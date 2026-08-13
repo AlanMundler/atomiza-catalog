@@ -1,7 +1,6 @@
 ---
 import ImageGallery from '@/components/product/ImageGallery.astro';
 import SizeSelector from '@/components/product/SizeSelector.astro';
-import StockBadge from '@/components/product/StockBadge.astro';
 import Button from '@/components/ui/Button.astro';
 import { formatPrice } from '@/utils/formatters';
 import { getStockStatus, isSizeAvailable } from '@/utils/stock';
@@ -65,7 +64,6 @@ const available = isSizeAvailable(selectedSize);
           selectedSize={selectedSize}
           onSizeChange={(size) => {}}
         />
-        <StockBadge size={selectedSize} class="product-detail-stock" />
       </div>
 
       <div class="product-detail-actions">
@@ -270,10 +268,6 @@ const available = isSizeAvailable(selectedSize);
     padding: var(--spacing-stack-md) 0;
     border-top: var(--border-width) solid var(--color-outline-variant);
     border-bottom: var(--border-width) solid var(--color-outline-variant);
-  }
-
-  .product-detail-stock {
-    align-self: flex-start;
   }
 
   .product-detail-actions {

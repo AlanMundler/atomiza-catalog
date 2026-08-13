@@ -128,7 +128,7 @@ const mainAlt = images[0]?.alt || alt;
   }
 
   .image-gallery-main {
-    aspect-ratio: 1;
+    aspect-ratio: 3 / 4;
     border-radius: var(--border-radius);
     overflow: hidden;
     background-color: var(--color-surface-container-high);
@@ -138,6 +138,7 @@ const mainAlt = images[0]?.alt || alt;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    mix-blend-mode: multiply;
     cursor: zoom-in;
     transition: transform var(--transition-duration) var(--transition-easing);
   }
@@ -162,7 +163,7 @@ const mainAlt = images[0]?.alt || alt;
     border: 2px solid transparent;
     border-radius: var(--border-radius);
     overflow: hidden;
-    background: transparent;
+    background: var(--color-surface-container-high);
     cursor: pointer;
     padding: 0;
     transition: all var(--transition-duration) var(--transition-easing);
@@ -172,6 +173,7 @@ const mainAlt = images[0]?.alt || alt;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    mix-blend-mode: multiply;
   }
 
   .image-gallery-thumb:hover {

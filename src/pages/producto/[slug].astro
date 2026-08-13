@@ -21,5 +21,7 @@ const { perfume } = Astro.props;
   description={`${perfume.brand} ${perfume.name} - ${perfume.olfactoryFamily}. Decant de 5ml disponible.`}
   ogImage={perfume.images[0]?.src}
 >
-  <ProductDetail perfume={perfume} />
+  <div class="container">
+    <ProductDetail perfume={perfume} />
+  </div>
 </Layout>

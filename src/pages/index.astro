@@ -10,7 +10,7 @@ const allPerfumes = perfumesData.perfumes;
 const featuredPerfumes = allPerfumes.filter(p => p.featured).slice(0, 3);
 ---
 
-<Layout title="ATOMIZA - Decants de autor" description="Boutique de perfumes de lujo en decants de 2ml, 5ml y 10ml. Autenticidad 100% garantizada.">
+<Layout title="ATOMIZA - Decants de autor" description="Boutique de perfumes de lujo en decants de 5ml. Autenticidad 100% garantizada.">
   <section class="hero" aria-labelledby="hero-title">
     <div class="container">
       <h1 id="hero-title" class="hero-title">ATOMIZA</h1>
@@ -83,7 +83,7 @@ const featuredPerfumes = allPerfumes.filter(p => p.featured).slice(0, 3);
           <div class="step-number">03</div>
           <div class="step-content">
             <h3 class="step-title">Seleccionar</h3>
-            <p class="step-text">Elige tu tamaño (2ml, 5ml, 10ml) y agrégalo a tu pedido.</p>
+            <p class="step-text">Elige tu tamaño de 5ml y agrégalo a tu pedido.</p>
           </div>
         </article>
         <article class="step">
@@ -241,27 +241,14 @@ const featuredPerfumes = allPerfumes.filter(p => p.featured).slice(0, 3);
   }
 
   .steps {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr;
     gap: var(--spacing-stack-md);
-    position: relative;
   }
 
   @media (min-width: 768px) {
     .steps {
-      flex-direction: row;
-      align-items: flex-start;
-    }
-
-    .steps::before {
-      content: '';
-      position: absolute;
-      top: 16px;
-      left: 10%;
-      right: 10%;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
-      z-index: 0;
+      grid-template-columns: repeat(4, 1fr);
     }
   }
 
@@ -271,18 +258,9 @@ const featuredPerfumes = allPerfumes.filter(p => p.featured).slice(0, 3);
     align-items: center;
     text-align: center;
     gap: var(--spacing-stack-sm);
-    padding: 0 var(--spacing-gutter);
-    position: relative;
-    z-index: 1;
-    flex: 1;
-  }
-
-  @media (min-width: 768px) {
-    .step {
-      flex-direction: row;
-      align-items: flex-start;
-      text-align: left;
-    }
+    padding: var(--spacing-stack-md);
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: var(--border-radius);
   }
 
   .step-number {
@@ -291,7 +269,6 @@ const featuredPerfumes = allPerfumes.filter(p => p.featured).slice(0, 3);
     font-weight: var(--font-headline-lg-weight);
     letter-spacing: var(--font-headline-lg-tracking);
     color: var(--color-primary);
-    flex-shrink: 0;
   }
 
   @media (max-width: 640px) {
@@ -355,14 +332,16 @@ const featuredPerfumes = allPerfumes.filter(p => p.featured).slice(0, 3);
   }
 
   .featured-card-image {
-    aspect-ratio: 1;
+    aspect-ratio: 3 / 4;
     overflow: hidden;
+    background-color: var(--color-surface-container-high);
   }
 
   .featured-card-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    mix-blend-mode: multiply;
     transition: transform 400ms var(--transition-easing);
   }
 
