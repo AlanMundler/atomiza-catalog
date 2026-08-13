@@ -1,13 +1,5 @@
 ---
 import Drawer from '@/components/ui/Drawer.astro';
-import CartItem from '@/components/cart/CartItem.astro';
-import OrderSummary from '@/components/cart/OrderSummary.astro';
-import { getCart, getCartSubtotal, addToCart } from '@/utils/cart';
-import type { PerfumeSize } from '@/data/types';
-
-const cart = getCart();
-const subtotal = getCartSubtotal();
-const isEmpty = cart.items.length === 0;
 ---
 
 <Drawer 
@@ -28,75 +20,220 @@ const isEmpty = cart.items.length === 0;
     </button>
   </div>
 
-  <div class="cart-content" slot="header">
-    {isEmpty ? (
-      <div class="cart-empty">
-        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
-          <circle cx="9" cy="21" r="1"></circle>
-          <circle cx="20" cy="21" r="1"></circle>
-          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-        </svg>
-        <p class="cart-empty-text">Tu carrito está vacío</p>
-        <p class="cart-empty-subtext">Agrega decants desde el catálogo</p>
-      </div>
-    ) : (
-      <>
-        <ul class="cart-items" role="list" aria-label="Artículos en el carrito">
-          {cart.items.map((item) => (
-            <CartItem item={item} />
-          ))}
-        </ul>
-        <OrderSummary subtotal={subtotal} />
-      </>
-    )}
-  </div>
+  <div class="cart-content" id="cart-content"></div>
 </Drawer>
 
 <script>
-  import { addToCart } from '@/utils/cart';
+  import {
+    getCart,
+    addToCart,
+    removeFromCart,
+    updateCartItemQuantity,
+    clearCart,
+    getCartSubtotal
+  } from '@/utils/cart';
+  import { formatPrice } from '@/utils/formatters';
+  import type { CartItem as CartItemType } from '@/data/types';
 
-  const cartDrawer = document.querySelector('#cart-drawer');
-  
-  if (cartDrawer) {
-    // Listen for cart open event
-    window.addEventListener('cart:open', () => {
-      cartDrawer.dispatchEvent(new CustomEvent('drawer:toggle', { detail: { open: true } }));
-    });
+  const drawerRoot = document.querySelector('#cart-drawer');
+  const content = document.querySelector('#cart-content');
+  let perfumesMap = new Map<string, any>();
 
-    // Listen for add to cart event
-    window.addEventListener('cart:add', (e: CustomEvent) => {
-      const { perfumeId, sizeMl, quantity } = e.detail;
-      
-      // Find the perfume size
-      const perfumesData = JSON.parse(localStorage.getItem('perfumes-data') || '{"perfumes":[]}');
-      const perfume = perfumesData.perfumes?.find((p: any) => p.id === perfumeId);
-      if (!perfume) return;
-      
-      const size = perfume.sizes?.find((s: PerfumeSize) => s.ml === sizeMl);
-      if (!size) return;
-      
-      // Add to cart
-      addToCart({ perfumeId, size, quantity });
-      
-      // Dispatch update event
-      window.dispatchEvent(new CustomEvent('cart:update'));
-    });
-
-    // Listen for cart updates
-    window.addEventListener('cart:update', () => {
-      // Reload the page to reflect cart changes
-      location.reload();
-    });
-
-    // Clear cart button
-    const clearBtn = cartDrawer.querySelector('[data-clear-cart]');
-    clearBtn?.addEventListener('click', () => {
-      if (confirm('¿Estás seguro de que quieres vaciar el carrito?')) {
-        localStorage.removeItem('atomiza-cart');
-        window.dispatchEvent(new CustomEvent('cart:update'));
-      }
-    });
+  function getPerfumesMap(): Map<string, any> {
+    try {
+      const data = JSON.parse(localStorage.getItem('perfumes-data') || '{"perfumes":[]}');
+      return new Map((data.perfumes || []).map((p: any) => [p.id, p]));
+    } catch {
+      return new Map();
+    }
   }
+
+  function render() {
+    if (!content) return;
+
+    perfumesMap = getPerfumesMap();
+    const cart = getCart();
+
+    if (cart.items.length === 0) {
+      content.innerHTML = `
+        <div class="cart-empty">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+          <p class="cart-empty-text">Tu carrito está vacío</p>
+          <p class="cart-empty-subtext">Agrega decants desde el catálogo</p>
+        </div>
+      `;
+      return;
+    }
+
+    const itemsHtml = cart.items.map(itemHtml).join('');
+    const subtotal = getCartSubtotal();
+
+    content.innerHTML = `
+      <ul class="cart-items" role="list" aria-label="Artículos en el carrito">
+        ${itemsHtml}
+      </ul>
+      <div class="order-summary" role="region" aria-label="Resumen del pedido">
+        <div class="order-summary-line">
+          <span class="order-summary-label">Subtotal</span>
+          <span class="order-summary-value">${formatPrice(subtotal)}</span>
+        </div>
+        <div class="order-summary-line order-summary-line--total">
+          <span class="order-summary-label">Total estimado</span>
+          <span class="order-summary-value">${formatPrice(subtotal)}</span>
+        </div>
+        <p class="order-summary-note">El total final se confirma al coordinar el envío</p>
+        <button type="button" class="btn btn--primary btn--lg order-summary-btn" data-finalize-order>
+          Finalizar pedido
+        </button>
+      </div>
+    `;
+  }
+
+  function itemHtml(item: CartItemType): string {
+    const perfume = perfumesMap.get(item.perfumeId) || {};
+    const brand = perfume.brand || item.perfumeId;
+    const name = perfume.name || item.perfumeId;
+    const image = perfume.images?.[0]?.src || '/images/placeholder.jpg';
+    const lineTotal = item.size.price * item.quantity;
+    const size = item.size;
+
+    return `
+      <li class="cart-item" data-perfume-id="${item.perfumeId}" data-size-ml="${size.ml}">
+        <div class="cart-item-image">
+          <img src="${image}" alt="${brand} ${name}" loading="lazy" width="60" height="60" />
+        </div>
+        <div class="cart-item-details">
+          <div class="cart-item-brand">${brand}</div>
+          <div class="cart-item-name">${name}</div>
+          <div class="cart-item-meta">
+            <span class="cart-item-size">${size.ml}ml</span>
+            <span class="cart-item-price">${formatPrice(size.price)}</span>
+          </div>
+          <div class="cart-item-quantity">
+            <button type="button" class="quantity-btn quantity-btn--decrease" data-action="decrease" aria-label="Disminuir cantidad" ${item.quantity <= 1 ? 'disabled' : ''}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </button>
+            <span class="quantity-value" aria-live="polite">${item.quantity}</span>
+            <button type="button" class="quantity-btn quantity-btn--increase" data-action="increase" aria-label="Aumentar cantidad" ${item.quantity >= size.stock ? 'disabled' : ''}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="cart-item-total">
+          <span class="cart-item-line-total">${formatPrice(lineTotal)}</span>
+          <button type="button" class="cart-item-remove" data-action="remove" aria-label="Eliminar del carrito">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      </li>
+    `;
+  }
+
+  function updateAndRerender() {
+    window.dispatchEvent(new CustomEvent('cart:update'));
+  }
+
+  function handleAction(target: HTMLElement) {
+    const action = target.getAttribute('data-action');
+    const itemEl = target.closest('.cart-item') as HTMLElement | null;
+    if (!itemEl) return;
+
+    const perfumeId = itemEl.getAttribute('data-perfume-id');
+    const sizeMl = parseInt(itemEl.getAttribute('data-size-ml') || '', 10);
+    const perfume = getPerfumesMap().get(perfumeId || '');
+    const size = perfume?.sizes?.find((s: any) => s.ml === sizeMl);
+    if (!perfumeId || !size) return;
+
+    const current = getCart().items.find(
+      (i) => i.perfumeId === perfumeId && i.size.ml === sizeMl
+    );
+
+    if (action === 'decrease' && current) {
+      updateCartItemQuantity(perfumeId, size, current.quantity - 1);
+    } else if (action === 'increase' && current) {
+      updateCartItemQuantity(perfumeId, size, current.quantity + 1);
+    } else if (action === 'remove') {
+      removeFromCart(perfumeId, size);
+    }
+    updateAndRerender();
+  }
+
+  content?.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+    const actionEl = target.closest('[data-action]') as HTMLElement | null;
+    const finalizeEl = target.closest('[data-finalize-order]') as HTMLElement | null;
+
+    if (actionEl) {
+      handleAction(actionEl);
+      return;
+    }
+    if (finalizeEl) {
+      window.dispatchEvent(new CustomEvent('order:finalize'));
+    }
+  });
+
+  document.querySelector('[data-clear-cart]')?.addEventListener('click', () => {
+    if (confirm('¿Estás seguro de que quieres vaciar el carrito?')) {
+      clearCart();
+      updateAndRerender();
+    }
+  });
+
+  // Listen for cart open event
+  window.addEventListener('cart:open', () => {
+    render();
+    if (drawerRoot) {
+      drawerRoot.dispatchEvent(new CustomEvent('drawer:toggle', { detail: { open: true } }));
+    }
+  });
+
+  // Listen for add to cart event
+  window.addEventListener('cart:add', (e: CustomEvent) => {
+    const { perfumeId, sizeMl, quantity } = e.detail;
+    const perfume = getPerfumesMap().get(perfumeId);
+    const size = perfume?.sizes?.find((s: any) => s.ml === sizeMl);
+    if (!perfumeId || !size) return;
+
+    addToCart({ perfumeId, size, quantity: quantity || 1 });
+    window.dispatchEvent(new CustomEvent('cart:update'));
+  });
+
+  // Listen for cart updates
+  window.addEventListener('cart:update', () => {
+    render();
+  });
+
+  window.addEventListener('cart:update-quantity', (e: CustomEvent) => {
+    const { perfumeId, sizeMl, quantity } = e.detail;
+    const perfume = getPerfumesMap().get(perfumeId);
+    const size = perfume?.sizes?.find((s: any) => s.ml === sizeMl);
+    if (!perfumeId || !size) return;
+    updateCartItemQuantity(perfumeId, size, quantity);
+    updateAndRerender();
+  });
+
+  window.addEventListener('cart:remove', (e: CustomEvent) => {
+    const { perfumeId, sizeMl } = e.detail;
+    const perfume = getPerfumesMap().get(perfumeId);
+    const size = perfume?.sizes?.find((s: any) => s.ml === sizeMl);
+    if (!perfumeId || !size) return;
+    removeFromCart(perfumeId, size);
+    updateAndRerender();
+  });
+
+  render();
 </script>
 
 <style>
@@ -191,5 +328,238 @@ const isEmpty = cart.items.length === 0;
     margin: 0;
     padding: 0;
     list-style: none;
+  }
+
+  /* Cart item */
+  .cart-item {
+    display: grid;
+    grid-template-columns: 60px 1fr auto;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: var(--border-width) solid var(--color-outline-variant);
+    align-items: center;
+  }
+
+  .cart-item-image {
+    width: 60px;
+    height: 60px;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .cart-item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .cart-item-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .cart-item-brand {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+  }
+
+  .cart-item-name {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    font-weight: var(--font-body-md-weight);
+    color: var(--color-on-surface);
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .cart-item-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 4px;
+  }
+
+  .cart-item-size {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-primary);
+  }
+
+  .cart-item-price {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    color: var(--color-on-surface-variant);
+  }
+
+  .cart-item-quantity {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .quantity-btn {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-on-surface);
+    background: var(--color-surface-container-high);
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all var(--transition-duration) var(--transition-easing);
+  }
+
+  .quantity-btn:hover:not(:disabled) {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+  }
+
+  .quantity-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .quantity-btn:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .quantity-value {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    font-weight: var(--font-body-md-weight);
+    color: var(--color-on-surface);
+    min-width: 24px;
+    text-align: center;
+  }
+
+  .cart-item-total {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+  }
+
+  .cart-item-line-total {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    font-weight: var(--font-body-md-weight);
+    color: var(--color-on-surface);
+  }
+
+  .cart-item-remove {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-on-surface-variant);
+    background: transparent;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all var(--transition-duration) var(--transition-easing);
+  }
+
+  .cart-item-remove:hover {
+    color: var(--color-error);
+    background-color: var(--color-error-container);
+  }
+
+  .cart-item-remove:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 480px) {
+    .cart-item {
+      grid-template-columns: 50px 1fr;
+      grid-template-rows: auto auto;
+    }
+
+    .cart-item-total {
+      grid-column: 2;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+
+    .cart-item-quantity {
+      grid-column: 1 / -1;
+    }
+  }
+
+  /* Order summary */
+  .order-summary {
+    padding-top: 16px;
+    border-top: var(--border-width) solid var(--color-outline-variant);
+    margin-top: 8px;
+  }
+
+  .order-summary-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+  }
+
+  .order-summary-line--total {
+    padding-top: 16px;
+    margin-top: 8px;
+    border-top: var(--border-width) solid var(--color-outline-variant);
+  }
+
+  .order-summary-label {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    color: var(--color-on-surface-variant);
+  }
+
+  .order-summary-value {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    font-weight: var(--font-body-md-weight);
+    color: var(--color-on-surface);
+  }
+
+  .order-summary-line--total .order-summary-label {
+    font-size: var(--font-headline-md-size);
+    font-weight: var(--font-headline-md-weight);
+    letter-spacing: var(--font-headline-md-tracking);
+    text-transform: uppercase;
+  }
+
+  .order-summary-line--total .order-summary-value {
+    font-size: var(--font-headline-md-size);
+    font-weight: var(--font-headline-md-weight);
+    color: var(--color-primary);
+  }
+
+  .order-summary-note {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    color: var(--color-on-surface-variant);
+    margin: 12px 0 20px;
+    text-align: center;
+  }
+
+  .order-summary-btn {
+    width: 100%;
   }
 </style>

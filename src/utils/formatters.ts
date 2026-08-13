@@ -5,11 +5,14 @@ export function formatPrice(price: number): string {
   return '$' + price.toLocaleString('es-AR');
 }
 
-export function generateInstagramOrderText(
+export type OrderChannel = 'whatsapp' | 'instagram';
+
+export function generateOrderText(
   items: CartItem[],
   perfumesMap: Map<string, Perfume>,
   customerName: string,
-  customerContact: string
+  customerContact: string,
+  channel: OrderChannel = 'whatsapp'
 ): string {
   const lines: string[] = [
     '📦 NUEVO PEDIDO - ΛTOMIZΛ',
@@ -34,7 +37,31 @@ export function generateInstagramOrderText(
     );
   }
 
-  lines.push('', `💰 TOTAL: ${formatPrice(total)}`, '', '📍 Envío: [A coordinar]', '💳 Pago: [Transferencia / Efectivo / A coordinar]', '', '—', 'Enviar a @atomiza.cba por Instagram DM');
+  lines.push(
+    '',
+    `💰 TOTAL: ${formatPrice(total)}`,
+    '',
+    '📍 Envío: [A coordinar]',
+    '💳 Pago: [Transferencia / Efectivo / A coordinar]',
+    '',
+    '—',
+    channel === 'instagram'
+      ? 'Enviar a @atomiza.cba por Instagram DM'
+      : 'Enviar por WhatsApp a @atomiza.cba'
+  );
 
   return lines.join('\n');
+}
+
+export function generateInstagramOrderText(
+  items: CartItem[],
+  perfumesMap: Map<string, Perfume>,
+  customerName: string,
+  customerContact: string
+): string {
+  return generateOrderText(items, perfumesMap, customerName, customerContact, 'instagram');
+}
+
+export function buildWhatsAppLink(phone: string, text: string): string {
+  return `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
 }

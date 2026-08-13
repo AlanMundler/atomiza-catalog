@@ -1,81 +1,104 @@
 ---
 interface Props {
-  isOpen: boolean;
+  id?: string;
   title?: string;
   class?: string;
-  onClose: () => void;
+  onClose?: () => void;
   children: any;
 }
 
-const { isOpen, title, class: className = '', onClose, children } = Astro.props;
+const { id = '', title, class: className = '', onClose = () => {}, children } = Astro.props;
+const modalId = id || `modal-${Math.random().toString(36).slice(2, 9)}`;
 ---
 
-{isOpen && (
-  <>
-    <div 
-      class="modal-backdrop" 
-      role="presentation"
-      aria-hidden="true"
-    ></div>
-    <dialog 
-      class={`modal ${className}`}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby={title ? 'modal-title' : undefined}
-      open
+<div class="modal-root" id={modalId} data-modal-root>
+  <div class="modal-backdrop" data-modal-backdrop role="presentation" aria-hidden="true"></div>
+  <dialog 
+    class={`modal ${className}`}
+    data-modal-dialog
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby={title ? `${modalId}-title` : undefined}
+  >
+    {title && <h2 id={`${modalId}-title`} class="modal-title">{title}</h2>}
+    <button 
+      class="modal-close" 
+      data-modal-close
+      aria-label="Cerrar modal"
     >
-      {title && <h2 id="modal-title" class="modal-title">{title}</h2>}
-      <button 
-        class="modal-close" 
-        onclick={onClose}
-        aria-label="Cerrar modal"
-      >
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
-      <div class="modal-content">
-        <slot>{children}</slot>
-      </div>
-    </dialog>
-  </>
-)}
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+    <div class="modal-content">
+      <slot>{children}</slot>
+    </div>
+  </dialog>
+</div>
 
 <script>
-  const modal = document.querySelector('.modal');
-  const backdrop = document.querySelector('.modal-backdrop');
-  
-  if (modal && backdrop) {
-    const closeModal = () => {
-      modal.close();
+  document.querySelectorAll('[data-modal-root]').forEach((root) => {
+    const dialog = root.querySelector('[data-modal-dialog]') as HTMLDialogElement | null;
+    const backdrop = root.querySelector('[data-modal-backdrop]') as HTMLElement | null;
+    const closeBtn = root.querySelector('[data-modal-close]') as HTMLElement | null;
+    if (!dialog) return;
+
+    const open = () => {
+      if (!dialog.open) {
+        dialog.showModal();
+      }
+      document.body.style.overflow = 'hidden';
+    };
+
+    const close = () => {
+      if (dialog.open) {
+        dialog.close();
+      }
       document.body.style.overflow = '';
     };
 
-    backdrop.addEventListener('click', closeModal);
-    modal.addEventListener('close', () => {
+    closeBtn?.addEventListener('click', close);
+    backdrop?.addEventListener('click', close);
+
+    dialog.addEventListener('close', () => {
       document.body.style.overflow = '';
     });
 
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) close();
+    });
+
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && modal.open) {
-        closeModal();
+      if (e.key === 'Escape' && dialog.open) {
+        close();
       }
     });
 
-    // Prevent body scroll when modal is open
-    document.body.style.overflow = 'hidden';
-  }
+    root.addEventListener('modal:open', () => open());
+    root.addEventListener('modal:close', () => close());
+
+    // Store open/close helpers so other scripts can trigger them
+    (root as any)._modalOpen = open;
+    (root as any)._modalClose = close;
+  });
 </script>
 
 <style>
+  .modal-root {
+    position: relative;
+  }
+
   .modal-backdrop {
     position: fixed;
     inset: 0;
     background-color: rgba(0, 0, 0, 0.8);
     backdrop-filter: blur(4px);
     z-index: 999;
-    animation: fade-in var(--transition-duration) var(--transition-easing);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity var(--transition-duration) var(--transition-easing), visibility var(--transition-duration) var(--transition-easing);
   }
 
   .modal {
@@ -93,6 +116,12 @@ const { isOpen, title, class: className = '', onClose, children } = Astro.props;
     z-index: 1000;
     overflow: hidden;
     animation: slide-up var(--transition-duration) var(--transition-easing);
+  }
+
+  .modal[open] ~ .modal-backdrop {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
   }
 
   .modal::backdrop {

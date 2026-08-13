@@ -50,9 +50,7 @@ const BASE = '/atomiza-catalog/';
           <circle cx="20" cy="21" r="1"></circle>
           <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
         </svg>
-        {cartCount > 0 && (
-          <span class="cart-count" aria-hidden="true">{cartCount}</span>
-        )}
+        <span class="cart-count" data-cart-count aria-hidden="true" hidden>{cartCount}</span>
       </button>
 
       <button 
@@ -85,7 +83,7 @@ const BASE = '/atomiza-catalog/';
   </nav>
   <div class="mobile-cart-summary" slot="header">
     <h3 class="mobile-cart-title">Carrito</h3>
-    <p class="mobile-cart-count">{cartCount} artículos</p>
+    <p class="mobile-cart-count" data-cart-count-mobile>{cartCount} artículos</p>
     <a href={`${BASE}catalogo/`} class="mobile-cart-btn-link">
       <Button variant="secondary" class="mobile-cart-btn">
         Ver carrito
@@ -148,14 +146,24 @@ const BASE = '/atomiza-catalog/';
 
   // Listen for cart updates
   window.addEventListener('cart:update', () => {
-    const count = document.querySelector('.cart-count');
+    updateCartCount();
+  });
+
+  function updateCartCount() {
+    const badge = document.querySelector('[data-cart-count]');
+    const mobileCount = document.querySelector('[data-cart-count-mobile]');
     const cart = JSON.parse(localStorage.getItem('atomiza-cart') || '{"items":[]}');
     const newCount = cart.items.reduce((sum: number, item: any) => sum + item.quantity, 0);
-    if (count) {
-      count.textContent = String(newCount);
-      count.style.display = newCount > 0 ? 'flex' : 'none';
+    if (badge) {
+      badge.textContent = String(newCount);
+      badge.hidden = newCount === 0;
     }
-  });
+    if (mobileCount) {
+      mobileCount.textContent = `${newCount} ${newCount === 1 ? 'artículo' : 'artículos'}`;
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', updateCartCount);
 </script>
 
 <style>

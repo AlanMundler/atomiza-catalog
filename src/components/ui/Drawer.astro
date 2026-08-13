@@ -24,7 +24,7 @@ const { isOpen, position = 'right', id, class: className = '', onClose, children
       </slot>
       <button 
         class="drawer-close" 
-        onclick={onClose}
+        data-drawer-close
         aria-label="Cerrar"
       >
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -63,6 +63,9 @@ const { isOpen, position = 'right', id, class: className = '', onClose, children
         document.body.style.overflow = '';
       }, 200);
     };
+
+    const closeBtn = root.querySelector('[data-drawer-close]');
+    closeBtn?.addEventListener('click', closeDrawer);
 
     backdrop.addEventListener('click', closeDrawer);
 
