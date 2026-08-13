@@ -18,9 +18,7 @@
         { "src": "/images/perfumes/glacier-ultra-2.jpg", "alt": "Maison Alhambra Glacier Ultra - Detalle del frasco" }
       ],
       "sizes": [
-        { "ml": 2, "price": 8000, "stock": 10 },
-        { "ml": 5, "price": 18000, "stock": 8 },
-        { "ml": 10, "price": 32000, "stock": 5 }
+        { "ml": 5, "price": 6000, "stock": 8 }
       ],
       "isBoutiqueExclusive": false,
       "featured": true
@@ -43,9 +41,7 @@
         { "src": "/images/perfumes/your-touch-2.jpg", "alt": "Maison Alhambra Your Touch - Vista lateral" }
       ],
       "sizes": [
-        { "ml": 2, "price": 8000, "stock": 12 },
-        { "ml": 5, "price": 18000, "stock": 10 },
-        { "ml": 10, "price": 32000, "stock": 6 }
+        { "ml": 5, "price": 6000, "stock": 10 }
       ],
       "isBoutiqueExclusive": false,
       "featured": true
@@ -68,9 +64,7 @@
         { "src": "/images/perfumes/hawas-ice-2.jpg", "alt": "Rasasi Hawas Ice - Detalle del tapón" }
       ],
       "sizes": [
-        { "ml": 2, "price": 9000, "stock": 8 },
-        { "ml": 5, "price": 20000, "stock": 6 },
-        { "ml": 10, "price": 35000, "stock": 4 }
+        { "ml": 5, "price": 10000, "stock": 6 }
       ],
       "isBoutiqueExclusive": false,
       "featured": true
@@ -93,9 +87,7 @@
         { "src": "/images/perfumes/24-carat-white-gold-2.jpg", "alt": "Lattafa 24 Carat White Gold - Vista del empaque" }
       ],
       "sizes": [
-        { "ml": 2, "price": 10000, "stock": 6 },
-        { "ml": 5, "price": 22000, "stock": 5 },
-        { "ml": 10, "price": 38000, "stock": 3 }
+        { "ml": 5, "price": 6000, "stock": 5 }
       ],
       "isBoutiqueExclusive": false,
       "featured": true
@@ -118,9 +110,7 @@
         { "src": "/images/perfumes/al-fursan-untamed-2.jpg", "alt": "Lattafa Al Fursan Untamed - Detalle dorado" }
       ],
       "sizes": [
-        { "ml": 2, "price": 9000, "stock": 7 },
-        { "ml": 5, "price": 20000, "stock": 5 },
-        { "ml": 10, "price": 35000, "stock": 4 }
+        { "ml": 5, "price": 6000, "stock": 5 }
       ],
       "isBoutiqueExclusive": false,
       "featured": true
@@ -143,9 +133,7 @@
         { "src": "/images/perfumes/liam-grey-2.jpg", "alt": "Lattafa Liam Grey - Vista frontal" }
       ],
       "sizes": [
-        { "ml": 2, "price": 8500, "stock": 10 },
-        { "ml": 5, "price": 19000, "stock": 8 },
-        { "ml": 10, "price": 33000, "stock": 5 }
+        { "ml": 5, "price": 6000, "stock": 8 }
       ],
       "isBoutiqueExclusive": false,
       "featured": false
@@ -168,9 +156,7 @@
         { "src": "/images/perfumes/now-rave-2.jpg", "alt": "Lattafa Now Rave - Detalle del diseño" }
       ],
       "sizes": [
-        { "ml": 2, "price": 8500, "stock": 9 },
-        { "ml": 5, "price": 19000, "stock": 7 },
-        { "ml": 10, "price": 33000, "stock": 5 }
+        { "ml": 5, "price": 6000, "stock": 7 }
       ],
       "isBoutiqueExclusive": false,
       "featured": false
@@ -193,9 +179,7 @@
         { "src": "/images/perfumes/jorge-di-profumo-2.jpg", "alt": "Maison Alhambra Jorge Di Profumo - Detalle plateado" }
       ],
       "sizes": [
-        { "ml": 2, "price": 8000, "stock": 11 },
-        { "ml": 5, "price": 18000, "stock": 9 },
-        { "ml": 10, "price": 32000, "stock": 6 }
+        { "ml": 5, "price": 6000, "stock": 9 }
       ],
       "isBoutiqueExclusive": false,
       "featured": false
@@ -218,9 +202,7 @@
         { "src": "/images/perfumes/salvo-intense-2.jpg", "alt": "Maison Alhambra Salvo Intense - Vista lateral" }
       ],
       "sizes": [
-        { "ml": 2, "price": 9000, "stock": 6 },
-        { "ml": 5, "price": 20000, "stock": 4 },
-        { "ml": 10, "price": 35000, "stock": 3 }
+        { "ml": 5, "price": 6000, "stock": 4 }
       ],
       "isBoutiqueExclusive": false,
       "featured": false
@@ -243,9 +225,7 @@
         { "src": "/images/perfumes/dark-door-sport-2.jpg", "alt": "Maison Alhambra Dark Door Sport - Detalle verde" }
       ],
       "sizes": [
-        { "ml": 2, "price": 8000, "stock": 10 },
-        { "ml": 5, "price": 18000, "stock": 8 },
-        { "ml": 10, "price": 32000, "stock": 5 }
+        { "ml": 5, "price": 6000, "stock": 8 }
       ],
       "isBoutiqueExclusive": false,
       "featured": false
@@ -268,9 +248,7 @@
         { "src": "/images/perfumes/tonic-malt-2.jpg", "alt": "Maison Alhambra Tonic Malt - Detalle del tapón" }
       ],
       "sizes": [
-        { "ml": 2, "price": 9000, "stock": 8 },
-        { "ml": 5, "price": 20000, "stock": 6 },
-        { "ml": 10, "price": 35000, "stock": 4 }
+        { "ml": 5, "price": 6000, "stock": 6 }
       ],
       "isBoutiqueExclusive": false,
       "featured": false
@@ -293,9 +271,7 @@
         { "src": "/images/perfumes/luminous-sahara-2.jpg", "alt": "Maison Alhambra Luminous Sahara - Vista del brillo" }
       ],
       "sizes": [
-        { "ml": 2, "price": 9500, "stock": 7 },
-        { "ml": 5, "price": 21000, "stock": 5 },
-        { "ml": 10, "price": 36000, "stock": 3 }
+        { "ml": 5, "price": 6000, "stock": 5 }
       ],
       "isBoutiqueExclusive": false,
       "featured": true
@@ -318,9 +294,7 @@
         { "src": "/images/perfumes/confidential-private-gold-2.jpg", "alt": "Lattafa Confidential Private Gold - Detalle exclusivo" }
       ],
       "sizes": [
-        { "ml": 2, "price": 10000, "stock": 5 },
-        { "ml": 5, "price": 22000, "stock": 4 },
-        { "ml": 10, "price": 38000, "stock": 2 }
+        { "ml": 5, "price": 6000, "stock": 4 }
       ],
       "isBoutiqueExclusive": true,
       "featured": true
@@ -343,9 +317,7 @@
         { "src": "/images/perfumes/lail-maleki-oud-2.jpg", "alt": "Lattafa Lail Maleki Oud - Detalle dorado real" }
       ],
       "sizes": [
-        { "ml": 2, "price": 11000, "stock": 6 },
-        { "ml": 5, "price": 24000, "stock": 4 },
-        { "ml": 10, "price": 42000, "stock": 3 }
+        { "ml": 5, "price": 6000, "stock": 4 }
       ],
       "isBoutiqueExclusive": true,
       "featured": true
@@ -368,9 +340,7 @@
         { "src": "/images/perfumes/ameer-al-oudh-2.jpg", "alt": "Lattafa Ameer Al Oudh - Corona dorada" }
       ],
       "sizes": [
-        { "ml": 2, "price": 10000, "stock": 7 },
-        { "ml": 5, "price": 22000, "stock": 5 },
-        { "ml": 10, "price": 38000, "stock": 3 }
+        { "ml": 5, "price": 6000, "stock": 5 }
       ],
       "isBoutiqueExclusive": true,
       "featured": false
@@ -393,9 +363,7 @@
         { "src": "/images/perfumes/hercules-2.jpg", "alt": "Maison Alhambra Hercules - Detalle plateado" }
       ],
       "sizes": [
-        { "ml": 2, "price": 8500, "stock": 9 },
-        { "ml": 5, "price": 19000, "stock": 7 },
-        { "ml": 10, "price": 33000, "stock": 5 }
+        { "ml": 5, "price": 6000, "stock": 7 }
       ],
       "isBoutiqueExclusive": false,
       "featured": false
@@ -418,9 +386,7 @@
         { "src": "/images/perfumes/perseus-exclusif-2.jpg", "alt": "Maison Alhambra Perseus Exclusif - Detalle exclusivo" }
       ],
       "sizes": [
-        { "ml": 2, "price": 9000, "stock": 6 },
-        { "ml": 5, "price": 20000, "stock": 5 },
-        { "ml": 10, "price": 35000, "stock": 4 }
+        { "ml": 5, "price": 6000, "stock": 5 }
       ],
       "isBoutiqueExclusive": false,
       "featured": true
@@ -443,9 +409,7 @@
         { "src": "/images/perfumes/rouat-ajial-2.jpg", "alt": "Lattafa Rouat Ajial - Detalle tradicional" }
       ],
       "sizes": [
-        { "ml": 2, "price": 9500, "stock": 8 },
-        { "ml": 5, "price": 21000, "stock": 6 },
-        { "ml": 10, "price": 36000, "stock": 4 }
+        { "ml": 5, "price": 6000, "stock": 6 }
       ],
       "isBoutiqueExclusive": false,
       "featured": false
@@ -468,9 +432,7 @@
         { "src": "/images/perfumes/sublime-2.jpg", "alt": "Lattafa Sublime - Detalle elegante" }
       ],
       "sizes": [
-        { "ml": 2, "price": 8500, "stock": 10 },
-        { "ml": 5, "price": 19000, "stock": 8 },
-        { "ml": 10, "price": 33000, "stock": 5 }
+        { "ml": 5, "price": 6000, "stock": 8 }
       ],
       "isBoutiqueExclusive": false,
       "featured": true
@@ -493,9 +455,7 @@
         { "src": "/images/perfumes/delilah-2.jpg", "alt": "Maison Alhambra Delilah - Detalle encantador" }
       ],
       "sizes": [
-        { "ml": 2, "price": 8500, "stock": 9 },
-        { "ml": 5, "price": 19000, "stock": 7 },
-        { "ml": 10, "price": 33000, "stock": 5 }
+        { "ml": 5, "price": 6000, "stock": 7 }
       ],
       "isBoutiqueExclusive": false,
       "featured": false
@@ -518,9 +478,7 @@
         { "src": "/images/perfumes/mayar-2.jpg", "alt": "Lattafa Mayar - Detalle floral" }
       ],
       "sizes": [
-        { "ml": 2, "price": 8000, "stock": 12 },
-        { "ml": 5, "price": 18000, "stock": 10 },
-        { "ml": 10, "price": 32000, "stock": 7 }
+        { "ml": 5, "price": 6000, "stock": 10 }
       ],
       "isBoutiqueExclusive": false,
       "featured": true
@@ -543,9 +501,7 @@
         { "src": "/images/perfumes/glacier-bella-2.jpg", "alt": "Maison Alhambra Glacier Bella - Detalle hielo" }
       ],
       "sizes": [
-        { "ml": 2, "price": 8000, "stock": 11 },
-        { "ml": 5, "price": 18000, "stock": 9 },
-        { "ml": 10, "price": 32000, "stock": 6 }
+        { "ml": 5, "price": 6000, "stock": 9 }
       ],
       "isBoutiqueExclusive": false,
       "featured": false
@@ -568,9 +524,7 @@
         { "src": "/images/perfumes/angham-2.jpg", "alt": "Lattafa Angham - Detalle musical" }
       ],
       "sizes": [
-        { "ml": 2, "price": 9000, "stock": 8 },
-        { "ml": 5, "price": 20000, "stock": 6 },
-        { "ml": 10, "price": 35000, "stock": 4 }
+        { "ml": 5, "price": 6000, "stock": 6 }
       ],
       "isBoutiqueExclusive": false,
       "featured": false
@@ -593,9 +547,7 @@
         { "src": "/images/perfumes/hayaati-florence-2.jpg", "alt": "Lattafa Hayaati Florence - Detalle artístico" }
       ],
       "sizes": [
-        { "ml": 2, "price": 8500, "stock": 10 },
-        { "ml": 5, "price": 19000, "stock": 8 },
-        { "ml": 10, "price": 33000, "stock": 5 }
+        { "ml": 5, "price": 6000, "stock": 8 }
       ],
       "isBoutiqueExclusive": false,
       "featured": false
@@ -618,9 +570,7 @@
         { "src": "/images/perfumes/hayaati-black-2.jpg", "alt": "Lattafa Hayaati Black - Detalle misterioso" }
       ],
       "sizes": [
-        { "ml": 2, "price": 10000, "stock": 7 },
-        { "ml": 5, "price": 22000, "stock": 5 },
-        { "ml": 10, "price": 38000, "stock": 3 }
+        { "ml": 5, "price": 6000, "stock": 5 }
       ],
       "isBoutiqueExclusive": true,
       "featured": true
@@ -643,9 +593,7 @@
         { "src": "/images/perfumes/hayaati-al-maleki-2.jpg", "alt": "Lattafa Hayaati Al Maleki - Corona dorada" }
       ],
       "sizes": [
-        { "ml": 2, "price": 11000, "stock": 6 },
-        { "ml": 5, "price": 24000, "stock": 4 },
-        { "ml": 10, "price": 42000, "stock": 3 }
+        { "ml": 5, "price": 6000, "stock": 4 }
       ],
       "isBoutiqueExclusive": true,
       "featured": false
@@ -668,9 +616,7 @@
         { "src": "/images/perfumes/opulent-dubai-2.jpg", "alt": "Lattafa Opulent Dubai - Detalle lujo" }
       ],
       "sizes": [
-        { "ml": 2, "price": 12000, "stock": 5 },
-        { "ml": 5, "price": 26000, "stock": 4 },
-        { "ml": 10, "price": 45000, "stock": 2 }
+        { "ml": 5, "price": 6000, "stock": 4 }
       ],
       "isBoutiqueExclusive": true,
       "featured": true
@@ -693,9 +639,7 @@
         { "src": "/images/perfumes/glacier-bold-2.jpg", "alt": "Maison Alhambra Glacier Bold - Detalle fuerte" }
       ],
       "sizes": [
-        { "ml": 2, "price": 8500, "stock": 9 },
-        { "ml": 5, "price": 19000, "stock": 7 },
-        { "ml": 10, "price": 33000, "stock": 5 }
+        { "ml": 5, "price": 6000, "stock": 7 }
       ],
       "isBoutiqueExclusive": false,
       "featured": false
@@ -718,9 +662,7 @@
         { "src": "/images/perfumes/yeah-man-2.jpg", "alt": "Maison Alhambra Yeah! Man - Detalle confianza" }
       ],
       "sizes": [
-        { "ml": 2, "price": 8000, "stock": 10 },
-        { "ml": 5, "price": 18000, "stock": 8 },
-        { "ml": 10, "price": 32000, "stock": 6 }
+        { "ml": 5, "price": 6000, "stock": 8 }
       ],
       "isBoutiqueExclusive": false,
       "featured": true
@@ -743,9 +685,7 @@
         { "src": "/images/perfumes/la-baroque-rouge-2.jpg", "alt": "Maison Alhambra La Baroque Rouge - Detalle artístico" }
       ],
       "sizes": [
-        { "ml": 2, "price": 9500, "stock": 7 },
-        { "ml": 5, "price": 21000, "stock": 5 },
-        { "ml": 10, "price": 36000, "stock": 3 }
+        { "ml": 5, "price": 6000, "stock": 5 }
       ],
       "isBoutiqueExclusive": false,
       "featured": true
@@ -768,9 +708,7 @@
         { "src": "/images/perfumes/your-touch-intense-2.jpg", "alt": "Maison Alhambra Your Touch Intense - Detalle adictivo" }
       ],
       "sizes": [
-        { "ml": 2, "price": 8500, "stock": 9 },
-        { "ml": 5, "price": 19000, "stock": 7 },
-        { "ml": 10, "price": 33000, "stock": 5 }
+        { "ml": 5, "price": 6000, "stock": 7 }
       ],
       "isBoutiqueExclusive": false,
       "featured": false

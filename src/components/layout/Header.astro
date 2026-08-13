@@ -13,9 +13,11 @@ const BASE = '/atomiza-catalog/';
       <span class="logo-text">ATOMIZA</span>
     </a>
 
-    <nav class="header-nav" role="navigation" aria-label="Navegación principal">
-      <a href={`${BASE}catalogo/`} class="nav-link">Catálogo</a>
-    </nav>
+    <div class="header-center">
+      <nav class="header-nav" role="navigation" aria-label="Navegación principal">
+        <a href={`${BASE}catalogo/`} class="nav-link">Catálogo</a>
+      </nav>
+    </div>
 
     <div class="header-actions">
       <button 
@@ -159,6 +161,12 @@ const BASE = '/atomiza-catalog/';
     justify-content: space-between;
     height: 72px;
     gap: 24px;
+  }
+
+  .header-center {
+    display: flex;
+    justify-content: center;
+    flex: 1;
   }
 
   .header-logo {
