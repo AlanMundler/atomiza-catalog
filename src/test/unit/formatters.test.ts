@@ -81,7 +81,7 @@ describe('formatters', () => {
     it('generates correct Instagram order text with all sections', () => {
       const result = generateInstagramOrderText(cartItems, perfumesMap, 'Juan Pérez', '+54 9 11 1234-5678');
 
-      expect(result).toContain('📦 NUEVO PEDIDO - ATOMIZA');
+      expect(result).toContain('📦 NUEVO PEDIDO - ΛTOMIZΛ');
       expect(result).toContain('👤 Cliente: Juan Pérez');
       expect(result).toContain('📱 Contacto: +54 9 11 1234-5678');
       expect(result).toContain('🛍️ DETALLE:');

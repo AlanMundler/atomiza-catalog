@@ -10,20 +10,17 @@ const allPerfumes = perfumesData.perfumes;
 const featuredPerfumes = allPerfumes.filter(p => p.featured).slice(0, 3);
 ---
 
-<Layout title="ATOMIZA - Decants de autor" description="Boutique de perfumes de lujo en decants de 5ml. Autenticidad 100% garantizada.">
+<Layout title="ΛTOMIZΛ - Decants de autor" description="Boutique de perfumes de lujo en decants de 5ml. Autenticidad 100% garantizada.">
   <section class="hero" aria-labelledby="hero-title">
     <div class="container">
-      <h1 id="hero-title" class="hero-title">ATOMIZA</h1>
+      <h1 id="hero-title" class="hero-title">ΛTOMIZΛ</h1>
       <p class="hero-subtitle">Decants de autor</p>
-      <a href={`${BASE}catalogo/`} class="btn btn--primary btn--lg hero-cta">
-        Explorar catálogo
-      </a>
     </div>
   </section>
 
   <section class="value-prop" aria-labelledby="value-prop-title">
     <div class="container">
-      <h2 id="value-prop-title" class="section-title">Por qué elegir ATOMIZA</h2>
+      <h2 id="value-prop-title" class="section-title">Por qué elegir ΛTOMIZΛ</h2>
       <div class="value-prop-grid">
         <article class="value-prop-card">
           <div class="value-prop-icon">
@@ -156,11 +153,7 @@ const featuredPerfumes = allPerfumes.filter(p => p.featured).slice(0, 3);
     line-height: var(--font-body-lg-line-height);
     letter-spacing: var(--font-body-lg-tracking);
     color: var(--color-on-surface-variant);
-    margin: 0 0 var(--spacing-stack-lg);
-  }
-
-  .hero-cta {
-    min-width: 280px;
+    margin: 0;
   }
 
   .section-title {
@@ -429,9 +422,5 @@ const featuredPerfumes = allPerfumes.filter(p => p.featured).slice(0, 3);
     font-size: var(--font-body-md-size);
     padding: 18px 32px;
     height: 52px;
-  }
-
-  .hero-cta {
-    min-width: 280px;
   }
 </style>

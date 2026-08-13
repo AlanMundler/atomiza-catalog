@@ -12,7 +12,7 @@ export function generateInstagramOrderText(
   customerContact: string
 ): string {
   const lines: string[] = [
-    '📦 NUEVO PEDIDO - ATOMIZA',
+    '📦 NUEVO PEDIDO - ΛTOMIZΛ',
     '',
     `👤 Cliente: ${customerName}`,
     `📱 Contacto: ${customerContact}`,
