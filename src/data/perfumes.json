@@ -1,253 +1,778 @@
 {
   "perfumes": [
     {
-      "id": "tobacco-vanille",
-      "slug": "tobacco-vanille",
-      "brand": "Tom Ford",
-      "name": "Tobacco Vanille",
-      "gender": "unisex",
-      "olfactoryFamily": "Amaderada Especiada",
-      "description": "Una fragancia icónica y opulenta que evoca el calor de una pipa de tabaco y la dulzura de la vainilla. Rica, cálida e inolvidable, Tobacco Vanille es la esencia del lujo moderno.",
-      "notes": {
-        "top": ["Tabaco", "Especias"],
-        "heart": ["Vainilla", "Cacao", "Tonka"],
-        "base": ["Madera", "Frutos Secos"]
-      },
-      "images": [
-        { "src": "/images/perfumes/tobacco-vanille-1.jpg", "alt": "Tom Ford Tobacco Vanille - Vista frontal del frasco" },
-        { "src": "/images/perfumes/tobacco-vanille-2.jpg", "alt": "Tom Ford Tobacco Vanille - Detalle del atomizador" }
-      ],
-      "sizes": [
-        { "ml": 2, "price": 15000, "stock": 5 },
-        { "ml": 5, "price": 32000, "stock": 2 },
-        { "ml": 10, "price": 55000, "stock": 0 }
-      ],
-      "isBoutiqueExclusive": false,
-      "featured": true
-    },
-    {
-      "id": "baccarat-rouge-540",
-      "slug": "baccarat-rouge-540",
-      "brand": "Maison Francis Kurkdjian",
-      "name": "Baccarat Rouge 540",
-      "gender": "unisex",
-      "olfactoryFamily": "Ambarina Floral",
-      "description": "Una alquimia luminosa y sofisticada. El azafrán y el jazmín se funden con ámbar gris y madera de cedro para crear una estela radiante y magnética.",
-      "notes": {
-        "top": ["Azafrán", "Jazmín"],
-        "heart": ["Ámbar Gris", "Madera de Cedro"],
-        "base": ["Resina de Abeto", "Musgo de Roble"]
-      },
-      "images": [
-        { "src": "/images/perfumes/baccarat-rouge-540-1.jpg", "alt": "MFK Baccarat Rouge 540 - Frasco rojo icónico" },
-        { "src": "/images/perfumes/baccarat-rouge-540-2.jpg", "alt": "MFK Baccarat Rouge 540 - Detalle de la caja" }
-      ],
-      "sizes": [
-        { "ml": 2, "price": 18000, "stock": 8 },
-        { "ml": 5, "price": 42000, "stock": 3 },
-        { "ml": 10, "price": 75000, "stock": 1 }
-      ],
-      "isBoutiqueExclusive": false,
-      "featured": true
-    },
-    {
-      "id": "aventus",
-      "slug": "aventus",
-      "brand": "Creed",
-      "name": "Aventus",
+      "id": "glacier-ultra",
+      "slug": "glacier-ultra",
+      "brand": "Maison Alhambra",
+      "name": "Glacier Ultra",
       "gender": "masculino",
-      "olfactoryFamily": "Chypre Frutal",
-      "description": "El epítome del éxito y la masculinidad. Piña negra, bergamota y grosella negra se abren a un corazón de abedul y pachulí, cerrando con musgo de roble y vainilla.",
+      "olfactoryFamily": "Aromática Acuática",
+      "description": "Frescura glacial extrema. Notas de menta, bergamota y accords marinos crean una sensación de pureza alpina. Potente y duradera.",
       "notes": {
-        "top": ["Piña Negra", "Bergamota", "Grosella Negra", "Manzana"],
-        "heart": ["Abedul", "Pachulí", "Jazmín de Marruecos", "Rosa"],
-        "base": ["Musgo de Roble", "Vainilla", "Ámbar Gris", "Almizcle"]
+        "top": ["Menta", "Bergamota", "Limón"],
+        "heart": ["Lavanda", "Notas Marinas", "Geranio"],
+        "base": ["Ámbar", "Almizcle", "Madera de Cedro"]
       },
       "images": [
-        { "src": "/images/perfumes/aventus-1.jpg", "alt": "Creed Aventus - Frasco plateado con detalles dorados" },
-        { "src": "/images/perfumes/aventus-2.jpg", "alt": "Creed Aventus - Vista lateral del frasco" }
+        { "src": "/images/perfumes/glacier-ultra-1.jpg", "alt": "Maison Alhambra Glacier Ultra - Frasco azul glacial" },
+        { "src": "/images/perfumes/glacier-ultra-2.jpg", "alt": "Maison Alhambra Glacier Ultra - Detalle del frasco" }
       ],
       "sizes": [
-        { "ml": 2, "price": 16000, "stock": 6 },
-        { "ml": 5, "price": 35000, "stock": 4 },
-        { "ml": 10, "price": 62000, "stock": 2 }
+        { "ml": 2, "price": 8000, "stock": 10 },
+        { "ml": 5, "price": 18000, "stock": 8 },
+        { "ml": 10, "price": 32000, "stock": 5 }
       ],
       "isBoutiqueExclusive": false,
       "featured": true
     },
     {
-      "id": "lost-cherry",
-      "slug": "lost-cherry",
-      "brand": "Tom Ford",
-      "name": "Lost Cherry",
-      "gender": "unisex",
-      "olfactoryFamily": "Floral Frutal Gourmand",
-      "description": "Una indulgencia prohibida. Cereza negra, licor de cereza y almendra amarga crean una apertura embriagadora, mientras que la rosa turca y el jazmín sambac revelan un corazón floral opulento.",
-      "notes": {
-        "top": ["Cereza Negra", "Licor de Cereza", "Almendra Amarga"],
-        "heart": ["Rosa Turca", "Jazmín Sambac", "Ciruela"],
-        "base": ["Vainilla", "Haba Tonka", "Sándalo", "Cedro", "Vetiver"]
-      },
-      "images": [
-        { "src": "/images/perfumes/lost-cherry-1.jpg", "alt": "Tom Ford Lost Cherry - Frasco rojo intenso" },
-        { "src": "/images/perfumes/lost-cherry-2.jpg", "alt": "Tom Ford Lost Cherry - Detalle de la tapa" }
-      ],
-      "sizes": [
-        { "ml": 2, "price": 17000, "stock": 3 },
-        { "ml": 5, "price": 38000, "stock": 1 },
-        { "ml": 10, "price": 68000, "stock": 0 }
-      ],
-      "isBoutiqueExclusive": false,
-      "featured": false
-    },
-    {
-      "id": "santal-33",
-      "slug": "santal-33",
-      "brand": "Le Labo",
-      "name": "Santal 33",
-      "gender": "unisex",
-      "olfactoryFamily": "Amaderada Especiada",
-      "description": "Un clásico de culto. Sándalo australiano, cardamomo y cuero crean una firma olfativa inconfundible: ahumada, cremosa y profundamente adictiva.",
-      "notes": {
-        "top": ["Cardamomo", "Violeta", "Iris"],
-        "heart": ["Sándalo Australiano", "Papiro", "Rosa"],
-        "base": ["Cuero", "Cedro", "Ámbar", "Musgo"]
-      },
-      "images": [
-        { "src": "/images/perfumes/santal-33-1.jpg", "alt": "Le Labo Santal 33 - Frasco minimalista etiquetado a mano" },
-        { "src": "/images/perfumes/santal-33-2.jpg", "alt": "Le Labo Santal 33 - Detalle de la etiqueta personalizada" }
-      ],
-      "sizes": [
-        { "ml": 2, "price": 14000, "stock": 7 },
-        { "ml": 5, "price": 30000, "stock": 5 },
-        { "ml": 10, "price": 52000, "stock": 3 }
-      ],
-      "isBoutiqueExclusive": false,
-      "featured": true
-    },
-    {
-      "id": "gypsy-water",
-      "slug": "gypsy-water",
-      "brand": "Byredo",
-      "name": "Gypsy Water",
-      "gender": "unisex",
-      "olfactoryFamily": "Amaderada Aromática",
-      "description": "Una oda a la cultura romaní. Bergamota, limón y pimienta se entrelazan con incienso, piña y sándalo para evocar noches de fogata bajo las estrellas.",
-      "notes": {
-        "top": ["Bergamota", "Limón", "Pimienta", "Eneldo"],
-        "heart": ["Incienso", "Piña", "Jazmín"],
-        "base": ["Sándalo", "Ámbar", "Vainilla", "Almizcle"]
-      },
-      "images": [
-        { "src": "/images/perfumes/gypsy-water-1.jpg", "alt": "Byredo Gypsy Water - Frasco ámbar con tapa negra" },
-        { "src": "/images/perfumes/gypsy-water-2.jpg", "alt": "Byredo Gypsy Water - Vista del empaque" }
-      ],
-      "sizes": [
-        { "ml": 2, "price": 13000, "stock": 4 },
-        { "ml": 5, "price": 28000, "stock": 2 },
-        { "ml": 10, "price": 48000, "stock": 0 }
-      ],
-      "isBoutiqueExclusive": false,
-      "featured": false
-    },
-    {
-      "id": "oud-wood",
-      "slug": "oud-wood",
-      "brand": "Tom Ford",
-      "name": "Oud Wood",
-      "gender": "unisex",
-      "olfactoryFamily": "Amaderada Oriental",
-      "description": "Exótico y refinado. El raro oud se mezcla con palisandro, sándalo y vetiver, suavizado por vainilla y ámbar. Una interpretación moderna y accesible del oud.",
-      "notes": {
-        "top": ["Pimienta Rosa", "Cardamomo", "Palo de Brasil"],
-        "heart": ["Oud", "Palisandro", "Sándalo", "Vetiver"],
-        "base": ["Vainilla", "Ámbar", "Haba Tonka"]
-      },
-      "images": [
-        { "src": "/images/perfumes/oud-wood-1.jpg", "alt": "Tom Ford Oud Wood - Frasco marrón oscuro" },
-        { "src": "/images/perfumes/oud-wood-2.jpg", "alt": "Tom Ford Oud Wood - Detalle del atomizador dorado" }
-      ],
-      "sizes": [
-        { "ml": 2, "price": 16000, "stock": 5 },
-        { "ml": 5, "price": 34000, "stock": 3 },
-        { "ml": 10, "price": 58000, "stock": 1 }
-      ],
-      "isBoutiqueExclusive": false,
-      "featured": false
-    },
-    {
-      "id": "la-vie-est-belle",
-      "slug": "la-vie-est-belle",
-      "brand": "Lancôme",
-      "name": "La Vie Est Belle",
-      "gender": "femenino",
-      "olfactoryFamily": "Floral Frutal Gourmand",
-      "description": "Una declaración de felicidad. Íris, jazmín y flor de azahar se endulzan con pera, grosella y vainilla. Femenina, radiante y universalmente amada.",
-      "notes": {
-        "top": ["Pera", "Grosella Negra", "Bergamota"],
-        "heart": ["Íris", "Jazmín", "Flor de Azahar"],
-        "base": ["Vainilla", "Praliné", "Haba Tonka", "Pachulí"]
-      },
-      "images": [
-        { "src": "/images/perfumes/la-vie-est-belle-1.jpg", "alt": "Lancôme La Vie Est Belle - Frasco con lazo cristalino" },
-        { "src": "/images/perfumes/la-vie-est-belle-2.jpg", "alt": "Lancôme La Vie Est Belle - Detalle del lazo" }
-      ],
-      "sizes": [
-        { "ml": 2, "price": 12000, "stock": 10 },
-        { "ml": 5, "price": 25000, "stock": 8 },
-        { "ml": 10, "price": 42000, "stock": 5 }
-      ],
-      "isBoutiqueExclusive": false,
-      "featured": false
-    },
-    {
-      "id": "sauvage",
-      "slug": "sauvage",
-      "brand": "Dior",
-      "name": "Sauvage",
-      "gender": "masculino",
-      "olfactoryFamily": "Aromática Fougère",
-      "description": "Frescura radical y nobleza. Bergamota de Calabria, pimienta de Sichuan y lavanda se funden con ambroxan y cedro. Poderosa, cruda y auténtica.",
-      "notes": {
-        "top": ["Bergamota de Calabria", "Pimienta de Sichuan"],
-        "heart": ["Lavanda", "Pimienta Rosa", "Vetiver", "Pachulí", "Geranio", "Elemí"],
-        "base": ["Ambroxan", "Cedro", "Ládano"]
-      },
-      "images": [
-        { "src": "/images/perfumes/sauvage-1.jpg", "alt": "Dior Sauvage - Frasco azul oscuro con degradado" },
-        { "src": "/images/perfumes/sauvage-2.jpg", "alt": "Dior Sauvage - Detalle de la tapa magnética" }
-      ],
-      "sizes": [
-        { "ml": 2, "price": 11000, "stock": 12 },
-        { "ml": 5, "price": 24000, "stock": 9 },
-        { "ml": 10, "price": 40000, "stock": 6 }
-      ],
-      "isBoutiqueExclusive": false,
-      "featured": true
-    },
-    {
-      "id": "delina",
-      "slug": "delina",
-      "brand": "Parfums de Marly",
-      "name": "Delina",
+      "id": "your-touch",
+      "slug": "your-touch",
+      "brand": "Maison Alhambra",
+      "name": "Your Touch",
       "gender": "femenino",
       "olfactoryFamily": "Floral Frutal",
-      "description": "Romántica y sensual. Lichi, pera y bergamota abren paso a un corazón de rosa turca, peonía y vainilla. Un bouquet floral moderno con estela duradera.",
+      "description": "Toque delicado y femenino. Frutas rojas, jazmín y vainilla se entrelazan en una estela dulce y romántica.",
       "notes": {
-        "top": ["Lichi", "Pera", "Bergamota", "Pomelo"],
-        "heart": ["Rosa Turca", "Peonía", "Vainilla", "Incienso"],
-        "base": ["Almizcle", "Vetiver", "Cashmeran", "Madera de Cachemira"]
+        "top": ["Frutos Rojos", "Mandarina", "Pera"],
+        "heart": ["Jazmín", "Rosa", "Flor de Azahar"],
+        "base": ["Vainilla", "Almizcle", "Sándalo"]
       },
       "images": [
-        { "src": "/images/perfumes/delina-1.jpg", "alt": "Parfums de Marly Delina - Frasco rosa con detalles dorados" },
-        { "src": "/images/perfumes/delina-2.jpg", "alt": "Parfums de Marly Delina - Vista del empaque rosa" }
+        { "src": "/images/perfumes/your-touch-1.jpg", "alt": "Maison Alhambra Your Touch - Frasco rosa elegante" },
+        { "src": "/images/perfumes/your-touch-2.jpg", "alt": "Maison Alhambra Your Touch - Vista lateral" }
       ],
       "sizes": [
-        { "ml": 2, "price": 15000, "stock": 4 },
-        { "ml": 5, "price": 33000, "stock": 2 },
-        { "ml": 10, "price": 58000, "stock": 0 }
+        { "ml": 2, "price": 8000, "stock": 12 },
+        { "ml": 5, "price": 18000, "stock": 10 },
+        { "ml": 10, "price": 32000, "stock": 6 }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": true
+    },
+    {
+      "id": "hawas-ice",
+      "slug": "hawas-ice",
+      "brand": "Rasasi",
+      "name": "Hawas Ice",
+      "gender": "masculino",
+      "olfactoryFamily": "Aromática Acuática",
+      "description": "Versión helada del clásico Hawas. Menta, bergamota y notas oceánicas con un fondo amaderado. Frescura intensa y duradera.",
+      "notes": {
+        "top": ["Menta", "Bergamota", "Limón", "Manzana"],
+        "heart": ["Lavanda", "Notas Acuáticas", "Canela", "Pimienta"],
+        "base": ["Ámbar Gris", "Almizcle", "Pachulí", "Madera de Cedro"]
+      },
+      "images": [
+        { "src": "/images/perfumes/hawas-ice-1.jpg", "alt": "Rasasi Hawas Ice - Frasco azul hielo" },
+        { "src": "/images/perfumes/hawas-ice-2.jpg", "alt": "Rasasi Hawas Ice - Detalle del tapón" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 9000, "stock": 8 },
+        { "ml": 5, "price": 20000, "stock": 6 },
+        { "ml": 10, "price": 35000, "stock": 4 }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": true
+    },
+    {
+      "id": "24-carat-white-gold",
+      "slug": "24-carat-white-gold",
+      "brand": "Lattafa",
+      "name": "24 Carat White Gold",
+      "gender": "unisex",
+      "olfactoryFamily": "Oriental Amaderada",
+      "description": "Lujo dorado en versión blanca. Azafrán, rosa y oud se mezclan con ámbar y vainilla. Opulento y sofisticado.",
+      "notes": {
+        "top": ["Azafrán", "Bergamota", "Pimienta Rosa"],
+        "heart": ["Rosa", "Jazmín", "Incienso"],
+        "base": ["Oud", "Ámbar", "Vainilla", "Almizcle", "Madera de Sándalo"]
+      },
+      "images": [
+        { "src": "/images/perfumes/24-carat-white-gold-1.jpg", "alt": "Lattafa 24 Carat White Gold - Frasco blanco dorado" },
+        { "src": "/images/perfumes/24-carat-white-gold-2.jpg", "alt": "Lattafa 24 Carat White Gold - Vista del empaque" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 10000, "stock": 6 },
+        { "ml": 5, "price": 22000, "stock": 5 },
+        { "ml": 10, "price": 38000, "stock": 3 }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": true
+    },
+    {
+      "id": "al-fursan-untamed",
+      "slug": "al-fursan-untamed",
+      "brand": "Lattafa",
+      "name": "Al Fursan Untamed",
+      "gender": "masculino",
+      "olfactoryFamily": "Amaderada Especiada",
+      "description": "Espíritu indomable. Pimienta, canela y cuero sobre base de oud y vetiver. Potente, salvaje y magnético.",
+      "notes": {
+        "top": ["Pimienta Negra", "Cardamomo", "Bergamota"],
+        "heart": ["Canela", "Clavo", "Geranio", "Cuero"],
+        "base": ["Oud", "Vetiver", "Pachulí", "Ámbar", "Almizcle"]
+      },
+      "images": [
+        { "src": "/images/perfumes/al-fursan-untamed-1.jpg", "alt": "Lattafa Al Fursan Untamed - Frasco negro mate" },
+        { "src": "/images/perfumes/al-fursan-untamed-2.jpg", "alt": "Lattafa Al Fursan Untamed - Detalle dorado" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 9000, "stock": 7 },
+        { "ml": 5, "price": 20000, "stock": 5 },
+        { "ml": 10, "price": 35000, "stock": 4 }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": true
+    },
+    {
+      "id": "liam-grey",
+      "slug": "liam-grey",
+      "brand": "Lattafa",
+      "name": "Liam Grey",
+      "gender": "unisex",
+      "olfactoryFamily": "Amaderada Aromática",
+      "description": "Elegancia gris. Lavanda, bergamota y vetiver crean una firma fresca y sofisticada. Versátil y moderna.",
+      "notes": {
+        "top": ["Bergamota", "Limón", "Lavanda"],
+        "heart": ["Salvia", "Geranio", "Violeta"],
+        "base": ["Vetiver", "Madera de Cedro", "Ámbar", "Almizcle"]
+      },
+      "images": [
+        { "src": "/images/perfumes/liam-grey-1.jpg", "alt": "Lattafa Liam Grey - Frasco gris metálico" },
+        { "src": "/images/perfumes/liam-grey-2.jpg", "alt": "Lattafa Liam Grey - Vista frontal" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 8500, "stock": 10 },
+        { "ml": 5, "price": 19000, "stock": 8 },
+        { "ml": 10, "price": 33000, "stock": 5 }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    },
+    {
+      "id": "now-rave",
+      "slug": "now-rave",
+      "brand": "Lattafa",
+      "name": "Now Rave",
+      "gender": "unisex",
+      "olfactoryFamily": "Oriental Gourmand",
+      "description": "Energía nocturna. Frutas exóticas, flores blancas y dulces notas de vainilla y caramelo. Adictiva y festiva.",
+      "notes": {
+        "top": ["Mango", "Piña", "Bergamota", "Pimienta Rosa"],
+        "heart": ["Ylang-Ylang", "Jazmín", "Flor de Azahar", "Caramelo"],
+        "base": ["Vainilla", "Haba Tonka", "Ámbar", "Almizcle", "Benjuí"]
+      },
+      "images": [
+        { "src": "/images/perfumes/now-rave-1.jpg", "alt": "Lattafa Now Rave - Frasco vibrante multicolor" },
+        { "src": "/images/perfumes/now-rave-2.jpg", "alt": "Lattafa Now Rave - Detalle del diseño" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 8500, "stock": 9 },
+        { "ml": 5, "price": 19000, "stock": 7 },
+        { "ml": 10, "price": 33000, "stock": 5 }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    },
+    {
+      "id": "jorge-di-profumo",
+      "slug": "jorge-di-profumo",
+      "brand": "Maison Alhambra",
+      "name": "Jorge Di Profumo",
+      "gender": "masculino",
+      "olfactoryFamily": "Amaderada Aromática",
+      "description": "Masculinidad clásica. Bergamota, lavanda y vetiver con toque de cuero. Elegante y atemporal.",
+      "notes": {
+        "top": ["Bergamota", "Limón", "Lavanda", "Albahaca"],
+        "heart": ["Geranio", "Salvia", "Clavo", "Canela"],
+        "base": ["Vetiver", "Cuero", "Madera de Cedro", "Ámbar", "Almizcle"]
+      },
+      "images": [
+        { "src": "/images/perfumes/jorge-di-profumo-1.jpg", "alt": "Maison Alhambra Jorge Di Profumo - Frasco azul oscuro" },
+        { "src": "/images/perfumes/jorge-di-profumo-2.jpg", "alt": "Maison Alhambra Jorge Di Profumo - Detalle plateado" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 8000, "stock": 11 },
+        { "ml": 5, "price": 18000, "stock": 9 },
+        { "ml": 10, "price": 32000, "stock": 6 }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    },
+    {
+      "id": "salvo-intense",
+      "slug": "salvo-intense",
+      "brand": "Maison Alhambra",
+      "name": "Salvo Intense",
+      "gender": "masculino",
+      "olfactoryFamily": "Oriental Amaderada",
+      "description": "Intensidad pura. Especias, oud y ámbar crean una estela poderosa y seductora. Para la noche.",
+      "notes": {
+        "top": ["Pimienta Negra", "Cardamomo", "Nuez Moscada"],
+        "heart": ["Oud", "Rosa", "Incienso", "Cuero"],
+        "base": ["Ámbar", "Vainilla", "Pachulí", "Almizcle", "Madera de Sándalo"]
+      },
+      "images": [
+        { "src": "/images/perfumes/salvo-intense-1.jpg", "alt": "Maison Alhambra Salvo Intense - Frasco rojo intenso" },
+        { "src": "/images/perfumes/salvo-intense-2.jpg", "alt": "Maison Alhambra Salvo Intense - Vista lateral" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 9000, "stock": 6 },
+        { "ml": 5, "price": 20000, "stock": 4 },
+        { "ml": 10, "price": 35000, "stock": 3 }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    },
+    {
+      "id": "dark-door-sport",
+      "slug": "dark-door-sport",
+      "brand": "Maison Alhambra",
+      "name": "Dark Door Sport",
+      "gender": "masculino",
+      "olfactoryFamily": "Aromática Fougère",
+      "description": "Deportivo y oscuro. Menta, lavanda y notas verdes con fondo amaderado. Frescura dinámica para el día a día.",
+      "notes": {
+        "top": ["Menta", "Bergamota", "Limón", "Notas Verdes"],
+        "heart": ["Lavanda", "Geranio", "Salvia", "Hiedra"],
+        "base": ["Vetiver", "Madera de Cedro", "Ámbar", "Almizcle", "Musgo de Roble"]
+      },
+      "images": [
+        { "src": "/images/perfumes/dark-door-sport-1.jpg", "alt": "Maison Alhambra Dark Door Sport - Frasco negro deportivo" },
+        { "src": "/images/perfumes/dark-door-sport-2.jpg", "alt": "Maison Alhambra Dark Door Sport - Detalle verde" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 8000, "stock": 10 },
+        { "ml": 5, "price": 18000, "stock": 8 },
+        { "ml": 10, "price": 32000, "stock": 5 }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    },
+    {
+      "id": "tonic-malt",
+      "slug": "tonic-malt",
+      "brand": "Maison Alhambra",
+      "name": "Tonic Malt",
+      "gender": "unisex",
+      "olfactoryFamily": "Gourmand Amaderada",
+      "description": "Whisky y vainilla. Notas de malta, caramelo y madera ahumada. Dulce, cálida y reconfortante.",
+      "notes": {
+        "top": ["Whisky", "Menta", "Bergamota"],
+        "heart": ["Caramelo", "Vainilla", "Canela", "Nuez Moscada"],
+        "base": ["Madera Ahumada", "Ámbar", "Haba Tonka", "Almizcle", "Benjuí"]
+      },
+      "images": [
+        { "src": "/images/perfumes/tonic-malt-1.jpg", "alt": "Maison Alhambra Tonic Malt - Frasco ámbar whisky" },
+        { "src": "/images/perfumes/tonic-malt-2.jpg", "alt": "Maison Alhambra Tonic Malt - Detalle del tapón" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 9000, "stock": 8 },
+        { "ml": 5, "price": 20000, "stock": 6 },
+        { "ml": 10, "price": 35000, "stock": 4 }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    },
+    {
+      "id": "luminous-sahara",
+      "slug": "luminous-sahara",
+      "brand": "Maison Alhambra",
+      "name": "Luminous Sahara",
+      "gender": "unisex",
+      "olfactoryFamily": "Oriental Especiada",
+      "description": "Desierto luminoso. Azafrán, canela y oud bañados en ámbar dorado. Cálida, radiante y exótica.",
+      "notes": {
+        "top": ["Azafrán", "Canela", "Cardamomo", "Bergamota"],
+        "heart": ["Rosa", "Incienso", "Jazmín", "Clavo"],
+        "base": ["Oud", "Ámbar", "Vainilla", "Madera de Sándalo", "Almizcle"]
+      },
+      "images": [
+        { "src": "/images/perfumes/luminous-sahara-1.jpg", "alt": "Maison Alhambra Luminous Sahara - Frasco dorado arena" },
+        { "src": "/images/perfumes/luminous-sahara-2.jpg", "alt": "Maison Alhambra Luminous Sahara - Vista del brillo" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 9500, "stock": 7 },
+        { "ml": 5, "price": 21000, "stock": 5 },
+        { "ml": 10, "price": 36000, "stock": 3 }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": true
+    },
+    {
+      "id": "confidential-private-gold",
+      "slug": "confidential-private-gold",
+      "brand": "Lattafa",
+      "name": "Confidential Private Gold",
+      "gender": "unisex",
+      "olfactoryFamily": "Oriental Floral",
+      "description": "Secreto dorado. Rosa, azafrán y oud envueltos en vainilla y ámbar. Lujo íntimo y exclusivo.",
+      "notes": {
+        "top": ["Azafrán", "Bergamota", "Pimienta Rosa"],
+        "heart": ["Rosa", "Jazmín", "Geranio", "Incienso"],
+        "base": ["Oud", "Ámbar", "Vainilla", "Haba Tonka", "Almizcle", "Madera de Cedro"]
+      },
+      "images": [
+        { "src": "/images/perfumes/confidential-private-gold-1.jpg", "alt": "Lattafa Confidential Private Gold - Frasco dorado privado" },
+        { "src": "/images/perfumes/confidential-private-gold-2.jpg", "alt": "Lattafa Confidential Private Gold - Detalle exclusivo" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 10000, "stock": 5 },
+        { "ml": 5, "price": 22000, "stock": 4 },
+        { "ml": 10, "price": 38000, "stock": 2 }
       ],
       "isBoutiqueExclusive": true,
+      "featured": true
+    },
+    {
+      "id": "lail-maleki-oud",
+      "slug": "lail-maleki-oud",
+      "brand": "Lattafa",
+      "name": "Lail Maleki Oud",
+      "gender": "unisex",
+      "olfactoryFamily": "Oriental Amaderada",
+      "description": "Noche real de oud. Oud puro, rosa, azafrán y ámbar. Majestuosa, profunda y duradera.",
+      "notes": {
+        "top": ["Azafrán", "Pimienta Rosa", "Bergamota", "Limón"],
+        "heart": ["Oud", "Rosa", "Jazmín", "Geranio", "Incienso"],
+        "base": ["Ámbar", "Vainilla", "Pachulí", "Madera de Sándalo", "Almizcle", "Cuero"]
+      },
+      "images": [
+        { "src": "/images/perfumes/lail-maleki-oud-1.jpg", "alt": "Lattafa Lail Maleki Oud - Frasco negro oud" },
+        { "src": "/images/perfumes/lail-maleki-oud-2.jpg", "alt": "Lattafa Lail Maleki Oud - Detalle dorado real" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 11000, "stock": 6 },
+        { "ml": 5, "price": 24000, "stock": 4 },
+        { "ml": 10, "price": 42000, "stock": 3 }
+      ],
+      "isBoutiqueExclusive": true,
+      "featured": true
+    },
+    {
+      "id": "ameer-al-oudh",
+      "slug": "ameer-al-oudh",
+      "brand": "Lattafa",
+      "name": "Ameer Al Oudh",
+      "gender": "masculino",
+      "olfactoryFamily": "Oriental Amaderada",
+      "description": "Príncipe del oud. Oud, especias y cuero sobre base ambarina. Noble, poderosa y regia.",
+      "notes": {
+        "top": ["Azafrán", "Pimienta Negra", "Cardamomo", "Nuez Moscada"],
+        "heart": ["Oud", "Rosa", "Canela", "Clavo", "Cuero"],
+        "base": ["Ámbar", "Vainilla", "Pachulí", "Vetiver", "Madera de Cedro", "Almizcle"]
+      },
+      "images": [
+        { "src": "/images/perfumes/ameer-al-oudh-1.jpg", "alt": "Lattafa Ameer Al Oudh - Frasco negro príncipe" },
+        { "src": "/images/perfumes/ameer-al-oudh-2.jpg", "alt": "Lattafa Ameer Al Oudh - Corona dorada" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 10000, "stock": 7 },
+        { "ml": 5, "price": 22000, "stock": 5 },
+        { "ml": 10, "price": 38000, "stock": 3 }
+      ],
+      "isBoutiqueExclusive": true,
+      "featured": false
+    },
+    {
+      "id": "hercules",
+      "slug": "hercules",
+      "brand": "Maison Alhambra",
+      "name": "Hercules",
+      "gender": "masculino",
+      "olfactoryFamily": "Amaderada Aromática",
+      "description": "Fuerza mitológica. Bergamota, lavanda, vetiver y cuero. Potente, viril e invencible.",
+      "notes": {
+        "top": ["Bergamota", "Limón", "Lavanda", "Menta", "Pimienta Rosa"],
+        "heart": ["Geranio", "Salvia", "Violeta", "Cuero", "Canela"],
+        "base": ["Vetiver", "Madera de Cedro", "Pachulí", "Ámbar", "Almizcle", "Musgo de Roble"]
+      },
+      "images": [
+        { "src": "/images/perfumes/hercules-1.jpg", "alt": "Maison Alhambra Hercules - Frasco gris fuerza" },
+        { "src": "/images/perfumes/hercules-2.jpg", "alt": "Maison Alhambra Hercules - Detalle plateado" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 8500, "stock": 9 },
+        { "ml": 5, "price": 19000, "stock": 7 },
+        { "ml": 10, "price": 33000, "stock": 5 }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    },
+    {
+      "id": "perseus-exclusif",
+      "slug": "perseus-exclusif",
+      "brand": "Maison Alhambra",
+      "name": "Perseus Exclusif",
+      "gender": "masculino",
+      "olfactoryFamily": "Aromática Fougère",
+      "description": "Héroe exclusivo. Bergamota, lavanda, geranio y vetiver. Frescura clásica con toque moderno y elegante.",
+      "notes": {
+        "top": ["Bergamota", "Limón", "Lavanda", "Menta", "Albahaca"],
+        "heart": ["Geranio", "Salvia", "Violeta", "Hiedra", "Pimienta Rosa"],
+        "base": ["Vetiver", "Madera de Cedro", "Ámbar", "Almizcle", "Musgo de Roble", "Cuero"]
+      },
+      "images": [
+        { "src": "/images/perfumes/perseus-exclusif-1.jpg", "alt": "Maison Alhambra Perseus Exclusif - Frasco azul heroico" },
+        { "src": "/images/perfumes/perseus-exclusif-2.jpg", "alt": "Maison Alhambra Perseus Exclusif - Detalle exclusivo" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 9000, "stock": 6 },
+        { "ml": 5, "price": 20000, "stock": 5 },
+        { "ml": 10, "price": 35000, "stock": 4 }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": true
+    },
+    {
+      "id": "rouat-ajial",
+      "slug": "rouat-ajial",
+      "brand": "Lattafa",
+      "name": "Rouat Ajial",
+      "gender": "unisex",
+      "olfactoryFamily": "Oriental Floral",
+      "description": "Generaciones de aroma. Rosa, azafrán, oud y ámbar. Tradición y modernidad en perfecta armonía.",
+      "notes": {
+        "top": ["Azafrán", "Bergamota", "Pimienta Rosa", "Limón"],
+        "heart": ["Rosa", "Jazmín", "Geranio", "Incienso", "Canela"],
+        "base": ["Oud", "Ámbar", "Vainilla", "Haba Tonka", "Madera de Sándalo", "Almizcle"]
+      },
+      "images": [
+        { "src": "/images/perfumes/rouat-ajial-1.jpg", "alt": "Lattafa Rouat Ajial - Frasco generacional" },
+        { "src": "/images/perfumes/rouat-ajial-2.jpg", "alt": "Lattafa Rouat Ajial - Detalle tradicional" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 9500, "stock": 8 },
+        { "ml": 5, "price": 21000, "stock": 6 },
+        { "ml": 10, "price": 36000, "stock": 4 }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    },
+    {
+      "id": "sublime",
+      "slug": "sublime",
+      "brand": "Lattafa",
+      "name": "Sublime",
+      "gender": "femenino",
+      "olfactoryFamily": "Floral Oriental",
+      "description": "Sublimación floral. Jazmín, rosa, vainilla y ámbar. Femenina, elegante y eternamente bella.",
+      "notes": {
+        "top": ["Bergamota", "Mandarina", "Pera", "Pimienta Rosa"],
+        "heart": ["Jazmín", "Rosa", "Ylang-Ylang", "Flor de Azahar", "Vainilla"],
+        "base": ["Ámbar", "Haba Tonka", "Vainilla", "Almizcle", "Madera de Sándalo", "Benjuí"]
+      },
+      "images": [
+        { "src": "/images/perfumes/sublime-1.jpg", "alt": "Lattafa Sublime - Frasco rosa sublime" },
+        { "src": "/images/perfumes/sublime-2.jpg", "alt": "Lattafa Sublime - Detalle elegante" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 8500, "stock": 10 },
+        { "ml": 5, "price": 19000, "stock": 8 },
+        { "ml": 10, "price": 33000, "stock": 5 }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": true
+    },
+    {
+      "id": "delilah",
+      "slug": "delilah",
+      "brand": "Maison Alhambra",
+      "name": "Delilah",
+      "gender": "femenino",
+      "olfactoryFamily": "Floral Frutal Gourmand",
+      "description": "Seducción dulce. Frutas rojas, jazmín, caramelo y vainilla. Irresistible y encantadora.",
+      "notes": {
+        "top": ["Frutos Rojos", "Mandarina", "Pera", "Bergamota"],
+        "heart": ["Jazmín", "Rosa", "Caramelo", "Vainilla", "Flor de Azahar"],
+        "base": ["Vainilla", "Haba Tonka", "Ámbar", "Almizcle", "Madera de Sándalo", "Praliné"]
+      },
+      "images": [
+        { "src": "/images/perfumes/delilah-1.jpg", "alt": "Maison Alhambra Delilah - Frasco rojo seductor" },
+        { "src": "/images/perfumes/delilah-2.jpg", "alt": "Maison Alhambra Delilah - Detalle encantador" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 8500, "stock": 9 },
+        { "ml": 5, "price": 19000, "stock": 7 },
+        { "ml": 10, "price": 33000, "stock": 5 }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    },
+    {
+      "id": "mayar",
+      "slug": "mayar",
+      "brand": "Lattafa",
+      "name": "Mayar",
+      "gender": "femenino",
+      "olfactoryFamily": "Floral Frutal",
+      "description": "Primavera eterna. Lichi, pera, rosa y jazmín. Fresca, dulce y luminosa. Alegría en frasco.",
+      "notes": {
+        "top": ["Lichi", "Pera", "Bergamota", "Mandarina", "Pomelo"],
+        "heart": ["Rosa", "Jazmín", "Flor de Azahar", "Peonía", "Fresa"],
+        "base": ["Vainilla", "Almizcle", "Madera de Cedro", "Ámbar", "Haba Tonka", "Algodón de Azúcar"]
+      },
+      "images": [
+        { "src": "/images/perfumes/mayar-1.jpg", "alt": "Lattafa Mayar - Frasco primavera" },
+        { "src": "/images/perfumes/mayar-2.jpg", "alt": "Lattafa Mayar - Detalle floral" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 8000, "stock": 12 },
+        { "ml": 5, "price": 18000, "stock": 10 },
+        { "ml": 10, "price": 32000, "stock": 7 }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": true
+    },
+    {
+      "id": "glacier-bella",
+      "slug": "glacier-bella",
+      "brand": "Maison Alhambra",
+      "name": "Glacier Bella",
+      "gender": "femenino",
+      "olfactoryFamily": "Floral Acuática",
+      "description": "Belleza glacial. Notas marinas, jazmín, rosa y almizcle. Pura, fresca y cristalina como el hielo.",
+      "notes": {
+        "top": ["Bergamota", "Limón", "Notas Marinas", "Menta", "Pera"],
+        "heart": ["Jazmín", "Rosa", "Flor de Loto", "Peonía", "Ciclamen"],
+        "base": ["Almizcle", "Ámbar", "Madera de Cedro", "Vainilla", "Haba Tonka", "Sándalo"]
+      },
+      "images": [
+        { "src": "/images/perfumes/glacier-bella-1.jpg", "alt": "Maison Alhambra Glacier Bella - Frasco azul cristal" },
+        { "src": "/images/perfumes/glacier-bella-2.jpg", "alt": "Maison Alhambra Glacier Bella - Detalle hielo" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 8000, "stock": 11 },
+        { "ml": 5, "price": 18000, "stock": 9 },
+        { "ml": 10, "price": 32000, "stock": 6 }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    },
+    {
+      "id": "angham",
+      "slug": "angham",
+      "brand": "Lattafa",
+      "name": "Angham",
+      "gender": "femenino",
+      "olfactoryFamily": "Oriental Floral",
+      "description": "Melodía oriental. Azafrán, rosa, oud y vainilla. Sensual, profunda y musical en su evolución.",
+      "notes": {
+        "top": ["Azafrán", "Bergamota", "Pimienta Rosa", "Mandarina"],
+        "heart": ["Rosa", "Jazmín", "Geranio", "Incienso", "Canela", "Clavo"],
+        "base": ["Oud", "Ámbar", "Vainilla", "Haba Tonka", "Almizcle", "Madera de Sándalo", "Pachulí"]
+      },
+      "images": [
+        { "src": "/images/perfumes/angham-1.jpg", "alt": "Lattafa Angham - Frasco melódico" },
+        { "src": "/images/perfumes/angham-2.jpg", "alt": "Lattafa Angham - Detalle musical" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 9000, "stock": 8 },
+        { "ml": 5, "price": 20000, "stock": 6 },
+        { "ml": 10, "price": 35000, "stock": 4 }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    },
+    {
+      "id": "hayaati-florence",
+      "slug": "hayaati-florence",
+      "brand": "Lattafa",
+      "name": "Hayaati Florence",
+      "gender": "femenino",
+      "olfactoryFamily": "Floral Frutal",
+      "description": "Vida en Florencia. Lichi, pera, rosa y vainilla. Romántica, artística y renacentista.",
+      "notes": {
+        "top": ["Lichi", "Pera", "Bergamota", "Mandarina", "Frambuesa"],
+        "heart": ["Rosa", "Jazmín", "Peonía", "Flor de Azahar", "Fresa", "Vainilla"],
+        "base": ["Ámbar", "Almizcle", "Vainilla", "Haba Tonka", "Madera de Cedro", "Algodón de Azúcar"]
+      },
+      "images": [
+        { "src": "/images/perfumes/hayaati-florence-1.jpg", "alt": "Lattafa Hayaati Florence - Frasco renacentista" },
+        { "src": "/images/perfumes/hayaati-florence-2.jpg", "alt": "Lattafa Hayaati Florence - Detalle artístico" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 8500, "stock": 10 },
+        { "ml": 5, "price": 19000, "stock": 8 },
+        { "ml": 10, "price": 33000, "stock": 5 }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    },
+    {
+      "id": "hayaati-black",
+      "slug": "hayaati-black",
+      "brand": "Lattafa",
+      "name": "Hayaati Black",
+      "gender": "unisex",
+      "olfactoryFamily": "Oriental Amaderada",
+      "description": "Vida oscura. Oud, especias, cuero y ámbar. Misteriosa, profunda y magnética. Para la noche.",
+      "notes": {
+        "top": ["Azafrán", "Pimienta Negra", "Cardamomo", "Bergamota"],
+        "heart": ["Oud", "Rosa", "Incienso", "Cuero", "Canela", "Clavo"],
+        "base": ["Ámbar", "Vainilla", "Pachulí", "Vetiver", "Madera de Cedro", "Almizcle", "Benjuí"]
+      },
+      "images": [
+        { "src": "/images/perfumes/hayaati-black-1.jpg", "alt": "Lattafa Hayaati Black - Frasco negro vida" },
+        { "src": "/images/perfumes/hayaati-black-2.jpg", "alt": "Lattafa Hayaati Black - Detalle misterioso" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 10000, "stock": 7 },
+        { "ml": 5, "price": 22000, "stock": 5 },
+        { "ml": 10, "price": 38000, "stock": 3 }
+      ],
+      "isBoutiqueExclusive": true,
+      "featured": true
+    },
+    {
+      "id": "hayaati-al-maleki",
+      "slug": "hayaati-al-maleki",
+      "brand": "Lattafa",
+      "name": "Hayaati Al Maleki",
+      "gender": "masculino",
+      "olfactoryFamily": "Oriental Especiada",
+      "description": "Vida real. Azafrán, oud, especias y cuero. Majestuosa, poderosa y digna de un rey.",
+      "notes": {
+        "top": ["Azafrán", "Pimienta Negra", "Cardamomo", "Nuez Moscada", "Bergamota"],
+        "heart": ["Oud", "Rosa", "Canela", "Clavo", "Cuero", "Incienso", "Geranio"],
+        "base": ["Ámbar", "Vainilla", "Pachulí", "Vetiver", "Madera de Cedro", "Almizcle", "Madera de Sándalo"]
+      },
+      "images": [
+        { "src": "/images/perfumes/hayaati-al-maleki-1.jpg", "alt": "Lattafa Hayaati Al Maleki - Frasco real masculino" },
+        { "src": "/images/perfumes/hayaati-al-maleki-2.jpg", "alt": "Lattafa Hayaati Al Maleki - Corona dorada" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 11000, "stock": 6 },
+        { "ml": 5, "price": 24000, "stock": 4 },
+        { "ml": 10, "price": 42000, "stock": 3 }
+      ],
+      "isBoutiqueExclusive": true,
+      "featured": false
+    },
+    {
+      "id": "opulent-dubai",
+      "slug": "opulent-dubai",
+      "brand": "Lattafa",
+      "name": "Opulent Dubai",
+      "gender": "unisex",
+      "olfactoryFamily": "Oriental Ambarina",
+      "description": "Opulencia de Dubai. Azafrán, rosa, oud, ámbar y vainilla. Lujo desértico en su máxima expresión.",
+      "notes": {
+        "top": ["Azafrán", "Bergamota", "Pimienta Rosa", "Cardamomo", "Limón"],
+        "heart": ["Rosa", "Jazmín", "Geranio", "Incienso", "Oud", "Canela"],
+        "base": ["Ámbar", "Vainilla", "Haba Tonka", "Madera de Sándalo", "Almizcle", "Pachulí", "Benjuí", "Cuero"]
+      },
+      "images": [
+        { "src": "/images/perfumes/opulent-dubai-1.jpg", "alt": "Lattafa Opulent Dubai - Frasco opulento dubai" },
+        { "src": "/images/perfumes/opulent-dubai-2.jpg", "alt": "Lattafa Opulent Dubai - Detalle lujo" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 12000, "stock": 5 },
+        { "ml": 5, "price": 26000, "stock": 4 },
+        { "ml": 10, "price": 45000, "stock": 2 }
+      ],
+      "isBoutiqueExclusive": true,
+      "featured": true
+    },
+    {
+      "id": "glacier-bold",
+      "slug": "glacier-bold",
+      "brand": "Maison Alhambra",
+      "name": "Glacier Bold",
+      "gender": "masculino",
+      "olfactoryFamily": "Aromática Acuática",
+      "description": "Glaciar audaz. Menta, bergamota, notas marinas y vetiver. Frescura extrema con carácter fuerte.",
+      "notes": {
+        "top": ["Menta", "Bergamota", "Limón", "Notas Marinas", "Pimienta Rosa"],
+        "heart": ["Lavanda", "Geranio", "Salvia", "Notas Acuáticas", "Canela"],
+        "base": ["Vetiver", "Madera de Cedro", "Ámbar", "Almizcle", "Pachulí", "Musgo de Roble"]
+      },
+      "images": [
+        { "src": "/images/perfumes/glacier-bold-1.jpg", "alt": "Maison Alhambra Glacier Bold - Frasco azul audaz" },
+        { "src": "/images/perfumes/glacier-bold-2.jpg", "alt": "Maison Alhambra Glacier Bold - Detalle fuerte" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 8500, "stock": 9 },
+        { "ml": 5, "price": 19000, "stock": 7 },
+        { "ml": 10, "price": 33000, "stock": 5 }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    },
+    {
+      "id": "yeah-man",
+      "slug": "yeah-man",
+      "brand": "Maison Alhambra",
+      "name": "Yeah! Man",
+      "gender": "masculino",
+      "olfactoryFamily": "Aromática Fougère",
+      "description": "¡Sí, hombre! Bergamota, lavanda, vetiver y cuero. Confianza pura en frasco. Carismático.",
+      "notes": {
+        "top": ["Bergamota", "Limón", "Lavanda", "Menta", "Albahaca", "Pimienta Rosa"],
+        "heart": ["Geranio", "Salvia", "Violeta", "Cuero", "Canela", "Clavo"],
+        "base": ["Vetiver", "Madera de Cedro", "Pachulí", "Ámbar", "Almizcle", "Musgo de Roble"]
+      },
+      "images": [
+        { "src": "/images/perfumes/yeah-man-1.jpg", "alt": "Maison Alhambra Yeah! Man - Frasco carismático" },
+        { "src": "/images/perfumes/yeah-man-2.jpg", "alt": "Maison Alhambra Yeah! Man - Detalle confianza" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 8000, "stock": 10 },
+        { "ml": 5, "price": 18000, "stock": 8 },
+        { "ml": 10, "price": 32000, "stock": 6 }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": true
+    },
+    {
+      "id": "la-baroque-rouge",
+      "slug": "la-baroque-rouge",
+      "brand": "Maison Alhambra",
+      "name": "La Baroque Rouge",
+      "gender": "unisex",
+      "olfactoryFamily": "Ambarina Floral",
+      "description": "Barroco rojo. Azafrán, jazmín, ámbar gris y cedro. Lujo artístico, dramático y radiante.",
+      "notes": {
+        "top": ["Azafrán", "Jazmín", "Bergamota", "Pimienta Rosa"],
+        "heart": ["Ámbar Gris", "Madera de Cedro", "Rosa", "Geranio", "Incienso"],
+        "base": ["Resina de Abeto", "Musgo de Roble", "Vainilla", "Almizcle", "Haba Tonka", "Benjuí"]
+      },
+      "images": [
+        { "src": "/images/perfumes/la-baroque-rouge-1.jpg", "alt": "Maison Alhambra La Baroque Rouge - Frasco rojo barroco" },
+        { "src": "/images/perfumes/la-baroque-rouge-2.jpg", "alt": "Maison Alhambra La Baroque Rouge - Detalle artístico" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 9500, "stock": 7 },
+        { "ml": 5, "price": 21000, "stock": 5 },
+        { "ml": 10, "price": 36000, "stock": 3 }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": true
+    },
+    {
+      "id": "your-touch-intense",
+      "slug": "your-touch-intense",
+      "brand": "Maison Alhambra",
+      "name": "Your Touch Intense",
+      "gender": "femenino",
+      "olfactoryFamily": "Oriental Floral Gourmand",
+      "description": "Toque intenso. Frutas, flores blancas, vainilla, caramelo y ámbar. Profunda, dulce y adictiva.",
+      "notes": {
+        "top": ["Frutos Rojos", "Mandarina", "Pera", "Bergamota", "Lichi"],
+        "heart": ["Jazmín", "Gardenia", "Flor de Azahar", "Vainilla", "Caramelo", "Rosa"],
+        "base": ["Ámbar", "Vainilla", "Haba Tonka", "Almizcle", "Madera de Sándalo", "Praliné", "Benjuí"]
+      },
+      "images": [
+        { "src": "/images/perfumes/your-touch-intense-1.jpg", "alt": "Maison Alhambra Your Touch Intense - Frasco rosa intenso" },
+        { "src": "/images/perfumes/your-touch-intense-2.jpg", "alt": "Maison Alhambra Your Touch Intense - Detalle adictivo" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 8500, "stock": 9 },
+        { "ml": 5, "price": 19000, "stock": 7 },
+        { "ml": 10, "price": 33000, "stock": 5 }
+      ],
+      "isBoutiqueExclusive": false,
       "featured": false
     }
   ]
