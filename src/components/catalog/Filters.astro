@@ -4,10 +4,9 @@ import type { GenderFilter } from '@/data/types';
 
 interface Props {
   currentFilter: GenderFilter;
-  onFilterChange: (filter: GenderFilter) => void;
 }
 
-const { currentFilter, onFilterChange } = Astro.props;
+const { currentFilter } = Astro.props;
 
 const filters: { value: GenderFilter; label: string }[] = [
   { value: 'all', label: 'TODOS' },
@@ -24,7 +23,6 @@ const filters: { value: GenderFilter; label: string }[] = [
       class={`filter-chip ${currentFilter === filter.value ? 'filter-chip--active' : ''}`}
       data-filter={filter.value}
       aria-pressed={currentFilter === filter.value}
-      onclick={() => onFilterChange(filter.value)}
     >
       <Chip variant="gender" class="filter-chip-inner">
         {filter.label}
