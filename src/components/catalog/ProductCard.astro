@@ -5,9 +5,10 @@ import type { Perfume, PerfumeSize } from '@/data/types';
 
 interface Props {
   perfume: Perfume;
+  basePath?: string;
 }
 
-const { perfume } = Astro.props;
+const { perfume, basePath = '/atomiza-catalog/' } = Astro.props;
 const mainImage = perfume.images[0]?.src || '/images/placeholder.jpg';
 const mainAlt = perfume.images[0]?.alt || `${perfume.brand} ${perfume.name}`;
 
@@ -18,7 +19,7 @@ const stockLabel = getStockLabel(stockStatus);
 const isOutOfStock = stockStatus === 'out-of-stock';
 ---
 
-<a href={`/producto/${perfume.slug}`} class="product-card" aria-label={`Ver ${perfume.brand} ${perfume.name}`}>
+<a href={`${basePath}producto/${perfume.slug}/`} class="product-card" aria-label={`Ver ${perfume.brand} ${perfume.name}`}>
   <div class="product-card-image-wrapper">
     <img 
       src={mainImage} 

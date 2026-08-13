@@ -4,16 +4,17 @@ import Drawer from '@/components/ui/Drawer.astro';
 import { getCartItemCount } from '@/utils/cart';
 
 const cartCount = getCartItemCount();
+const BASE = '/atomiza-catalog/';
 ---
 
 <header class="header" role="banner">
   <div class="header-inner container">
-    <a href="/" class="header-logo" aria-label="ATOMIZA - Inicio">
+    <a href={BASE} class="header-logo" aria-label="ATOMIZA - Inicio">
       <span class="logo-text">ATOMIZA</span>
     </a>
 
     <nav class="header-nav" role="navigation" aria-label="Navegación principal">
-      <a href="/catalogo" class="nav-link">Catálogo</a>
+      <a href={`${BASE}catalogo/`} class="nav-link">Catálogo</a>
     </nav>
 
     <div class="header-actions">
@@ -57,15 +58,17 @@ const cartCount = getCartItemCount();
   class="mobile-drawer"
 >
   <nav class="mobile-nav" slot="header" role="navigation" aria-label="Menú móvil">
-    <a href="/" class="mobile-nav-link">Inicio</a>
-    <a href="/catalogo" class="mobile-nav-link">Catálogo</a>
+    <a href={BASE} class="mobile-nav-link">Inicio</a>
+    <a href={`${BASE}catalogo/`} class="mobile-nav-link">Catálogo</a>
   </nav>
   <div class="mobile-cart-summary" slot="header">
     <h3 class="mobile-cart-title">Carrito</h3>
     <p class="mobile-cart-count">{cartCount} artículos</p>
-    <Button variant="secondary" class="mobile-cart-btn" href="/catalogo">
-      Ver carrito
-    </Button>
+    <a href={`${BASE}catalogo/`} class="mobile-cart-btn-link">
+      <Button variant="secondary" class="mobile-cart-btn">
+        Ver carrito
+      </Button>
+    </a>
   </div>
 </Drawer>
 
@@ -342,6 +345,15 @@ const cartCount = getCartItemCount();
   }
 
   .mobile-cart-btn {
+    width: 100%;
+  }
+
+  .mobile-cart-btn-link {
+    width: 100%;
+    text-decoration: none;
+  }
+
+  .mobile-cart-btn-link .mobile-cart-btn {
     width: 100%;
   }
 </style>

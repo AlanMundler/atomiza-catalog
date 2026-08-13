@@ -4,15 +4,16 @@ import type { Perfume } from '@/data/types';
 
 interface Props {
   perfumes: Perfume[];
+  basePath?: string;
 }
 
-const { perfumes } = Astro.props;
+const { perfumes, basePath = '/atomiza-catalog/' } = Astro.props;
 ---
 
 {perfumes.length > 0 ? (
   <div class="product-grid" role="list" aria-label="Catálogo de perfumes">
     {perfumes.map((perfume) => (
-      <ProductCard perfume={perfume} />
+      <ProductCard perfume={perfume} basePath={basePath} />
     ))}
   </div>
 ) : (

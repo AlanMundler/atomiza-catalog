@@ -2,7 +2,8 @@
 import Drawer from '@/components/ui/Drawer.astro';
 import CartItem from '@/components/cart/CartItem.astro';
 import OrderSummary from '@/components/cart/OrderSummary.astro';
-import { getCart, getCartSubtotal } from '@/utils/cart';
+import { getCart, getCartSubtotal, addToCart } from '@/utils/cart';
+import type { PerfumeSize } from '@/data/types';
 
 const cart = getCart();
 const subtotal = getCartSubtotal();
@@ -69,10 +70,28 @@ const isEmpty = cart.items.length === 0;
       }
     });
 
+    // Listen for add to cart event
+    window.addEventListener('cart:add', (e: CustomEvent) => {
+      const { perfumeId, sizeMl, quantity } = e.detail;
+      
+      // Find the perfume size
+      const perfumesData = JSON.parse(localStorage.getItem('perfumes-data') || '{"perfumes":[]}');
+      const perfume = perfumesData.perfumes?.find((p: any) => p.id === perfumeId);
+      if (!perfume) return;
+      
+      const size = perfume.sizes?.find((s: PerfumeSize) => s.ml === sizeMl);
+      if (!size) return;
+      
+      // Add to cart
+      addToCart({ perfumeId, size, quantity });
+      
+      // Dispatch update event
+      window.dispatchEvent(new CustomEvent('cart:update'));
+    });
+
     // Listen for cart updates
     window.addEventListener('cart:update', () => {
       // Reload the page to reflect cart changes
-      // In a real app, we'd update the DOM directly
       location.reload();
     });
 

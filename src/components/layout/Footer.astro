@@ -1,4 +1,5 @@
 ---
+const BASE = '/atomiza-catalog/';
 ---
 
 <footer class="footer" role="contentinfo">
@@ -51,8 +52,8 @@
     <div class="footer-bottom">
       <p class="footer-copyright">© 2024 ATOMIZA. Todos los derechos reservados.</p>
       <nav class="footer-legal" aria-label="Enlaces legales">
-        <a href="/terminos" class="footer-legal-link">Términos y condiciones</a>
-        <a href="/privacidad" class="footer-legal-link">Política de privacidad</a>
+        <a href={`${BASE}terminos/`} class="footer-legal-link">Términos y condiciones</a>
+        <a href={`${BASE}privacidad/`} class="footer-legal-link">Política de privacidad</a>
       </nav>
     </div>
   </div>
