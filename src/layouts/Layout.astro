@@ -44,7 +44,7 @@ const { title, description = 'ATOMIZA - Decants de autor. Boutique de perfumes d
   </body>
 </html>
 
-<script>
+<script define:vars={{ perfumesData }}>
   // Store perfumes data in localStorage for cart functionality
   if (typeof window !== 'undefined') {
     localStorage.setItem('perfumes-data', JSON.stringify({ perfumes: perfumesData.perfumes }));

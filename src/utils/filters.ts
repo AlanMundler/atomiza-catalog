@@ -3,6 +3,17 @@ import type { Perfume, GenderFilter } from '@/data/types';
 export function filterPerfumes(perfumes: Perfume[], filter: GenderFilter): Perfume[] {
   if (filter === 'all') return perfumes;
   if (filter === 'boutique') return perfumes.filter((perfume) => perfume.isBoutiqueExclusive);
+  if (filter === 'unisex') return perfumes.filter((perfume) => perfume.gender === 'unisex');
+  if (filter === 'masculino') {
+    return perfumes.filter(
+      (perfume) => perfume.gender === 'masculino' || perfume.gender === 'unisex'
+    );
+  }
+  if (filter === 'femenino') {
+    return perfumes.filter(
+      (perfume) => perfume.gender === 'femenino' || perfume.gender === 'unisex'
+    );
+  }
   return perfumes.filter((perfume) => perfume.gender === filter);
 }
 

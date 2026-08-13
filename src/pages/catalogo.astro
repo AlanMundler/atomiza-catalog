@@ -44,10 +44,10 @@ const filteredPerfumes = searchPerfumes(filterPerfumes(allPerfumes, currentFilte
   <section class="catalog-results" aria-label="Resultados del catálogo">
     <div class="container">
       <div class="results-header">
-        <p class="results-count">
+        <p class="results-count" data-results-count>
           {filteredPerfumes.length} {filteredPerfumes.length === 1 ? 'perfume' : 'perfumes'} encontrado{filteredPerfumes.length !== 1 ? 's' : ''}
-          {currentFilter !== 'all' && <span> en {currentFilter}</span>}
-          {currentSearch && <span> para "{currentSearch}"</span>}
+          {currentFilter !== 'all' && <span data-filter-label> en {currentFilter}</span>}
+          {currentSearch && <span data-search-label> para "{currentSearch}"</span>}
         </p>
       </div>
       <ProductGrid perfumes={filteredPerfumes} />
@@ -56,30 +56,98 @@ const filteredPerfumes = searchPerfumes(filterPerfumes(allPerfumes, currentFilte
 </Layout>
 
 <script>
-  // Handle filter changes
-  window.addEventListener('filter:change', (e: CustomEvent) => {
-    const { filter } = e.detail;
-    const url = new URL(window.location.href);
-    url.searchParams.set('filter', filter);
-    url.searchParams.delete('page'); // Reset pagination
-    window.history.pushState({}, '', url);
-    // In a real SPA, we'd update without reload
-    window.location.reload();
+  // Client-side filtering without page reload (static output has no query params at build time)
+  const cards = Array.from(document.querySelectorAll('.product-card')) as HTMLElement[];
+  const countEl = document.querySelector('[data-results-count]') as HTMLElement;
+  const filterLabelEl = document.querySelector('[data-filter-label]') as HTMLElement | null;
+  const searchLabelEl = document.querySelector('[data-search-label]') as HTMLElement | null;
+  const emptyEl = document.querySelector('.product-grid-empty') as HTMLElement | null;
+  const gridEl = document.querySelector('.product-grid') as HTMLElement | null;
+  const filterButtons = document.querySelectorAll('.filter-chip') as NodeListOf<HTMLButtonElement>;
+
+  const GENDERS: Record<string, string[]> = {
+    'masculino': ['masculino', 'unisex'],
+    'femenino': ['femenino', 'unisex'],
+    'unisex': ['unisex'],
+  };
+
+  let currentFilter: string = new URL(window.location.href).searchParams.get('filter') || 'all';
+  let currentSearch: string = new URL(window.location.href).searchParams.get('search') || '';
+
+  function applyFilters() {
+    let visible = 0;
+    cards.forEach((card) => {
+      const gender = card.getAttribute('data-gender') || '';
+      const isBoutique = card.getAttribute('data-boutique') === 'true';
+      const search = card.getAttribute('data-search') || '';
+
+      let matches = true;
+      if (currentFilter === 'boutique') {
+        matches = isBoutique;
+      } else if (currentFilter !== 'all') {
+        const allowed = GENDERS[currentFilter] || [];
+        matches = allowed.includes(gender);
+      }
+      if (matches && currentSearch) {
+        matches = search.includes(currentSearch.toLowerCase());
+      }
+
+      card.style.display = matches ? '' : 'none';
+      if (matches) visible++;
+    });
+
+    if (countEl) {
+      countEl.innerHTML = `${visible} ${visible === 1 ? 'perfume' : 'perfumes'} encontrado${visible !== 1 ? 's' : ''}` +
+        (currentFilter !== 'all' ? ` <span>en ${currentFilter}</span>` : '') +
+        (currentSearch ? ` <span>para "${currentSearch}"</span>` : '');
+    }
+
+    if (emptyEl && gridEl) {
+      emptyEl.style.display = visible === 0 ? '' : 'none';
+      gridEl.style.display = visible === 0 ? 'none' : '';
+    }
+  }
+
+  filterButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const filter = button.getAttribute('data-filter');
+      if (!filter) return;
+      currentFilter = filter;
+      const url = new URL(window.location.href);
+      if (filter === 'all') {
+        url.searchParams.delete('filter');
+      } else {
+        url.searchParams.set('filter', filter);
+      }
+      window.history.pushState({}, '', url);
+
+      updateActiveChip();
+      applyFilters();
+    });
   });
 
-  // Handle search changes
+  function updateActiveChip() {
+    filterButtons.forEach((b) => {
+      const isActive = b.getAttribute('data-filter') === currentFilter;
+      b.classList.toggle('filter-chip--active', isActive);
+      b.setAttribute('aria-pressed', String(isActive));
+    });
+  }
+
   window.addEventListener('search:change', (e: CustomEvent) => {
-    const { query } = e.detail;
+    currentSearch = e.detail?.query || '';
     const url = new URL(window.location.href);
-    if (query) {
-      url.searchParams.set('search', query);
+    if (currentSearch) {
+      url.searchParams.set('search', currentSearch);
     } else {
       url.searchParams.delete('search');
     }
-    url.searchParams.delete('page');
     window.history.pushState({}, '', url);
-    window.location.reload();
+    applyFilters();
   });
+
+  updateActiveChip();
+  applyFilters();
 </script>
 
 <style>
@@ -116,7 +184,7 @@ const filteredPerfumes = searchPerfumes(filterPerfumes(allPerfumes, currentFilte
   }
 
   .catalog-toolbar {
-    padding: var(--spacing-stack-md) 0;
+    padding: var(--spacing-stack-sm) 0;
     border-top: var(--border-width) solid var(--color-outline-variant);
     border-bottom: var(--border-width) solid var(--color-outline-variant);
     position: sticky;
@@ -137,6 +205,7 @@ const filteredPerfumes = searchPerfumes(filterPerfumes(allPerfumes, currentFilte
       flex-direction: row;
       justify-content: space-between;
       align-items: center;
+      gap: var(--spacing-stack-md);
     }
   }
 

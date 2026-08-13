@@ -19,7 +19,14 @@ const stockLabel = getStockLabel(stockStatus);
 const isOutOfStock = stockStatus === 'out-of-stock';
 ---
 
-<a href={`${basePath}producto/${perfume.slug}/`} class="product-card" aria-label={`Ver ${perfume.brand} ${perfume.name}`}>
+<a
+  href={`${basePath}producto/${perfume.slug}/`}
+  class="product-card"
+  aria-label={`Ver ${perfume.brand} ${perfume.name}`}
+  data-gender={perfume.gender}
+  data-boutique={perfume.isBoutiqueExclusive ? 'true' : 'false'}
+  data-search={`${perfume.brand} ${perfume.name}`.toLowerCase()}
+>
   <div class="product-card-image-wrapper">
     <img 
       src={mainImage} 
@@ -69,17 +76,20 @@ const isOutOfStock = stockStatus === 'out-of-stock';
     aspect-ratio: 3 / 4;
     overflow: hidden;
     background-color: var(--color-surface-container-high);
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .product-card-image {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     transition: transform 400ms var(--transition-easing);
   }
 
   .product-card:hover .product-card-image {
-    transform: scale(1.05);
+    transform: scale(1.04);
   }
 
   .product-card-overlay {

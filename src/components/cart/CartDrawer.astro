@@ -53,21 +53,14 @@ const isEmpty = cart.items.length === 0;
 </Drawer>
 
 <script>
+  import { addToCart } from '@/utils/cart';
+
   const cartDrawer = document.querySelector('#cart-drawer');
   
   if (cartDrawer) {
     // Listen for cart open event
     window.addEventListener('cart:open', () => {
-      const drawerComponent = cartDrawer.querySelector('.drawer');
-      if (drawerComponent) {
-        drawerComponent.classList.add('drawer--open');
-        document.body.style.overflow = 'hidden';
-        
-        const backdrop = cartDrawer.querySelector('.drawer-backdrop');
-        if (backdrop) {
-          backdrop.style.opacity = '1';
-        }
-      }
+      cartDrawer.dispatchEvent(new CustomEvent('drawer:toggle', { detail: { open: true } }));
     });
 
     // Listen for add to cart event
@@ -101,22 +94,6 @@ const isEmpty = cart.items.length === 0;
       if (confirm('¿Estás seguro de que quieres vaciar el carrito?')) {
         localStorage.removeItem('atomiza-cart');
         window.dispatchEvent(new CustomEvent('cart:update'));
-      }
-    });
-
-    // Close on Escape
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        const drawerComponent = cartDrawer.querySelector('.drawer');
-        if (drawerComponent?.classList.contains('drawer--open')) {
-          drawerComponent.classList.remove('drawer--open');
-          document.body.style.overflow = '';
-          
-          const backdrop = cartDrawer.querySelector('.drawer-backdrop');
-          if (backdrop) {
-            backdrop.style.opacity = '0';
-          }
-        }
       }
     });
   }

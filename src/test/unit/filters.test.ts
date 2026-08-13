@@ -82,19 +82,19 @@ describe('filters utilities', () => {
       expect(result).toHaveLength(5);
     });
 
-    it('filters by masculino gender', () => {
+    it('filters by masculino gender (masculino + unisex)', () => {
       const result = filterPerfumes(mockPerfumes, 'masculino');
-      expect(result).toHaveLength(1);
-      expect(result[0].id).toBe('aventus');
+      expect(result).toHaveLength(3);
+      expect(result.map(p => p.id).sort()).toEqual(['aventus', 'baccarat-rouge-540', 'tobacco-vanille']);
     });
 
-    it('filters by femenino gender', () => {
+    it('filters by femenino gender (femenino + unisex)', () => {
       const result = filterPerfumes(mockPerfumes, 'femenino');
-      expect(result).toHaveLength(2);
-      expect(result.map(p => p.id).sort()).toEqual(['delina', 'la-vie-est-belle']);
+      expect(result).toHaveLength(4);
+      expect(result.map(p => p.id).sort()).toEqual(['baccarat-rouge-540', 'delina', 'la-vie-est-belle', 'tobacco-vanille']);
     });
 
-    it('filters by unisex gender', () => {
+    it('filters by unisex gender (only unisex)', () => {
       const result = filterPerfumes(mockPerfumes, 'unisex');
       expect(result).toHaveLength(2);
       expect(result.map(p => p.id).sort()).toEqual(['baccarat-rouge-540', 'tobacco-vanille']);

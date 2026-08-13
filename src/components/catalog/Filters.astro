@@ -30,28 +30,11 @@ const filters: { value: GenderFilter; label: string }[] = [
     </button>
   ))}
 </div>
-
-<script>
-  const filterButtons = document.querySelectorAll('.filter-chip');
-  
-  filterButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-      const filter = button.getAttribute('data-filter');
-      if (filter) {
-        const event = new CustomEvent('filter:change', {
-          detail: { filter }
-        });
-        window.dispatchEvent(event);
-      }
-    });
-  });
-</script>
-
 <style>
   .filters {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 8px;
     justify-content: center;
   }
 
@@ -60,6 +43,7 @@ const filters: { value: GenderFilter; label: string }[] = [
     border: none;
     padding: 0;
     cursor: pointer;
+    line-height: 1;
   }
 
   .filter-chip-inner {

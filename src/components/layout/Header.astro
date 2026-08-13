@@ -129,7 +129,8 @@ const BASE = '/atomiza-catalog/';
   // Listen for cart updates
   window.addEventListener('cart:update', () => {
     const count = document.querySelector('.cart-count');
-    const newCount = parseInt(localStorage.getItem('atomiza-cart') || '{"items":[]}').items.reduce((sum: number, item: any) => sum + item.quantity, 0);
+    const cart = JSON.parse(localStorage.getItem('atomiza-cart') || '{"items":[]}');
+    const newCount = cart.items.reduce((sum: number, item: any) => sum + item.quantity, 0);
     if (count) {
       count.textContent = String(newCount);
       count.style.display = newCount > 0 ? 'flex' : 'none';
