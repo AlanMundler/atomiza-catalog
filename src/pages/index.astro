@@ -1,0 +1,414 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Button from '@/components/ui/Button.astro';
+
+const featuredPerfumes = [
+  {
+    id: 'tobacco-vanille',
+    brand: 'Tom Ford',
+    name: 'Tobacco Vanille',
+    image: '/images/perfumes/tobacco-vanille-1.jpg'
+  },
+  {
+    id: 'baccarat-rouge-540',
+    brand: 'Maison Francis Kurkdjian',
+    name: 'Baccarat Rouge 540',
+    image: '/images/perfumes/baccarat-rouge-540-1.jpg'
+  },
+  {
+    id: 'aventus',
+    brand: 'Creed',
+    name: 'Aventus',
+    image: '/images/perfumes/aventus-1.jpg'
+  }
+];
+---
+
+<Layout title="ATOMIZA - Decants de autor" description="Boutique de perfumes de lujo en decants de 2ml, 5ml y 10ml. Autenticidad 100% garantizada.">
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="container">
+      <h1 id="hero-title" class="hero-title">ATOMIZA</h1>
+      <p class="hero-subtitle">Decants de autor</p>
+      <Button href="/catalogo" variant="primary" size="lg" class="hero-cta">
+        Explorar catálogo
+      </Button>
+    </div>
+  </section>
+
+  <section class="value-prop" aria-labelledby="value-prop-title">
+    <div class="container">
+      <h2 id="value-prop-title" class="section-title">Por qué elegir ATOMIZA</h2>
+      <div class="value-prop-grid">
+        <article class="value-prop-card">
+          <div class="value-prop-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+          </div>
+          <h3 class="value-prop-card-title">Autenticidad 100%</h3>
+          <p class="value-prop-card-text">Todos nuestros decants provienen de frascos originales sellados. Garantizamos la autenticidad de cada gota.</p>
+        </article>
+        <article class="value-prop-card">
+          <div class="value-prop-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M2 12h20"></path>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+          </div>
+          <h3 class="value-prop-card-title">Variedad curada</h3>
+          <p class="value-prop-card-text">Seleccionamos las fragancias más icónicas y exclusivas de casas de perfume de nicho y diseñador.</p>
+        </article>
+        <article class="value-prop-card">
+          <div class="value-prop-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+          <h3 class="value-prop-card-title">Atención personalizada</h3>
+          <p class="value-prop-card-text">Te asesoramos para encontrar tu fragancia ideal. Coordinamos el envío y pago a tu medida.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="how-to-buy" aria-labelledby="how-to-buy-title">
+    <div class="container">
+      <h2 id="how-to-buy-title" class="section-title">Cómo comprar</h2>
+      <div class="steps">
+        <article class="step">
+          <div class="step-number">01</div>
+          <div class="step-content">
+            <h3 class="step-title">Descubrir</h3>
+            <p class="step-text">Explora nuestro catálogo curado con las mejores fragancias de nicho y diseñador.</p>
+          </div>
+        </article>
+        <article class="step">
+          <div class="step-number">02</div>
+          <div class="step-content">
+            <h3 class="step-title">Explorar</h3>
+            <p class="step-text">Filtra por género, busca por nombre y consulta notas olfativas y disponibilidad.</p>
+          </div>
+        </article>
+        <article class="step">
+          <div class="step-number">03</div>
+          <div class="step-content">
+            <h3 class="step-title">Seleccionar</h3>
+            <p class="step-text">Elige tu tamaño (2ml, 5ml, 10ml) y agrégalo a tu pedido.</p>
+          </div>
+        </article>
+        <article class="step">
+          <div class="step-number">04</div>
+          <div class="step-content">
+            <h3 class="step-title">Coordinar</h3>
+            <p class="step-text">Finaliza tu pedido y coordina envío y pago por Instagram o WhatsApp.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="featured" aria-labelledby="featured-title">
+    <div class="container">
+      <h2 id="featured-title" class="section-title">Destacados</h2>
+      <div class="featured-grid">
+        {featuredPerfumes.map((perfume) => (
+          <a href={`/producto/${perfume.id}`} class="featured-card">
+            <div class="featured-card-image">
+              <img src={perfume.image} alt={perfume.name} loading="lazy" width="300" height="300" />
+            </div>
+            <div class="featured-card-info">
+              <span class="featured-card-brand">{perfume.brand}</span>
+              <h3 class="featured-card-name">{perfume.name}</h3>
+            </div>
+          </a>
+        ))}
+      </div>
+      <div class="featured-cta">
+        <Button href="/catalogo" variant="secondary" size="lg">
+          Ver todo el catálogo
+        </Button>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: var(--spacing-stack-lg) 0;
+  }
+
+  .hero-title {
+    font-family: var(--font-family);
+    font-size: var(--font-display-lg-size);
+    font-weight: var(--font-display-lg-weight);
+    line-height: var(--font-display-lg-line-height);
+    letter-spacing: var(--font-display-lg-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    margin: 0 0 var(--spacing-stack-sm);
+  }
+
+  @media (max-width: 640px) {
+    .hero-title {
+      font-size: 48px;
+    }
+  }
+
+  .hero-subtitle {
+    font-family: var(--font-family);
+    font-size: var(--font-body-lg-size);
+    font-weight: var(--font-body-lg-weight);
+    line-height: var(--font-body-lg-line-height);
+    letter-spacing: var(--font-body-lg-tracking);
+    color: var(--color-on-surface-variant);
+    margin: 0 0 var(--spacing-stack-lg);
+  }
+
+  .hero-cta {
+    min-width: 280px;
+  }
+
+  .section-title {
+    font-family: var(--font-family);
+    font-size: var(--font-headline-lg-size);
+    font-weight: var(--font-headline-lg-weight);
+    line-height: var(--font-headline-lg-line-height);
+    letter-spacing: var(--font-headline-lg-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    text-align: center;
+    margin: 0 0 var(--spacing-stack-lg);
+  }
+
+  @media (max-width: 640px) {
+    .section-title {
+      font-size: var(--font-headline-lg-mobile-size);
+    }
+  }
+
+  /* Value Prop */
+  .value-prop {
+    padding: var(--spacing-stack-lg) 0;
+    border-top: var(--border-width) solid var(--color-outline-variant);
+    border-bottom: var(--border-width) solid var(--color-outline-variant);
+  }
+
+  .value-prop-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-stack-md);
+  }
+
+  @media (min-width: 768px) {
+    .value-prop-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .value-prop-card {
+    text-align: center;
+    padding: var(--spacing-stack-md);
+  }
+
+  .value-prop-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    margin-bottom: var(--spacing-stack-sm);
+    color: var(--color-primary);
+  }
+
+  .value-prop-card-title {
+    font-family: var(--font-family);
+    font-size: var(--font-headline-md-size);
+    font-weight: var(--font-headline-md-weight);
+    line-height: var(--font-headline-md-line-height);
+    letter-spacing: var(--font-headline-md-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    margin: 0 0 var(--spacing-stack-sm);
+  }
+
+  .value-prop-card-text {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    line-height: var(--font-body-md-line-height);
+    letter-spacing: var(--font-body-md-tracking);
+    color: var(--color-on-surface-variant);
+    margin: 0;
+  }
+
+  /* How to Buy */
+  .how-to-buy {
+    padding: var(--spacing-stack-lg) 0;
+  }
+
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-stack-md);
+    position: relative;
+  }
+
+  @media (min-width: 768px) {
+    .steps {
+      flex-direction: row;
+      align-items: flex-start;
+    }
+
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 16px;
+      left: 10%;
+      right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+      z-index: 0;
+    }
+  }
+
+  .step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--spacing-stack-sm);
+    padding: 0 var(--spacing-gutter);
+    position: relative;
+    z-index: 1;
+    flex: 1;
+  }
+
+  @media (min-width: 768px) {
+    .step {
+      flex-direction: row;
+      align-items: flex-start;
+      text-align: left;
+    }
+  }
+
+  .step-number {
+    font-family: var(--font-family);
+    font-size: var(--font-headline-lg-size);
+    font-weight: var(--font-headline-lg-weight);
+    letter-spacing: var(--font-headline-lg-tracking);
+    color: var(--color-primary);
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 640px) {
+    .step-number {
+      font-size: var(--font-headline-md-size);
+    }
+  }
+
+  .step-title {
+    font-family: var(--font-family);
+    font-size: var(--font-headline-md-size);
+    font-weight: var(--font-headline-md-weight);
+    line-height: var(--font-headline-md-line-height);
+    letter-spacing: var(--font-headline-md-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    margin: 0;
+  }
+
+  .step-text {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    line-height: var(--font-body-md-line-height);
+    letter-spacing: var(--font-body-md-tracking);
+    color: var(--color-on-surface-variant);
+    margin: 0;
+  }
+
+  /* Featured */
+  .featured {
+    padding: var(--spacing-stack-lg) 0;
+    border-top: var(--border-width) solid var(--color-outline-variant);
+  }
+
+  .featured-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-stack-md);
+  }
+
+  @media (min-width: 768px) {
+    .featured-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .featured-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    background-color: var(--color-surface-container);
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    transition: all var(--transition-duration) var(--transition-easing);
+  }
+
+  .featured-card:hover {
+    border-color: var(--color-primary);
+    transform: translateY(-4px);
+  }
+
+  .featured-card-image {
+    aspect-ratio: 1;
+    overflow: hidden;
+  }
+
+  .featured-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 400ms var(--transition-easing);
+  }
+
+  .featured-card:hover .featured-card-image img {
+    transform: scale(1.05);
+  }
+
+  .featured-card-info {
+    padding: 16px;
+  }
+
+  .featured-card-brand {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .featured-card-name {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    font-weight: var(--font-body-md-weight);
+    color: var(--color-on-surface);
+    margin: 0;
+  }
+
+  .featured-cta {
+    text-align: center;
+    margin-top: var(--spacing-stack-md);
+  }
+</style>

@@ -1,0 +1,180 @@
+---
+interface Props {
+  isOpen: boolean;
+  position?: 'left' | 'right';
+  class?: string;
+  onClose: () => void;
+  children: any;
+}
+
+const { isOpen, position = 'right', class: className = '', onClose, children } = Astro.props;
+---
+
+{isOpen && (
+  <>
+    <div 
+      class="drawer-backdrop" 
+      role="presentation"
+      aria-hidden="true"
+    ></div>
+    <aside 
+      class={`drawer drawer--${position} ${className}`}
+      role="dialog"
+      aria-modal="true"
+      aria-label={position === 'right' ? 'Carrito de compras' : 'Menú de navegación'}
+    >
+      <div class="drawer-header">
+        <slot name="header">
+          <h2 class="drawer-title">Carrito</h2>
+        </slot>
+        <button 
+          class="drawer-close" 
+          onclick={onClose}
+          aria-label="Cerrar"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="drawer-content">
+        <slot>{children}</slot>
+      </div>
+    </aside>
+  </>
+)}
+
+<script>
+  const drawer = document.querySelector('.drawer');
+  const backdrop = document.querySelector('.drawer-backdrop');
+  
+  if (drawer && backdrop) {
+    const closeDrawer = () => {
+      drawer.classList.remove('drawer--open');
+      setTimeout(() => {
+        document.body.style.overflow = '';
+      }, 200);
+    };
+
+    backdrop.addEventListener('click', closeDrawer);
+    
+    // Trigger open animation
+    requestAnimationFrame(() => {
+      drawer.classList.add('drawer--open');
+      document.body.style.overflow = 'hidden';
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeDrawer();
+      }
+    });
+  }
+</script>
+
+<style>
+  .drawer-backdrop {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+    opacity: 0;
+    transition: opacity var(--transition-duration) var(--transition-easing);
+  }
+
+  .drawer {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: 400px;
+    background-color: var(--color-surface-container);
+    border: var(--border-width) solid var(--color-outline-variant);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .drawer--left {
+    left: 0;
+    border-right: var(--border-width) solid var(--color-outline-variant);
+    transform: translateX(-100%);
+  }
+
+  .drawer--right {
+    right: 0;
+    border-left: var(--border-width) solid var(--color-outline-variant);
+    transform: translateX(100%);
+  }
+
+  .drawer--open {
+    transform: translateX(0);
+  }
+
+  .drawer-backdrop + .drawer--open ~ .drawer-backdrop,
+  .drawer--open + .drawer-backdrop {
+    opacity: 1;
+  }
+
+  .drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: var(--border-width) solid var(--color-outline-variant);
+    flex-shrink: 0;
+  }
+
+  .drawer-title {
+    font-family: var(--font-family);
+    font-size: var(--font-headline-md-size);
+    font-weight: var(--font-headline-md-weight);
+    line-height: var(--font-headline-md-line-height);
+    letter-spacing: var(--font-headline-md-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    margin: 0;
+  }
+
+  .drawer-close {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-on-surface-variant);
+    background: transparent;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all var(--transition-duration) var(--transition-easing);
+  }
+
+  .drawer-close:hover {
+    color: var(--color-primary);
+    background-color: var(--color-surface-container-high);
+  }
+
+  .drawer-close:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .drawer-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  @media (max-width: 640px) {
+    .drawer {
+      max-width: 100%;
+    }
+  }
+</style>

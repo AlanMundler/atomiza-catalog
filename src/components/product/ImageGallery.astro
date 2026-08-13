@@ -1,0 +1,208 @@
+---
+import Modal from '@/components/ui/Modal.astro';
+import type { PerfumeImage } from '@/data/types';
+
+interface Props {
+  images: PerfumeImage[];
+  alt: string;
+}
+
+const { images, alt } = Astro.props;
+const mainImage = images[0]?.src || '/images/placeholder.jpg';
+const mainAlt = images[0]?.alt || alt;
+---
+
+<div class="image-gallery" role="region" aria-label="Galería de imágenes">
+  <div class="image-gallery-main">
+    <img 
+      src={mainImage} 
+      alt={mainAlt} 
+      class="image-gallery-main-image"
+      loading="eager"
+      width="600"
+      height="600"
+      data-main-image
+    />
+  </div>
+
+  {images.length > 1 && (
+    <div class="image-gallery-thumbs" role="list" aria-label="Miniaturas">
+      {images.map((image, index) => (
+        <button
+          class={`image-gallery-thumb ${index === 0 ? 'image-gallery-thumb--active' : ''}`}
+          data-thumb-index={index}
+          data-image-src={image.src}
+          aria-label={`Ver imagen ${index + 1}`}
+          aria-selected={index === 0}
+        >
+          <img src={image.src} alt={image.alt} loading="lazy" width="80" height="80" />
+        </button>
+      ))}
+    </div>
+  )}
+
+  <Modal 
+    isOpen={false} 
+    id="image-zoom-modal"
+    onClose={() => {}}
+    class="image-zoom-modal"
+  >
+    <div class="image-zoom-content" slot="header">
+      <img 
+        src={mainImage} 
+        alt={mainAlt} 
+        class="image-zoom-image"
+        data-zoom-image
+      />
+    </div>
+  </Modal>
+</div>
+
+<script>
+  const mainImageEl = document.querySelector('[data-main-image]') as HTMLImageElement;
+  const thumbs = document.querySelectorAll('.image-gallery-thumb');
+  const zoomModal = document.querySelector('#image-zoom-modal');
+  const zoomImage = document.querySelector('[data-zoom-image]') as HTMLImageElement;
+  
+  let currentIndex = 0;
+
+  thumbs.forEach((thumb, index) => {
+    thumb.addEventListener('click', () => {
+      const src = thumb.getAttribute('data-image-src');
+      if (src && mainImageEl) {
+        mainImageEl.src = src;
+        currentIndex = index;
+        updateActiveThumb(index);
+      }
+    });
+  });
+
+  // Open zoom modal on main image click
+  mainImageEl?.addEventListener('click', () => {
+    if (zoomModal) {
+      const modalDialog = zoomModal.querySelector('dialog');
+      if (modalDialog && zoomImage) {
+        zoomImage.src = mainImageEl.src;
+        modalDialog.showModal();
+        document.body.style.overflow = 'hidden';
+      }
+    }
+  });
+
+  // Keyboard navigation for thumbnails
+  thumbs.forEach((thumb, index) => {
+    thumb.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        e.preventDefault();
+        const newIndex = e.key === 'ArrowRight' 
+          ? (index + 1) % thumbs.length 
+          : (index - 1 + thumbs.length) % thumbs.length;
+        (thumbs[newIndex] as HTMLElement).focus();
+        (thumbs[newIndex] as HTMLElement).click();
+      }
+    });
+  });
+
+  function updateActiveThumb(index: number) {
+    thumbs.forEach((thumb, i) => {
+      thumb.classList.toggle('image-gallery-thumb--active', i === index);
+      thumb.setAttribute('aria-selected', String(i === index));
+    });
+  }
+
+  // Close zoom modal on Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      const modalDialog = zoomModal?.querySelector('dialog');
+      if (modalDialog?.open) {
+        modalDialog.close();
+        document.body.style.overflow = '';
+      }
+    }
+  });
+</script>
+
+<style>
+  .image-gallery {
+    position: relative;
+  }
+
+  .image-gallery-main {
+    aspect-ratio: 1;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    background-color: var(--color-surface-container-high);
+  }
+
+  .image-gallery-main-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: zoom-in;
+    transition: transform var(--transition-duration) var(--transition-easing);
+  }
+
+  .image-gallery-main-image:hover {
+    transform: scale(1.02);
+  }
+
+  .image-gallery-thumbs {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .image-gallery-thumb {
+    flex-shrink: 0;
+    width: 80px;
+    height: 80px;
+    border: 2px solid transparent;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    transition: all var(--transition-duration) var(--transition-easing);
+  }
+
+  .image-gallery-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .image-gallery-thumb:hover {
+    border-color: var(--color-primary);
+  }
+
+  .image-gallery-thumb--active {
+    border-color: var(--color-primary);
+  }
+
+  .image-gallery-thumb:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  /* Zoom modal */
+  .image-zoom-modal {
+    --modal-width: 90vw;
+    --modal-height: 90vh;
+  }
+
+  .image-zoom-content {
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .image-zoom-image {
+    max-width: 100%;
+    max-height: 80vh;
+    object-fit: contain;
+  }
+</style>

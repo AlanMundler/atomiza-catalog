@@ -1,0 +1,86 @@
+---
+import Chip from '@/components/ui/Chip.astro';
+import type { GenderFilter } from '@/data/types';
+
+interface Props {
+  currentFilter: GenderFilter;
+  onFilterChange: (filter: GenderFilter) => void;
+}
+
+const { currentFilter, onFilterChange } = Astro.props;
+
+const filters: { value: GenderFilter; label: string }[] = [
+  { value: 'all', label: 'TODOS' },
+  { value: 'masculino', label: 'MASCULINO' },
+  { value: 'femenino', label: 'FEMENINO' },
+  { value: 'unisex', label: 'UNISEX' },
+  { value: 'boutique', label: 'BOUTIQUE' },
+];
+---
+
+<div class="filters" role="group" aria-label="Filtrar por categoría">
+  {filters.map((filter) => (
+    <button
+      class={`filter-chip ${currentFilter === filter.value ? 'filter-chip--active' : ''}`}
+      data-filter={filter.value}
+      aria-pressed={currentFilter === filter.value}
+      onclick={() => onFilterChange(filter.value)}
+    >
+      <Chip variant="gender" class="filter-chip-inner">
+        {filter.label}
+      </Chip>
+    </button>
+  ))}
+</div>
+
+<script>
+  const filterButtons = document.querySelectorAll('.filter-chip');
+  
+  filterButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const filter = button.getAttribute('data-filter');
+      if (filter) {
+        const event = new CustomEvent('filter:change', {
+          detail: { filter }
+        });
+        window.dispatchEvent(event);
+      }
+    });
+  });
+</script>
+
+<style>
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .filter-chip {
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  .filter-chip-inner {
+    transition: all var(--transition-duration) var(--transition-easing);
+  }
+
+  .filter-chip:hover .filter-chip-inner {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+
+  .filter-chip--active .filter-chip-inner {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+    background-color: rgba(197, 160, 89, 0.1);
+  }
+
+  .filter-chip:focus-visible .filter-chip-inner {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+</style>

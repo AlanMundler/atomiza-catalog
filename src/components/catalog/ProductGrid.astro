@@ -1,0 +1,80 @@
+---
+import ProductCard from '@/components/catalog/ProductCard.astro';
+import type { Perfume } from '@/data/types';
+
+interface Props {
+  perfumes: Perfume[];
+}
+
+const { perfumes } = Astro.props;
+---
+
+{perfumes.length > 0 ? (
+  <div class="product-grid" role="list" aria-label="Catálogo de perfumes">
+    {perfumes.map((perfume) => (
+      <ProductCard perfume={perfume} />
+    ))}
+  </div>
+) : (
+  <div class="product-grid-empty" role="status">
+    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
+      <circle cx="11" cy="11" r="8"></circle>
+      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+    </svg>
+    <h3 class="empty-title">No se encontraron perfumes</h3>
+    <p class="empty-text">Intenta ajustar los filtros o la búsqueda</p>
+  </div>
+)}
+
+<style>
+  .product-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  @media (min-width: 640px) {
+    .product-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .product-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (min-width: 1440px) {
+    .product-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .product-grid-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 24px;
+    text-align: center;
+    color: var(--color-on-surface-variant);
+    grid-column: 1 / -1;
+  }
+
+  .empty-title {
+    font-family: var(--font-family);
+    font-size: var(--font-headline-md-size);
+    font-weight: var(--font-headline-md-weight);
+    letter-spacing: var(--font-headline-md-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    margin: 16px 0 8px;
+  }
+
+  .empty-text {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    margin: 0;
+  }
+</style>

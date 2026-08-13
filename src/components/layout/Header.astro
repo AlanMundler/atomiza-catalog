@@ -1,0 +1,347 @@
+---
+import Button from '@/components/ui/Button.astro';
+import Drawer from '@/components/ui/Drawer.astro';
+import { getCartItemCount } from '@/utils/cart';
+
+const cartCount = getCartItemCount();
+---
+
+<header class="header" role="banner">
+  <div class="header-inner container">
+    <a href="/" class="header-logo" aria-label="ATOMIZA - Inicio">
+      <span class="logo-text">ATOMIZA</span>
+    </a>
+
+    <nav class="header-nav" role="navigation" aria-label="Navegación principal">
+      <a href="/catalogo" class="nav-link">Catálogo</a>
+    </nav>
+
+    <div class="header-actions">
+      <button 
+        class="header-cart-btn"
+        aria-label={`Carrito de compras, ${cartCount} artículos`}
+        data-cart-trigger
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <circle cx="9" cy="21" r="1"></circle>
+          <circle cx="20" cy="21" r="1"></circle>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+        </svg>
+        {cartCount > 0 && (
+          <span class="cart-count" aria-hidden="true">{cartCount}</span>
+        )}
+      </button>
+
+      <button 
+        class="header-menu-btn"
+        aria-label="Abrir menú"
+        aria-expanded="false"
+        aria-controls="mobile-drawer"
+        data-menu-trigger
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<Drawer 
+  isOpen={false} 
+  position="left" 
+  id="mobile-drawer"
+  onClose={() => {}}
+  class="mobile-drawer"
+>
+  <nav class="mobile-nav" slot="header" role="navigation" aria-label="Menú móvil">
+    <a href="/" class="mobile-nav-link">Inicio</a>
+    <a href="/catalogo" class="mobile-nav-link">Catálogo</a>
+  </nav>
+  <div class="mobile-cart-summary" slot="header">
+    <h3 class="mobile-cart-title">Carrito</h3>
+    <p class="mobile-cart-count">{cartCount} artículos</p>
+    <Button variant="secondary" class="mobile-cart-btn" href="/catalogo">
+      Ver carrito
+    </Button>
+  </div>
+</Drawer>
+
+<script>
+  const header = document.querySelector('.header');
+  const cartTrigger = document.querySelector('[data-cart-trigger]');
+  const menuTrigger = document.querySelector('[data-menu-trigger]');
+  const mobileDrawer = document.querySelector('#mobile-drawer');
+  
+  let lastScroll = 0;
+  let ticking = false;
+
+  // Header scroll effect
+  function handleScroll() {
+    const currentScroll = window.scrollY;
+    
+    if (currentScroll > 20) {
+      header?.classList.add('header--scrolled');
+    } else {
+      header?.classList.remove('header--scrolled');
+    }
+    
+    lastScroll = currentScroll;
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(handleScroll);
+      ticking = true;
+    }
+  }, { passive: true });
+
+  // Cart drawer trigger
+  cartTrigger?.addEventListener('click', () => {
+    const event = new CustomEvent('cart:open');
+    window.dispatchEvent(event);
+  });
+
+  // Mobile menu trigger
+  menuTrigger?.addEventListener('click', () => {
+    const isExpanded = menuTrigger.getAttribute('aria-expanded') === 'true';
+    menuTrigger.setAttribute('aria-expanded', String(!isExpanded));
+    
+    if (mobileDrawer) {
+      const drawerComponent = mobileDrawer.querySelector('.drawer');
+      if (drawerComponent) {
+        const event = new CustomEvent('drawer:toggle', { 
+          detail: { open: !isExpanded } 
+        });
+        mobileDrawer.dispatchEvent(event);
+      }
+    }
+  });
+
+  // Listen for cart updates
+  window.addEventListener('cart:update', () => {
+    const count = document.querySelector('.cart-count');
+    const newCount = parseInt(localStorage.getItem('atomiza-cart') || '{"items":[]}').items.reduce((sum: number, item: any) => sum + item.quantity, 0);
+    if (count) {
+      count.textContent = String(newCount);
+      count.style.display = newCount > 0 ? 'flex' : 'none';
+    }
+  });
+</script>
+
+<style>
+  .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background-color: rgba(18, 20, 20, 0.8);
+    backdrop-filter: blur(20px);
+    border-bottom: var(--border-width) solid var(--color-outline-variant);
+    transition: all var(--transition-duration) var(--transition-easing);
+  }
+
+  .header--scrolled {
+    background-color: rgba(18, 20, 20, 0.95);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 72px;
+    gap: 24px;
+  }
+
+  .header-logo {
+    flex-shrink: 0;
+    text-decoration: none;
+  }
+
+  .logo-text {
+    font-family: var(--font-family);
+    font-size: 20px;
+    font-weight: 200;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    transition: color var(--transition-duration) var(--transition-easing);
+  }
+
+  .header-logo:hover .logo-text {
+    color: var(--color-primary);
+  }
+
+  .header-nav {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .header-nav {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+    }
+
+    .nav-link {
+      font-family: var(--font-family);
+      font-size: var(--font-label-sm-size);
+      font-weight: var(--font-label-sm-weight);
+      letter-spacing: var(--font-label-sm-tracking);
+      text-transform: uppercase;
+      color: var(--color-on-surface-variant);
+      position: relative;
+      padding: 8px 0;
+      transition: color var(--transition-duration) var(--transition-easing);
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background-color: var(--color-primary);
+      transition: width var(--transition-duration) var(--transition-easing);
+    }
+
+    .nav-link:hover {
+      color: var(--color-primary);
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .header-cart-btn {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-on-surface);
+    background: transparent;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all var(--transition-duration) var(--transition-easing);
+  }
+
+  .header-cart-btn:hover {
+    color: var(--color-primary);
+    background-color: var(--color-surface-container-high);
+  }
+
+  .header-cart-btn:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .cart-count {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    min-width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-family);
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--color-on-primary);
+    background-color: var(--color-primary);
+    border-radius: 50%;
+    padding: 0 4px;
+  }
+
+  .header-menu-btn {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-on-surface);
+    background: transparent;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all var(--transition-duration) var(--transition-easing);
+  }
+
+  .header-menu-btn:hover {
+    color: var(--color-primary);
+    background-color: var(--color-surface-container-high);
+  }
+
+  @media (min-width: 1024px) {
+    .header-menu-btn {
+      display: none;
+    }
+  }
+
+  /* Mobile drawer styles */
+  .mobile-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 32px;
+  }
+
+  .mobile-nav-link {
+    font-family: var(--font-family);
+    font-size: var(--font-headline-md-size);
+    font-weight: var(--font-headline-md-weight);
+    letter-spacing: var(--font-headline-md-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    padding: 12px 0;
+    border-bottom: var(--border-width) solid var(--color-outline-variant);
+    transition: color var(--transition-duration) var(--transition-easing);
+  }
+
+  .mobile-nav-link:hover {
+    color: var(--color-primary);
+  }
+
+  .mobile-cart-summary {
+    padding: 24px 0;
+    border-top: var(--border-width) solid var(--color-outline-variant);
+  }
+
+  .mobile-cart-title {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+    margin: 0 0 8px;
+  }
+
+  .mobile-cart-count {
+    font-family: var(--font-family);
+    font-size: var(--font-body-lg-size);
+    font-weight: var(--font-body-lg-weight);
+    color: var(--color-on-surface);
+    margin: 0 0 16px;
+  }
+
+  .mobile-cart-btn {
+    width: 100%;
+  }
+</style>

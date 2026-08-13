@@ -1,0 +1,199 @@
+---
+import Drawer from '@/components/ui/Drawer.astro';
+import CartItem from '@/components/cart/CartItem.astro';
+import OrderSummary from '@/components/cart/OrderSummary.astro';
+import { getCart, getCartSubtotal } from '@/utils/cart';
+
+const cart = getCart();
+const subtotal = getCartSubtotal();
+const isEmpty = cart.items.length === 0;
+---
+
+<Drawer 
+  isOpen={false} 
+  position="right" 
+  id="cart-drawer"
+  onClose={() => {}}
+  class="cart-drawer"
+>
+  <div class="cart-header" slot="header">
+    <h2 class="cart-title">Tu pedido</h2>
+    <button class="cart-clear" data-clear-cart>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <polyline points="3 6 5 6 21 6"></polyline>
+        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+      </svg>
+      Vaciar
+    </button>
+  </div>
+
+  <div class="cart-content" slot="header">
+    {isEmpty ? (
+      <div class="cart-empty">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
+          <circle cx="9" cy="21" r="1"></circle>
+          <circle cx="20" cy="21" r="1"></circle>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+        </svg>
+        <p class="cart-empty-text">Tu carrito está vacío</p>
+        <p class="cart-empty-subtext">Agrega decants desde el catálogo</p>
+      </div>
+    ) : (
+      <>
+        <ul class="cart-items" role="list" aria-label="Artículos en el carrito">
+          {cart.items.map((item) => (
+            <CartItem item={item} />
+          ))}
+        </ul>
+        <OrderSummary subtotal={subtotal} />
+      </>
+    )}
+  </div>
+</Drawer>
+
+<script>
+  const cartDrawer = document.querySelector('#cart-drawer');
+  
+  if (cartDrawer) {
+    // Listen for cart open event
+    window.addEventListener('cart:open', () => {
+      const drawerComponent = cartDrawer.querySelector('.drawer');
+      if (drawerComponent) {
+        drawerComponent.classList.add('drawer--open');
+        document.body.style.overflow = 'hidden';
+        
+        const backdrop = cartDrawer.querySelector('.drawer-backdrop');
+        if (backdrop) {
+          backdrop.style.opacity = '1';
+        }
+      }
+    });
+
+    // Listen for cart updates
+    window.addEventListener('cart:update', () => {
+      // Reload the page to reflect cart changes
+      // In a real app, we'd update the DOM directly
+      location.reload();
+    });
+
+    // Clear cart button
+    const clearBtn = cartDrawer.querySelector('[data-clear-cart]');
+    clearBtn?.addEventListener('click', () => {
+      if (confirm('¿Estás seguro de que quieres vaciar el carrito?')) {
+        localStorage.removeItem('atomiza-cart');
+        window.dispatchEvent(new CustomEvent('cart:update'));
+      }
+    });
+
+    // Close on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const drawerComponent = cartDrawer.querySelector('.drawer');
+        if (drawerComponent?.classList.contains('drawer--open')) {
+          drawerComponent.classList.remove('drawer--open');
+          document.body.style.overflow = '';
+          
+          const backdrop = cartDrawer.querySelector('.drawer-backdrop');
+          if (backdrop) {
+            backdrop.style.opacity = '0';
+          }
+        }
+      }
+    });
+  }
+</script>
+
+<style>
+  .cart-drawer {
+    --drawer-width: 400px;
+  }
+
+  .cart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: var(--border-width) solid var(--color-outline-variant);
+  }
+
+  .cart-title {
+    font-family: var(--font-family);
+    font-size: var(--font-headline-md-size);
+    font-weight: var(--font-headline-md-weight);
+    line-height: var(--font-headline-md-line-height);
+    letter-spacing: var(--font-headline-md-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    margin: 0;
+  }
+
+  .cart-clear {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    transition: color var(--transition-duration) var(--transition-easing);
+  }
+
+  .cart-clear:hover {
+    color: var(--color-error);
+  }
+
+  .cart-clear:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    border-radius: var(--border-radius);
+  }
+
+  .cart-content {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .cart-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 24px;
+    text-align: center;
+    color: var(--color-on-surface-variant);
+    flex: 1;
+  }
+
+  .cart-empty-text {
+    font-family: var(--font-family);
+    font-size: var(--font-headline-md-size);
+    font-weight: var(--font-headline-md-weight);
+    letter-spacing: var(--font-headline-md-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    margin: 16px 0 8px;
+  }
+
+  .cart-empty-subtext {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    margin: 0;
+  }
+
+  .cart-items {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+</style>

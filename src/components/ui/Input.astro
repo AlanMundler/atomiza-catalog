@@ -1,0 +1,86 @@
+---
+interface Props {
+  type?: 'text' | 'search' | 'email' | 'tel';
+  placeholder?: string;
+  value?: string;
+  class?: string;
+  id?: string;
+  name?: string;
+  ariaLabel?: string;
+  onInput?: (value: string) => void;
+}
+
+const { 
+  type = 'text', 
+  placeholder = '', 
+  value = '', 
+  class: className = '', 
+  id, 
+  name,
+  ariaLabel,
+  ...attrs 
+} = Astro.props;
+---
+
+<div class="input-wrapper">
+  <input
+    type={type}
+    placeholder={placeholder}
+    value={value}
+    id={id}
+    name={name}
+    aria-label={ariaLabel}
+    class={`input ${className}`}
+    {...attrs}
+  />
+  <span class="input-line"></span>
+</div>
+
+<style>
+  .input-wrapper {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .input {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    color: var(--color-on-surface);
+    background-color: transparent;
+    border: none;
+    border-bottom: var(--border-width) solid var(--color-outline-variant);
+    padding: 12px 0 8px;
+    width: 100%;
+    outline: none;
+    transition: all var(--transition-duration) var(--transition-easing);
+  }
+
+  .input::placeholder {
+    color: var(--color-outline-variant);
+    opacity: 0.6;
+  }
+
+  .input:focus,
+  .input:not(:placeholder-shown) {
+    border-bottom-color: var(--color-primary);
+  }
+
+  .input:focus + .input-line,
+  .input:not(:placeholder-shown) + .input-line {
+    transform: scaleX(1);
+  }
+
+  .input-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    background-color: var(--color-primary);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--transition-duration) var(--transition-easing);
+    pointer-events: none;
+  }
+</style>

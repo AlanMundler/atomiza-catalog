@@ -1,0 +1,296 @@
+---
+import ImageGallery from '@/components/product/ImageGallery.astro';
+import SizeSelector from '@/components/product/SizeSelector.astro';
+import StockBadge from '@/components/product/StockBadge.astro';
+import Button from '@/components/ui/Button.astro';
+import { formatPrice } from '@/utils/formatters';
+import { getStockStatus, isSizeAvailable } from '@/utils/stock';
+import type { Perfume, PerfumeSize } from '@/data/types';
+
+interface Props {
+  perfume: Perfume;
+}
+
+const { perfume } = Astro.props;
+const selectedSize = perfume.sizes.find(s => s.ml === 5) || perfume.sizes[0];
+const stockStatus = getStockStatus(selectedSize);
+const available = isSizeAvailable(selectedSize);
+---
+
+<article class="product-detail" data-perfume-id={perfume.id}>
+  <div class="product-detail-grid">
+    <div class="product-detail-gallery">
+      <ImageGallery images={perfume.images} alt={`${perfume.brand} ${perfume.name}`} />
+    </div>
+
+    <div class="product-detail-info">
+      <div class="product-detail-header">
+        <span class="product-detail-brand">{perfume.brand}</span>
+        <h1 class="product-detail-name">{perfume.name}</h1>
+        <p class="product-detail-family">{perfume.olfactoryFamily}</p>
+      </div>
+
+      <div class="product-detail-description">
+        <p>{perfume.description}</p>
+      </div>
+
+      <div class="product-detail-notes" role="region" aria-label="Notas olfativas">
+        <details class="notes-accordion" open>
+          <summary class="notes-accordion-summary">
+            <span>Notas olfativas</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </summary>
+          <div class="notes-accordion-content">
+            <div class="notes-row">
+              <span class="notes-label">Salida</span>
+              <span class="notes-values">{perfume.notes.top.join(', ')}</span>
+            </div>
+            <div class="notes-row">
+              <span class="notes-label">Corazón</span>
+              <span class="notes-values">{perfume.notes.heart.join(', ')}</span>
+            </div>
+            <div class="notes-row">
+              <span class="notes-label">Fondo</span>
+              <span class="notes-values">{perfume.notes.base.join(', ')}</span>
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <div class="product-detail-selector">
+        <SizeSelector 
+          sizes={perfume.sizes} 
+          selectedSize={selectedSize}
+          onSizeChange={(size) => {}}
+        />
+        <StockBadge size={selectedSize} class="product-detail-stock" />
+      </div>
+
+      <div class="product-detail-actions">
+        <Button 
+          variant="primary" 
+          size="lg" 
+          class="product-detail-add-btn"
+          disabled={!available}
+          data-add-to-cart
+        >
+          {available ? 'Agregar al pedido' : 'Agotado'}
+        </Button>
+      </div>
+    </div>
+  </div>
+</article>
+
+<script>
+  const addBtn = document.querySelector('[data-add-to-cart]');
+  const sizeSelector = document.querySelector('size-selector'); // Custom element would be here
+  
+  // Listen for size changes
+  window.addEventListener('size:change', (e: CustomEvent) => {
+    const { sizeMl } = e.detail;
+    const perfumeId = document.querySelector('[data-perfume-id]')?.getAttribute('data-perfume-id');
+    
+    // Update stock badge and button state
+    // In a real implementation, this would update the DOM reactively
+    console.log('Size changed to:', sizeMl);
+  });
+
+  addBtn?.addEventListener('click', () => {
+    const perfumeId = document.querySelector('[data-perfume-id]')?.getAttribute('data-perfume-id');
+    const selectedSizeInput = document.querySelector('input[name="size"]:checked');
+    const sizeMl = selectedSizeInput ? parseInt(selectedSizeInput.value) : 5;
+    
+    const event = new CustomEvent('cart:add', {
+      detail: { perfumeId, sizeMl, quantity: 1 }
+    });
+    window.dispatchEvent(event);
+    
+    // Open cart drawer
+    window.dispatchEvent(new CustomEvent('cart:open'));
+  });
+</script>
+
+<style>
+  .product-detail {
+    padding: var(--spacing-stack-lg) 0;
+  }
+
+  .product-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-stack-lg);
+  }
+
+  @media (min-width: 1024px) {
+    .product-detail-grid {
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+    }
+  }
+
+  .product-detail-gallery {
+    position: sticky;
+    top: 100px;
+  }
+
+  .product-detail-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-stack-md);
+  }
+
+  .product-detail-header {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .product-detail-brand {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+  }
+
+  .product-detail-name {
+    font-family: var(--font-family);
+    font-size: var(--font-headline-lg-size);
+    font-weight: var(--font-headline-lg-weight);
+    line-height: var(--font-headline-lg-line-height);
+    letter-spacing: var(--font-headline-lg-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    margin: 0;
+  }
+
+  @media (max-width: 640px) {
+    .product-detail-name {
+      font-size: var(--font-headline-lg-mobile-size);
+    }
+  }
+
+  .product-detail-family {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    color: var(--color-primary);
+    margin: 0;
+  }
+
+  .product-detail-description {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    line-height: var(--font-body-md-line-height);
+    letter-spacing: var(--font-body-md-tracking);
+    color: var(--color-on-surface-variant);
+    margin: 0;
+  }
+
+  .product-detail-notes {
+    border-top: var(--border-width) solid var(--color-outline-variant);
+    padding-top: var(--spacing-stack-md);
+  }
+
+  .notes-accordion {
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+  }
+
+  .notes-accordion[open] {
+    border-color: var(--color-primary);
+  }
+
+  .notes-accordion-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .notes-accordion-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .notes-accordion-summary svg {
+    flex-shrink: 0;
+    color: var(--color-on-surface-variant);
+    transition: transform var(--transition-duration) var(--transition-easing);
+  }
+
+  .notes-accordion[open] .notes-accordion-summary svg {
+    transform: rotate(180deg);
+  }
+
+  .notes-accordion-content {
+    padding: 0 20px 20px;
+    border-top: var(--border-width) solid var(--color-outline-variant);
+  }
+
+  .notes-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px 0;
+    border-bottom: var(--border-width) solid var(--color-outline-variant);
+  }
+
+  .notes-row:last-child {
+    border-bottom: none;
+  }
+
+  .notes-label {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+  }
+
+  .notes-values {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    color: var(--color-on-surface);
+  }
+
+  .product-detail-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: var(--spacing-stack-md) 0;
+    border-top: var(--border-width) solid var(--color-outline-variant);
+    border-bottom: var(--border-width) solid var(--color-outline-variant);
+  }
+
+  .product-detail-stock {
+    align-self: flex-start;
+  }
+
+  .product-detail-actions {
+    display: flex;
+    gap: 12px;
+    padding-top: var(--spacing-stack-sm);
+  }
+
+  .product-detail-add-btn {
+    flex: 1;
+  }
+
+  @media (max-width: 640px) {
+    .product-detail-actions {
+      flex-direction: column;
+    }
+  }
+</style>

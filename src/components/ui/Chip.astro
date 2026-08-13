@@ -1,0 +1,72 @@
+---
+interface Props {
+  variant?: 'in-stock' | 'low-stock' | 'out-of-stock' | 'gender' | 'default';
+  class?: string;
+  children: any;
+}
+
+const { variant = 'default', class: className = '', children, ...attrs } = Astro.props;
+
+const variantClasses = {
+  'in-stock': 'chip--in-stock',
+  'low-stock': 'chip--low-stock',
+  'out-of-stock': 'chip--out-of-stock',
+  'gender': 'chip--gender',
+  'default': 'chip--default'
+};
+---
+
+<span class={`chip ${variantClasses[variant]} ${className}`} {...attrs}>
+  <slot>{children}</slot>
+</span>
+
+<style>
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    line-height: var(--font-label-sm-line-height);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    border-radius: var(--border-radius);
+    border: var(--border-width) solid transparent;
+    padding: 4px 10px;
+    height: 24px;
+    white-space: nowrap;
+  }
+
+  .chip--in-stock {
+    color: var(--color-status-in-stock);
+    border-color: var(--color-status-in-stock);
+  }
+
+  .chip--low-stock {
+    color: var(--color-status-low-stock);
+    border-color: var(--color-status-low-stock);
+  }
+
+  .chip--out-of-stock {
+    color: var(--color-status-out-of-stock);
+    border-color: var(--color-status-out-of-stock);
+  }
+
+  .chip--gender {
+    color: var(--color-on-surface-variant);
+    border-color: var(--color-outline-variant);
+    background-color: var(--color-surface-container-low);
+  }
+
+  .chip--gender[aria-selected="true"],
+  .chip--gender[data-selected="true"] {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+    background-color: rgba(197, 160, 89, 0.1);
+  }
+
+  .chip--default {
+    color: var(--color-on-surface-variant);
+    border-color: var(--color-outline-variant);
+  }
+</style>

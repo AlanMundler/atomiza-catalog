@@ -1,0 +1,164 @@
+---
+import Chip from '@/components/ui/Chip.astro';
+import { formatPrice } from '@/utils/formatters';
+import { getStockStatus, getStockLabel, isSizeAvailable } from '@/utils/stock';
+import type { PerfumeSize } from '@/data/types';
+
+interface Props {
+  sizes: PerfumeSize[];
+  selectedSize: PerfumeSize;
+  onSizeChange: (size: PerfumeSize) => void;
+}
+
+const { sizes, selectedSize, onSizeChange } = Astro.props;
+---
+
+<fieldset class="size-selector" role="radiogroup" aria-label="Seleccionar tamaño">
+  <legend class="size-selector-label">Tamaño</legend>
+  <div class="size-selector-options">
+    {sizes.map((size) => {
+      const available = isSizeAvailable(size);
+      const stockStatus = getStockStatus(size);
+      const stockLabel = getStockLabel(stockStatus);
+      const isSelected = selectedSize.ml === size.ml;
+      
+      return (
+        <label class={`size-option ${isSelected ? 'size-option--selected' : ''} ${!available ? 'size-option--unavailable' : ''}`}>
+          <input
+            type="radio"
+            name="size"
+            value={String(size.ml)}
+            checked={isSelected}
+            disabled={!available}
+            data-size-ml={size.ml}
+            aria-label={`${size.ml}ml - ${formatPrice(size.price)} - ${stockLabel}`}
+          />
+          <span class="size-option-content">
+            <span class="size-option-ml">{size.ml}ml</span>
+            <span class="size-option-price">{formatPrice(size.price)}</span>
+          </span>
+          <Chip variant={stockStatus} class="size-option-stock" aria-hidden="true">
+            {stockLabel}
+          </Chip>
+        </label>
+      );
+    })}
+  </div>
+</fieldset>
+
+<script>
+  const sizeOptions = document.querySelectorAll('.size-option input[type="radio"]');
+  
+  sizeOptions.forEach((radio) => {
+    radio.addEventListener('change', (e) => {
+      const target = e.target as HTMLInputElement;
+      const sizeMl = parseInt(target.getAttribute('data-size-ml') || '0');
+      
+      const event = new CustomEvent('size:change', {
+        detail: { sizeMl }
+      });
+      window.dispatchEvent(event);
+    });
+  });
+</script>
+
+<style>
+  .size-selector {
+    border: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .size-selector-label {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .size-selector-options {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .size-option {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 20px;
+    background-color: var(--color-surface-container);
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all var(--transition-duration) var(--transition-easing);
+    min-width: 80px;
+  }
+
+  .size-option:hover:not(.size-option--unavailable) {
+    border-color: var(--color-primary);
+  }
+
+  .size-option--selected {
+    border-color: var(--color-primary);
+    background-color: rgba(197, 160, 89, 0.1);
+  }
+
+  .size-option--unavailable {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .size-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .size-option input[type="radio"]:focus-visible + .size-option-content {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    border-radius: var(--border-radius);
+  }
+
+  .size-option-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .size-option-ml {
+    font-family: var(--font-family);
+    font-size: var(--font-headline-md-size);
+    font-weight: var(--font-headline-md-weight);
+    line-height: var(--font-headline-md-line-height);
+    letter-spacing: var(--font-headline-md-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+  }
+
+  .size-option-price {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-primary);
+  }
+
+  .size-option-stock {
+    margin-top: 4px;
+  }
+
+  .size-option--unavailable .size-option-ml,
+  .size-option--unavailable .size-option-price {
+    color: var(--color-on-surface-variant);
+  }
+</style>

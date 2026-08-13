@@ -1,0 +1,254 @@
+{
+  "perfumes": [
+    {
+      "id": "tobacco-vanille",
+      "slug": "tobacco-vanille",
+      "brand": "Tom Ford",
+      "name": "Tobacco Vanille",
+      "gender": "unisex",
+      "olfactoryFamily": "Amaderada Especiada",
+      "description": "Una fragancia icónica y opulenta que evoca el calor de una pipa de tabaco y la dulzura de la vainilla. Rica, cálida e inolvidable, Tobacco Vanille es la esencia del lujo moderno.",
+      "notes": {
+        "top": ["Tabaco", "Especias"],
+        "heart": ["Vainilla", "Cacao", "Tonka"],
+        "base": ["Madera", "Frutos Secos"]
+      },
+      "images": [
+        { "src": "/images/perfumes/tobacco-vanille-1.jpg", "alt": "Tom Ford Tobacco Vanille - Vista frontal del frasco" },
+        { "src": "/images/perfumes/tobacco-vanille-2.jpg", "alt": "Tom Ford Tobacco Vanille - Detalle del atomizador" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 15000, "stock": 5 },
+        { "ml": 5, "price": 32000, "stock": 2 },
+        { "ml": 10, "price": 55000, "stock": 0 }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": true
+    },
+    {
+      "id": "baccarat-rouge-540",
+      "slug": "baccarat-rouge-540",
+      "brand": "Maison Francis Kurkdjian",
+      "name": "Baccarat Rouge 540",
+      "gender": "unisex",
+      "olfactoryFamily": "Ambarina Floral",
+      "description": "Una alquimia luminosa y sofisticada. El azafrán y el jazmín se funden con ámbar gris y madera de cedro para crear una estela radiante y magnética.",
+      "notes": {
+        "top": ["Azafrán", "Jazmín"],
+        "heart": ["Ámbar Gris", "Madera de Cedro"],
+        "base": ["Resina de Abeto", "Musgo de Roble"]
+      },
+      "images": [
+        { "src": "/images/perfumes/baccarat-rouge-540-1.jpg", "alt": "MFK Baccarat Rouge 540 - Frasco rojo icónico" },
+        { "src": "/images/perfumes/baccarat-rouge-540-2.jpg", "alt": "MFK Baccarat Rouge 540 - Detalle de la caja" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 18000, "stock": 8 },
+        { "ml": 5, "price": 42000, "stock": 3 },
+        { "ml": 10, "price": 75000, "stock": 1 }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": true
+    },
+    {
+      "id": "aventus",
+      "slug": "aventus",
+      "brand": "Creed",
+      "name": "Aventus",
+      "gender": "masculino",
+      "olfactoryFamily": "Chypre Frutal",
+      "description": "El epítome del éxito y la masculinidad. Piña negra, bergamota y grosella negra se abren a un corazón de abedul y pachulí, cerrando con musgo de roble y vainilla.",
+      "notes": {
+        "top": ["Piña Negra", "Bergamota", "Grosella Negra", "Manzana"],
+        "heart": ["Abedul", "Pachulí", "Jazmín de Marruecos", "Rosa"],
+        "base": ["Musgo de Roble", "Vainilla", "Ámbar Gris", "Almizcle"]
+      },
+      "images": [
+        { "src": "/images/perfumes/aventus-1.jpg", "alt": "Creed Aventus - Frasco plateado con detalles dorados" },
+        { "src": "/images/perfumes/aventus-2.jpg", "alt": "Creed Aventus - Vista lateral del frasco" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 16000, "stock": 6 },
+        { "ml": 5, "price": 35000, "stock": 4 },
+        { "ml": 10, "price": 62000, "stock": 2 }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": true
+    },
+    {
+      "id": "lost-cherry",
+      "slug": "lost-cherry",
+      "brand": "Tom Ford",
+      "name": "Lost Cherry",
+      "gender": "unisex",
+      "olfactoryFamily": "Floral Frutal Gourmand",
+      "description": "Una indulgencia prohibida. Cereza negra, licor de cereza y almendra amarga crean una apertura embriagadora, mientras que la rosa turca y el jazmín sambac revelan un corazón floral opulento.",
+      "notes": {
+        "top": ["Cereza Negra", "Licor de Cereza", "Almendra Amarga"],
+        "heart": ["Rosa Turca", "Jazmín Sambac", "Ciruela"],
+        "base": ["Vainilla", "Haba Tonka", "Sándalo", "Cedro", "Vetiver"]
+      },
+      "images": [
+        { "src": "/images/perfumes/lost-cherry-1.jpg", "alt": "Tom Ford Lost Cherry - Frasco rojo intenso" },
+        { "src": "/images/perfumes/lost-cherry-2.jpg", "alt": "Tom Ford Lost Cherry - Detalle de la tapa" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 17000, "stock": 3 },
+        { "ml": 5, "price": 38000, "stock": 1 },
+        { "ml": 10, "price": 68000, "stock": 0 }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    },
+    {
+      "id": "santal-33",
+      "slug": "santal-33",
+      "brand": "Le Labo",
+      "name": "Santal 33",
+      "gender": "unisex",
+      "olfactoryFamily": "Amaderada Especiada",
+      "description": "Un clásico de culto. Sándalo australiano, cardamomo y cuero crean una firma olfativa inconfundible: ahumada, cremosa y profundamente adictiva.",
+      "notes": {
+        "top": ["Cardamomo", "Violeta", "Iris"],
+        "heart": ["Sándalo Australiano", "Papiro", "Rosa"],
+        "base": ["Cuero", "Cedro", "Ámbar", "Musgo"]
+      },
+      "images": [
+        { "src": "/images/perfumes/santal-33-1.jpg", "alt": "Le Labo Santal 33 - Frasco minimalista etiquetado a mano" },
+        { "src": "/images/perfumes/santal-33-2.jpg", "alt": "Le Labo Santal 33 - Detalle de la etiqueta personalizada" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 14000, "stock": 7 },
+        { "ml": 5, "price": 30000, "stock": 5 },
+        { "ml": 10, "price": 52000, "stock": 3 }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": true
+    },
+    {
+      "id": "gypsy-water",
+      "slug": "gypsy-water",
+      "brand": "Byredo",
+      "name": "Gypsy Water",
+      "gender": "unisex",
+      "olfactoryFamily": "Amaderada Aromática",
+      "description": "Una oda a la cultura romaní. Bergamota, limón y pimienta se entrelazan con incienso, piña y sándalo para evocar noches de fogata bajo las estrellas.",
+      "notes": {
+        "top": ["Bergamota", "Limón", "Pimienta", "Eneldo"],
+        "heart": ["Incienso", "Piña", "Jazmín"],
+        "base": ["Sándalo", "Ámbar", "Vainilla", "Almizcle"]
+      },
+      "images": [
+        { "src": "/images/perfumes/gypsy-water-1.jpg", "alt": "Byredo Gypsy Water - Frasco ámbar con tapa negra" },
+        { "src": "/images/perfumes/gypsy-water-2.jpg", "alt": "Byredo Gypsy Water - Vista del empaque" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 13000, "stock": 4 },
+        { "ml": 5, "price": 28000, "stock": 2 },
+        { "ml": 10, "price": 48000, "stock": 0 }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    },
+    {
+      "id": "oud-wood",
+      "slug": "oud-wood",
+      "brand": "Tom Ford",
+      "name": "Oud Wood",
+      "gender": "unisex",
+      "olfactoryFamily": "Amaderada Oriental",
+      "description": "Exótico y refinado. El raro oud se mezcla con palisandro, sándalo y vetiver, suavizado por vainilla y ámbar. Una interpretación moderna y accesible del oud.",
+      "notes": {
+        "top": ["Pimienta Rosa", "Cardamomo", "Palo de Brasil"],
+        "heart": ["Oud", "Palisandro", "Sándalo", "Vetiver"],
+        "base": ["Vainilla", "Ámbar", "Haba Tonka"]
+      },
+      "images": [
+        { "src": "/images/perfumes/oud-wood-1.jpg", "alt": "Tom Ford Oud Wood - Frasco marrón oscuro" },
+        { "src": "/images/perfumes/oud-wood-2.jpg", "alt": "Tom Ford Oud Wood - Detalle del atomizador dorado" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 16000, "stock": 5 },
+        { "ml": 5, "price": 34000, "stock": 3 },
+        { "ml": 10, "price": 58000, "stock": 1 }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    },
+    {
+      "id": "la-vie-est-belle",
+      "slug": "la-vie-est-belle",
+      "brand": "Lancôme",
+      "name": "La Vie Est Belle",
+      "gender": "femenino",
+      "olfactoryFamily": "Floral Frutal Gourmand",
+      "description": "Una declaración de felicidad. Íris, jazmín y flor de azahar se endulzan con pera, grosella y vainilla. Femenina, radiante y universalmente amada.",
+      "notes": {
+        "top": ["Pera", "Grosella Negra", "Bergamota"],
+        "heart": ["Íris", "Jazmín", "Flor de Azahar"],
+        "base": ["Vainilla", "Praliné", "Haba Tonka", "Pachulí"]
+      },
+      "images": [
+        { "src": "/images/perfumes/la-vie-est-belle-1.jpg", "alt": "Lancôme La Vie Est Belle - Frasco con lazo cristalino" },
+        { "src": "/images/perfumes/la-vie-est-belle-2.jpg", "alt": "Lancôme La Vie Est Belle - Detalle del lazo" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 12000, "stock": 10 },
+        { "ml": 5, "price": 25000, "stock": 8 },
+        { "ml": 10, "price": 42000, "stock": 5 }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    },
+    {
+      "id": "sauvage",
+      "slug": "sauvage",
+      "brand": "Dior",
+      "name": "Sauvage",
+      "gender": "masculino",
+      "olfactoryFamily": "Aromática Fougère",
+      "description": "Frescura radical y nobleza. Bergamota de Calabria, pimienta de Sichuan y lavanda se funden con ambroxan y cedro. Poderosa, cruda y auténtica.",
+      "notes": {
+        "top": ["Bergamota de Calabria", "Pimienta de Sichuan"],
+        "heart": ["Lavanda", "Pimienta Rosa", "Vetiver", "Pachulí", "Geranio", "Elemí"],
+        "base": ["Ambroxan", "Cedro", "Ládano"]
+      },
+      "images": [
+        { "src": "/images/perfumes/sauvage-1.jpg", "alt": "Dior Sauvage - Frasco azul oscuro con degradado" },
+        { "src": "/images/perfumes/sauvage-2.jpg", "alt": "Dior Sauvage - Detalle de la tapa magnética" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 11000, "stock": 12 },
+        { "ml": 5, "price": 24000, "stock": 9 },
+        { "ml": 10, "price": 40000, "stock": 6 }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": true
+    },
+    {
+      "id": "delina",
+      "slug": "delina",
+      "brand": "Parfums de Marly",
+      "name": "Delina",
+      "gender": "femenino",
+      "olfactoryFamily": "Floral Frutal",
+      "description": "Romántica y sensual. Lichi, pera y bergamota abren paso a un corazón de rosa turca, peonía y vainilla. Un bouquet floral moderno con estela duradera.",
+      "notes": {
+        "top": ["Lichi", "Pera", "Bergamota", "Pomelo"],
+        "heart": ["Rosa Turca", "Peonía", "Vainilla", "Incienso"],
+        "base": ["Almizcle", "Vetiver", "Cashmeran", "Madera de Cachemira"]
+      },
+      "images": [
+        { "src": "/images/perfumes/delina-1.jpg", "alt": "Parfums de Marly Delina - Frasco rosa con detalles dorados" },
+        { "src": "/images/perfumes/delina-2.jpg", "alt": "Parfums de Marly Delina - Vista del empaque rosa" }
+      ],
+      "sizes": [
+        { "ml": 2, "price": 15000, "stock": 4 },
+        { "ml": 5, "price": 33000, "stock": 2 },
+        { "ml": 10, "price": 58000, "stock": 0 }
+      ],
+      "isBoutiqueExclusive": true,
+      "featured": false
+    }
+  ]
+}

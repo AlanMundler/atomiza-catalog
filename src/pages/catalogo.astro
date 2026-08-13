@@ -1,0 +1,170 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Filters from '@/components/catalog/Filters.astro';
+import Search from '@/components/catalog/Search.astro';
+import ProductGrid from '@/components/catalog/ProductGrid.astro';
+import { filterPerfumes, searchPerfumes } from '@/utils/filters';
+import type { Perfume, GenderFilter } from '@/data/types';
+import perfumesData from '@/data/perfumes.json';
+
+const allPerfumes: Perfume[] = perfumesData.perfumes;
+
+// Get filter and search from URL params
+const url = new URL(Astro.request.url);
+const filterParam = url.searchParams.get('filter') as GenderFilter | null;
+const searchParam = url.searchParams.get('search') || '';
+
+const currentFilter: GenderFilter = filterParam || 'all';
+const currentSearch = searchParam;
+
+const filteredPerfumes = searchPerfumes(filterPerfumes(allPerfumes, currentFilter), currentSearch);
+---
+
+<Layout title="Catálogo - ATOMIZA" description="Explora nuestro catálogo de perfumes de nicho y diseñador. Filtra por género y busca tus fragancias favoritas.">
+  <section class="catalog-hero" aria-labelledby="catalog-title">
+    <div class="container">
+      <h1 id="catalog-title" class="catalog-title">Catálogo</h1>
+      <p class="catalog-subtitle">Descubre nuestra selección curada de fragancias de autor</p>
+    </div>
+  </section>
+
+  <section class="catalog-toolbar" aria-label="Filtros y búsqueda">
+    <div class="container">
+      <div class="toolbar-content">
+        <div class="toolbar-filters">
+          <Filters currentFilter={currentFilter} onFilterChange={() => {}} />
+        </div>
+        <div class="toolbar-search">
+          <Search />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="catalog-results" aria-label="Resultados del catálogo">
+    <div class="container">
+      <div class="results-header">
+        <p class="results-count">
+          {filteredPerfumes.length} {filteredPerfumes.length === 1 ? 'perfume' : 'perfumes'} encontrado{filteredPerfumes.length !== 1 ? 's' : ''}
+          {currentFilter !== 'all' && <span> en {currentFilter}</span>}
+          {currentSearch && <span> para "{currentSearch}"</span>}
+        </p>
+      </div>
+      <ProductGrid perfumes={filteredPerfumes} />
+    </div>
+  </section>
+</Layout>
+
+<script>
+  // Handle filter changes
+  window.addEventListener('filter:change', (e: CustomEvent) => {
+    const { filter } = e.detail;
+    const url = new URL(window.location.href);
+    url.searchParams.set('filter', filter);
+    url.searchParams.delete('page'); // Reset pagination
+    window.history.pushState({}, '', url);
+    // In a real SPA, we'd update without reload
+    window.location.reload();
+  });
+
+  // Handle search changes
+  window.addEventListener('search:change', (e: CustomEvent) => {
+    const { query } = e.detail;
+    const url = new URL(window.location.href);
+    if (query) {
+      url.searchParams.set('search', query);
+    } else {
+      url.searchParams.delete('search');
+    }
+    url.searchParams.delete('page');
+    window.history.pushState({}, '', url);
+    window.location.reload();
+  });
+</script>
+
+<style>
+  .catalog-hero {
+    padding: var(--spacing-stack-lg) 0 var(--spacing-stack-md);
+    text-align: center;
+  }
+
+  .catalog-title {
+    font-family: var(--font-family);
+    font-size: var(--font-display-lg-size);
+    font-weight: var(--font-display-lg-weight);
+    line-height: var(--font-display-lg-line-height);
+    letter-spacing: var(--font-display-lg-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    margin: 0 0 var(--spacing-stack-sm);
+  }
+
+  @media (max-width: 640px) {
+    .catalog-title {
+      font-size: 48px;
+    }
+  }
+
+  .catalog-subtitle {
+    font-family: var(--font-family);
+    font-size: var(--font-body-lg-size);
+    font-weight: var(--font-body-lg-weight);
+    line-height: var(--font-body-lg-line-height);
+    letter-spacing: var(--font-body-lg-tracking);
+    color: var(--color-on-surface-variant);
+    margin: 0;
+  }
+
+  .catalog-toolbar {
+    padding: var(--spacing-stack-md) 0;
+    border-top: var(--border-width) solid var(--color-outline-variant);
+    border-bottom: var(--border-width) solid var(--color-outline-variant);
+    position: sticky;
+    top: 72px;
+    z-index: 50;
+    background-color: var(--color-background);
+  }
+
+  .toolbar-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-stack-sm);
+    align-items: center;
+  }
+
+  @media (min-width: 768px) {
+    .toolbar-content {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+
+  .toolbar-filters {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .toolbar-search {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .catalog-results {
+    padding: var(--spacing-stack-lg) 0;
+  }
+
+  .results-header {
+    margin-bottom: var(--spacing-stack-md);
+  }
+
+  .results-count {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+    margin: 0;
+  }
+</style>

@@ -1,0 +1,154 @@
+---
+interface Props {
+  isOpen: boolean;
+  title?: string;
+  class?: string;
+  onClose: () => void;
+  children: any;
+}
+
+const { isOpen, title, class: className = '', onClose, children } = Astro.props;
+---
+
+{isOpen && (
+  <>
+    <div 
+      class="modal-backdrop" 
+      role="presentation"
+      aria-hidden="true"
+    ></div>
+    <dialog 
+      class={`modal ${className}`}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={title ? 'modal-title' : undefined}
+      open
+    >
+      {title && <h2 id="modal-title" class="modal-title">{title}</h2>}
+      <button 
+        class="modal-close" 
+        onclick={onClose}
+        aria-label="Cerrar modal"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <div class="modal-content">
+        <slot>{children}</slot>
+      </div>
+    </dialog>
+  </>
+)}
+
+<script>
+  const modal = document.querySelector('.modal');
+  const backdrop = document.querySelector('.modal-backdrop');
+  
+  if (modal && backdrop) {
+    const closeModal = () => {
+      modal.close();
+      document.body.style.overflow = '';
+    };
+
+    backdrop.addEventListener('click', closeModal);
+    modal.addEventListener('close', () => {
+      document.body.style.overflow = '';
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.open) {
+        closeModal();
+      }
+    });
+
+    // Prevent body scroll when modal is open
+    document.body.style.overflow = 'hidden';
+  }
+</script>
+
+<style>
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+    animation: fade-in var(--transition-duration) var(--transition-easing);
+  }
+
+  .modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--color-surface-container);
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: var(--border-radius);
+    padding: 0;
+    max-width: 90vw;
+    max-height: 90vh;
+    width: 500px;
+    z-index: 1000;
+    overflow: hidden;
+    animation: slide-up var(--transition-duration) var(--transition-easing);
+  }
+
+  .modal::backdrop {
+    display: none;
+  }
+
+  .modal-title {
+    font-family: var(--font-family);
+    font-size: var(--font-headline-md-size);
+    font-weight: var(--font-headline-md-weight);
+    line-height: var(--font-headline-md-line-height);
+    letter-spacing: var(--font-headline-md-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    padding: 24px 24px 0;
+    margin: 0;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-on-surface-variant);
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all var(--transition-duration) var(--transition-easing);
+    z-index: 1;
+  }
+
+  .modal-close:hover {
+    color: var(--color-primary);
+    background-color: var(--color-surface-container-high);
+  }
+
+  .modal-close:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .modal-content {
+    padding: 24px;
+    overflow-y: auto;
+    max-height: calc(90vh - 80px);
+  }
+
+  @media (max-width: 640px) {
+    .modal {
+      width: calc(100vw - 40px);
+      max-width: none;
+    }
+  }
+</style>

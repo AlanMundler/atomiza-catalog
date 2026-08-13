@@ -1,0 +1,42 @@
+---
+import Input from '@/components/ui/Input.astro';
+---
+
+<div class="search" role="search" aria-label="Buscar perfumes">
+  <Input
+    type="search"
+    placeholder="Buscar perfume o marca..."
+    aria-label="Buscar perfume o marca"
+    data-search-input
+    class="search-input"
+  />
+</div>
+
+<script>
+  const searchInput = document.querySelector('[data-search-input]') as HTMLInputElement;
+  let debounceTimer: number;
+
+  searchInput?.addEventListener('input', (e) => {
+    const target = e.target as HTMLInputElement;
+    const value = target.value.trim();
+    
+    clearTimeout(debounceTimer);
+    debounceTimer = window.setTimeout(() => {
+      const event = new CustomEvent('search:change', {
+        detail: { query: value }
+      });
+      window.dispatchEvent(event);
+    }, 300);
+  });
+</script>
+
+<style>
+  .search {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .search-input {
+    width: 100%;
+  }
+</style>
