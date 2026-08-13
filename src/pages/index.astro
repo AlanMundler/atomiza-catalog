@@ -1,16 +1,38 @@
 ---
 import Layout from '@/layouts/Layout.astro';
-import Button from '@/components/ui/Button.astro';
+import ProductCard from '@/components/catalog/ProductCard.astro';
 import perfumesData from '@/data/perfumes.json';
+import { isSizeAvailable } from '@/utils/stock';
 
 const BASE = '/atomiza-catalog/';
 
-// Get featured perfumes from the new stock
+// Perfumes in stock to rotate on the home page
 const allPerfumes = perfumesData.perfumes;
-const featuredPerfumes = allPerfumes.filter(p => p.featured).slice(0, 3);
+const inStockPerfumes = allPerfumes.filter((perfume) => {
+  const primary = perfume.sizes.find((s) => s.ml === 5) || perfume.sizes[0];
+  return primary ? isSizeAvailable(primary) : false;
+});
 ---
 
 <Layout title="ΛTOMIZΛ - Decants de autor" description="Boutique de perfumes de lujo en decants de 5ml. Autenticidad 100% garantizada.">
+  <section class="home-perfumes" aria-labelledby="home-perfumes-title">
+    <div class="container">
+      <div class="home-perfume-head">
+        <h2 id="home-perfumes-title" class="section-title">Perfumes en stock</h2>
+      </div>
+      <div class="home-perfume-grid" id="home-perfume-grid">
+        {inStockPerfumes.map((perfume, index) => (
+          <div class="home-perfume-item" hidden={index >= 3}>
+            <ProductCard perfume={perfume} basePath={BASE} />
+          </div>
+        ))}
+      </div>
+      <div class="home-perfume-cta">
+        <a href={`${BASE}catalogo/`} class="btn btn--secondary btn--lg">Ver todo el catálogo</a>
+      </div>
+    </div>
+  </section>
+
   <section class="hero" aria-labelledby="hero-title">
     <div class="container">
       <h1 id="hero-title" class="hero-title">ΛTOMIZΛ</h1>
@@ -94,39 +116,22 @@ const featuredPerfumes = allPerfumes.filter(p => p.featured).slice(0, 3);
     </div>
   </section>
 
-  <section class="featured" aria-labelledby="featured-title">
-    <div class="container">
-      <h2 id="featured-title" class="section-title">Destacados</h2>
-      <div class="featured-grid">
-        {featuredPerfumes.map((perfume) => (
-          <a href={`${BASE}producto/${perfume.slug}/`} class="featured-card">
-            <div class="featured-card-image">
-              <img src={perfume.images[0]?.src} alt={perfume.name} loading="lazy" width="300" height="300" />
-            </div>
-            <div class="featured-card-info">
-              <span class="featured-card-brand">{perfume.brand}</span>
-              <h3 class="featured-card-name">{perfume.name}</h3>
-            </div>
-          </a>
-        ))}
-      </div>
-      <div class="featured-cta">
-        <a href={`${BASE}catalogo/`} class="btn btn--secondary btn--lg">
-          Ver todo el catálogo
-        </a>
-      </div>
-    </div>
-  </section>
+  <script>
+    // Pick 3 random perfumes from stock on each visit
+    const items = Array.from(document.querySelectorAll('#home-perfume-grid .home-perfume-item'));
+    if (items.length > 3) {
+      const shuffled = items.sort(() => Math.random() - 0.5);
+      shuffled.forEach((item, i) => {
+        item.hidden = i >= 3;
+      });
+    }
+  </script>
 </Layout>
 
 <style>
   .hero {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     text-align: center;
-    padding: var(--spacing-stack-lg) 0;
+    padding: var(--spacing-stack-md) 0 var(--spacing-stack-lg);
   }
 
   .hero-title {
@@ -290,81 +295,31 @@ const featuredPerfumes = allPerfumes.filter(p => p.featured).slice(0, 3);
     margin: 0;
   }
 
-  /* Featured */
-  .featured {
-    padding: var(--spacing-stack-lg) 0;
+  /* Home perfumes (random rotation) */
+  .home-perfumes {
+    padding: 0 0 var(--spacing-stack-lg);
     border-top: var(--border-width) solid var(--color-outline-variant);
   }
 
-  .featured-grid {
+  .home-perfume-head {
+    text-align: center;
+    padding: var(--spacing-stack-lg) 0 0;
+  }
+
+  .home-perfume-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--spacing-stack-md);
+    margin-top: var(--spacing-stack-md);
   }
 
   @media (min-width: 768px) {
-    .featured-grid {
+    .home-perfume-grid {
       grid-template-columns: repeat(3, 1fr);
     }
   }
 
-  .featured-card {
-    display: block;
-    text-decoration: none;
-    color: inherit;
-    background-color: var(--color-surface-container);
-    border: var(--border-width) solid var(--color-outline-variant);
-    border-radius: var(--border-radius);
-    overflow: hidden;
-    transition: all var(--transition-duration) var(--transition-easing);
-  }
-
-  .featured-card:hover {
-    border-color: var(--color-primary);
-    transform: translateY(-4px);
-  }
-
-  .featured-card-image {
-    aspect-ratio: 3 / 4;
-    overflow: hidden;
-    background-color: var(--color-surface-container-high);
-  }
-
-  .featured-card-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 400ms var(--transition-easing);
-  }
-
-  .featured-card:hover .featured-card-image img {
-    transform: scale(1.05);
-  }
-
-  .featured-card-info {
-    padding: 16px;
-  }
-
-  .featured-card-brand {
-    font-family: var(--font-family);
-    font-size: var(--font-label-sm-size);
-    font-weight: var(--font-label-sm-weight);
-    letter-spacing: var(--font-label-sm-tracking);
-    text-transform: uppercase;
-    color: var(--color-on-surface-variant);
-    display: block;
-    margin-bottom: 4px;
-  }
-
-  .featured-card-name {
-    font-family: var(--font-family);
-    font-size: var(--font-body-md-size);
-    font-weight: var(--font-body-md-weight);
-    color: var(--color-on-surface);
-    margin: 0;
-  }
-
-  .featured-cta {
+  .home-perfume-cta {
     text-align: center;
     margin-top: var(--spacing-stack-md);
   }

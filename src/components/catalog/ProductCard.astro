@@ -44,7 +44,7 @@ const isOutOfStock = stockStatus === 'out-of-stock';
   <div class="product-card-info">
     <span class="product-card-brand">{perfume.brand}</span>
     <h3 class="product-card-name">{perfume.name}</h3>
-    <span class="product-card-price">Desde {primarySize ? `${primarySize.price.toLocaleString('es-AR')}` : '—'} ARS</span>
+    <span class="product-card-price">{primarySize ? `${primarySize.price.toLocaleString('es-AR')}` : '—'} ARS</span>
   </div>
 </a>
 
