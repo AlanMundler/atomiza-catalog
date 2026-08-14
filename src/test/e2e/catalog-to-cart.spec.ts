@@ -21,6 +21,11 @@ test.describe('Catalog to Cart Flow', () => {
     }
     await expect(page).toHaveURL(/\/catalogo/);
     await expect(page.locator('h1')).toContainText('Catálogo');
+
+    // Regression: filters must work after a client-side (SPA) navigation
+    await page.click('button[data-filter="masculino"]');
+    await expect(page).toHaveURL(/filter=masculino/);
+    await expect(page.locator('.product-card:visible').first()).toBeVisible();
   });
 
   test('should filter catalog by gender', async ({ page }) => {
@@ -82,19 +87,28 @@ test.describe('Catalog to Cart Flow', () => {
     await expect(page.locator('h1')).toBeVisible();
   });
 
-  test('should add product to cart', async ({ page }) => {
-    await page.goto(PRODUCT);
+  test('should add product to cart after client-side navigation', async ({ page }) => {
+    // Navigate catalog -> product via SPA transition (no full reload)
+    await page.goto(CATALOG);
     await page.waitForLoadState('networkidle');
+    await page.locator('.product-card').first().click();
+    await page.waitForTimeout(1000);
+    await expect(page).toHaveURL(/\/producto\//);
+    const slug = page.url().match(/producto\/([^/]+)\//)?.[1] ?? '';
 
     await page.click('[data-add-to-cart]');
-    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(600);
 
     const cart = await page.evaluate(() =>
       JSON.parse(localStorage.getItem('atomiza-cart') || '{"items":[]}')
     );
     expect(cart.items).toHaveLength(1);
-    expect(cart.items[0].perfumeId).toBe('baroque-rouge-540');
+    expect(cart.items[0].perfumeId).toBe(slug);
     expect(cart.items[0].size.ml).toBe(5);
+
+    // Regression: cart drawer must open after the add and show the item
+    await expect(page.locator('#cart-drawer .drawer--open')).toBeVisible();
+    await expect(page.locator('#cart-content .cart-item')).toHaveCount(1);
   });
 });
 

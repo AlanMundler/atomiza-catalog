@@ -12,7 +12,9 @@ export function onPageLoad(key: string, cb: () => void): void {
   if ((window as any)[registeredKey]) return;
   (window as any)[registeredKey] = true;
 
-  window.addEventListener('astro:page-load', cb);
+  // Astro's ClientRouter dispatches `astro:page-load` on `document`,
+  // not on `window` (see astro/dist/transitions/events.js).
+  document.addEventListener('astro:page-load', cb);
 
   if (document.readyState === 'loading') {
     window.addEventListener('DOMContentLoaded', cb);
