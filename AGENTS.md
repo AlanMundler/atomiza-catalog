@@ -8,6 +8,26 @@ astro dev --background
 
 Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
 
+## Stock manual (importante)
+
+El stock se maneja **manualmente** editando `src/data/perfumes.json`, campo `stock` de la talla de cada perfume (todas las tallas son de 5 ml).
+
+Los tres estados preconfigurados (etiquetas y colores viven en `src/utils/stock.ts` y `src/components/ui/Chip.astro`):
+
+- **EN STOCK** (verde `#8dba7d`): `stock >= 5`
+- **POCO STOCK** (amarillo `#c5a059`): `stock` entre 1 y 4
+- **SIN STOCK** (gris `#333333`): `stock = 0`
+
+### Convención con el usuario
+
+Cuando el usuario dice **"(perfume) esta en (estado)"**, por ejemplo "qaed-al-fursan-untamed esta en poco stock", cambiar el `stock` de ese perfume en `perfumes.json` al rango del estado pedido:
+
+- `en stock` → `stock: 10`
+- `poco stock` → `stock: 3`
+- `sin stock` → `stock: 0`
+
+Luego correr tests (`npm test`), `npm run lint` (`astro check`), `npm run build` y hacer commit + push (deploy automático a GitHub Pages).
+
 ## Documentation
 
 Full documentation: https://docs.astro.build

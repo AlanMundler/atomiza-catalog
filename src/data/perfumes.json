@@ -38,7 +38,7 @@
         {
           "ml": 5,
           "price": 6000,
-          "stock": 5
+          "stock": 10
         }
       ],
       "isBoutiqueExclusive": false,
@@ -81,7 +81,7 @@
         {
           "ml": 5,
           "price": 6000,
-          "stock": 7
+          "stock": 10
         }
       ],
       "isBoutiqueExclusive": false,
@@ -123,7 +123,7 @@
         {
           "ml": 5,
           "price": 6000,
-          "stock": 8
+          "stock": 10
         }
       ],
       "isBoutiqueExclusive": false,
@@ -164,7 +164,7 @@
         {
           "ml": 5,
           "price": 6000,
-          "stock": 9
+          "stock": 10
         }
       ],
       "isBoutiqueExclusive": false,
@@ -251,7 +251,7 @@
         {
           "ml": 5,
           "price": 6000,
-          "stock": 8
+          "stock": 10
         }
       ],
       "isBoutiqueExclusive": false,
@@ -295,7 +295,7 @@
         {
           "ml": 5,
           "price": 6000,
-          "stock": 5
+          "stock": 10
         }
       ],
       "isBoutiqueExclusive": false,
@@ -336,7 +336,7 @@
         {
           "ml": 5,
           "price": 6000,
-          "stock": 6
+          "stock": 10
         }
       ],
       "isBoutiqueExclusive": false,
@@ -375,7 +375,7 @@
         {
           "ml": 5,
           "price": 6000,
-          "stock": 4
+          "stock": 10
         }
       ],
       "isBoutiqueExclusive": false,
@@ -413,7 +413,7 @@
         {
           "ml": 5,
           "price": 6000,
-          "stock": 7
+          "stock": 10
         }
       ],
       "isBoutiqueExclusive": false,
@@ -451,7 +451,7 @@
         {
           "ml": 5,
           "price": 6000,
-          "stock": 7
+          "stock": 10
         }
       ],
       "isBoutiqueExclusive": false,
@@ -489,7 +489,7 @@
         {
           "ml": 5,
           "price": 6000,
-          "stock": 8
+          "stock": 10
         }
       ],
       "isBoutiqueExclusive": false,
@@ -527,7 +527,7 @@
         {
           "ml": 5,
           "price": 6000,
-          "stock": 5
+          "stock": 10
         }
       ],
       "isBoutiqueExclusive": false,
@@ -564,7 +564,7 @@
         {
           "ml": 5,
           "price": 6000,
-          "stock": 9
+          "stock": 10
         }
       ],
       "isBoutiqueExclusive": false,
@@ -603,7 +603,7 @@
         {
           "ml": 5,
           "price": 6000,
-          "stock": 7
+          "stock": 10
         }
       ],
       "isBoutiqueExclusive": false,
@@ -646,7 +646,7 @@
         {
           "ml": 5,
           "price": 6000,
-          "stock": 4
+          "stock": 10
         }
       ],
       "isBoutiqueExclusive": true,
@@ -685,7 +685,7 @@
         {
           "ml": 5,
           "price": 6000,
-          "stock": 5
+          "stock": 10
         }
       ],
       "isBoutiqueExclusive": true,
@@ -728,7 +728,7 @@
         {
           "ml": 5,
           "price": 6000,
-          "stock": 4
+          "stock": 10
         }
       ],
       "isBoutiqueExclusive": true,
@@ -773,7 +773,7 @@
         {
           "ml": 5,
           "price": 6000,
-          "stock": 6
+          "stock": 10
         }
       ],
       "isBoutiqueExclusive": false,
@@ -817,7 +817,7 @@
         {
           "ml": 5,
           "price": 6000,
-          "stock": 7
+          "stock": 10
         }
       ],
       "isBoutiqueExclusive": false,
@@ -863,7 +863,7 @@
         {
           "ml": 5,
           "price": 6000,
-          "stock": 5
+          "stock": 10
         }
       ],
       "isBoutiqueExclusive": false,
@@ -905,7 +905,7 @@
         {
           "ml": 5,
           "price": 6000,
-          "stock": 8
+          "stock": 10
         }
       ],
       "isBoutiqueExclusive": false,
@@ -946,7 +946,7 @@
         {
           "ml": 5,
           "price": 6000,
-          "stock": 5
+          "stock": 10
         }
       ],
       "isBoutiqueExclusive": false,
@@ -985,7 +985,7 @@
         {
           "ml": 5,
           "price": 6000,
-          "stock": 5
+          "stock": 10
         }
       ],
       "isBoutiqueExclusive": true,
@@ -1023,7 +1023,7 @@
         {
           "ml": 5,
           "price": 6000,
-          "stock": 4
+          "stock": 10
         }
       ],
       "isBoutiqueExclusive": true,
@@ -1061,7 +1061,7 @@
         {
           "ml": 5,
           "price": 6000,
-          "stock": 4
+          "stock": 10
         }
       ],
       "isBoutiqueExclusive": true,
@@ -1137,7 +1137,7 @@
         {
           "ml": 5,
           "price": 6000,
-          "stock": 6
+          "stock": 10
         }
       ],
       "isBoutiqueExclusive": false,
@@ -1175,7 +1175,7 @@
         {
           "ml": 5,
           "price": 6000,
-          "stock": 8
+          "stock": 10
         }
       ],
       "isBoutiqueExclusive": false,
@@ -1212,7 +1212,7 @@
         {
           "ml": 5,
           "price": 6000,
-          "stock": 8
+          "stock": 10
         }
       ],
       "isBoutiqueExclusive": false,
@@ -1255,7 +1255,7 @@
         {
           "ml": 5,
           "price": 10000,
-          "stock": 6
+          "stock": 10
         }
       ],
       "isBoutiqueExclusive": false,

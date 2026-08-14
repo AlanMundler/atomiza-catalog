@@ -5,12 +5,11 @@ import { getStockStatus, getStockLabel, isSizeAvailable } from '@/utils/stock';
 import type { PerfumeSize } from '@/data/types';
 
 interface Props {
-  perfumeId: string;
   sizes: PerfumeSize[];
   selectedSize: PerfumeSize;
 }
 
-const { perfumeId, sizes, selectedSize } = Astro.props;
+const { sizes, selectedSize } = Astro.props;
 ---
 
 <fieldset class="size-selector" role="radiogroup" aria-label="Seleccionar tamaño">
@@ -25,8 +24,6 @@ const { perfumeId, sizes, selectedSize } = Astro.props;
       return (
         <label
           class={`size-option ${isSelected ? 'size-option--selected' : ''} ${!available ? 'size-option--unavailable' : ''}`}
-          data-stock-id={perfumeId}
-          data-stock-ml={size.ml}
         >
           <input
             type="radio"
