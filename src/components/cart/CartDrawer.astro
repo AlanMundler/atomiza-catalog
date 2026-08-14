@@ -104,15 +104,17 @@ import Drawer from '@/components/ui/Drawer.astro';
     return `
       <li class="cart-item" data-perfume-id="${item.perfumeId}" data-size-ml="${size.ml}">
         <div class="cart-item-image">
-          <img src="${image}" alt="${brand} ${name}" loading="lazy" width="60" height="60" />
+          <img src="${image}" alt="${brand} ${name}" loading="lazy" width="64" height="64" />
         </div>
-        <div class="cart-item-details">
+        <div class="cart-item-info">
           <div class="cart-item-brand">${brand}</div>
           <div class="cart-item-name">${name}</div>
           <div class="cart-item-meta">
             <span class="cart-item-size">${size.ml}ml</span>
             <span class="cart-item-price">${formatPrice(size.price)}</span>
           </div>
+        </div>
+        <div class="cart-item-controls">
           <div class="cart-item-quantity">
             <button type="button" class="quantity-btn quantity-btn--decrease" data-action="decrease" aria-label="Disminuir cantidad" ${item.quantity <= 1 ? 'disabled' : ''}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -127,15 +129,15 @@ import Drawer from '@/components/ui/Drawer.astro';
               </svg>
             </button>
           </div>
-        </div>
-        <div class="cart-item-total">
-          <span class="cart-item-line-total">${formatPrice(lineTotal)}</span>
-          <button type="button" class="cart-item-remove" data-action="remove" aria-label="Eliminar del carrito">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
+          <div class="cart-item-total">
+            <span class="cart-item-line-total">${formatPrice(lineTotal)}</span>
+            <button type="button" class="cart-item-remove" data-action="remove" aria-label="Eliminar del carrito">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
         </div>
       </li>
     `;
@@ -333,16 +335,16 @@ import Drawer from '@/components/ui/Drawer.astro';
   /* Cart item */
   .cart-item {
     display: grid;
-    grid-template-columns: 60px 1fr auto;
+    grid-template-columns: 64px minmax(0, 1fr) auto;
     gap: 16px;
-    padding: 12px 0;
+    padding: 16px 0;
     border-bottom: var(--border-width) solid var(--color-outline-variant);
-    align-items: center;
+    align-items: start;
   }
 
   .cart-item-image {
-    width: 60px;
-    height: 60px;
+    width: 64px;
+    height: 64px;
     border-radius: var(--border-radius);
     overflow: hidden;
     flex-shrink: 0;
@@ -354,7 +356,7 @@ import Drawer from '@/components/ui/Drawer.astro';
     object-fit: cover;
   }
 
-  .cart-item-details {
+  .cart-item-info {
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -395,6 +397,9 @@ import Drawer from '@/components/ui/Drawer.astro';
     letter-spacing: var(--font-label-sm-tracking);
     text-transform: uppercase;
     color: var(--color-primary);
+    background-color: var(--color-primary-container);
+    padding: 2px 8px;
+    border-radius: 999px;
   }
 
   .cart-item-price {
@@ -403,11 +408,21 @@ import Drawer from '@/components/ui/Drawer.astro';
     color: var(--color-on-surface-variant);
   }
 
+  .cart-item-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+  }
+
   .cart-item-quantity {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-top: 8px;
+    background-color: var(--color-surface-container-high);
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: var(--border-radius);
+    padding: 4px;
   }
 
   .quantity-btn {
@@ -417,8 +432,8 @@ import Drawer from '@/components/ui/Drawer.astro';
     align-items: center;
     justify-content: center;
     color: var(--color-on-surface);
-    background: var(--color-surface-container-high);
-    border: var(--border-width) solid var(--color-outline-variant);
+    background: transparent;
+    border: none;
     border-radius: var(--border-radius);
     cursor: pointer;
     transition: all var(--transition-duration) var(--transition-easing);
@@ -426,7 +441,7 @@ import Drawer from '@/components/ui/Drawer.astro';
 
   .quantity-btn:hover:not(:disabled) {
     color: var(--color-primary);
-    border-color: var(--color-primary);
+    background-color: var(--color-surface-container-highest);
   }
 
   .quantity-btn:disabled {
@@ -450,8 +465,7 @@ import Drawer from '@/components/ui/Drawer.astro';
 
   .cart-item-total {
     display: flex;
-    flex-direction: column;
-    align-items: flex-end;
+    align-items: center;
     gap: 8px;
   }
 
@@ -463,8 +477,8 @@ import Drawer from '@/components/ui/Drawer.astro';
   }
 
   .cart-item-remove {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -488,20 +502,16 @@ import Drawer from '@/components/ui/Drawer.astro';
 
   @media (max-width: 480px) {
     .cart-item {
-      grid-template-columns: 50px 1fr;
-      grid-template-rows: auto auto;
+      grid-template-columns: 56px minmax(0, 1fr);
+      gap: 12px;
     }
 
-    .cart-item-total {
-      grid-column: 2;
+    .cart-item-controls {
+      grid-column: 1 / -1;
       flex-direction: row;
       justify-content: space-between;
       align-items: center;
-      width: 100%;
-    }
-
-    .cart-item-quantity {
-      grid-column: 1 / -1;
+      margin-left: 68px;
     }
   }
 
