@@ -99,12 +99,6 @@ describe('filters utilities', () => {
       expect(result).toHaveLength(2);
       expect(result.map(p => p.id).sort()).toEqual(['baccarat-rouge-540', 'tobacco-vanille']);
     });
-
-    it('filters by boutique exclusives', () => {
-      const result = filterPerfumes(mockPerfumes, 'boutique');
-      expect(result).toHaveLength(1);
-      expect(result[0].id).toBe('delina');
-    });
   });
 
   describe('searchPerfumes', () => {

@@ -20,7 +20,7 @@ export interface Perfume {
   slug: string;
   brand: string;
   name: string;
-  gender: 'masculino' | 'femenino' | 'unisex' | 'boutique';
+  gender: 'masculino' | 'femenino' | 'unisex';
   olfactoryFamily: string;
   description: string;
   notes: PerfumeNotes;
@@ -53,4 +53,4 @@ export interface OrderSummary {
   itemCount: number;
 }
 
-export type GenderFilter = 'all' | 'masculino' | 'femenino' | 'unisex' | 'boutique';
+export type GenderFilter = 'all' | 'masculino' | 'femenino' | 'unisex';

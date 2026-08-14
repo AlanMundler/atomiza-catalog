@@ -5,7 +5,7 @@
       "slug": "luminous-sahara",
       "brand": "Maison Alhambra",
       "name": "Luminous Sahara",
-      "gender": "unisex",
+      "gender": "masculino",
       "olfactoryFamily": "Cítrico Dulce Amaderado",
       "description": "Inspirado en Althaïr de Parfums de Marly. Un cítrico dulce y envolvente: flor de azahar, cardamomo y canela que desembocan en una vainilla cremosa con almendras acarameladas y praliné sobre un fondo ambarado y almizclado.",
       "notes": {
@@ -49,7 +49,7 @@
       "slug": "hercules",
       "brand": "Maison Alhambra",
       "name": "Hercules",
-      "gender": "unisex",
+      "gender": "masculino",
       "olfactoryFamily": "Tabaco Amaderado",
       "description": "Inspirado en Herod de Parfums de Marly. Tabaco, incienso y ládano sobre una base de vainilla, cedro y vetiver. Cálido, especiado y balsámico con un toque de canela.",
       "notes": {
@@ -221,7 +221,7 @@
       "slug": "glacier-ultra",
       "brand": "Maison Alhambra",
       "name": "Glacier Ultra",
-      "gender": "unisex",
+      "gender": "masculino",
       "olfactoryFamily": "Cálido Especiado",
       "description": "Inspirado en Ultra Male de Jean Paul Gaultier. Canela, pimienta y lima sobre lavanda y pachulí, con un fondo dulce de vainilla, ámbar y cedro. Potente, cálido y adictivo.",
       "notes": {
@@ -386,7 +386,7 @@
       "slug": "glacier-bold",
       "brand": "Maison Alhambra",
       "name": "Glacier Bold",
-      "gender": "unisex",
+      "gender": "masculino",
       "olfactoryFamily": "Coco Dulce",
       "description": "Inspirado en Le Beau de Jean Paul Gaultier. Coco cremoso con haba tonka y bergamota. Dulce, cálido y tropical, ideal para el día.",
       "notes": {
@@ -424,7 +424,7 @@
       "slug": "your-touch-intense",
       "brand": "Maison Alhambra",
       "name": "Your Touch Intense",
-      "gender": "unisex",
+      "gender": "masculino",
       "olfactoryFamily": "Gourmand Dulce",
       "description": "Inspirado en Stronger With You Intensely de Giorgio Armani. Tófe, vainilla y canela con haba tonka, ámbar y pimienta rosa. Dulce, cálido y de excelente duración.",
       "notes": {
@@ -500,7 +500,7 @@
       "slug": "baroque-rouge-540",
       "brand": "Maison Alhambra",
       "name": "Baroque Rouge 540",
-      "gender": "unisex",
+      "gender": "femenino",
       "olfactoryFamily": "Ámbar Floral",
       "description": "Inspirado en Baccarat Rouge 540 de Maison Francis Kurkdjian. Azafrán, ámbar y madera de cedro con jazmín, almizcle y pera. Cálido, especiado y de estela poderosa.",
       "notes": {
@@ -538,7 +538,7 @@
       "slug": "glacier-bella",
       "brand": "Maison Alhambra",
       "name": "Glacier Bella",
-      "gender": "unisex",
+      "gender": "femenino",
       "olfactoryFamily": "Pera Avainillada",
       "description": "Inspirado en La Belle de Jean Paul Gaultier. Pera verde, vainilla y bergamota en una mezcla avainillada, atalcada y dulce con un fondo especiado.",
       "notes": {
@@ -657,7 +657,7 @@
       "slug": "ameer-al-oudh",
       "brand": "Lattafa Perfumes",
       "name": "Ameer Al Oudh Intense Oud",
-      "gender": "unisex",
+      "gender": "masculino",
       "olfactoryFamily": "Oud Avainillado",
       "description": "Inspirado en By the Fireplace de Maison Margiela. Notas amaderadas y oud con azúcar y vainilla, sobre un fondo de oud, sándalo y notas herbales. Dulce, ahumado y acogedor.",
       "notes": {
@@ -739,7 +739,7 @@
       "slug": "rouat-ajial",
       "brand": "Lattafa Perfumes",
       "name": "Rouat Ajial",
-      "gender": "unisex",
+      "gender": "masculino",
       "olfactoryFamily": "Especiado Amaderado",
       "description": "Fragancia árabe tradicional de gran riqueza de especias y maderas. Lavanda, bergamota y vainilla con jazmín, nuez moscada y ylang-ylang, sobre cedro, pachulí, ámbar y sándalo.",
       "notes": {
@@ -828,7 +828,7 @@
       "slug": "qaed-al-fursan-untamed",
       "brand": "Lattafa Perfumes",
       "name": "Qaed Al Fursan Untamed",
-      "gender": "unisex",
+      "gender": "masculino",
       "olfactoryFamily": "Ámbar Cálido",
       "description": "Inspirado en Eros Najim de Versace. Canela, cardamomo, mandarina y nuez moscada con caramelo, lavanda, esclarea y geranio, sobre ámbar, cedro, incienso y ládano. Ámbar especiado, cálido y dulce.",
       "notes": {
@@ -916,7 +916,7 @@
       "slug": "24-carat-white-gold",
       "brand": "Lattafa Perfumes",
       "name": "24 Carat White Gold",
-      "gender": "unisex",
+      "gender": "masculino",
       "olfactoryFamily": "Cítrico Aromático",
       "description": "Inspirado en Light Blue pour Homme de Dolce & Gabbana. Bergamota y flor de azahar con lavanda, geranio, pimienta rosa y nuez moscada, sobre vetiver, oud y haba tonka. Fresco especiado, aromático y amaderado.",
       "notes": {
@@ -957,7 +957,7 @@
       "slug": "hayaati-black",
       "brand": "Lattafa Perfumes",
       "name": "Hayaati Black",
-      "gender": "unisex",
+      "gender": "masculino",
       "olfactoryFamily": "Frutal Atalcado",
       "description": "Manzana, almizcle, canela y bergamota con vainilla y notas amaderadas. Frutal, almizclado y cálido especiado con un acabado atalcado y dulce.",
       "notes": {
@@ -996,7 +996,7 @@
       "slug": "hayaati-al-maleky",
       "brand": "Lattafa Perfumes",
       "name": "Hayaati Al Maleky",
-      "gender": "unisex",
+      "gender": "masculino",
       "olfactoryFamily": "Ámbar Especiado",
       "description": "Almizcle, pimienta rosa, bergamota, jengibre, ámbar gris y ámbar. Ámbar, fresco especiado, almizclado y amaderado con toques cítricos y gran proyección.",
       "notes": {
@@ -1034,7 +1034,7 @@
       "slug": "opulent-dubai",
       "brand": "Lattafa Perfumes",
       "name": "Opulent Dubai",
-      "gender": "unisex",
+      "gender": "masculino",
       "olfactoryFamily": "Frutal Tropical",
       "description": "Mango, toronja, limón, jengibre, jazmín y notas amaderadas. Cítrico, tropical y afrutado con un fondo dulce y amaderado de gran rendimiento.",
       "notes": {
@@ -1110,7 +1110,7 @@
       "slug": "angham",
       "brand": "Lattafa Perfumes",
       "name": "Angham",
-      "gender": "unisex",
+      "gender": "femenino",
       "olfactoryFamily": "Gourmand Avainillado",
       "description": "Vainilla, lavanda, praliné, jengibre, ámbar y vaina de cacao. Dulce, avainillado y cálido especiado con un acabado atalcado y goloso.",
       "notes": {
@@ -1148,7 +1148,7 @@
       "slug": "badee-al-oud-sublime",
       "brand": "Lattafa Perfumes",
       "name": "Bade'e Al Oud Sublime",
-      "gender": "unisex",
+      "gender": "femenino",
       "olfactoryFamily": "Frutal Fresco",
       "description": "Inspirado en Eden Juicy Apple de Kayali. Manzana, lichi y ciruela con rosa, musgo de roble y vainilla. Frutal, fresco y tropical con un toque verde.",
       "notes": {

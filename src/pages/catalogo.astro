@@ -24,7 +24,7 @@ const filteredPerfumes = searchPerfumes(filterPerfumes(allPerfumes, currentFilte
   <section class="catalog-hero" aria-labelledby="catalog-title">
     <div class="container">
       <h1 id="catalog-title" class="catalog-title">Catálogo</h1>
-      <p class="catalog-subtitle">Descubre nuestra selección curada de fragancias de autor</p>
+      <p class="catalog-subtitle">Descubre nuestra selección de decants de perfumes árabes</p>
     </div>
   </section>
 
@@ -78,13 +78,10 @@ const filteredPerfumes = searchPerfumes(filterPerfumes(allPerfumes, currentFilte
     let visible = 0;
     cards.forEach((card) => {
       const gender = card.getAttribute('data-gender') || '';
-      const isBoutique = card.getAttribute('data-boutique') === 'true';
       const search = card.getAttribute('data-search') || '';
 
       let matches = true;
-      if (currentFilter === 'boutique') {
-        matches = isBoutique;
-      } else if (currentFilter !== 'all') {
+      if (currentFilter !== 'all') {
         const allowed = GENDERS[currentFilter] || [];
         matches = allowed.includes(gender);
       }
@@ -152,7 +149,7 @@ const filteredPerfumes = searchPerfumes(filterPerfumes(allPerfumes, currentFilte
 
 <style>
   .catalog-hero {
-    padding: var(--spacing-stack-lg) 0 var(--spacing-stack-md);
+    padding: var(--spacing-stack-md) 0 var(--spacing-stack-sm);
     text-align: center;
   }
 
@@ -164,12 +161,12 @@ const filteredPerfumes = searchPerfumes(filterPerfumes(allPerfumes, currentFilte
     letter-spacing: var(--font-display-lg-tracking);
     text-transform: uppercase;
     color: var(--color-on-surface);
-    margin: 0 0 var(--spacing-stack-sm);
+    margin: 0 0 12px;
   }
 
   @media (max-width: 640px) {
     .catalog-title {
-      font-size: 48px;
+      font-size: 36px;
     }
   }
 
@@ -184,7 +181,7 @@ const filteredPerfumes = searchPerfumes(filterPerfumes(allPerfumes, currentFilte
   }
 
   .catalog-toolbar {
-    padding: var(--spacing-stack-sm) 0;
+    padding: 12px 0;
     border-top: var(--border-width) solid var(--color-outline-variant);
     border-bottom: var(--border-width) solid var(--color-outline-variant);
     position: sticky;
@@ -220,11 +217,11 @@ const filteredPerfumes = searchPerfumes(filterPerfumes(allPerfumes, currentFilte
   }
 
   .catalog-results {
-    padding: var(--spacing-stack-lg) 0;
+    padding: var(--spacing-stack-sm) 0 var(--spacing-stack-lg);
   }
 
   .results-header {
-    margin-bottom: var(--spacing-stack-md);
+    margin-bottom: var(--spacing-stack-sm);
   }
 
   .results-count {
