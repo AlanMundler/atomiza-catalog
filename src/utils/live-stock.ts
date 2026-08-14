@@ -106,7 +106,7 @@ function updateAddToCartButton(map: Map<string, number>): void {
   const unavailable = stock <= 0;
   btn.disabled = unavailable;
   btn.classList.toggle('btn--disabled', unavailable);
-  const label = unavailable ? 'Agotado' : 'Agregar al pedido';
+  const label = unavailable ? 'Sin Stock' : 'Agregar al pedido';
   if (btn.textContent !== label) btn.textContent = label;
 }
 

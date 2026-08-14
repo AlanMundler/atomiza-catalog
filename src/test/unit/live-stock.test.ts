@@ -145,7 +145,7 @@ describe('applyStockToDom', () => {
     `;
     applyStockToDom([{ id: 'perfume-a', ml: 5, stock: 2 }]);
     const chips = Array.from(document.querySelectorAll('.product-card-stock')) as HTMLElement[];
-    expect(chips[0].textContent).toBe('ÚLTIMAS UNIDADES');
+    expect(chips[0].textContent).toBe('POCO STOCK');
     expect(chips[0].classList.contains('chip--low-stock')).toBe(true);
     expect(chips[0].classList.contains('chip--in-stock')).toBe(false);
     expect(chips[1].textContent).toBe('EN STOCK');
@@ -165,7 +165,7 @@ describe('applyStockToDom', () => {
     const chip = option.querySelector('.size-option-stock') as HTMLElement;
     expect(option.classList.contains('size-option--unavailable')).toBe(true);
     expect(radio.disabled).toBe(true);
-    expect(chip.textContent).toBe('AGOTADO');
+    expect(chip.textContent).toBe('SIN STOCK');
     expect(chip.classList.contains('chip--out-of-stock')).toBe(true);
   });
 
@@ -173,7 +173,7 @@ describe('applyStockToDom', () => {
     document.body.innerHTML = `
       <label class="size-option size-option--unavailable" data-stock-id="perfume-a" data-stock-ml="5">
         <input type="radio" name="size" value="5" checked disabled />
-        <span class="size-option-stock chip chip--out-of-stock">AGOTADO</span>
+        <span class="size-option-stock chip chip--out-of-stock">SIN STOCK</span>
       </label>
     `;
     applyStockToDom([{ id: 'perfume-a', ml: 5, stock: 4 }]);
@@ -197,7 +197,7 @@ describe('applyStockToDom', () => {
     const btn = document.querySelector('[data-add-to-cart]') as HTMLButtonElement;
     expect(btn.disabled).toBe(true);
     expect(btn.classList.contains('btn--disabled')).toBe(true);
-    expect(btn.textContent).toBe('Agotado');
+    expect(btn.textContent).toBe('Sin Stock');
   });
 
   it('does not touch elements with no matching override', () => {
@@ -238,7 +238,7 @@ describe('refreshLiveStock', () => {
     await refreshLiveStock('https://example.com/stock');
 
     const chip = document.querySelector('.product-card-stock') as HTMLElement;
-    expect(chip.textContent).toBe('AGOTADO');
+    expect(chip.textContent).toBe('SIN STOCK');
     const cached = JSON.parse(window.localStorage.getItem(CACHE_KEY) || '{}');
     expect(cached.rows).toEqual([{ id: 'perfume-a', ml: 5, stock: 0 }]);
     const data = JSON.parse(window.localStorage.getItem(PERFUMES_DATA_KEY) || '{}');
@@ -260,7 +260,7 @@ describe('refreshLiveStock', () => {
 
     expect(fetchMock).not.toHaveBeenCalled();
     const chip = document.querySelector('.product-card-stock') as HTMLElement;
-    expect(chip.textContent).toBe('AGOTADO');
+    expect(chip.textContent).toBe('SIN STOCK');
   });
 
   it('falls back to cached rows when the fetch fails', async () => {
@@ -276,7 +276,7 @@ describe('refreshLiveStock', () => {
     await refreshLiveStock('https://example.com/stock');
 
     const chip = document.querySelector('.product-card-stock') as HTMLElement;
-    expect(chip.textContent).toBe('ÚLTIMAS UNIDADES');
+    expect(chip.textContent).toBe('POCO STOCK');
   });
 
   it('does nothing when fetch fails and there is no cache', async () => {

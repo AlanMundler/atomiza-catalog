@@ -4,14 +4,24 @@ import type { PerfumeSize } from '@/data/types';
 
 describe('stock utilities', () => {
   describe('getStockStatus', () => {
-    it('returns in-stock when stock > 3', () => {
+    it('returns in-stock when stock >= 5', () => {
       const size: PerfumeSize = { ml: 5, price: 32000, stock: 5 };
       expect(getStockStatus(size)).toBe('in-stock');
     });
 
-    it('returns in-stock when stock === 3', () => {
-      const size: PerfumeSize = { ml: 5, price: 32000, stock: 3 };
+    it('returns in-stock when stock is 6', () => {
+      const size: PerfumeSize = { ml: 5, price: 32000, stock: 6 };
       expect(getStockStatus(size)).toBe('in-stock');
+    });
+
+    it('returns low-stock when stock is 4', () => {
+      const size: PerfumeSize = { ml: 5, price: 32000, stock: 4 };
+      expect(getStockStatus(size)).toBe('low-stock');
+    });
+
+    it('returns low-stock when stock is 3', () => {
+      const size: PerfumeSize = { ml: 5, price: 32000, stock: 3 };
+      expect(getStockStatus(size)).toBe('low-stock');
     });
 
     it('returns low-stock when stock is 2', () => {
@@ -33,8 +43,8 @@ describe('stock utilities', () => {
   describe('getStockLabel', () => {
     it('returns correct Spanish labels', () => {
       expect(getStockLabel('in-stock')).toBe('EN STOCK');
-      expect(getStockLabel('low-stock')).toBe('ÚLTIMAS UNIDADES');
-      expect(getStockLabel('out-of-stock')).toBe('AGOTADO');
+      expect(getStockLabel('low-stock')).toBe('POCO STOCK');
+      expect(getStockLabel('out-of-stock')).toBe('SIN STOCK');
     });
   });
 
