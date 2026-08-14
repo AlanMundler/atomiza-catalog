@@ -103,7 +103,7 @@ const { isOpen, position = 'right', id, class: className = '', onClose, children
     top: 0;
     bottom: 0;
     width: 100%;
-    max-width: 400px;
+    max-width: var(--drawer-width, 400px);
     background-color: var(--color-surface-container);
     border: var(--border-width) solid var(--color-outline-variant);
     z-index: 1000;

@@ -240,7 +240,7 @@ import Drawer from '@/components/ui/Drawer.astro';
 
 <style is:global>
   .cart-drawer {
-    --drawer-width: 400px;
+    --drawer-width: 360px;
   }
 
   .cart-header {
@@ -354,8 +354,8 @@ import Drawer from '@/components/ui/Drawer.astro';
   /* Cart item */
   .cart-item {
     display: grid;
-    grid-template-columns: 64px minmax(0, 1fr) auto;
-    gap: 14px;
+    grid-template-columns: 56px minmax(0, 1fr) auto;
+    gap: 12px;
     padding: 14px;
     background-color: var(--color-surface-container-high);
     border: var(--border-width) solid var(--color-outline-variant);
@@ -364,8 +364,8 @@ import Drawer from '@/components/ui/Drawer.astro';
   }
 
   .cart-item-image {
-    width: 64px;
-    height: 64px;
+    width: 56px;
+    height: 56px;
     border-radius: calc(var(--border-radius) - 4px);
     overflow: hidden;
     background-color: var(--color-surface-container-highest);
