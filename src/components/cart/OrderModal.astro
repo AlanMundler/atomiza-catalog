@@ -189,16 +189,32 @@ import Button from '@/components/ui/Button.astro';
     --modal-width: 480px;
   }
 
-  #order-modal .modal-content {
-    scrollbar-width: none;
+  :global(#order-modal .modal-content) {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-outline-variant) transparent;
   }
 
-  #order-modal .modal-content::-webkit-scrollbar {
-    display: none;
+  :global(#order-modal .modal-content::-webkit-scrollbar) {
+    width: 5px;
   }
 
-  #order-modal .modal {
-    width: 500px;
+  :global(#order-modal .modal-content::-webkit-scrollbar-track) {
+    background: transparent;
+  }
+
+  :global(#order-modal .modal-content::-webkit-scrollbar-thumb) {
+    background-color: var(--color-outline-variant);
+    border-radius: 4px;
+  }
+
+  :global(#order-modal .modal) {
+    width: 600px;
+  }
+
+  @media (max-width: 640px) {
+    :global(#order-modal .modal) {
+      width: calc(100vw - 40px);
+    }
   }
 
   .order-modal-content {
@@ -260,8 +276,24 @@ import Button from '@/components/ui/Button.astro';
     border-radius: var(--border-radius);
     padding: 12px 16px;
     resize: none;
-    overflow: hidden;
+    overflow-y: auto;
+    max-height: 180px;
     line-height: 1.6;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-outline-variant) transparent;
+  }
+
+  .form-textarea::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  .form-textarea::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .form-textarea::-webkit-scrollbar-thumb {
+    background-color: var(--color-outline-variant);
+    border-radius: 4px;
   }
 
   .order-preview {
@@ -272,20 +304,20 @@ import Button from '@/components/ui/Button.astro';
 
   .order-modal-actions {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-wrap: nowrap;
     gap: 8px;
     margin-top: 8px;
   }
 
   .order-modal-actions .order-modal-btn {
-    width: auto;
+    flex: 1 1 0;
     min-width: 0;
-    height: 40px;
-    padding: 0 14px;
-    gap: 8px;
+    height: 38px;
+    padding: 0 12px;
+    gap: 6px;
     border-radius: var(--border-radius);
-    flex: 0 0 auto;
+    font-size: 10px;
+    letter-spacing: 0.05em;
   }
 
   .order-modal-btn-icon {
@@ -293,6 +325,11 @@ import Button from '@/components/ui/Button.astro';
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+  }
+
+  .order-modal-btn-icon svg {
+    width: 16px;
+    height: 16px;
   }
 
   .order-modal-btn-label {
@@ -303,7 +340,6 @@ import Button from '@/components/ui/Button.astro';
 
   @media (max-width: 479px) {
     .order-modal-actions {
-      display: flex;
       flex-wrap: wrap;
       justify-content: center;
       gap: 16px;
