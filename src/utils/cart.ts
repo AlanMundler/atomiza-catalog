@@ -1,6 +1,7 @@
 import type { CartItem, CartState, PerfumeSize } from '@/data/types';
+import { site } from '@/site.config';
 
-const CART_STORAGE_KEY = 'atomiza-cart';
+const CART_STORAGE_KEY = site.storage.cart;
 
 function getStoredCart(): CartState {
   try {

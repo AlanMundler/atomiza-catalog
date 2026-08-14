@@ -30,7 +30,7 @@
       },
       "images": [
         {
-          "src": "/atomiza-catalog/images/perfumes/luminous-sahara.svg",
+          "src": "images/perfumes/luminous-sahara.svg",
           "alt": "Maison Alhambra Luminous Sahara"
         }
       ],
@@ -73,7 +73,7 @@
       },
       "images": [
         {
-          "src": "/atomiza-catalog/images/perfumes/hercules.svg",
+          "src": "images/perfumes/hercules.svg",
           "alt": "Maison Alhambra Hercules"
         }
       ],
@@ -115,7 +115,7 @@
       },
       "images": [
         {
-          "src": "/atomiza-catalog/images/perfumes/dark-door-sport.svg",
+          "src": "images/perfumes/dark-door-sport.svg",
           "alt": "Maison Alhambra Dark Door Sport"
         }
       ],
@@ -156,7 +156,7 @@
       },
       "images": [
         {
-          "src": "/atomiza-catalog/images/perfumes/jorge-di-profumo.svg",
+          "src": "images/perfumes/jorge-di-profumo.svg",
           "alt": "Maison Alhambra Jorge Di Profumo"
         }
       ],
@@ -202,7 +202,7 @@
       },
       "images": [
         {
-          "src": "/atomiza-catalog/images/perfumes/your-touch.svg",
+          "src": "images/perfumes/your-touch.svg",
           "alt": "Maison Alhambra Your Touch"
         }
       ],
@@ -243,7 +243,7 @@
       },
       "images": [
         {
-          "src": "/atomiza-catalog/images/perfumes/glacier-ultra.svg",
+          "src": "images/perfumes/glacier-ultra.svg",
           "alt": "Maison Alhambra Glacier Ultra"
         }
       ],
@@ -287,7 +287,7 @@
       },
       "images": [
         {
-          "src": "/atomiza-catalog/images/perfumes/perseus-exclusif.svg",
+          "src": "images/perfumes/perseus-exclusif.svg",
           "alt": "Maison Alhambra Perseus Exclusif"
         }
       ],
@@ -328,7 +328,7 @@
       },
       "images": [
         {
-          "src": "/atomiza-catalog/images/perfumes/tonic-malt.svg",
+          "src": "images/perfumes/tonic-malt.svg",
           "alt": "Maison Alhambra Tonic Malt"
         }
       ],
@@ -367,7 +367,7 @@
       },
       "images": [
         {
-          "src": "/atomiza-catalog/images/perfumes/salvo-intense.svg",
+          "src": "images/perfumes/salvo-intense.svg",
           "alt": "Maison Alhambra Salvo Intense"
         }
       ],
@@ -405,7 +405,7 @@
       },
       "images": [
         {
-          "src": "/atomiza-catalog/images/perfumes/glacier-bold.svg",
+          "src": "images/perfumes/glacier-bold.svg",
           "alt": "Maison Alhambra Glacier Bold"
         }
       ],
@@ -443,7 +443,7 @@
       },
       "images": [
         {
-          "src": "/atomiza-catalog/images/perfumes/your-touch-intense.svg",
+          "src": "images/perfumes/your-touch-intense.svg",
           "alt": "Maison Alhambra Your Touch Intense"
         }
       ],
@@ -481,7 +481,7 @@
       },
       "images": [
         {
-          "src": "/atomiza-catalog/images/perfumes/yeah.svg",
+          "src": "images/perfumes/yeah.svg",
           "alt": "Maison Alhambra Yeah!"
         }
       ],
@@ -519,7 +519,7 @@
       },
       "images": [
         {
-          "src": "/atomiza-catalog/images/perfumes/baroque-rouge-540.svg",
+          "src": "images/perfumes/baroque-rouge-540.svg",
           "alt": "Maison Alhambra Baroque Rouge 540"
         }
       ],
@@ -556,7 +556,7 @@
       },
       "images": [
         {
-          "src": "/atomiza-catalog/images/perfumes/glacier-bella.svg",
+          "src": "images/perfumes/glacier-bella.svg",
           "alt": "Maison Alhambra Glacier Bella"
         }
       ],
@@ -595,7 +595,7 @@
       },
       "images": [
         {
-          "src": "/atomiza-catalog/images/perfumes/delilah.svg",
+          "src": "images/perfumes/delilah.svg",
           "alt": "Maison Alhambra Delilah"
         }
       ],
@@ -638,7 +638,7 @@
       },
       "images": [
         {
-          "src": "/atomiza-catalog/images/perfumes/confidential-private-gold.svg",
+          "src": "images/perfumes/confidential-private-gold.svg",
           "alt": "Lattafa Confidential Private Gold"
         }
       ],
@@ -677,7 +677,7 @@
       },
       "images": [
         {
-          "src": "/atomiza-catalog/images/perfumes/ameer-al-oudh.svg",
+          "src": "images/perfumes/ameer-al-oudh.svg",
           "alt": "Lattafa Ameer Al Oudh Intense Oud"
         }
       ],
@@ -720,7 +720,7 @@
       },
       "images": [
         {
-          "src": "/atomiza-catalog/images/perfumes/oud-lail-maleki.svg",
+          "src": "images/perfumes/oud-lail-maleki.svg",
           "alt": "Lattafa Oud Lail Maleki"
         }
       ],
@@ -765,7 +765,7 @@
       },
       "images": [
         {
-          "src": "/atomiza-catalog/images/perfumes/rouat-ajial.svg",
+          "src": "images/perfumes/rouat-ajial.svg",
           "alt": "Lattafa Rouat Ajial"
         }
       ],
@@ -809,7 +809,7 @@
       },
       "images": [
         {
-          "src": "/atomiza-catalog/images/perfumes/now-rave.svg",
+          "src": "images/perfumes/now-rave.svg",
           "alt": "RAVE Now"
         }
       ],
@@ -855,7 +855,7 @@
       },
       "images": [
         {
-          "src": "/atomiza-catalog/images/perfumes/qaed-al-fursan-untamed.svg",
+          "src": "images/perfumes/qaed-al-fursan-untamed.svg",
           "alt": "Lattafa Qaed Al Fursan Untamed"
         }
       ],
@@ -897,7 +897,7 @@
       },
       "images": [
         {
-          "src": "/atomiza-catalog/images/perfumes/liam.svg",
+          "src": "images/perfumes/liam.svg",
           "alt": "Lattafa Liam"
         }
       ],
@@ -938,7 +938,7 @@
       },
       "images": [
         {
-          "src": "/atomiza-catalog/images/perfumes/24-carat-white-gold.svg",
+          "src": "images/perfumes/24-carat-white-gold.svg",
           "alt": "Lattafa 24 Carat White Gold"
         }
       ],
@@ -977,7 +977,7 @@
       },
       "images": [
         {
-          "src": "/atomiza-catalog/images/perfumes/hayaati-black.svg",
+          "src": "images/perfumes/hayaati-black.svg",
           "alt": "Lattafa Hayaati Black"
         }
       ],
@@ -1015,7 +1015,7 @@
       },
       "images": [
         {
-          "src": "/atomiza-catalog/images/perfumes/hayaati-al-maleky.svg",
+          "src": "images/perfumes/hayaati-al-maleky.svg",
           "alt": "Lattafa Hayaati Al Maleky"
         }
       ],
@@ -1053,7 +1053,7 @@
       },
       "images": [
         {
-          "src": "/atomiza-catalog/images/perfumes/opulent-dubai.svg",
+          "src": "images/perfumes/opulent-dubai.svg",
           "alt": "Lattafa Opulent Dubai"
         }
       ],
@@ -1091,7 +1091,7 @@
       },
       "images": [
         {
-          "src": "/atomiza-catalog/images/perfumes/mayar.svg",
+          "src": "images/perfumes/mayar.svg",
           "alt": "Lattafa Mayar"
         }
       ],
@@ -1129,7 +1129,7 @@
       },
       "images": [
         {
-          "src": "/atomiza-catalog/images/perfumes/angham.svg",
+          "src": "images/perfumes/angham.svg",
           "alt": "Lattafa Angham"
         }
       ],
@@ -1167,7 +1167,7 @@
       },
       "images": [
         {
-          "src": "/atomiza-catalog/images/perfumes/badee-al-oud-sublime.svg",
+          "src": "images/perfumes/badee-al-oud-sublime.svg",
           "alt": "Lattafa Bade'e Al Oud Sublime"
         }
       ],
@@ -1204,7 +1204,7 @@
       },
       "images": [
         {
-          "src": "/atomiza-catalog/images/perfumes/hayaati-florence.svg",
+          "src": "images/perfumes/hayaati-florence.svg",
           "alt": "Lattafa Hayaati Florence"
         }
       ],
@@ -1247,7 +1247,7 @@
       },
       "images": [
         {
-          "src": "/atomiza-catalog/images/perfumes/hawas-ice.svg",
+          "src": "images/perfumes/hawas-ice.svg",
           "alt": "Rasasi Hawas Ice"
         }
       ],

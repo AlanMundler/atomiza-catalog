@@ -26,6 +26,9 @@ jobs:
       - run: npm ci --legacy-peer-deps
       - run: npm run test
       - run: npm run build
+        env:
+          BASE_PATH: ${{ vars.BASE_PATH || '/atomiza-catalog/' }}
+          SITE_URL: ${{ vars.SITE_URL || 'https://atomiza.github.io' }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist

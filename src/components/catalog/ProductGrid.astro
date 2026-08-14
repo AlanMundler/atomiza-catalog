@@ -1,5 +1,6 @@
 ---
 import ProductCard from '@/components/catalog/ProductCard.astro';
+import { site } from '@/site.config';
 import type { Perfume } from '@/data/types';
 
 interface Props {
@@ -7,7 +8,7 @@ interface Props {
   basePath?: string;
 }
 
-const { perfumes, basePath = '/atomiza-catalog/' } = Astro.props;
+const { perfumes, basePath = site.basePath } = Astro.props;
 ---
 
 {perfumes.length > 0 ? (

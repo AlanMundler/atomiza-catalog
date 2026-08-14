@@ -2,24 +2,25 @@
 import Button from '@/components/ui/Button.astro';
 import Drawer from '@/components/ui/Drawer.astro';
 import { getCartItemCount } from '@/utils/cart';
+import { site } from '@/site.config';
 
 const cartCount = getCartItemCount();
-const BASE = '/atomiza-catalog/';
+const BASE = site.basePath;
 ---
 
 <header class="header" role="banner">
   <div class="header-inner container">
-    <a href={BASE} class="header-logo" aria-label="ΛTOMIZΛ - Inicio">
-      <span class="logo-text">ΛTOMIZΛ</span>
+    <a href={BASE} class="header-logo" aria-label={`${site.name} - Inicio`}>
+      <span class="logo-text">{site.name}</span>
     </a>
 
     <div class="header-actions">
       <a 
-        href="https://instagram.com/atomiza.cba" 
+        href={site.instagramUrl} 
         target="_blank" 
         rel="noopener noreferrer"
         class="header-social-btn"
-        aria-label="Instagram @atomiza.cba"
+        aria-label={`Instagram @${site.instagramHandle}`}
       >
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
           <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
@@ -28,7 +29,7 @@ const BASE = '/atomiza-catalog/';
         </svg>
       </a>
       <a 
-        href="https://wa.me/5493472559307" 
+        href={site.whatsappUrl} 
         target="_blank" 
         rel="noopener noreferrer"
         class="header-social-btn"
@@ -92,7 +93,7 @@ const BASE = '/atomiza-catalog/';
     </a>
   </div>
   <div class="mobile-socials">
-    <a href="https://instagram.com/atomiza.cba" target="_blank" rel="noopener noreferrer" class="mobile-social-link">
+    <a href={site.instagramUrl} target="_blank" rel="noopener noreferrer" class="mobile-social-link">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
         <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
         <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
@@ -100,7 +101,7 @@ const BASE = '/atomiza-catalog/';
       </svg>
       Instagram
     </a>
-    <a href="https://wa.me/5493472559307" target="_blank" rel="noopener noreferrer" class="mobile-social-link">
+    <a href={site.whatsappUrl} target="_blank" rel="noopener noreferrer" class="mobile-social-link">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
         <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
       </svg>
@@ -111,6 +112,7 @@ const BASE = '/atomiza-catalog/';
 
 <script>
   import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
+  import { site } from '@/site.config';
 
   let ticking = false;
 
@@ -143,7 +145,7 @@ const BASE = '/atomiza-catalog/';
   function updateCartCount() {
     const badge = document.querySelector('[data-cart-count]') as HTMLElement | null;
     const mobileCount = document.querySelector('[data-cart-count-mobile]') as HTMLElement | null;
-    const cart = JSON.parse(localStorage.getItem('atomiza-cart') || '{"items":[]}');
+    const cart = JSON.parse(localStorage.getItem(site.storage.cart) || '{"items":[]}');
     const newCount = cart.items.reduce((sum: number, item: any) => sum + item.quantity, 0);
     if (badge) {
       badge.textContent = String(newCount);

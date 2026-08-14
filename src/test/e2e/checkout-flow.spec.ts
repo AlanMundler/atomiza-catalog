@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
 
-const HOME = '/atomiza-catalog/';
-const CATALOG = '/atomiza-catalog/catalogo/';
-const PRODUCT_1 = '/atomiza-catalog/producto/baroque-rouge-540/';
-const PRODUCT_2 = '/atomiza-catalog/producto/luminous-sahara/';
+const HOME = '.';
+const CATALOG = 'catalogo/';
+const PRODUCT_1 = 'producto/baroque-rouge-540/';
+const PRODUCT_2 = 'producto/luminous-sahara/';
 
 test.describe('Checkout Flow', () => {
   test.beforeEach(async ({ page }) => {

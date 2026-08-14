@@ -35,13 +35,14 @@ import Drawer from '@/components/ui/Drawer.astro';
   import { formatPrice } from '@/utils/formatters';
   import type { CartItem as CartItemType } from '@/data/types';
   import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
+  import { site } from '@/site.config';
 
   let drawerRoot: HTMLElement | null = null;
   let perfumesMap = new Map<string, any>();
 
   function getPerfumesMap(): Map<string, any> {
     try {
-      const data = JSON.parse(localStorage.getItem('perfumes-data') || '{"perfumes":[]}');
+      const data = JSON.parse(localStorage.getItem(site.storage.perfumes) || '{"perfumes":[]}');
       return new Map((data.perfumes || []).map((p: any) => [p.id, p]));
     } catch {
       return new Map();
@@ -98,7 +99,7 @@ import Drawer from '@/components/ui/Drawer.astro';
     const perfume = perfumesMap.get(item.perfumeId) || {};
     const brand = perfume.brand || item.perfumeId;
     const name = perfume.name || item.perfumeId;
-    const image = perfume.images?.[0]?.src || '/images/placeholder.jpg';
+    const image = perfume.images?.[0]?.src ? site.basePath + perfume.images[0].src.replace(/^\//, '') : `${site.basePath}images/placeholder.jpg`;
     const lineTotal = item.size.price * item.quantity;
     const size = item.size;
 

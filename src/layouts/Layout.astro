@@ -4,6 +4,7 @@ import Footer from '@/components/layout/Footer.astro';
 import CartDrawer from '@/components/cart/CartDrawer.astro';
 import OrderModal from '@/components/cart/OrderModal.astro';
 import perfumesData from '@/data/perfumes.json';
+import { site, assetUrl } from '@/site.config';
 import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
 
@@ -14,7 +15,8 @@ interface Props {
   children: any;
 }
 
-const { title, description = 'ΛTOMIZΛ - Decants de autor. Boutique de perfumes de lujo en decants de 5ml.', ogImage = '/og-image.jpg', children } = Astro.props;
+const { title, description = `${site.name} - ${site.tagline}. ${site.description}`, ogImage = '/og-image.jpg', children } = Astro.props;
+const ogImageUrl = new URL(assetUrl(ogImage).replace(site.basePath, ''), Astro.site).href;
 ---
 
 <!DOCTYPE html>
@@ -23,18 +25,18 @@ const { title, description = 'ΛTOMIZΛ - Decants de autor. Boutique de perfumes
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="generator" content={Astro.generator} />
-    <title>{title} | ΛTOMIZΛ</title>
+    <title>{title} | {site.name}</title>
     <meta name="description" content={description} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={new URL(ogImage, Astro.site).href} />
+    <meta property="og:image" content={ogImageUrl} />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={new URL(ogImage, Astro.site).href} />
+    <meta name="twitter:image" content={ogImageUrl} />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href={assetUrl('/favicon.svg')} />
     <ClientRouter />
   </head>
   <body>
@@ -48,10 +50,10 @@ const { title, description = 'ΛTOMIZΛ - Decants de autor. Boutique de perfumes
   </body>
 </html>
 
-<script is:inline define:vars={{ perfumesData }}>
+<script is:inline define:vars={{ perfumesData, perfumesStorageKey: site.storage.perfumes }}>
   // Store perfumes data in localStorage for cart functionality
   if (typeof window !== 'undefined') {
-    localStorage.setItem('perfumes-data', JSON.stringify({ perfumes: perfumesData.perfumes }));
+    localStorage.setItem(perfumesStorageKey, JSON.stringify({ perfumes: perfumesData.perfumes }));
   }
 </script>
 

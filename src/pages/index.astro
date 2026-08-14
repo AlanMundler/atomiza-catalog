@@ -3,9 +3,10 @@ import Layout from '@/layouts/Layout.astro';
 import ProductCard from '@/components/catalog/ProductCard.astro';
 import perfumesData from '@/data/perfumes.json';
 import { isSizeAvailable } from '@/utils/stock';
+import { site } from '@/site.config';
 import type { Perfume } from '@/data/types';
 
-const BASE = '/atomiza-catalog/';
+const BASE = site.basePath;
 
 // Perfumes in stock to rotate on the home page
 const allPerfumes = perfumesData.perfumes as Perfume[];
@@ -15,7 +16,7 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
 });
 ---
 
-<Layout title="ΛTOMIZΛ - Decants de autor" description="Boutique de perfumes de lujo en decants de 5ml. Autenticidad 100% garantizada.">
+<Layout title={`${site.name} - ${site.tagline}`} description={`${site.name}. ${site.tagline}. ${site.description}`}>
   <section class="home-perfumes" aria-labelledby="home-perfumes-title">
     <div class="container">
       <div class="home-perfume-head">
@@ -36,14 +37,14 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
 
   <section class="hero" aria-labelledby="hero-title">
     <div class="container">
-      <h1 id="hero-title" class="hero-title">ΛTOMIZΛ</h1>
-      <p class="hero-subtitle">Decants de autor</p>
+      <h1 id="hero-title" class="hero-title">{site.name}</h1>
+      <p class="hero-subtitle">{site.tagline}</p>
     </div>
   </section>
 
   <section class="value-prop" aria-labelledby="value-prop-title">
     <div class="container">
-      <h2 id="value-prop-title" class="section-title">Por qué elegir ΛTOMIZΛ</h2>
+      <h2 id="value-prop-title" class="section-title">Por qué elegir {site.name}</h2>
       <div class="value-prop-grid">
         <article class="value-prop-card">
           <div class="value-prop-icon">

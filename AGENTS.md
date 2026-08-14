@@ -8,6 +8,14 @@ astro dev --background
 
 Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
 
+## Configuración del emprendimiento (importante)
+
+Todo lo específico de la marca (nombre, tagline, Instagram, WhatsApp, teléfono, textos de pedido y claves de localStorage) vive en **`src/site.config.ts`**. No hay strings de marca en el resto del código.
+
+Al agregar o modificar cualquier texto visible, uso de redes/WhatsApp o clave de storage, sacarlo de `site.config.ts` (no hardcodear). El base path se resuelve con `import.meta.env.BASE_URL` (definido por `BASE_PATH` en `astro.config.mjs`); las imágenes internas usan el helper `assetUrl()` y rutas relativas (`images/perfumes/...`).
+
+Para reutilizar el proyecto en otro emprendimiento, ver `README.md`.
+
 ## Stock manual (importante)
 
 El stock se maneja **manualmente** editando `src/data/perfumes.json`, campo `stock` de la talla de cada perfume (todas las tallas son de 5 ml).

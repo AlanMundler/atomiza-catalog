@@ -1,10 +1,11 @@
 ---
 import Layout from '@/layouts/Layout.astro';
+import { site } from '@/site.config';
 
-const BASE = '/atomiza-catalog/';
+const BASE = site.basePath;
 ---
 
-<Layout title="Términos y condiciones - ΛTOMIZΛ" description="Términos y condiciones de venta de decants de perfumes árabes en ΛTOMIZΛ. Pedidos por WhatsApp e Instagram, precios, envíos y devoluciones.">
+<Layout title={`Términos y condiciones - ${site.name}`} description={`Términos y condiciones de venta de decants de perfumes árabes en ${site.name}. Pedidos por WhatsApp e Instagram, precios, envíos y devoluciones.`}>
   <section class="legal-hero" aria-labelledby="legal-title">
     <div class="container">
       <h1 id="legal-title" class="legal-title">Términos y condiciones</h1>
@@ -21,7 +22,7 @@ const BASE = '/atomiza-catalog/';
 
       <div class="legal-section">
         <h2>2. Productos</h2>
-        <p>ΛTOMIZΛ vende decants (muestras de 5 ml) de perfumes árabes. Todos los decants se extraen de frascos originales sellados, garantizando la autenticidad de cada producto.</p>
+        <p>{site.name} vende decants (muestras de 5 ml) de perfumes árabes. Todos los decants se extraen de frascos originales sellados, garantizando la autenticidad de cada producto.</p>
         <p>Las fotos y descripciones son orientativas y pueden tener leves variaciones respecto del producto final.</p>
       </div>
 
@@ -29,8 +30,8 @@ const BASE = '/atomiza-catalog/';
         <h2>3. Realización de pedidos</h2>
         <p>Los pedidos se realizan a través del sitio y se confirman por WhatsApp o Instagram, donde coordinamos los detalles de envío y pago.</p>
         <ul>
-          <li>WhatsApp: 54 9 3472 559307</li>
-          <li>Instagram: @atomiza.cba</li>
+          <li>WhatsApp: {site.phoneDisplay}</li>
+          <li>Instagram: @{site.instagramHandle}</li>
         </ul>
       </div>
 
@@ -51,12 +52,12 @@ const BASE = '/atomiza-catalog/';
 
       <div class="legal-section">
         <h2>7. Limitación de responsabilidad</h2>
-        <p>ΛTOMIZΛ no se hace responsable por el uso indebido de los productos ni por reacciones alérgicas. Ante dudas, recomendamos realizar una prueba en la piel antes del uso habitual.</p>
+        <p>{site.name} no se hace responsable por el uso indebido de los productos ni por reacciones alérgicas. Ante dudas, recomendamos realizar una prueba en la piel antes del uso habitual.</p>
       </div>
 
       <div class="legal-section">
         <h2>8. Contacto</h2>
-        <p>Ante cualquier consulta sobre estos términos, escribinos por <a href="https://wa.me/5493472559307" target="_blank" rel="noopener noreferrer">WhatsApp</a> o por <a href="https://instagram.com/atomiza.cba" target="_blank" rel="noopener noreferrer">Instagram</a>.</p>
+        <p>Ante cualquier consulta sobre estos términos, escribinos por <a href={site.whatsappUrl} target="_blank" rel="noopener noreferrer">WhatsApp</a> o por <a href={site.instagramUrl} target="_blank" rel="noopener noreferrer">Instagram</a>.</p>
       </div>
 
       <p class="legal-back"><a href={BASE} class="legal-back-link">Volver al inicio</a></p>

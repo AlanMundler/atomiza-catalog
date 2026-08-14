@@ -1,10 +1,11 @@
 ---
 import Layout from '@/layouts/Layout.astro';
+import { site } from '@/site.config';
 
-const BASE = '/atomiza-catalog/';
+const BASE = site.basePath;
 ---
 
-<Layout title="Política de privacidad - ΛTOMIZΛ" description="Política de privacidad de ΛTOMIZΛ. Qué datos recopilamos, cómo los usamos y qué derechos tenés sobre ellos.">
+<Layout title={`Política de privacidad - ${site.name}`} description={`Política de privacidad de ${site.name}. Qué datos recopilamos, cómo los usamos y qué derechos tenés sobre ellos.`}>
   <section class="legal-hero" aria-labelledby="legal-title">
     <div class="container">
       <h1 id="legal-title" class="legal-title">Política de privacidad</h1>
@@ -16,7 +17,7 @@ const BASE = '/atomiza-catalog/';
     <div class="container">
       <div class="legal-section">
         <h2>1. Introducción</h2>
-        <p>En ΛTOMIZΛ respetamos tu privacidad. Esta política explica qué información se maneja cuando usás nuestro sitio web y realizás pedidos, y cómo la protegemos.</p>
+        <p>En {site.name} respetamos tu privacidad. Esta política explica qué información se maneja cuando usás nuestro sitio web y realizás pedidos, y cómo la protegemos.</p>
       </div>
 
       <div class="legal-section">
@@ -50,7 +51,7 @@ const BASE = '/atomiza-catalog/';
 
       <div class="legal-section">
         <h2>7. Tus derechos</h2>
-        <p>De acuerdo con la Ley 25.326 de Protección de Datos Personales de la República Argentina, tenés derecho a acceder, rectificar y suprimir tus datos personales. Para ejercer estos derechos, contactanos por <a href="https://wa.me/5493472559307" target="_blank" rel="noopener noreferrer">WhatsApp</a> o <a href="https://instagram.com/atomiza.cba" target="_blank" rel="noopener noreferrer">Instagram</a>.</p>
+        <p>De acuerdo con la Ley 25.326 de Protección de Datos Personales de la República Argentina, tenés derecho a acceder, rectificar y suprimir tus datos personales. Para ejercer estos derechos, contactanos por <a href={site.whatsappUrl} target="_blank" rel="noopener noreferrer">WhatsApp</a> o <a href={site.instagramUrl} target="_blank" rel="noopener noreferrer">Instagram</a>.</p>
       </div>
 
       <div class="legal-section">
@@ -60,7 +61,7 @@ const BASE = '/atomiza-catalog/';
 
       <div class="legal-section">
         <h2>9. Contacto</h2>
-        <p>Ante cualquier consulta sobre esta política, escribinos por <a href="https://wa.me/5493472559307" target="_blank" rel="noopener noreferrer">WhatsApp</a> o por <a href="https://instagram.com/atomiza.cba" target="_blank" rel="noopener noreferrer">Instagram</a>.</p>
+        <p>Ante cualquier consulta sobre esta política, escribinos por <a href={site.whatsappUrl} target="_blank" rel="noopener noreferrer">WhatsApp</a> o por <a href={site.instagramUrl} target="_blank" rel="noopener noreferrer">Instagram</a>.</p>
       </div>
 
       <p class="legal-back"><a href={BASE} class="legal-back-link">Volver al inicio</a></p>

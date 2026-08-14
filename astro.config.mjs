@@ -7,10 +7,13 @@ import { resolve } from 'path';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
+const SITE_URL = process.env.SITE_URL || 'https://atomiza.github.io';
+const BASE_PATH = process.env.BASE_PATH || '/atomiza-catalog/';
+
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://atomiza.github.io',
-  base: '/atomiza-catalog/',
+  site: SITE_URL,
+  base: BASE_PATH,
   output: 'static',
   trailingSlash: 'always',
   integrations: [

@@ -1,5 +1,6 @@
 ---
 import Modal from '@/components/ui/Modal.astro';
+import { assetUrl } from '@/site.config';
 import type { PerfumeImage } from '@/data/types';
 
 interface Props {
@@ -8,7 +9,7 @@ interface Props {
 }
 
 const { images, alt } = Astro.props;
-const mainImage = images[0]?.src || '/images/placeholder.jpg';
+const mainImage = assetUrl(images[0]?.src);
 const mainAlt = images[0]?.alt || alt;
 ---
 
@@ -31,11 +32,11 @@ const mainAlt = images[0]?.alt || alt;
         <button
           class={`image-gallery-thumb ${index === 0 ? 'image-gallery-thumb--active' : ''}`}
           data-thumb-index={index}
-          data-image-src={image.src}
+          data-image-src={assetUrl(image.src)}
           aria-label={`Ver imagen ${index + 1}`}
           aria-selected={index === 0}
         >
-          <img src={image.src} alt={image.alt} loading="lazy" width="80" height="80" />
+          <img src={assetUrl(image.src)} alt={image.alt} loading="lazy" width="80" height="80" />
         </button>
       ))}
     </div>

@@ -1,18 +1,20 @@
 ---
-const BASE = '/atomiza-catalog/';
+import { site } from '@/site.config';
+const BASE = site.basePath;
+const currentYear = new Date().getFullYear();
 ---
 
 <footer class="footer" role="contentinfo">
   <div class="footer-inner container">
     <div class="footer-main">
       <div class="footer-brand">
-        <span class="footer-logo">ΛTOMIZΛ</span>
-        <p class="footer-tagline">Decants de autor</p>
+        <span class="footer-logo">{site.name}</span>
+        <p class="footer-tagline">{site.tagline}</p>
       </div>
     </div>
 
     <div class="footer-bottom">
-      <p class="footer-copyright">© 2026 ΛTOMIZΛ. Todos los derechos reservados.</p>
+      <p class="footer-copyright">© {currentYear} {site.name}. Todos los derechos reservados.</p>
       <nav class="footer-legal" aria-label="Enlaces legales">
         <a href={`${BASE}terminos/`} class="footer-legal-link">Términos y condiciones</a>
         <a href={`${BASE}privacidad/`} class="footer-legal-link">Política de privacidad</a>

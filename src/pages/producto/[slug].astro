@@ -2,6 +2,7 @@
 import Layout from '@/layouts/Layout.astro';
 import ProductDetail from '@/components/product/ProductDetail.astro';
 import perfumesData from '@/data/perfumes.json';
+import { site } from '@/site.config';
 import type { Perfume } from '@/data/types';
 
 export async function getStaticPaths() {
@@ -17,7 +18,7 @@ const { perfume } = Astro.props;
 ---
 
 <Layout 
-  title={`${perfume.brand} ${perfume.name} - ΛTOMIZΛ`} 
+  title={`${perfume.brand} ${perfume.name} - ${site.name}`} 
   description={`${perfume.brand} ${perfume.name} - ${perfume.olfactoryFamily}. Decant de 5ml disponible.`}
   ogImage={perfume.images[0]?.src}
 >

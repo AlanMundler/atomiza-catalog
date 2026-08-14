@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
 
-const HOME = '/atomiza-catalog/';
-const CATALOG = '/atomiza-catalog/catalogo/';
-const PRODUCT = '/atomiza-catalog/producto/baroque-rouge-540/';
+const HOME = '.';
+const CATALOG = 'catalogo/';
+const PRODUCT = 'producto/baroque-rouge-540/';
 
 test.describe('Catalog to Cart Flow', () => {
   test.beforeEach(async ({ page }) => {

@@ -1,5 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const BASE_PATH = process.env.BASE_PATH || '/atomiza-catalog/';
+
 export default defineConfig({
   testDir: './src/test/e2e',
   fullyParallel: true,
@@ -8,7 +10,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
-    baseURL: 'http://localhost:4321/atomiza-catalog/',
+    baseURL: `http://localhost:4321${BASE_PATH}`,
     trace: 'on-first-retry',
   },
   projects: [
@@ -27,7 +29,7 @@ export default defineConfig({
   ],
   webServer: {
     command: 'npm run preview',
-    url: 'http://localhost:4321/atomiza-catalog/',
+    url: `http://localhost:4321${BASE_PATH}`,
     reuseExistingServer: !process.env.CI,
     timeout: 120000,
   },

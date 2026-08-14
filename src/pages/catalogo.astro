@@ -6,6 +6,7 @@ import ProductGrid from '@/components/catalog/ProductGrid.astro';
 import { filterPerfumes, searchPerfumes } from '@/utils/filters';
 import type { Perfume, GenderFilter } from '@/data/types';
 import perfumesData from '@/data/perfumes.json';
+import { site } from '@/site.config';
 
 const allPerfumes: Perfume[] = perfumesData.perfumes as Perfume[];
 
@@ -20,7 +21,7 @@ const currentSearch = searchParam;
 const filteredPerfumes = searchPerfumes(filterPerfumes(allPerfumes, currentFilter), currentSearch);
 ---
 
-<Layout title="Catálogo - ΛTOMIZΛ" description="Explora nuestro catálogo de decants de perfumes árabes. Filtra por género y busca tus fragancias favoritas.">
+<Layout title={`Catálogo - ${site.name}`} description="Explora nuestro catálogo de decants de perfumes árabes. Filtra por género y busca tus fragancias favoritas.">
   <section class="catalog-hero" aria-labelledby="catalog-title">
     <div class="container">
       <h1 id="catalog-title" class="catalog-title">Catálogo</h1>

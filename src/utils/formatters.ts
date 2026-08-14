@@ -1,4 +1,5 @@
 import type { CartItem, Perfume } from '@/data/types';
+import { site } from '@/site.config';
 
 export function formatPrice(price: number): string {
   if (price === 0) return '$0';
@@ -15,7 +16,7 @@ export function generateOrderText(
   channel: OrderChannel = 'whatsapp'
 ): string {
   const lines: string[] = [
-    '📦 NUEVO PEDIDO - ΛTOMIZΛ',
+    `📦 NUEVO PEDIDO - ${site.name}`,
     '',
     `👤 Cliente: ${customerName}`,
     `📱 Contacto: ${customerContact}`,
@@ -46,8 +47,8 @@ export function generateOrderText(
     '',
     '—',
     channel === 'instagram'
-      ? 'Enviar a @atomiza.cba por Instagram DM'
-      : 'Enviar por WhatsApp a @atomiza.cba'
+      ? `Enviar a @${site.instagramHandle} por Instagram DM`
+      : `Enviar por WhatsApp a @${site.instagramHandle}`
   );
 
   return lines.join('\n');

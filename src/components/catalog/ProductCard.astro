@@ -1,6 +1,7 @@
 ---
 import Chip from '@/components/ui/Chip.astro';
 import { getStockStatus, getStockLabel } from '@/utils/stock';
+import { site, assetUrl } from '@/site.config';
 import type { Perfume } from '@/data/types';
 
 interface Props {
@@ -8,8 +9,8 @@ interface Props {
   basePath?: string;
 }
 
-const { perfume, basePath = '/atomiza-catalog/' } = Astro.props;
-const mainImage = perfume.images[0]?.src || '/images/placeholder.jpg';
+const { perfume, basePath = site.basePath } = Astro.props;
+const mainImage = assetUrl(perfume.images[0]?.src);
 const mainAlt = perfume.images[0]?.alt || `${perfume.brand} ${perfume.name}`;
 
 // Get primary size (5ml) for price display

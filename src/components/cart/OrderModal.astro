@@ -1,6 +1,7 @@
 ---
 import Modal from '@/components/ui/Modal.astro';
 import Button from '@/components/ui/Button.astro';
+import { site } from '@/site.config';
 ---
 
 <Modal 
@@ -93,7 +94,7 @@ import Button from '@/components/ui/Button.astro';
       </Button>
     </div>
 
-    <p class="order-modal-note">El pedido se envía a <strong>@atomiza.cba</strong></p>
+    <p class="order-modal-note">El pedido se envía a <strong>@{site.instagramHandle}</strong></p>
   </div>
 </Modal>
 
@@ -101,9 +102,10 @@ import Button from '@/components/ui/Button.astro';
   import { getCart } from '@/utils/cart';
   import { generateOrderText, buildWhatsAppLink } from '@/utils/formatters';
   import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
+  import { site } from '@/site.config';
 
-  const WHATSAPP_NUMBER = '5493472559307';
-  const INSTAGRAM_HANDLE = 'atomiza.cba';
+  const WHATSAPP_NUMBER = site.whatsappNumber;
+  const INSTAGRAM_HANDLE = site.instagramHandle;
 
   let nameInput: HTMLInputElement | null = null;
   let contactInput: HTMLInputElement | null = null;
@@ -112,7 +114,7 @@ import Button from '@/components/ui/Button.astro';
 
   function getPerfumesMap(): Map<string, any> {
     try {
-      const data = JSON.parse(localStorage.getItem('perfumes-data') || '{"perfumes":[]}');
+      const data = JSON.parse(localStorage.getItem(site.storage.perfumes) || '{"perfumes":[]}');
       return new Map((data.perfumes || []).map((p: any) => [p.id, p]));
     } catch {
       return new Map();
