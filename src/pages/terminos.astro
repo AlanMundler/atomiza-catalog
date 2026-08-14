@@ -1,0 +1,162 @@
+---
+import Layout from '@/layouts/Layout.astro';
+
+const BASE = '/atomiza-catalog/';
+---
+
+<Layout title="Términos y condiciones - ΛTOMIZΛ" description="Términos y condiciones de venta de decants de perfumes árabes en ΛTOMIZΛ. Pedidos por WhatsApp e Instagram, precios, envíos y devoluciones.">
+  <section class="legal-hero" aria-labelledby="legal-title">
+    <div class="container">
+      <h1 id="legal-title" class="legal-title">Términos y condiciones</h1>
+      <p class="legal-subtitle">Última actualización: agosto de 2026</p>
+    </div>
+  </section>
+
+  <section class="legal-content" aria-label="Contenido de términos y condiciones">
+    <div class="container">
+      <div class="legal-section">
+        <h2>1. Aceptación de los términos</h2>
+        <p>Al navegar por este sitio y realizar un pedido, aceptás estos Términos y Condiciones. Si no estás de acuerdo con ellos, te pedimos que no realices compras a través de nuestros canales.</p>
+      </div>
+
+      <div class="legal-section">
+        <h2>2. Productos</h2>
+        <p>ΛTOMIZΛ vende decants (muestras de 5 ml) de perfumes árabes. Todos los decants se extraen de frascos originales sellados, garantizando la autenticidad de cada producto.</p>
+        <p>Las fotos y descripciones son orientativas y pueden tener leves variaciones respecto del producto final.</p>
+      </div>
+
+      <div class="legal-section">
+        <h2>3. Realización de pedidos</h2>
+        <p>Los pedidos se realizan a través del sitio y se confirman por WhatsApp o Instagram, donde coordinamos los detalles de envío y pago.</p>
+        <ul>
+          <li>WhatsApp: 54 9 3472 559307</li>
+          <li>Instagram: @atomiza.cba</li>
+        </ul>
+      </div>
+
+      <div class="legal-section">
+        <h2>4. Precios y pagos</h2>
+        <p>Los precios publicados están expresados en pesos argentinos. El total final se confirma al coordinar el envío, momento en el que se acuerdan el medio de pago y la forma de entrega.</p>
+      </div>
+
+      <div class="legal-section">
+        <h2>5. Envíos y entregas</h2>
+        <p>Coordinamos la entrega por puntos de encuentro o envío, según lo acordado por WhatsApp o Instagram. El costo y los tiempos de envío dependen de la ubicación y se informan al confirmar el pedido.</p>
+      </div>
+
+      <div class="legal-section">
+        <h2>6. Cambios y devoluciones</h2>
+        <p>Por razones de higiene, los decants abiertos no pueden ser devueltos. Si tu pedido llegó dañado o con un error, contactanos dentro de las 48 horas de recibido para gestionar el reemplazo.</p>
+      </div>
+
+      <div class="legal-section">
+        <h2>7. Limitación de responsabilidad</h2>
+        <p>ΛTOMIZΛ no se hace responsable por el uso indebido de los productos ni por reacciones alérgicas. Ante dudas, recomendamos realizar una prueba en la piel antes del uso habitual.</p>
+      </div>
+
+      <div class="legal-section">
+        <h2>8. Contacto</h2>
+        <p>Ante cualquier consulta sobre estos términos, escribinos por <a href="https://wa.me/5493472559307" target="_blank" rel="noopener noreferrer">WhatsApp</a> o por <a href="https://instagram.com/atomiza.cba" target="_blank" rel="noopener noreferrer">Instagram</a>.</p>
+      </div>
+
+      <p class="legal-back"><a href={BASE} class="legal-back-link">Volver al inicio</a></p>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .legal-hero {
+    padding: var(--spacing-stack-lg) 0 var(--spacing-stack-md);
+    text-align: center;
+  }
+
+  .legal-title {
+    font-family: var(--font-family);
+    font-size: var(--font-display-lg-size);
+    font-weight: var(--font-display-lg-weight);
+    line-height: var(--font-display-lg-line-height);
+    letter-spacing: var(--font-display-lg-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    margin: 0 0 var(--spacing-stack-sm);
+  }
+
+  @media (max-width: 640px) {
+    .legal-title {
+      font-size: 36px;
+    }
+  }
+
+  .legal-subtitle {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    color: var(--color-on-surface-variant);
+    margin: 0;
+  }
+
+  .legal-content {
+    padding: 0 0 var(--spacing-stack-lg);
+  }
+
+  .legal-section {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: var(--spacing-stack-sm) 0;
+    border-top: var(--border-width) solid var(--color-outline-variant);
+  }
+
+  .legal-section h2 {
+    font-family: var(--font-family);
+    font-size: var(--font-headline-md-size);
+    font-weight: var(--font-headline-md-weight);
+    line-height: var(--font-headline-md-line-height);
+    letter-spacing: var(--font-headline-md-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    margin: 0 0 var(--spacing-stack-sm);
+  }
+
+  .legal-section p,
+  .legal-section ul {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    line-height: var(--font-body-md-line-height);
+    letter-spacing: var(--font-body-md-tracking);
+    color: var(--color-on-surface-variant);
+    margin: 0 0 12px;
+  }
+
+  .legal-section ul {
+    padding-left: 20px;
+    margin-bottom: 0;
+  }
+
+  .legal-section li {
+    margin-bottom: 4px;
+  }
+
+  .legal-section a {
+    color: var(--color-primary);
+  }
+
+  .legal-back {
+    max-width: 720px;
+    margin: var(--spacing-stack-md) auto 0;
+    text-align: center;
+  }
+
+  .legal-back-link {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: color var(--transition-duration) var(--transition-easing);
+  }
+
+  .legal-back-link:hover {
+    color: var(--color-on-surface);
+  }
+</style>

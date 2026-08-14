@@ -1,0 +1,166 @@
+---
+import Layout from '@/layouts/Layout.astro';
+
+const BASE = '/atomiza-catalog/';
+---
+
+<Layout title="Política de privacidad - ΛTOMIZΛ" description="Política de privacidad de ΛTOMIZΛ. Qué datos recopilamos, cómo los usamos y qué derechos tenés sobre ellos.">
+  <section class="legal-hero" aria-labelledby="legal-title">
+    <div class="container">
+      <h1 id="legal-title" class="legal-title">Política de privacidad</h1>
+      <p class="legal-subtitle">Última actualización: agosto de 2026</p>
+    </div>
+  </section>
+
+  <section class="legal-content" aria-label="Contenido de la política de privacidad">
+    <div class="container">
+      <div class="legal-section">
+        <h2>1. Introducción</h2>
+        <p>En ΛTOMIZΛ respetamos tu privacidad. Esta política explica qué información se maneja cuando usás nuestro sitio web y realizás pedidos, y cómo la protegemos.</p>
+      </div>
+
+      <div class="legal-section">
+        <h2>2. Información que recopilamos</h2>
+        <p>No pedimos cuentas ni contraseñas. La información que podés compartir es:</p>
+        <ul>
+          <li><strong>Datos del carrito:</strong> los productos que elegís se guardan localmente en tu navegador (localStorage) para armar tu pedido.</li>
+          <li><strong>Datos de contacto:</strong> nombre y datos que nos enviás voluntariamente al escribirnos por WhatsApp o Instagram.</li>
+        </ul>
+      </div>
+
+      <div class="legal-section">
+        <h2>3. Uso de la información</h2>
+        <p>Usamos tu información únicamente para procesar y coordinar tu pedido, responder consultas y mejorar tu experiencia de compra. No vendemos ni cedemos tus datos a terceros con fines comerciales.</p>
+      </div>
+
+      <div class="legal-section">
+        <h2>4. Almacenamiento</h2>
+        <p>El carrito se guarda de forma local en tu navegador y podés vaciarlo cuando quieras desde el carrito de compras. Los mensajes que nos envías por WhatsApp o Instagram quedan en esas plataformas según sus propias políticas.</p>
+      </div>
+
+      <div class="legal-section">
+        <h2>5. Servicios de terceros</h2>
+        <p>Nuestros canales de comunicación y seguimiento de pedidos utilizan servicios de terceros (WhatsApp y Meta/Instagram). Sus políticas de privacidad aplican al usar esas plataformas.</p>
+      </div>
+
+      <div class="legal-section">
+        <h2>6. Cookies</h2>
+        <p>Este sitio no utiliza cookies de seguimiento de terceros. El almacenamiento local se usa exclusivamente para el funcionamiento del carrito de compras.</p>
+      </div>
+
+      <div class="legal-section">
+        <h2>7. Tus derechos</h2>
+        <p>De acuerdo con la Ley 25.326 de Protección de Datos Personales de la República Argentina, tenés derecho a acceder, rectificar y suprimir tus datos personales. Para ejercer estos derechos, contactanos por <a href="https://wa.me/5493472559307" target="_blank" rel="noopener noreferrer">WhatsApp</a> o <a href="https://instagram.com/atomiza.cba" target="_blank" rel="noopener noreferrer">Instagram</a>.</p>
+      </div>
+
+      <div class="legal-section">
+        <h2>8. Cambios en esta política</h2>
+        <p>Podemos actualizar esta política periódicamente. Los cambios se publicarán en esta página con su fecha de actualización.</p>
+      </div>
+
+      <div class="legal-section">
+        <h2>9. Contacto</h2>
+        <p>Ante cualquier consulta sobre esta política, escribinos por <a href="https://wa.me/5493472559307" target="_blank" rel="noopener noreferrer">WhatsApp</a> o por <a href="https://instagram.com/atomiza.cba" target="_blank" rel="noopener noreferrer">Instagram</a>.</p>
+      </div>
+
+      <p class="legal-back"><a href={BASE} class="legal-back-link">Volver al inicio</a></p>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .legal-hero {
+    padding: var(--spacing-stack-lg) 0 var(--spacing-stack-md);
+    text-align: center;
+  }
+
+  .legal-title {
+    font-family: var(--font-family);
+    font-size: var(--font-display-lg-size);
+    font-weight: var(--font-display-lg-weight);
+    line-height: var(--font-display-lg-line-height);
+    letter-spacing: var(--font-display-lg-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    margin: 0 0 var(--spacing-stack-sm);
+  }
+
+  @media (max-width: 640px) {
+    .legal-title {
+      font-size: 36px;
+    }
+  }
+
+  .legal-subtitle {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    color: var(--color-on-surface-variant);
+    margin: 0;
+  }
+
+  .legal-content {
+    padding: 0 0 var(--spacing-stack-lg);
+  }
+
+  .legal-section {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: var(--spacing-stack-sm) 0;
+    border-top: var(--border-width) solid var(--color-outline-variant);
+  }
+
+  .legal-section h2 {
+    font-family: var(--font-family);
+    font-size: var(--font-headline-md-size);
+    font-weight: var(--font-headline-md-weight);
+    line-height: var(--font-headline-md-line-height);
+    letter-spacing: var(--font-headline-md-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    margin: 0 0 var(--spacing-stack-sm);
+  }
+
+  .legal-section p,
+  .legal-section ul {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    line-height: var(--font-body-md-line-height);
+    letter-spacing: var(--font-body-md-tracking);
+    color: var(--color-on-surface-variant);
+    margin: 0 0 12px;
+  }
+
+  .legal-section ul {
+    padding-left: 20px;
+    margin-bottom: 0;
+  }
+
+  .legal-section li {
+    margin-bottom: 4px;
+  }
+
+  .legal-section a {
+    color: var(--color-primary);
+  }
+
+  .legal-back {
+    max-width: 720px;
+    margin: var(--spacing-stack-md) auto 0;
+    text-align: center;
+  }
+
+  .legal-back-link {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: color var(--transition-duration) var(--transition-easing);
+  }
+
+  .legal-back-link:hover {
+    color: var(--color-on-surface);
+  }
+</style>
