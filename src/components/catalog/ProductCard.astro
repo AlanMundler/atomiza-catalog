@@ -36,7 +36,12 @@ const isOutOfStock = stockStatus === 'out-of-stock';
       height="400"
     />
     {isOutOfStock && <div class="product-card-overlay" aria-hidden="true"></div>}
-    <Chip variant={stockStatus} class="product-card-stock">
+    <Chip
+      variant={stockStatus}
+      class="product-card-stock"
+      data-stock-id={perfume.id}
+      data-stock-ml={primarySize.ml}
+    >
       {stockLabel}
     </Chip>
   </div>
