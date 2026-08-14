@@ -8,7 +8,17 @@ export interface LiveStockRow {
   stock: number;
 }
 
-const LIVE_STOCK_URL = '';
+const LIVE_STOCK_URL =
+  'https://script.google.com/macros/s/AKfycbzmq3duVxIVGX0omOL480H960kam9MLp6OuPjJf31kzjBCJRRHl4ek0tcXp1VgZH_NdwA/exec';
+
+function slugifyId(raw: string): string {
+  return raw
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
 const PERFUMES_DATA_KEY = 'perfumes-data';
 const CACHE_KEY = 'atomiza-stock-live';
 const CACHE_TTL_MS = 15 * 60 * 1000;
@@ -20,7 +30,7 @@ export function normalizeRows(raw: unknown): LiveStockRow[] {
   for (const item of raw) {
     if (!item || typeof item !== 'object') continue;
     const record = item as Record<string, unknown>;
-    const id = typeof record.id === 'string' ? record.id.trim() : '';
+    const id = typeof record.id === 'string' ? slugifyId(record.id) : '';
     const ml = Number(record.ml);
     const stock = Number(record.stock);
     if (!id) continue;

@@ -50,6 +50,19 @@ describe('normalizeRows', () => {
     ]);
     expect(rows).toEqual([{ id: 'spaced-id', ml: 5, stock: 2 }]);
   });
+
+  it('slugifies display names so they match perfume slugs', () => {
+    const rows = normalizeRows([
+      { id: 'Glacier Ultra', ml: 10, stock: 4 },
+      { id: '  Yeah! Man  ', ml: 5, stock: 2 },
+      { id: '24 Carat White Gold', ml: 2, stock: 1 },
+    ]);
+    expect(rows).toEqual([
+      { id: 'glacier-ultra', ml: 10, stock: 4 },
+      { id: 'yeah-man', ml: 5, stock: 2 },
+      { id: '24-carat-white-gold', ml: 2, stock: 1 },
+    ]);
+  });
 });
 
 describe('buildStockMap', () => {
