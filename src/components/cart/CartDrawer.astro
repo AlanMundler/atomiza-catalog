@@ -291,24 +291,10 @@ import Drawer from '@/components/ui/Drawer.astro';
 
   .cart-content {
     flex: 1;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: var(--color-outline-variant) transparent;
+    min-height: 0;
     display: flex;
     flex-direction: column;
-  }
-
-  .cart-content::-webkit-scrollbar {
-    width: 5px;
-  }
-
-  .cart-content::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  .cart-content::-webkit-scrollbar-thumb {
-    background-color: var(--color-outline-variant);
-    border-radius: 4px;
+    overflow: hidden;
   }
 
   .cart-empty {
@@ -339,12 +325,30 @@ import Drawer from '@/components/ui/Drawer.astro';
   }
 
   .cart-items {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-outline-variant) transparent;
     display: flex;
     flex-direction: column;
     gap: 12px;
     margin: 0;
-    padding: 0;
+    padding: 0 4px 0 0;
     list-style: none;
+  }
+
+  .cart-items::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  .cart-items::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .cart-items::-webkit-scrollbar-thumb {
+    background-color: var(--color-outline-variant);
+    border-radius: 4px;
   }
 
   /* Cart item */
@@ -535,8 +539,9 @@ import Drawer from '@/components/ui/Drawer.astro';
 
   /* Order summary */
   .order-summary {
-    margin-top: auto;
-    padding: 20px;
+    flex-shrink: 0;
+    margin-top: 16px;
+    padding: 16px;
     background-color: var(--color-surface-container);
     border: var(--border-width) solid var(--color-outline-variant);
     border-radius: var(--border-radius);
@@ -546,12 +551,12 @@ import Drawer from '@/components/ui/Drawer.astro';
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 6px 0;
+    padding: 4px 0;
   }
 
   .order-summary-line--total {
     margin-top: 8px;
-    padding-top: 16px;
+    padding-top: 12px;
     border-top: var(--border-width) solid var(--color-outline-variant);
   }
 
@@ -569,23 +574,23 @@ import Drawer from '@/components/ui/Drawer.astro';
   }
 
   .order-summary-line--total .order-summary-label {
-    font-size: var(--font-headline-md-size);
-    font-weight: var(--font-headline-md-weight);
-    letter-spacing: var(--font-headline-md-tracking);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
     text-transform: uppercase;
   }
 
   .order-summary-line--total .order-summary-value {
-    font-size: var(--font-headline-md-size);
-    font-weight: var(--font-headline-md-weight);
+    font-size: 18px;
+    font-weight: 500;
     color: var(--color-primary);
   }
 
   .order-summary-note {
     font-family: var(--font-family);
-    font-size: var(--font-label-sm-size);
+    font-size: 11px;
     color: var(--color-on-surface-variant);
-    margin: 12px 0 16px;
+    margin: 8px 0 12px;
     text-align: center;
   }
 
@@ -594,10 +599,10 @@ import Drawer from '@/components/ui/Drawer.astro';
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: 40px;
-    padding: 0 24px;
+    height: 36px;
+    padding: 0 20px;
     font-family: var(--font-family);
-    font-size: var(--font-label-sm-size);
+    font-size: 11px;
     font-weight: 500;
     letter-spacing: var(--font-label-sm-tracking);
     text-transform: uppercase;
