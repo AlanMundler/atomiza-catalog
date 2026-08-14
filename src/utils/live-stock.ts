@@ -1,6 +1,6 @@
 import { getStockLabel, getStockStatus } from '@/utils/stock';
 import { onPageLoad } from '@/utils/view-transitions';
-import type { PerfumeSize, StockStatus } from '@/data/types';
+import type { Perfume, PerfumeSize, StockStatus } from '@/data/types';
 
 export interface LiveStockRow {
   id: string;
@@ -31,14 +31,113 @@ export function normalizeRows(raw: unknown): LiveStockRow[] {
     if (!item || typeof item !== 'object') continue;
     const record = item as Record<string, unknown>;
     const id = typeof record.id === 'string' ? slugifyId(record.id) : '';
-    const ml = Number(record.ml);
     const stock = Number(record.stock);
     if (!id) continue;
-    if (!Number.isFinite(ml) || ml <= 0) continue;
     if (!Number.isFinite(stock) || stock < 0) continue;
-    rows.push({ id, ml, stock });
+    rows.push({ id, ml: Number(record.ml), stock });
   }
   return rows;
+}
+
+function normalizeToken(value: string): string {
+  if (typeof value !== 'string' || !value) return '';
+  return value
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim()
+    .replace(/\s+/g, ' ');
+}
+
+function tokensOf(value: string): string[] {
+  return normalizeToken(value).split(' ').filter(Boolean);
+}
+
+function levenshtein(a: string, b: string): number {
+  if (a === b) return 0;
+  const m = a.length;
+  const n = b.length;
+  if (m === 0) return n;
+  if (n === 0) return m;
+  let prev = new Array<number>(n + 1);
+  for (let j = 0; j <= n; j++) prev[j] = j;
+  for (let i = 1; i <= m; i++) {
+    const curr = new Array<number>(n + 1);
+    curr[0] = i;
+    for (let j = 1; j <= n; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      curr[j] = Math.min(prev[j] + 1, curr[j - 1] + 1, prev[j - 1] + cost);
+    }
+    prev = curr;
+  }
+  return prev[n];
+}
+
+function fuzzyEqual(a: string, b: string): boolean {
+  if (a === b) return true;
+  const maxLen = Math.max(a.length, b.length);
+  if (maxLen < 3) return false;
+  return levenshtein(a, b) <= Math.max(1, Math.floor(maxLen * 0.2));
+}
+
+function perfumeMatchScore(rowId: string, perfume: { id: string; name: string }): number {
+  const row = normalizeToken(rowId);
+  if (!row) return 0;
+  const idN = normalizeToken(perfume.id);
+  const nameN = normalizeToken(perfume.name);
+  if (row === idN || row === nameN) return 1000;
+  if (idN.includes(row) || nameN.includes(row)) return 900;
+  const rowTokens = tokensOf(rowId);
+  if (rowTokens.length === 0) return 0;
+  const candidates = new Set([...tokensOf(perfume.id), ...tokensOf(perfume.name)]);
+  let matched = 0;
+  for (const token of rowTokens) {
+    for (const candidate of candidates) {
+      if (fuzzyEqual(token, candidate)) {
+        matched++;
+        break;
+      }
+    }
+  }
+  return Math.round((matched / rowTokens.length) * 800);
+}
+
+export interface ResolvablePerfume {
+  id: string;
+  name: string;
+  sizes: Array<{ ml: number }>;
+}
+
+export function resolveRows(rows: LiveStockRow[], perfumes: ResolvablePerfume[]): LiveStockRow[] {
+  const resolved: LiveStockRow[] = [];
+  for (const row of rows) {
+    let best: ResolvablePerfume | null = null;
+    let bestScore = 0;
+    for (const perfume of perfumes) {
+      const score = perfumeMatchScore(row.id, perfume);
+      if (score > bestScore) {
+        bestScore = score;
+        best = perfume;
+      }
+    }
+    if (!best || bestScore < 400) continue;
+    for (const size of best.sizes) {
+      resolved.push({ id: best.id, ml: size.ml, stock: row.stock });
+    }
+  }
+  return resolved;
+}
+
+function readPerfumesData(): Perfume[] {
+  try {
+    const raw = window.localStorage.getItem(PERFUMES_DATA_KEY);
+    if (!raw) return [];
+    const data = JSON.parse(raw);
+    return Array.isArray(data?.perfumes) ? (data.perfumes as Perfume[]) : [];
+  } catch {
+    return [];
+  }
 }
 
 export function buildStockMap(rows: LiveStockRow[]): Map<string, number> {
@@ -164,7 +263,7 @@ export async function refreshLiveStock(url = LIVE_STOCK_URL): Promise<void> {
   try {
     const res = await fetch(url);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const rows = normalizeRows(JSON.parse(await res.text()));
+    const rows = resolveRows(normalizeRows(JSON.parse(await res.text())), readPerfumesData());
     if (rows.length === 0) return;
     writeCache(rows);
     apply(rows);

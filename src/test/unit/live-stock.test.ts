@@ -5,6 +5,7 @@ import {
   mergeStockIntoPerfumesData,
   normalizeRows,
   refreshLiveStock,
+  resolveRows,
 } from '@/utils/live-stock';
 
 const PERFUMES_DATA_KEY = 'perfumes-data';
@@ -38,7 +39,7 @@ describe('normalizeRows', () => {
     ]);
   });
 
-  it('trims the id and skips invalid rows', () => {
+  it('trims the id, keeps any ml and skips rows without id or valid stock', () => {
     const rows = normalizeRows([
       { id: '  spaced-id  ', ml: 5, stock: 2 },
       { id: '', ml: 5, stock: 2 },
@@ -48,7 +49,11 @@ describe('normalizeRows', () => {
       { id: 'no-stock', ml: 5, stock: NaN },
       { ml: 5, stock: 1 },
     ]);
-    expect(rows).toEqual([{ id: 'spaced-id', ml: 5, stock: 2 }]);
+    expect(rows).toEqual([
+      { id: 'spaced-id', ml: 5, stock: 2 },
+      { id: 'no-ml', ml: 0, stock: 2 },
+      { id: 'neg-ml', ml: -5, stock: 2 },
+    ]);
   });
 
   it('slugifies display names so they match perfume slugs', () => {
@@ -62,6 +67,94 @@ describe('normalizeRows', () => {
       { id: 'yeah-man', ml: 5, stock: 2 },
       { id: '24-carat-white-gold', ml: 2, stock: 1 },
     ]);
+  });
+});
+
+describe('resolveRows', () => {
+  const perfumes = [
+    { id: 'glacier-ultra', name: 'Glacier Ultra', sizes: [{ ml: 5, price: 1000, stock: 10 }] },
+    { id: 'liam', name: 'Liam', sizes: [{ ml: 5, price: 1000, stock: 10 }] },
+    {
+      id: 'qaed-al-fursan-untamed',
+      name: 'Qaed Al Fursan Untamed',
+      sizes: [{ ml: 5, price: 1000, stock: 10 }],
+    },
+    {
+      id: 'oud-lail-maleki',
+      name: 'Oud Lail Maleki',
+      sizes: [{ ml: 5, price: 1000, stock: 10 }],
+    },
+    {
+      id: 'hayaati-al-maleky',
+      name: 'Hayaati Al Maleky',
+      sizes: [
+        { ml: 5, price: 1000, stock: 10 },
+        { ml: 10, price: 1800, stock: 5 },
+      ],
+    },
+    { id: 'yeah', name: 'Yeah!', sizes: [{ ml: 5, price: 1000, stock: 10 }] },
+    {
+      id: 'baroque-rouge-540',
+      name: 'Baroque Rouge 540',
+      sizes: [{ ml: 5, price: 1000, stock: 10 }],
+    },
+    { id: 'now-rave', name: 'Now', sizes: [{ ml: 5, price: 1000, stock: 10 }] },
+    {
+      id: 'badee-al-oud-sublime',
+      name: 'Bade\'e Al Oud Sublime',
+      sizes: [{ ml: 5, price: 1000, stock: 10 }],
+    },
+    {
+      id: 'ameer-al-oudh',
+      name: 'Ameer Al Oudh Intense Oud',
+      sizes: [{ ml: 5, price: 1000, stock: 10 }],
+    },
+  ];
+
+  it('resolves exact ids and applies the stock to every size, ignoring ml', () => {
+    const rows = resolveRows(
+      [
+        { id: 'Glacier Ultra', ml: 0, stock: 4 },
+        { id: 'Hayaati Al Maleki', ml: 0, stock: 2 },
+      ],
+      perfumes
+    );
+    expect(rows).toEqual([
+      { id: 'glacier-ultra', ml: 5, stock: 4 },
+      { id: 'hayaati-al-maleky', ml: 5, stock: 2 },
+      { id: 'hayaati-al-maleky', ml: 10, stock: 2 },
+    ]);
+  });
+
+  it('matches names that are almost identical to the catalog', () => {
+    const rows = resolveRows(
+      [
+        { id: 'Al Fursan Untamed', ml: 5, stock: 4 },
+        { id: 'Liam Grey', ml: 5, stock: 1 },
+        { id: 'Lail Maleki Oud', ml: 5, stock: 0 },
+        { id: 'Sublime', ml: 5, stock: 3 },
+        { id: 'Yeah! Man', ml: 5, stock: 2 },
+        { id: 'La Baroque Rouge', ml: 5, stock: 5 },
+        { id: 'Now Rave', ml: 5, stock: 6 },
+        { id: 'Ameer Al Oudh', ml: 5, stock: 7 },
+      ],
+      perfumes
+    );
+    expect(rows).toEqual([
+      { id: 'qaed-al-fursan-untamed', ml: 5, stock: 4 },
+      { id: 'liam', ml: 5, stock: 1 },
+      { id: 'oud-lail-maleki', ml: 5, stock: 0 },
+      { id: 'badee-al-oud-sublime', ml: 5, stock: 3 },
+      { id: 'yeah', ml: 5, stock: 2 },
+      { id: 'baroque-rouge-540', ml: 5, stock: 5 },
+      { id: 'now-rave', ml: 5, stock: 6 },
+      { id: 'ameer-al-oudh', ml: 5, stock: 7 },
+    ]);
+  });
+
+  it('drops rows that do not match any perfume', () => {
+    const rows = resolveRows([{ id: 'totally-unknown-thing', ml: 5, stock: 3 }], perfumes);
+    expect(rows).toEqual([]);
   });
 });
 
