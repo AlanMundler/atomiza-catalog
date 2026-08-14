@@ -7,7 +7,7 @@ import { filterPerfumes, searchPerfumes } from '@/utils/filters';
 import type { Perfume, GenderFilter } from '@/data/types';
 import perfumesData from '@/data/perfumes.json';
 
-const allPerfumes: Perfume[] = perfumesData.perfumes;
+const allPerfumes: Perfume[] = perfumesData.perfumes as Perfume[];
 
 // Get filter and search from URL params
 const url = new URL(Astro.request.url);
@@ -57,13 +57,7 @@ const filteredPerfumes = searchPerfumes(filterPerfumes(allPerfumes, currentFilte
 
 <script>
   // Client-side filtering without page reload (static output has no query params at build time)
-  const cards = Array.from(document.querySelectorAll('.product-card')) as HTMLElement[];
-  const countEl = document.querySelector('[data-results-count]') as HTMLElement;
-  const filterLabelEl = document.querySelector('[data-filter-label]') as HTMLElement | null;
-  const searchLabelEl = document.querySelector('[data-search-label]') as HTMLElement | null;
-  const emptyEl = document.querySelector('.product-grid-empty') as HTMLElement | null;
-  const gridEl = document.querySelector('.product-grid') as HTMLElement | null;
-  const filterButtons = document.querySelectorAll('.filter-chip') as NodeListOf<HTMLButtonElement>;
+  import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
 
   const GENDERS: Record<string, string[]> = {
     'masculino': ['masculino', 'unisex'],
@@ -71,10 +65,15 @@ const filteredPerfumes = searchPerfumes(filterPerfumes(allPerfumes, currentFilte
     'unisex': ['unisex'],
   };
 
-  let currentFilter: string = new URL(window.location.href).searchParams.get('filter') || 'all';
-  let currentSearch: string = new URL(window.location.href).searchParams.get('search') || '';
+  let currentFilter = 'all';
+  let currentSearch = '';
 
   function applyFilters() {
+    const cards = Array.from(document.querySelectorAll('.product-card')) as HTMLElement[];
+    const countEl = document.querySelector('[data-results-count]') as HTMLElement | null;
+    const emptyEl = document.querySelector('.product-grid-empty') as HTMLElement | null;
+    const gridEl = document.querySelector('.product-grid') as HTMLElement | null;
+
     let visible = 0;
     cards.forEach((card) => {
       const gender = card.getAttribute('data-gender') || '';
@@ -105,25 +104,8 @@ const filteredPerfumes = searchPerfumes(filterPerfumes(allPerfumes, currentFilte
     }
   }
 
-  filterButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-      const filter = button.getAttribute('data-filter');
-      if (!filter) return;
-      currentFilter = filter;
-      const url = new URL(window.location.href);
-      if (filter === 'all') {
-        url.searchParams.delete('filter');
-      } else {
-        url.searchParams.set('filter', filter);
-      }
-      window.history.pushState({}, '', url);
-
-      updateActiveChip();
-      applyFilters();
-    });
-  });
-
   function updateActiveChip() {
+    const filterButtons = document.querySelectorAll('.filter-chip') as NodeListOf<HTMLButtonElement>;
     filterButtons.forEach((b) => {
       const isActive = b.getAttribute('data-filter') === currentFilter;
       b.classList.toggle('filter-chip--active', isActive);
@@ -131,8 +113,8 @@ const filteredPerfumes = searchPerfumes(filterPerfumes(allPerfumes, currentFilte
     });
   }
 
-  window.addEventListener('search:change', (e: CustomEvent) => {
-    currentSearch = e.detail?.query || '';
+  onWindowOnce('catalogo-search', 'search:change', (e) => {
+    currentSearch = (e as CustomEvent).detail?.query || '';
     const url = new URL(window.location.href);
     if (currentSearch) {
       url.searchParams.set('search', currentSearch);
@@ -143,8 +125,34 @@ const filteredPerfumes = searchPerfumes(filterPerfumes(allPerfumes, currentFilte
     applyFilters();
   });
 
-  updateActiveChip();
-  applyFilters();
+  onPageLoad('catalogo', () => {
+    currentFilter = new URL(window.location.href).searchParams.get('filter') || 'all';
+    currentSearch = new URL(window.location.href).searchParams.get('search') || '';
+
+    const filterButtons = document.querySelectorAll('.filter-chip') as NodeListOf<HTMLButtonElement>;
+    filterButtons.forEach((button) => {
+      bindOnce(button, (el) => {
+        el.addEventListener('click', () => {
+          const filter = el.getAttribute('data-filter');
+          if (!filter) return;
+          currentFilter = filter;
+          const url = new URL(window.location.href);
+          if (filter === 'all') {
+            url.searchParams.delete('filter');
+          } else {
+            url.searchParams.set('filter', filter);
+          }
+          window.history.pushState({}, '', url);
+
+          updateActiveChip();
+          applyFilters();
+        });
+      });
+    });
+
+    updateActiveChip();
+    applyFilters();
+  });
 </script>
 
 <style>

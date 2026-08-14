@@ -3,11 +3,12 @@ import Layout from '@/layouts/Layout.astro';
 import ProductCard from '@/components/catalog/ProductCard.astro';
 import perfumesData from '@/data/perfumes.json';
 import { isSizeAvailable } from '@/utils/stock';
+import type { Perfume } from '@/data/types';
 
 const BASE = '/atomiza-catalog/';
 
 // Perfumes in stock to rotate on the home page
-const allPerfumes = perfumesData.perfumes;
+const allPerfumes = perfumesData.perfumes as Perfume[];
 const inStockPerfumes = allPerfumes.filter((perfume) => {
   const primary = perfume.sizes.find((s) => s.ml === 5) || perfume.sizes[0];
   return primary ? isSizeAvailable(primary) : false;
@@ -117,14 +118,22 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
   </section>
 
   <script>
+    import { onPageLoad } from '@/utils/view-transitions';
+
     // Pick 3 random perfumes from stock on each visit
-    const items = Array.from(document.querySelectorAll('#home-perfume-grid .home-perfume-item'));
-    if (items.length > 3) {
-      const shuffled = items.sort(() => Math.random() - 0.5);
-      shuffled.forEach((item, i) => {
-        item.hidden = i >= 3;
-      });
-    }
+    onPageLoad('home', () => {
+      const grid = document.querySelector('#home-perfume-grid') as HTMLElement | null;
+      if (!grid || (grid as any).__vtShuffled) return;
+      (grid as any).__vtShuffled = true;
+
+      const items = Array.from(grid.querySelectorAll('.home-perfume-item')) as HTMLElement[];
+      if (items.length > 3) {
+        const shuffled = items.sort(() => Math.random() - 0.5);
+        shuffled.forEach((item, i) => {
+          item.hidden = i >= 3;
+        });
+      }
+    });
   </script>
 </Layout>
 

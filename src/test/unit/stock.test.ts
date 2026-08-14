@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { getStockStatus, getStockLabel, getStockColor, isSizeAvailable } from '@/utils/stock';
-import type { PerfumeSize, StockStatus } from '@/data/types';
+import type { PerfumeSize } from '@/data/types';
 
 describe('stock utilities', () => {
   describe('getStockStatus', () => {

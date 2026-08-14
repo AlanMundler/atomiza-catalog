@@ -13,20 +13,28 @@ import Input from '@/components/ui/Input.astro';
 </div>
 
 <script>
-  const searchInput = document.querySelector('[data-search-input]') as HTMLInputElement;
-  let debounceTimer: number;
+  import { bindOnce, onPageLoad } from '@/utils/view-transitions';
 
-  searchInput?.addEventListener('input', (e) => {
-    const target = e.target as HTMLInputElement;
-    const value = target.value.trim();
-    
-    clearTimeout(debounceTimer);
-    debounceTimer = window.setTimeout(() => {
-      const event = new CustomEvent('search:change', {
-        detail: { query: value }
+  onPageLoad('search', () => {
+    const searchInput = document.querySelector('[data-search-input]') as HTMLInputElement | null;
+    if (!searchInput) return;
+
+    bindOnce(searchInput, (el) => {
+      let debounceTimer: number;
+
+      el.addEventListener('input', (e) => {
+        const target = e.target as HTMLInputElement;
+        const value = target.value.trim();
+
+        clearTimeout(debounceTimer);
+        debounceTimer = window.setTimeout(() => {
+          const event = new CustomEvent('search:change', {
+            detail: { query: value }
+          });
+          window.dispatchEvent(event);
+        }, 300);
       });
-      window.dispatchEvent(event);
-    }, 300);
+    });
   });
 </script>
 

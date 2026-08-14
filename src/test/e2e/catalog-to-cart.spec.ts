@@ -11,7 +11,14 @@ test.describe('Catalog to Cart Flow', () => {
   });
 
   test('should navigate from home to catalog', async ({ page }) => {
-    await page.click('a[href*="/catalogo/"]');
+    const headerBtn = page.locator('.header-catalogo-btn');
+    if (await headerBtn.isVisible()) {
+      await headerBtn.click();
+    } else {
+      await page.click('button[aria-label="Abrir menú"]');
+      const mobileNav = page.getByRole('navigation', { name: 'Menú móvil' });
+      await mobileNav.getByRole('link', { name: 'Catálogo' }).click();
+    }
     await expect(page).toHaveURL(/\/catalogo/);
     await expect(page.locator('h1')).toContainText('Catálogo');
   });

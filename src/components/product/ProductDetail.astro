@@ -2,9 +2,8 @@
 import ImageGallery from '@/components/product/ImageGallery.astro';
 import SizeSelector from '@/components/product/SizeSelector.astro';
 import Button from '@/components/ui/Button.astro';
-import { formatPrice } from '@/utils/formatters';
-import { getStockStatus, isSizeAvailable } from '@/utils/stock';
-import type { Perfume, PerfumeSize } from '@/data/types';
+import { isSizeAvailable } from '@/utils/stock';
+import type { Perfume } from '@/data/types';
 
 interface Props {
   perfume: Perfume;
@@ -12,7 +11,6 @@ interface Props {
 
 const { perfume } = Astro.props;
 const selectedSize = perfume.sizes.find(s => s.ml === 5) || perfume.sizes[0];
-const stockStatus = getStockStatus(selectedSize);
 const available = isSizeAvailable(selectedSize);
 ---
 
@@ -62,7 +60,6 @@ const available = isSizeAvailable(selectedSize);
         <SizeSelector 
           sizes={perfume.sizes} 
           selectedSize={selectedSize}
-          onSizeChange={(size) => {}}
         />
       </div>
 
@@ -82,31 +79,34 @@ const available = isSizeAvailable(selectedSize);
 </article>
 
 <script>
-  const addBtn = document.querySelector('[data-add-to-cart]');
-  const sizeSelector = document.querySelector('size-selector'); // Custom element would be here
-  
+  import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
+
   // Listen for size changes
-  window.addEventListener('size:change', (e: CustomEvent) => {
-    const { sizeMl } = e.detail;
-    const perfumeId = document.querySelector('[data-perfume-id]')?.getAttribute('data-perfume-id');
-    
-    // Update stock badge and button state
-    // In a real implementation, this would update the DOM reactively
+  onWindowOnce('product-size-change', 'size:change', (e) => {
+    const detail = (e as CustomEvent).detail;
+    const sizeMl = detail?.sizeMl;
     console.log('Size changed to:', sizeMl);
   });
 
-  addBtn?.addEventListener('click', () => {
-    const perfumeId = document.querySelector('[data-perfume-id]')?.getAttribute('data-perfume-id');
-    const selectedSizeInput = document.querySelector('input[name="size"]:checked');
-    const sizeMl = selectedSizeInput ? parseInt(selectedSizeInput.value) : 5;
-    
-    const event = new CustomEvent('cart:add', {
-      detail: { perfumeId, sizeMl, quantity: 1 }
+  onPageLoad('product-detail', () => {
+    const addBtn = document.querySelector('[data-add-to-cart]');
+    if (!addBtn) return;
+
+    bindOnce(addBtn, (el) => {
+      el.addEventListener('click', () => {
+        const perfumeId = document.querySelector('[data-perfume-id]')?.getAttribute('data-perfume-id');
+        const selectedSizeInput = document.querySelector('input[name="size"]:checked');
+        const sizeMl = selectedSizeInput ? parseInt((selectedSizeInput as HTMLInputElement).value) : 5;
+
+        const event = new CustomEvent('cart:add', {
+          detail: { perfumeId, sizeMl, quantity: 1 }
+        });
+        window.dispatchEvent(event);
+
+        // Open cart drawer
+        window.dispatchEvent(new CustomEvent('cart:open'));
+      });
     });
-    window.dispatchEvent(event);
-    
-    // Open cart drawer
-    window.dispatchEvent(new CustomEvent('cart:open'));
   });
 </script>
 

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { formatPrice, generateInstagramOrderText } from '@/utils/formatters';
-import type { CartItem, Perfume, PerfumeSize } from '@/data/types';
+import type { CartItem, Perfume } from '@/data/types';
 
 describe('formatters', () => {
   describe('formatPrice', () => {

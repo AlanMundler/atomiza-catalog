@@ -8,6 +8,7 @@ interface Props {
 }
 
 const { id = '', title, class: className = '', onClose = () => {}, children } = Astro.props;
+void onClose;
 const modalId = id || `modal-${Math.random().toString(36).slice(2, 9)}`;
 ---
 
@@ -38,49 +39,64 @@ const modalId = id || `modal-${Math.random().toString(36).slice(2, 9)}`;
 </div>
 
 <script>
-  document.querySelectorAll('[data-modal-root]').forEach((root) => {
-    const dialog = root.querySelector('[data-modal-dialog]') as HTMLDialogElement | null;
-    const backdrop = root.querySelector('[data-modal-backdrop]') as HTMLElement | null;
-    const closeBtn = root.querySelector('[data-modal-close]') as HTMLElement | null;
-    if (!dialog) return;
+  import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
 
-    const open = () => {
-      if (!dialog.open) {
-        dialog.showModal();
-      }
-      document.body.style.overflow = 'hidden';
-    };
-
-    const close = () => {
-      if (dialog.open) {
-        dialog.close();
-      }
+  function resetBodyOverflowIfClosed() {
+    if (!document.querySelector('.drawer--open') && !document.querySelector('dialog[open]')) {
       document.body.style.overflow = '';
-    };
+    }
+  }
 
-    closeBtn?.addEventListener('click', close);
-    backdrop?.addEventListener('click', close);
+  onWindowOnce('modal-escape', 'keydown', (e) => {
+    if ((e as KeyboardEvent).key === 'Escape') {
+      document.querySelectorAll('dialog[open]').forEach((dialog) => (dialog as HTMLDialogElement).close());
+      resetBodyOverflowIfClosed();
+    }
+  });
 
-    dialog.addEventListener('close', () => {
-      document.body.style.overflow = '';
+  onPageLoad('modal', () => {
+    document.querySelectorAll('[data-modal-root]').forEach((root) => {
+      bindOnce(root, (el) => {
+        const dialog = el.querySelector('[data-modal-dialog]') as HTMLDialogElement | null;
+        const backdrop = el.querySelector('[data-modal-backdrop]') as HTMLElement | null;
+        const closeBtn = el.querySelector('[data-modal-close]') as HTMLElement | null;
+        if (!dialog) return;
+
+        const open = () => {
+          if (!dialog.open) {
+            dialog.showModal();
+          }
+          document.body.style.overflow = 'hidden';
+        };
+
+        const close = () => {
+          if (dialog.open) {
+            dialog.close();
+          }
+          resetBodyOverflowIfClosed();
+        };
+
+        closeBtn?.addEventListener('click', close);
+        backdrop?.addEventListener('click', close);
+
+        dialog.addEventListener('close', resetBodyOverflowIfClosed);
+
+        dialog.addEventListener('click', (e) => {
+          if (e.target === dialog) close();
+        });
+
+        el.addEventListener('modal:open', () => open());
+        el.addEventListener('modal:close', () => close());
+
+        // Store open/close helpers so other scripts can trigger them
+        (el as any)._modalOpen = open;
+        (el as any)._modalClose = close;
+      });
     });
 
-    dialog.addEventListener('click', (e) => {
-      if (e.target === dialog) close();
-    });
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && dialog.open) {
-        close();
-      }
-    });
-
-    root.addEventListener('modal:open', () => open());
-    root.addEventListener('modal:close', () => close());
-
-    // Store open/close helpers so other scripts can trigger them
-    (root as any)._modalOpen = open;
-    (root as any)._modalClose = close;
+    // Close any modal left open by the previous navigation
+    document.querySelectorAll('dialog[open]').forEach((dialog) => (dialog as HTMLDialogElement).close());
+    resetBodyOverflowIfClosed();
   });
 </script>
 

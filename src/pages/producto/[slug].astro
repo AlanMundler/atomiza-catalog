@@ -5,7 +5,7 @@ import perfumesData from '@/data/perfumes.json';
 import type { Perfume } from '@/data/types';
 
 export async function getStaticPaths() {
-  const perfumes: Perfume[] = perfumesData.perfumes;
+  const perfumes: Perfume[] = perfumesData.perfumes as Perfume[];
   
   return perfumes.map((perfume) => ({
     params: { slug: perfume.slug },

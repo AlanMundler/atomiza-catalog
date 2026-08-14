@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { filterPerfumes, searchPerfumes } from '@/utils/filters';
-import type { Perfume, GenderFilter } from '@/data/types';
+import type { Perfume } from '@/data/types';
 
 const mockPerfumes: Perfume[] = [
   {

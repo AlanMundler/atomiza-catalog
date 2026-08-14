@@ -7,10 +7,9 @@ import type { PerfumeSize } from '@/data/types';
 interface Props {
   sizes: PerfumeSize[];
   selectedSize: PerfumeSize;
-  onSizeChange: (size: PerfumeSize) => void;
 }
 
-const { sizes, selectedSize, onSizeChange } = Astro.props;
+const { sizes, selectedSize } = Astro.props;
 ---
 
 <fieldset class="size-selector" role="radiogroup" aria-label="Seleccionar tamaño">
@@ -47,17 +46,21 @@ const { sizes, selectedSize, onSizeChange } = Astro.props;
 </fieldset>
 
 <script>
-  const sizeOptions = document.querySelectorAll('.size-option input[type="radio"]');
-  
-  sizeOptions.forEach((radio) => {
-    radio.addEventListener('change', (e) => {
-      const target = e.target as HTMLInputElement;
-      const sizeMl = parseInt(target.getAttribute('data-size-ml') || '0');
-      
-      const event = new CustomEvent('size:change', {
-        detail: { sizeMl }
+  import { bindOnce, onPageLoad } from '@/utils/view-transitions';
+
+  onPageLoad('size-selector', () => {
+    document.querySelectorAll('.size-option input[type="radio"]').forEach((radio) => {
+      bindOnce(radio, (el) => {
+        el.addEventListener('change', (e) => {
+          const target = e.target as HTMLInputElement;
+          const sizeMl = parseInt(target.getAttribute('data-size-ml') || '0');
+
+          const event = new CustomEvent('size:change', {
+            detail: { sizeMl }
+          });
+          window.dispatchEvent(event);
+        });
       });
-      window.dispatchEvent(event);
     });
   });
 </script>

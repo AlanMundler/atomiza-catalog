@@ -4,6 +4,7 @@ import Footer from '@/components/layout/Footer.astro';
 import CartDrawer from '@/components/cart/CartDrawer.astro';
 import OrderModal from '@/components/cart/OrderModal.astro';
 import perfumesData from '@/data/perfumes.json';
+import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
 
 interface Props {
@@ -32,8 +33,9 @@ const { title, description = 'ΛTOMIZΛ - Decants de autor. Boutique de perfumes
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={new URL(ogImage, Astro.site).href} />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <ClientRouter />
   </head>
   <body>
     <Header />
@@ -46,7 +48,7 @@ const { title, description = 'ΛTOMIZΛ - Decants de autor. Boutique de perfumes
   </body>
 </html>
 
-<script define:vars={{ perfumesData }}>
+<script is:inline define:vars={{ perfumesData }}>
   // Store perfumes data in localStorage for cart functionality
   if (typeof window !== 'undefined') {
     localStorage.setItem('perfumes-data', JSON.stringify({ perfumes: perfumesData.perfumes }));

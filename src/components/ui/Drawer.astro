@@ -9,6 +9,7 @@ interface Props {
 }
 
 const { isOpen, position = 'right', id, class: className = '', onClose, children } = Astro.props;
+void onClose;
 ---
 
 <div class={`drawer-root ${className}`} data-drawer-root {id}>
@@ -45,43 +46,62 @@ const { isOpen, position = 'right', id, class: className = '', onClose, children
 </div>
 
 <script>
-  document.querySelectorAll('[data-drawer-root]').forEach((root) => {
-    const drawer = root.querySelector('.drawer');
-    const backdrop = root.querySelector('.drawer-backdrop');
-    if (!drawer || !backdrop) return;
+  import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
 
-    const openDrawer = () => {
-      drawer.classList.add('drawer--open');
-      backdrop.style.opacity = '1';
-      document.body.style.overflow = 'hidden';
-    };
+  function resetBodyOverflowIfClosed() {
+    if (!document.querySelector('.drawer--open') && !document.querySelector('dialog[open]')) {
+      document.body.style.overflow = '';
+    }
+  }
 
-    const closeDrawer = () => {
-      drawer.classList.remove('drawer--open');
-      backdrop.style.opacity = '0';
-      setTimeout(() => {
-        document.body.style.overflow = '';
-      }, 200);
-    };
-
-    const closeBtn = root.querySelector('[data-drawer-close]');
-    closeBtn?.addEventListener('click', closeDrawer);
-
-    backdrop.addEventListener('click', closeDrawer);
-
-    root.addEventListener('drawer:toggle', (e: CustomEvent) => {
-      if (e.detail?.open) {
-        openDrawer();
-      } else {
-        closeDrawer();
+  onWindowOnce('drawer-escape', 'keydown', (e) => {
+    if ((e as KeyboardEvent).key === 'Escape') {
+      const openDrawer = document.querySelector('.drawer--open');
+      if (openDrawer) {
+        openDrawer.classList.remove('drawer--open');
+        resetBodyOverflowIfClosed();
       }
+    }
+  });
+
+  onPageLoad('drawer', () => {
+    document.querySelectorAll('[data-drawer-root]').forEach((root) => {
+      bindOnce(root, (el) => {
+        const drawer = el.querySelector('.drawer');
+        const backdrop = el.querySelector('.drawer-backdrop') as HTMLElement | null;
+        if (!drawer || !backdrop) return;
+
+        const openDrawer = () => {
+          drawer.classList.add('drawer--open');
+          backdrop.style.opacity = '1';
+          document.body.style.overflow = 'hidden';
+        };
+
+        const closeDrawer = () => {
+          drawer.classList.remove('drawer--open');
+          backdrop.style.opacity = '0';
+          resetBodyOverflowIfClosed();
+        };
+
+        const closeBtn = el.querySelector('[data-drawer-close]');
+        closeBtn?.addEventListener('click', closeDrawer);
+
+        backdrop.addEventListener('click', closeDrawer);
+
+        el.addEventListener('drawer:toggle', (e: Event) => {
+          const detail = (e as CustomEvent).detail;
+          if (detail?.open) {
+            openDrawer();
+          } else {
+            closeDrawer();
+          }
+        });
+      });
     });
 
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && drawer.classList.contains('drawer--open')) {
-        closeDrawer();
-      }
-    });
+    // Close any drawer left open by the previous navigation
+    document.querySelectorAll('.drawer--open').forEach((d) => d.classList.remove('drawer--open'));
+    resetBodyOverflowIfClosed();
   });
 </script>
 

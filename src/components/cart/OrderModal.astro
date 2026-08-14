@@ -100,17 +100,15 @@ import Button from '@/components/ui/Button.astro';
 <script>
   import { getCart } from '@/utils/cart';
   import { generateOrderText, buildWhatsAppLink } from '@/utils/formatters';
+  import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
 
   const WHATSAPP_NUMBER = '5493472559307';
   const INSTAGRAM_HANDLE = 'atomiza.cba';
 
-  const modal = document.querySelector('#order-modal');
-  const nameInput = modal?.querySelector('#customer-name') as HTMLInputElement | null;
-  const contactInput = modal?.querySelector('#customer-contact') as HTMLInputElement | null;
-  const preview = modal?.querySelector('#order-preview') as HTMLTextAreaElement | null;
-  const whatsappBtn = modal?.querySelector('[data-send-whatsapp]') as HTMLElement | null;
-  const instagramBtn = modal?.querySelector('[data-send-instagram]') as HTMLElement | null;
-  const copyBtn = modal?.querySelector('[data-copy-order]') as HTMLElement | null;
+  let nameInput: HTMLInputElement | null = null;
+  let contactInput: HTMLInputElement | null = null;
+  let preview: HTMLTextAreaElement | null = null;
+  let copyBtn: HTMLElement | null = null;
 
   function getPerfumesMap(): Map<string, any> {
     try {
@@ -143,44 +141,63 @@ import Button from '@/components/ui/Button.astro';
   }
 
   function openModal() {
+    const modal = document.querySelector('#order-modal');
     if (!modal) return;
-    const event = new CustomEvent('modal:open');
-    modal.dispatchEvent(event);
+    modal.dispatchEvent(new CustomEvent('modal:open'));
     requestAnimationFrame(autoResizePreview);
   }
 
-  nameInput?.addEventListener('input', refreshPreview);
-  contactInput?.addEventListener('input', refreshPreview);
-
-  whatsappBtn?.addEventListener('click', () => {
-    const text = buildOrderText();
-    window.open(buildWhatsAppLink(WHATSAPP_NUMBER, text), '_blank');
-  });
-
-  instagramBtn?.addEventListener('click', () => {
-    const text = encodeURIComponent(buildOrderText());
-    window.open(`https://ig.me/m/${INSTAGRAM_HANDLE}?text=${text}`, '_blank');
-  });
-
-  copyBtn?.addEventListener('click', async () => {
-    if (!preview) return;
-    try {
-      await navigator.clipboard.writeText(preview.value);
-    } catch {
-      preview.select();
-      document.execCommand('copy');
-    }
-    const label = copyBtn.querySelector('.order-modal-btn-label');
-    const originalText = label?.textContent || '';
-    if (label) label.textContent = '¡Copiado!';
-    setTimeout(() => {
-      if (label) label.textContent = originalText;
-    }, 2000);
-  });
-
-  window.addEventListener('order:finalize', () => {
+  onWindowOnce('order-finalize', 'order:finalize', () => {
     refreshPreview();
     openModal();
+  });
+
+  onPageLoad('order-modal', () => {
+    const modal = document.querySelector('#order-modal');
+    if (!modal) return;
+
+    nameInput = modal.querySelector('#customer-name') as HTMLInputElement | null;
+    contactInput = modal.querySelector('#customer-contact') as HTMLInputElement | null;
+    preview = modal.querySelector('#order-preview') as HTMLTextAreaElement | null;
+    const whatsappBtn = modal.querySelector('[data-send-whatsapp]') as HTMLElement | null;
+    const instagramBtn = modal.querySelector('[data-send-instagram]') as HTMLElement | null;
+    copyBtn = modal.querySelector('[data-copy-order]') as HTMLElement | null;
+
+    if (nameInput) {
+      bindOnce(nameInput, (el) => el.addEventListener('input', refreshPreview));
+    }
+    if (contactInput) {
+      bindOnce(contactInput, (el) => el.addEventListener('input', refreshPreview));
+    }
+    if (whatsappBtn) {
+      bindOnce(whatsappBtn, (el) => el.addEventListener('click', () => {
+        const text = buildOrderText();
+        window.open(buildWhatsAppLink(WHATSAPP_NUMBER, text), '_blank');
+      }));
+    }
+    if (instagramBtn) {
+      bindOnce(instagramBtn, (el) => el.addEventListener('click', () => {
+        const text = encodeURIComponent(buildOrderText());
+        window.open(`https://ig.me/m/${INSTAGRAM_HANDLE}?text=${text}`, '_blank');
+      }));
+    }
+    if (copyBtn) {
+      bindOnce(copyBtn, (el) => el.addEventListener('click', async () => {
+        if (!preview) return;
+        try {
+          await navigator.clipboard.writeText(preview.value);
+        } catch {
+          preview.select();
+          document.execCommand('copy');
+        }
+        const label = el.querySelector('.order-modal-btn-label');
+        const originalText = label?.textContent || '';
+        if (label) label.textContent = '¡Copiado!';
+        setTimeout(() => {
+          if (label) label.textContent = originalText;
+        }, 2000);
+      }));
+    }
   });
 </script>
 

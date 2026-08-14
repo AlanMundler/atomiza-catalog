@@ -34,9 +34,9 @@ import Drawer from '@/components/ui/Drawer.astro';
   } from '@/utils/cart';
   import { formatPrice } from '@/utils/formatters';
   import type { CartItem as CartItemType } from '@/data/types';
+  import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
 
-  const drawerRoot = document.querySelector('#cart-drawer');
-  const content = document.querySelector('#cart-content');
+  let drawerRoot: HTMLElement | null = null;
   let perfumesMap = new Map<string, any>();
 
   function getPerfumesMap(): Map<string, any> {
@@ -49,6 +49,7 @@ import Drawer from '@/components/ui/Drawer.astro';
   }
 
   function render() {
+    const content = document.querySelector('#cart-content') as HTMLElement | null;
     if (!content) return;
 
     perfumesMap = getPerfumesMap();
@@ -172,29 +173,8 @@ import Drawer from '@/components/ui/Drawer.astro';
     updateAndRerender();
   }
 
-  content?.addEventListener('click', (e) => {
-    const target = e.target as HTMLElement;
-    const actionEl = target.closest('[data-action]') as HTMLElement | null;
-    const finalizeEl = target.closest('[data-finalize-order]') as HTMLElement | null;
-
-    if (actionEl) {
-      handleAction(actionEl);
-      return;
-    }
-    if (finalizeEl) {
-      window.dispatchEvent(new CustomEvent('order:finalize'));
-    }
-  });
-
-  document.querySelector('[data-clear-cart]')?.addEventListener('click', () => {
-    if (confirm('¿Estás seguro de que quieres vaciar el carrito?')) {
-      clearCart();
-      updateAndRerender();
-    }
-  });
-
   // Listen for cart open event
-  window.addEventListener('cart:open', () => {
+  onWindowOnce('cart-open', 'cart:open', () => {
     render();
     if (drawerRoot) {
       drawerRoot.dispatchEvent(new CustomEvent('drawer:toggle', { detail: { open: true } }));
@@ -202,8 +182,8 @@ import Drawer from '@/components/ui/Drawer.astro';
   });
 
   // Listen for add to cart event
-  window.addEventListener('cart:add', (e: CustomEvent) => {
-    const { perfumeId, sizeMl, quantity } = e.detail;
+  onWindowOnce('cart-add', 'cart:add', (e) => {
+    const { perfumeId, sizeMl, quantity } = (e as CustomEvent).detail;
     const perfume = getPerfumesMap().get(perfumeId);
     const size = perfume?.sizes?.find((s: any) => s.ml === sizeMl);
     if (!perfumeId || !size) return;
@@ -213,12 +193,12 @@ import Drawer from '@/components/ui/Drawer.astro';
   });
 
   // Listen for cart updates
-  window.addEventListener('cart:update', () => {
+  onWindowOnce('cart-update', 'cart:update', () => {
     render();
   });
 
-  window.addEventListener('cart:update-quantity', (e: CustomEvent) => {
-    const { perfumeId, sizeMl, quantity } = e.detail;
+  onWindowOnce('cart-update-quantity', 'cart:update-quantity', (e) => {
+    const { perfumeId, sizeMl, quantity } = (e as CustomEvent).detail;
     const perfume = getPerfumesMap().get(perfumeId);
     const size = perfume?.sizes?.find((s: any) => s.ml === sizeMl);
     if (!perfumeId || !size) return;
@@ -226,8 +206,8 @@ import Drawer from '@/components/ui/Drawer.astro';
     updateAndRerender();
   });
 
-  window.addEventListener('cart:remove', (e: CustomEvent) => {
-    const { perfumeId, sizeMl } = e.detail;
+  onWindowOnce('cart-remove', 'cart:remove', (e) => {
+    const { perfumeId, sizeMl } = (e as CustomEvent).detail;
     const perfume = getPerfumesMap().get(perfumeId);
     const size = perfume?.sizes?.find((s: any) => s.ml === sizeMl);
     if (!perfumeId || !size) return;
@@ -235,7 +215,42 @@ import Drawer from '@/components/ui/Drawer.astro';
     updateAndRerender();
   });
 
-  render();
+  onPageLoad('cart-drawer', () => {
+    drawerRoot = document.querySelector('#cart-drawer');
+    const content = document.querySelector('#cart-content') as HTMLElement | null;
+    const clearBtn = document.querySelector('[data-clear-cart]') as HTMLElement | null;
+
+    if (content) {
+      bindOnce(content, (el) => {
+        el.addEventListener('click', (e) => {
+          const target = e.target as HTMLElement;
+          const actionEl = target.closest('[data-action]') as HTMLElement | null;
+          const finalizeEl = target.closest('[data-finalize-order]') as HTMLElement | null;
+
+          if (actionEl) {
+            handleAction(actionEl);
+            return;
+          }
+          if (finalizeEl) {
+            window.dispatchEvent(new CustomEvent('order:finalize'));
+          }
+        });
+      });
+    }
+
+    if (clearBtn) {
+      bindOnce(clearBtn, (el) => {
+        el.addEventListener('click', () => {
+          if (confirm('¿Estás seguro de que quieres vaciar el carrito?')) {
+            clearCart();
+            updateAndRerender();
+          }
+        });
+      });
+    }
+
+    render();
+  });
 </script>
 
 <style is:global>

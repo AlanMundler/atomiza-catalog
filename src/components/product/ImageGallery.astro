@@ -42,7 +42,6 @@ const mainAlt = images[0]?.alt || alt;
   )}
 
   <Modal 
-    isOpen={false} 
     id="image-zoom-modal"
     onClose={() => {}}
     class="image-zoom-modal"
@@ -59,66 +58,77 @@ const mainAlt = images[0]?.alt || alt;
 </div>
 
 <script>
-  const mainImageEl = document.querySelector('[data-main-image]') as HTMLImageElement;
-  const thumbs = document.querySelectorAll('.image-gallery-thumb');
-  const zoomModal = document.querySelector('#image-zoom-modal');
-  const zoomImage = document.querySelector('[data-zoom-image]') as HTMLImageElement;
-  
-  let currentIndex = 0;
+  import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
 
-  thumbs.forEach((thumb, index) => {
-    thumb.addEventListener('click', () => {
-      const src = thumb.getAttribute('data-image-src');
-      if (src && mainImageEl) {
-        mainImageEl.src = src;
-        currentIndex = index;
-        updateActiveThumb(index);
-      }
-    });
-  });
-
-  // Open zoom modal on main image click
-  mainImageEl?.addEventListener('click', () => {
-    if (zoomModal) {
-      const modalDialog = zoomModal.querySelector('dialog');
-      if (modalDialog && zoomImage) {
-        zoomImage.src = mainImageEl.src;
-        modalDialog.showModal();
-        document.body.style.overflow = 'hidden';
-      }
+  function resetBodyOverflowIfClosed() {
+    if (!document.querySelector('.drawer--open') && !document.querySelector('dialog[open]')) {
+      document.body.style.overflow = '';
     }
-  });
-
-  // Keyboard navigation for thumbnails
-  thumbs.forEach((thumb, index) => {
-    thumb.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
-        e.preventDefault();
-        const newIndex = e.key === 'ArrowRight' 
-          ? (index + 1) % thumbs.length 
-          : (index - 1 + thumbs.length) % thumbs.length;
-        (thumbs[newIndex] as HTMLElement).focus();
-        (thumbs[newIndex] as HTMLElement).click();
-      }
-    });
-  });
-
-  function updateActiveThumb(index: number) {
-    thumbs.forEach((thumb, i) => {
-      thumb.classList.toggle('image-gallery-thumb--active', i === index);
-      thumb.setAttribute('aria-selected', String(i === index));
-    });
   }
 
   // Close zoom modal on Escape
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      const modalDialog = zoomModal?.querySelector('dialog');
-      if (modalDialog?.open) {
-        modalDialog.close();
-        document.body.style.overflow = '';
-      }
+  onWindowOnce('gallery-escape', 'keydown', (e) => {
+    if ((e as KeyboardEvent).key === 'Escape') {
+      document.querySelectorAll('dialog[open]').forEach((dialog) => (dialog as HTMLDialogElement).close());
+      resetBodyOverflowIfClosed();
     }
+  });
+
+  onPageLoad('image-gallery', () => {
+    const mainImageEl = document.querySelector('[data-main-image]') as HTMLImageElement | null;
+    const thumbs = Array.from(document.querySelectorAll('.image-gallery-thumb')) as HTMLElement[];
+    const zoomModal = document.querySelector('#image-zoom-modal');
+    const zoomImage = document.querySelector('[data-zoom-image]') as HTMLImageElement | null;
+
+    let currentIndex = 0;
+
+    function updateActiveThumb() {
+      thumbs.forEach((thumb, i) => {
+        thumb.classList.toggle('image-gallery-thumb--active', i === currentIndex);
+        thumb.setAttribute('aria-selected', String(i === currentIndex));
+      });
+    }
+
+    // Open zoom modal on main image click
+    if (mainImageEl) {
+      bindOnce(mainImageEl, (el) => {
+        el.addEventListener('click', () => {
+          if (zoomModal) {
+            const modalDialog = zoomModal.querySelector('dialog');
+            if (modalDialog && zoomImage) {
+              zoomImage.src = el.src;
+              modalDialog.showModal();
+              document.body.style.overflow = 'hidden';
+            }
+          }
+        });
+      });
+    }
+
+    thumbs.forEach((thumb, index) => {
+      bindOnce(thumb, (el) => {
+        el.addEventListener('click', () => {
+          const src = el.getAttribute('data-image-src');
+          if (src && mainImageEl) {
+            mainImageEl.src = src;
+            currentIndex = index;
+            updateActiveThumb();
+          }
+        });
+
+        // Keyboard navigation for thumbnails
+        el.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+            e.preventDefault();
+            const newIndex = e.key === 'ArrowRight'
+              ? (index + 1) % thumbs.length
+              : (index - 1 + thumbs.length) % thumbs.length;
+            (thumbs[newIndex] as HTMLElement).focus();
+            (thumbs[newIndex] as HTMLElement).click();
+          }
+        });
+      });
+    });
   });
 </script>
 

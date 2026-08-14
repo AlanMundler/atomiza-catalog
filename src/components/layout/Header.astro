@@ -110,65 +110,39 @@ const BASE = '/atomiza-catalog/';
 </Drawer>
 
 <script>
-  const header = document.querySelector('.header');
-  const cartTrigger = document.querySelector('[data-cart-trigger]');
-  const menuTrigger = document.querySelector('[data-menu-trigger]');
-  const mobileDrawer = document.querySelector('#mobile-drawer');
-  
-  let lastScroll = 0;
+  import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
+
   let ticking = false;
 
-  // Header scroll effect
   function handleScroll() {
+    const header = document.querySelector('.header');
     const currentScroll = window.scrollY;
-    
+
     if (currentScroll > 20) {
       header?.classList.add('header--scrolled');
     } else {
       header?.classList.remove('header--scrolled');
     }
-    
-    lastScroll = currentScroll;
+
     ticking = false;
   }
 
-  window.addEventListener('scroll', () => {
+  // Header scroll effect
+  onWindowOnce('header-scroll', 'scroll', () => {
     if (!ticking) {
       requestAnimationFrame(handleScroll);
       ticking = true;
     }
   }, { passive: true });
 
-  // Cart drawer trigger
-  cartTrigger?.addEventListener('click', () => {
-    const event = new CustomEvent('cart:open');
-    window.dispatchEvent(event);
-  });
-
-  // Mobile menu trigger
-  menuTrigger?.addEventListener('click', () => {
-    const isExpanded = menuTrigger.getAttribute('aria-expanded') === 'true';
-    menuTrigger.setAttribute('aria-expanded', String(!isExpanded));
-    
-    if (mobileDrawer) {
-      const drawerComponent = mobileDrawer.querySelector('.drawer');
-      if (drawerComponent) {
-        const event = new CustomEvent('drawer:toggle', { 
-          detail: { open: !isExpanded } 
-        });
-        mobileDrawer.dispatchEvent(event);
-      }
-    }
-  });
-
   // Listen for cart updates
-  window.addEventListener('cart:update', () => {
+  onWindowOnce('header-cart-update', 'cart:update', () => {
     updateCartCount();
   });
 
   function updateCartCount() {
-    const badge = document.querySelector('[data-cart-count]');
-    const mobileCount = document.querySelector('[data-cart-count-mobile]');
+    const badge = document.querySelector('[data-cart-count]') as HTMLElement | null;
+    const mobileCount = document.querySelector('[data-cart-count-mobile]') as HTMLElement | null;
     const cart = JSON.parse(localStorage.getItem('atomiza-cart') || '{"items":[]}');
     const newCount = cart.items.reduce((sum: number, item: any) => sum + item.quantity, 0);
     if (badge) {
@@ -180,7 +154,41 @@ const BASE = '/atomiza-catalog/';
     }
   }
 
-  window.addEventListener('DOMContentLoaded', updateCartCount);
+  onPageLoad('header', () => {
+    const cartTrigger = document.querySelector('[data-cart-trigger]');
+    const menuTrigger = document.querySelector('[data-menu-trigger]');
+    const mobileDrawer = document.querySelector('#mobile-drawer');
+
+    // Cart drawer trigger
+    if (cartTrigger) {
+      bindOnce(cartTrigger, (el) => {
+        el.addEventListener('click', () => {
+          const event = new CustomEvent('cart:open');
+          window.dispatchEvent(event);
+        });
+      });
+    }
+
+    // Mobile menu trigger
+    if (menuTrigger && mobileDrawer) {
+      bindOnce(menuTrigger, () => {
+        menuTrigger.addEventListener('click', () => {
+          const isExpanded = menuTrigger.getAttribute('aria-expanded') === 'true';
+          menuTrigger.setAttribute('aria-expanded', String(!isExpanded));
+
+          const drawerComponent = mobileDrawer.querySelector('.drawer');
+          if (drawerComponent) {
+            const event = new CustomEvent('drawer:toggle', {
+              detail: { open: !isExpanded }
+            });
+            mobileDrawer.dispatchEvent(event);
+          }
+        });
+      });
+    }
+
+    updateCartCount();
+  });
 </script>
 
 <style>
