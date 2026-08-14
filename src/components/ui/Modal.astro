@@ -128,7 +128,7 @@ const modalId = id || `modal-${Math.random().toString(36).slice(2, 9)}`;
     padding: 0;
     max-width: 90vw;
     max-height: 90vh;
-    width: 500px;
+    width: var(--modal-width, 500px);
     z-index: 1000;
     overflow: hidden;
     animation: slide-up var(--transition-duration) var(--transition-easing);
