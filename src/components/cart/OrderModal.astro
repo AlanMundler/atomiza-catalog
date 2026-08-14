@@ -303,14 +303,15 @@ import Button from '@/components/ui/Button.astro';
   }
 
   .order-modal-actions {
-    display: flex;
-    flex-wrap: nowrap;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 8px;
     margin-top: 8px;
   }
 
   .order-modal-actions .order-modal-btn {
-    flex: 1 1 0;
+    flex: none;
+    width: 100%;
     min-width: 0;
     height: 38px;
     padding: 0 12px;
@@ -318,6 +319,13 @@ import Button from '@/components/ui/Button.astro';
     border-radius: var(--border-radius);
     font-size: 10px;
     letter-spacing: 0.05em;
+  }
+
+  .order-modal-actions .order-modal-btn--copy {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: auto;
+    padding: 0 24px;
   }
 
   .order-modal-btn-icon {
@@ -340,6 +348,7 @@ import Button from '@/components/ui/Button.astro';
 
   @media (max-width: 479px) {
     .order-modal-actions {
+      display: flex;
       flex-wrap: wrap;
       justify-content: center;
       gap: 16px;
