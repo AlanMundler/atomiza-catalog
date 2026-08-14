@@ -238,7 +238,7 @@ import Drawer from '@/components/ui/Drawer.astro';
   render();
 </script>
 
-<style>
+<style is:global>
   .cart-drawer {
     --drawer-width: 400px;
   }
@@ -326,7 +326,7 @@ import Drawer from '@/components/ui/Drawer.astro';
   .cart-items {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -336,17 +336,20 @@ import Drawer from '@/components/ui/Drawer.astro';
   .cart-item {
     display: grid;
     grid-template-columns: 64px minmax(0, 1fr) auto;
-    gap: 16px;
-    padding: 16px 0;
-    border-bottom: var(--border-width) solid var(--color-outline-variant);
+    gap: 14px;
+    padding: 14px;
+    background-color: var(--color-surface-container-high);
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: var(--border-radius);
     align-items: start;
   }
 
   .cart-item-image {
     width: 64px;
     height: 64px;
-    border-radius: var(--border-radius);
+    border-radius: calc(var(--border-radius) - 4px);
     overflow: hidden;
+    background-color: var(--color-surface-container-highest);
     flex-shrink: 0;
   }
 
@@ -359,7 +362,7 @@ import Drawer from '@/components/ui/Drawer.astro';
   .cart-item-info {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
     min-width: 0;
   }
 
@@ -377,7 +380,7 @@ import Drawer from '@/components/ui/Drawer.astro';
     font-size: var(--font-body-md-size);
     font-weight: var(--font-body-md-weight);
     color: var(--color-on-surface);
-    line-height: 1.3;
+    line-height: 1.25;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -386,8 +389,8 @@ import Drawer from '@/components/ui/Drawer.astro';
   .cart-item-meta {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-top: 4px;
+    gap: 10px;
+    margin-top: 2px;
   }
 
   .cart-item-size {
@@ -396,15 +399,16 @@ import Drawer from '@/components/ui/Drawer.astro';
     font-weight: var(--font-label-sm-weight);
     letter-spacing: var(--font-label-sm-tracking);
     text-transform: uppercase;
-    color: var(--color-primary);
-    background-color: var(--color-primary-container);
-    padding: 2px 8px;
-    border-radius: 999px;
+    color: var(--color-on-primary);
+    background-color: var(--color-primary);
+    padding: 3px 10px;
+    border-radius: var(--border-radius);
   }
 
   .cart-item-price {
     font-family: var(--font-family);
-    font-size: var(--font-body-md-size);
+    font-size: 13px;
+    font-weight: 500;
     color: var(--color-on-surface-variant);
   }
 
@@ -412,17 +416,17 @@ import Drawer from '@/components/ui/Drawer.astro';
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    gap: 12px;
+    gap: 10px;
   }
 
   .cart-item-quantity {
     display: flex;
     align-items: center;
-    gap: 8px;
-    background-color: var(--color-surface-container-high);
+    gap: 4px;
+    background-color: var(--color-surface-container-highest);
     border: var(--border-width) solid var(--color-outline-variant);
     border-radius: var(--border-radius);
-    padding: 4px;
+    padding: 3px 4px;
   }
 
   .quantity-btn {
@@ -441,11 +445,11 @@ import Drawer from '@/components/ui/Drawer.astro';
 
   .quantity-btn:hover:not(:disabled) {
     color: var(--color-primary);
-    background-color: var(--color-surface-container-highest);
+    background-color: var(--color-surface-container);
   }
 
   .quantity-btn:disabled {
-    opacity: 0.4;
+    opacity: 0.35;
     cursor: not-allowed;
   }
 
@@ -459,14 +463,14 @@ import Drawer from '@/components/ui/Drawer.astro';
     font-size: var(--font-body-md-size);
     font-weight: var(--font-body-md-weight);
     color: var(--color-on-surface);
-    min-width: 24px;
+    min-width: 22px;
     text-align: center;
   }
 
   .cart-item-total {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
   }
 
   .cart-item-line-total {
@@ -511,27 +515,28 @@ import Drawer from '@/components/ui/Drawer.astro';
       flex-direction: row;
       justify-content: space-between;
       align-items: center;
-      margin-left: 68px;
     }
   }
 
   /* Order summary */
   .order-summary {
-    padding-top: 16px;
-    border-top: var(--border-width) solid var(--color-outline-variant);
-    margin-top: 8px;
+    margin-top: auto;
+    padding: 20px;
+    background-color: var(--color-surface-container);
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: var(--border-radius);
   }
 
   .order-summary-line {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 0;
+    padding: 6px 0;
   }
 
   .order-summary-line--total {
-    padding-top: 16px;
     margin-top: 8px;
+    padding-top: 16px;
     border-top: var(--border-width) solid var(--color-outline-variant);
   }
 

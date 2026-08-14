@@ -259,20 +259,18 @@ import Button from '@/components/ui/Button.astro';
   }
 
   .order-modal-actions {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 12px;
     margin-top: 8px;
   }
 
-  .order-modal-btn {
-    flex: 0 0 auto;
-    width: 52px;
-    height: 52px;
-    padding: 0;
-    gap: 0;
-    border-radius: 50%;
+  .order-modal-actions .order-modal-btn {
+    width: 100%;
+    height: 48px;
+    padding: 0 16px;
+    gap: 8px;
+    border-radius: var(--border-radius);
   }
 
   .order-modal-btn-icon {
@@ -283,27 +281,37 @@ import Button from '@/components/ui/Button.astro';
   }
 
   .order-modal-btn-label {
-    max-width: 0;
-    opacity: 0;
     overflow: hidden;
+    text-overflow: ellipsis;
     white-space: nowrap;
-    transition: max-width var(--transition-duration) var(--transition-easing), opacity var(--transition-duration) var(--transition-easing), margin-left var(--transition-duration) var(--transition-easing);
-  }
-
-  .order-modal-btn:hover .order-modal-btn-label,
-  .order-modal-btn:focus-visible .order-modal-btn-label {
-    max-width: 220px;
-    opacity: 1;
-    margin-left: 8px;
   }
 
   .order-modal-btn--copy {
-    border-radius: var(--border-radius);
+    grid-column: 1 / -1;
   }
 
-  @media (min-width: 480px) {
+  @media (max-width: 479px) {
     .order-modal-actions {
-      justify-content: space-between;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .order-modal-actions .order-modal-btn {
+      width: 56px;
+      height: 56px;
+      padding: 0;
+      border-radius: 50%;
+      flex: 0 0 auto;
+    }
+
+    .order-modal-btn-label {
+      display: none;
+    }
+
+    .order-modal-btn--copy {
+      grid-column: auto;
     }
   }
 
