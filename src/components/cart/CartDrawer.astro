@@ -292,8 +292,13 @@ import Drawer from '@/components/ui/Drawer.astro';
   .cart-content {
     flex: 1;
     overflow-y: auto;
+    scrollbar-width: none;
     display: flex;
     flex-direction: column;
+  }
+
+  .cart-content::-webkit-scrollbar {
+    display: none;
   }
 
   .cart-empty {
