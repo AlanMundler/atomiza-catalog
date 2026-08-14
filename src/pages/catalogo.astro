@@ -199,8 +199,8 @@ const filteredPerfumes = searchPerfumes(filterPerfumes(allPerfumes, currentFilte
 
   @media (min-width: 768px) {
     .toolbar-content {
-      flex-direction: row;
-      justify-content: space-between;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
       align-items: center;
       gap: var(--spacing-stack-md);
     }
@@ -211,9 +211,24 @@ const filteredPerfumes = searchPerfumes(filterPerfumes(allPerfumes, currentFilte
     max-width: 100%;
   }
 
+  @media (min-width: 768px) {
+    .toolbar-filters {
+      grid-column: 2;
+      justify-self: center;
+    }
+  }
+
   .toolbar-search {
     width: 100%;
     max-width: 400px;
+  }
+
+  @media (min-width: 768px) {
+    .toolbar-search {
+      grid-column: 3;
+      justify-self: end;
+      max-width: 280px;
+    }
   }
 
   .catalog-results {

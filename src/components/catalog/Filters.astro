@@ -74,4 +74,17 @@ const filters: { value: GenderFilter; label: string }[] = [
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
   }
+
+  @media (max-width: 640px) {
+    .filters {
+      gap: 6px;
+    }
+
+    .filter-chip {
+      padding: 0 10px;
+      height: 36px;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+    }
+  }
 </style>
