@@ -41,6 +41,7 @@ const productSchema = {
   title={`${perfume.brand} ${perfume.name}`} 
   description={`${perfume.brand} ${perfume.name} - ${perfume.olfactoryFamily}. Decant de 5ml disponible.`}
   ogImage={`og/${perfume.slug}.jpg`}
+  ogType="product"
 >
   <script type="application/ld+json" is:inline set:html={JSON.stringify(productSchema)} />
   <div class="container">

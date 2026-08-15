@@ -12,11 +12,19 @@ interface Props {
   title: string;
   description?: string;
   ogImage?: string;
+  ogType?: string;
   children: any;
 }
 
-const { title, description = `${site.name} - ${site.tagline}. ${site.description}`, ogImage = '/og-image.jpg', children } = Astro.props;
+const {
+  title,
+  description = `${site.name} - ${site.tagline}. ${site.description}`,
+  ogImage = '/og-image.jpg',
+  ogType = 'website',
+  children,
+} = Astro.props;
 const ogImageUrl = new URL(assetUrl(ogImage), Astro.site).href;
+const pageUrl = new URL(Astro.url.pathname, Astro.site).href;
 ---
 
 <!DOCTYPE html>
@@ -27,10 +35,14 @@ const ogImageUrl = new URL(assetUrl(ogImage), Astro.site).href;
     <meta name="generator" content={Astro.generator} />
     <title>{title} | {site.name}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={pageUrl} />
+    <meta property="og:locale" content={site.locale} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:url" content={pageUrl} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImageUrl} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
@@ -39,8 +51,9 @@ const ogImageUrl = new URL(assetUrl(ogImage), Astro.site).href;
     <ClientRouter />
   </head>
   <body>
+    <a href="#main-content" class="skip-link">Saltar al contenido</a>
     <Header />
-    <main id="main-content" role="main">
+    <main id="main-content" role="main" tabindex="-1">
       <slot>{children}</slot>
     </main>
     <Footer />

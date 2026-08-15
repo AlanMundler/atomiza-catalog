@@ -15,6 +15,7 @@ export const site = {
   namePlain: 'ATOMIZA',
   tagline: 'Decants de autor',
   description: 'Boutique de perfumes de lujo en decants de 5ml.',
+  locale: 'es_AR',
   basePath: import.meta.env.BASE_URL,
   instagramHandle: 'atomiza.cba',
   instagramUrl: 'https://instagram.com/atomiza.cba',

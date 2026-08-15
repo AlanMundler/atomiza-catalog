@@ -1,6 +1,7 @@
 ---
 import Chip from '@/components/ui/Chip.astro';
 import { getStockStatus, getStockLabel } from '@/utils/stock';
+import { formatPrice } from '@/utils/formatters';
 import { site, assetUrl } from '@/site.config';
 import type { Perfume } from '@/data/types';
 
@@ -46,7 +47,7 @@ const isOutOfStock = stockStatus === 'out-of-stock';
   <div class="product-card-info">
     <span class="product-card-brand">{perfume.brand}</span>
     <h3 class="product-card-name">{perfume.name}</h3>
-    <span class="product-card-price">{primarySize ? `${primarySize.price.toLocaleString('es-AR')}` : '—'} ARS</span>
+    <span class="product-card-price">{primarySize ? formatPrice(primarySize.price) : '—'}</span>
   </div>
 </a>
 
@@ -138,7 +139,7 @@ const isOutOfStock = stockStatus === 'out-of-stock';
 
   .product-card-price {
     font-family: var(--font-family);
-    font-size: var(--font-label-sm-size);;
+    font-size: var(--font-label-sm-size);
     font-weight: var(--font-label-sm-weight);
     letter-spacing: var(--font-label-sm-tracking);
     text-transform: uppercase;
