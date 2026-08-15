@@ -19,7 +19,8 @@ import { site } from '@/site.config';
         id="customer-name" 
         class="form-input"
         placeholder="Juan Pérez"
-        aria-required="true"
+        required
+        maxlength="80"
         autocomplete="name"
       />
     </div>
@@ -31,7 +32,8 @@ import { site } from '@/site.config';
         id="customer-contact" 
         class="form-input"
         placeholder="+54 9 11 1234-5678 / @usuario"
-        aria-required="true"
+        required
+        maxlength="120"
         autocomplete="tel"
       />
     </div>
@@ -135,6 +137,23 @@ import { site } from '@/site.config';
     preview.style.height = `${preview.scrollHeight}px`;
   }
 
+  async function copyTextToClipboard(text: string): Promise<boolean> {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      if (preview) {
+        preview.select();
+        try {
+          return (document as any).execCommand('copy');
+        } catch {
+          return false;
+        }
+      }
+      return false;
+    }
+  }
+
   function openModal() {
     const modal = document.querySelector('#order-modal');
     if (!modal) return;
@@ -142,7 +161,11 @@ import { site } from '@/site.config';
     requestAnimationFrame(autoResizePreview);
   }
 
-  onWindowOnce('order-finalize', 'order:finalize', () => {
+  onWindowOnce('order-finalize', 'order:finalize', async () => {
+    // Pre-calienta el catálogo para que `window.open` se ejecute dentro de
+    // la activación de usuario (un fetch pendiente haría que el popup
+    // blocker bloquee el envío por WhatsApp).
+    await getPerfumesMap().catch(() => null);
     refreshPreview();
     openModal();
   });
@@ -167,7 +190,18 @@ import { site } from '@/site.config';
     if (whatsappBtn) {
       bindOnce(whatsappBtn, (el) => el.addEventListener('click', async () => {
         const text = await buildOrderText();
-        window.open(buildWhatsAppLink(WHATSAPP_NUMBER, text), '_blank');
+        const url = buildWhatsAppLink(WHATSAPP_NUMBER, text);
+        const win = window.open(url, '_blank', 'noopener');
+        // Si el popup blocker lo intercepta, copiá el mensaje y abrí igual
+        // el link como ancla (navegación directa, no bloqueable).
+        if (!win) {
+          await copyTextToClipboard(text);
+          const a = document.createElement('a');
+          a.href = url;
+          a.target = '_blank';
+          a.rel = 'noopener';
+          a.click();
+        }
       }));
     }
     if (instagramBtn) {
@@ -175,13 +209,7 @@ import { site } from '@/site.config';
         const text = await buildOrderText('instagram');
         const label = el.querySelector('.order-modal-btn-label');
         const originalText = label?.textContent || '';
-        let copied = false;
-        try {
-          await navigator.clipboard.writeText(text);
-          copied = true;
-        } catch {
-          if (preview) preview.select();
-        }
+        const copied = await copyTextToClipboard(text);
         window.open(`https://ig.me/m/${INSTAGRAM_HANDLE}`, '_blank');
         if (copied && label) {
           label.textContent = '¡Copiado!';
@@ -196,13 +224,7 @@ import { site } from '@/site.config';
         if (!preview) return;
         const label = el.querySelector('.order-modal-btn-label');
         const originalText = label?.textContent || '';
-        let copied = false;
-        try {
-          await navigator.clipboard.writeText(preview.value);
-          copied = true;
-        } catch {
-          preview.select();
-        }
+        const copied = await copyTextToClipboard(preview.value);
         if (copied && label) {
           label.textContent = '¡Copiado!';
           setTimeout(() => {

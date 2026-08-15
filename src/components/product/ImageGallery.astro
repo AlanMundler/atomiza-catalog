@@ -34,7 +34,7 @@ const mainAlt = images[0]?.alt || alt;
           data-thumb-index={index}
           data-image-src={assetUrl(image.src)}
           aria-label={`Ver imagen ${index + 1}`}
-          aria-selected={index === 0}
+          aria-pressed={index === 0}
         >
           <img src={assetUrl(image.src)} alt={image.alt} loading="lazy" width="80" height="80" />
         </button>
@@ -71,7 +71,7 @@ const mainAlt = images[0]?.alt || alt;
     function updateActiveThumb() {
       thumbs.forEach((thumb, i) => {
         thumb.classList.toggle('image-gallery-thumb--active', i === currentIndex);
-        thumb.setAttribute('aria-selected', String(i === currentIndex));
+        thumb.setAttribute('aria-pressed', String(i === currentIndex));
       });
     }
 

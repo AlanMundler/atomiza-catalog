@@ -108,7 +108,8 @@ const modalId = id || `modal-${Math.random().toString(36).slice(2, 9)}`;
     inset: 0;
     background-color: rgba(0, 0, 0, 0.8);
     backdrop-filter: blur(4px);
-    z-index: 999;
+    /* Por encima del drawer (backdrop 999 / aside 1000) */
+    z-index: 1100;
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
@@ -127,7 +128,7 @@ const modalId = id || `modal-${Math.random().toString(36).slice(2, 9)}`;
     max-width: 90vw;
     max-height: 90vh;
     width: var(--modal-width, 500px);
-    z-index: 1000;
+    z-index: 1101;
     overflow: hidden;
     animation: slide-up var(--transition-duration) var(--transition-easing);
   }

@@ -12,14 +12,25 @@ export function onPageLoad(key: string, cb: () => void): void {
   if ((window as any)[registeredKey]) return;
   (window as any)[registeredKey] = true;
 
-  // Astro's ClientRouter dispatches `astro:page-load` on `document`,
-  // not on `window` (see astro/dist/transitions/events.js).
-  document.addEventListener('astro:page-load', cb);
+  const run = () => cb();
+
+  // Con ClientRouter, `astro:page-load` se dispara en la carga inicial
+  // (evento `load`) y en cada navegación por vista de transición. Ejecutar
+  // `cb` también de forma inmediata duplicaría el callback en la primera
+  // carga, por eso acá solo se registra el listener.
+  const hasClientRouter = !!document.querySelector(
+    'meta[name="astro-view-transitions-enabled"]'
+  );
+
+  if (hasClientRouter) {
+    document.addEventListener('astro:page-load', run);
+    return;
+  }
 
   if (document.readyState === 'loading') {
-    window.addEventListener('DOMContentLoaded', cb);
+    window.addEventListener('DOMContentLoaded', run);
   } else {
-    cb();
+    run();
   }
 }
 

@@ -1,5 +1,5 @@
 ﻿import { describe, it, expect } from 'vitest';
-import { formatPrice, generateOrderText } from '@/utils/formatters';
+import { formatPrice, generateOrderText, escapeHtml } from '@/utils/formatters';
 import type { CartItem, Perfume } from '@/data/types';
 
 describe('formatters', () => {
@@ -18,6 +18,54 @@ describe('formatters', () => {
 
     it('handles prices without thousands', () => {
       expect(formatPrice(500)).toBe('$500');
+    });
+
+    it('does not render NaN for invalid prices', () => {
+      expect(formatPrice(NaN)).toBe('$—');
+    });
+  });
+
+  describe('escapeHtml', () => {
+    it('escapes HTML-sensitive characters', () => {
+      expect(escapeHtml(`<img src=x onerror="alert(1)">`)).toBe(
+        '&lt;img src=x onerror=&quot;alert(1)&quot;&gt;'
+      );
+      expect(escapeHtml(`a'b`)).toBe(`a&#39;b`);
+      expect(escapeHtml(null)).toBe('');
+    });
+  });
+
+  describe('generateOrderText (WhatsApp channel)', () => {
+    const perfume: Perfume = {
+      id: 'tobacco-vanille',
+      slug: 'tobacco-vanille',
+      brand: 'Tom Ford',
+      name: 'Tobacco Vanille',
+      gender: 'unisex',
+      olfactoryFamily: 'Amaderada Especiada',
+      description: 'Rich, warm, iconic...',
+      notes: { top: [], heart: [], base: [] },
+      images: [],
+      sizes: [{ ml: 5, price: 32000, stock: 2 }],
+      isBoutiqueExclusive: false,
+      featured: true
+    };
+
+    const perfumesMap = new Map([['tobacco-vanille', perfume]]);
+
+    it('uses the live catalog price over a stale snapshot', () => {
+      const items: CartItem[] = [
+        { perfumeId: 'tobacco-vanille', size: { ml: 5, price: 1, stock: 2 }, quantity: 1 }
+      ];
+      const result = generateOrderText(items, perfumesMap, 'Test', 'Test');
+      expect(result).toContain('$32.000');
+      expect(result).not.toContain('$1');
+    });
+
+    it('includes a correct WhatsApp footer', () => {
+      const result = generateOrderText([], perfumesMap, 'Test', 'Test', 'whatsapp');
+      expect(result).toContain('Enviar por WhatsApp a ΛTOMIZΛ');
+      expect(result).not.toContain('@atomiza.cba');
     });
   });
 

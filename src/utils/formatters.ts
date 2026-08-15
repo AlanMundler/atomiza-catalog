@@ -2,8 +2,19 @@ import type { CartItem, Perfume } from '@/data/types';
 import { site } from '@/site.config';
 
 export function formatPrice(price: number): string {
+  if (!Number.isFinite(price)) return '$—';
   if (price === 0) return '$0';
   return '$' + price.toLocaleString('es-AR');
+}
+
+/** Escapa texto para interpolarlo seguro dentro de HTML. */
+export function escapeHtml(value: string | number | null | undefined): string {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 export type OrderChannel = 'whatsapp' | 'instagram';
@@ -30,11 +41,14 @@ export function generateOrderText(
     const perfume = perfumesMap.get(item.perfumeId);
     if (!perfume) continue;
 
-    const lineTotal = item.size.price * item.quantity;
+    // El precio/stock SIEMPRE se toma del catálogo vivo, no del snapshot
+    // guardado en el carrito (que podría estar desactualizado o alterado).
+    const size = perfume.sizes.find((s) => s.ml === item.size.ml) || item.size;
+    const lineTotal = size.price * item.quantity;
     total += lineTotal;
 
     lines.push(
-      `• ${perfume.brand} - ${perfume.name} (${item.size.ml}ml) x${item.quantity} — ${formatPrice(lineTotal)}`
+      `• ${perfume.brand} - ${perfume.name} (${size.ml}ml) x${item.quantity} — ${formatPrice(lineTotal)}`
     );
   }
 
@@ -48,7 +62,7 @@ export function generateOrderText(
     '—',
     channel === 'instagram'
       ? `Enviar a @${site.instagramHandle} por Instagram DM`
-      : `Enviar por WhatsApp a @${site.instagramHandle}`
+      : `Enviar por WhatsApp a ${site.name} (${site.phoneDisplay})`
   );
 
   return lines.join('\n');

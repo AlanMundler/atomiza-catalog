@@ -191,7 +191,10 @@ ol {
   border-radius: var(--border-radius);
   border: var(--border-width) solid transparent;
   cursor: pointer;
-  transition: all var(--transition-duration) var(--transition-easing);
+  transition:
+    background-color var(--transition-duration) var(--transition-easing),
+    border-color var(--transition-duration) var(--transition-easing),
+    color var(--transition-duration) var(--transition-easing);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -297,8 +300,4 @@ ol {
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.animate-slide-up {
-  animation: slide-up var(--transition-duration) var(--transition-easing);
 }

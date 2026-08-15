@@ -55,6 +55,38 @@ describe('cart utilities', () => {
       const cart = getCart();
       expect(cart.items).toEqual([]);
     });
+
+    it('drops malformed items (missing price/size, empty id)', () => {
+      localStorage.setItem('atomiza-cart', JSON.stringify({
+        items: [
+          { perfumeId: 'ok', size: { ml: 5, price: 32000, stock: 2 }, quantity: 1 },
+          { perfumeId: 'no-size', size: null, quantity: 1 },
+          { perfumeId: '', size: { ml: 5, price: 32000, stock: 2 }, quantity: 1 },
+          { perfumeId: 'bad-price', size: { ml: 5, price: 'x', stock: 2 }, quantity: 1 },
+        ],
+        updatedAt: Date.now()
+      }));
+
+      const cart = getCart();
+      expect(cart.items).toHaveLength(1);
+      expect(cart.items[0].perfumeId).toBe('ok');
+    });
+
+    it('normalizes invalid quantities (non-integer, string, over stock)', () => {
+      localStorage.setItem('atomiza-cart', JSON.stringify({
+        items: [
+          { perfumeId: 'a', size: { ml: 5, price: 32000, stock: 10 }, quantity: 2.5 },
+          { perfumeId: 'b', size: { ml: 5, price: 32000, stock: 10 }, quantity: '2' },
+          { perfumeId: 'c', size: { ml: 5, price: 32000, stock: 10 }, quantity: 50 },
+        ],
+        updatedAt: Date.now()
+      }));
+
+      const cart = getCart();
+      expect(cart.items[0].quantity).toBe(1); // 2.5 → 1
+      expect(cart.items[1].quantity).toBe(1); // '2' → 1
+      expect(cart.items[2].quantity).toBe(10); // cap en stock
+    });
   });
 
   describe('addToCart', () => {

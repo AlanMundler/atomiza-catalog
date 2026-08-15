@@ -70,12 +70,6 @@ const pageUrl = new URL(Astro.url.pathname, Astro.site).href;
 
   main {
     flex: 1;
-    padding-top: 72px; /* Header height */
-  }
-
-  @media (max-width: 640px) {
-    main {
-      padding-top: 64px;
-    }
+    padding-top: 72px; /* Header height (72px en todos los viewports) */
   }
 </style>

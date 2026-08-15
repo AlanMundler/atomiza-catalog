@@ -89,11 +89,9 @@ const whatsappLink = buildWhatsAppLink(site.whatsappNumber, site.whatsappMessage
   <div class="mobile-cart-summary">
     <h3 class="mobile-cart-title">Carrito</h3>
     <p class="mobile-cart-count" data-cart-count-mobile>{cartCount} artículos</p>
-    <a href={`${BASE}catalogo/`} class="mobile-cart-btn-link">
-      <Button variant="secondary" class="mobile-cart-btn">
-        Ver carrito
-      </Button>
-    </a>
+    <Button variant="secondary" class="mobile-cart-btn" data-mobile-cart-open>
+      Ver carrito
+    </Button>
   </div>
   <div class="mobile-socials">
     <a href={site.instagramUrl} target="_blank" rel="noopener noreferrer" class="mobile-social-link">
@@ -115,7 +113,7 @@ const whatsappLink = buildWhatsAppLink(site.whatsappNumber, site.whatsappMessage
 
 <script>
   import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
-  import { site } from '@/site.config';
+  import { getCart } from '@/utils/cart';
 
   let ticking = false;
   let cartTrigger: HTMLElement | null = null;
@@ -149,8 +147,8 @@ const whatsappLink = buildWhatsAppLink(site.whatsappNumber, site.whatsappMessage
   function updateCartCount() {
     const badge = document.querySelector('[data-cart-count]') as HTMLElement | null;
     const mobileCount = document.querySelector('[data-cart-count-mobile]') as HTMLElement | null;
-    const cart = JSON.parse(localStorage.getItem(site.storage.cart) || '{"items":[]}');
-    const newCount = cart.items.reduce((sum: number, item: any) => sum + item.quantity, 0);
+    const cart = getCart();
+    const newCount = cart.items.reduce((sum, item) => sum + item.quantity, 0);
     if (badge) {
       badge.textContent = String(newCount);
       badge.hidden = newCount === 0;
@@ -177,6 +175,17 @@ const whatsappLink = buildWhatsAppLink(site.whatsappNumber, site.whatsappMessage
         el.addEventListener('click', () => {
           const event = new CustomEvent('cart:open');
           window.dispatchEvent(event);
+        });
+      });
+    }
+
+    // "Ver carrito" del menú móvil: cierra el drawer y abre el carrito
+    const mobileCartBtn = document.querySelector('[data-mobile-cart-open]');
+    if (mobileCartBtn && mobileDrawer) {
+      bindOnce(mobileCartBtn, (el) => {
+        el.addEventListener('click', () => {
+          mobileDrawer.dispatchEvent(new CustomEvent('drawer:toggle', { detail: { open: false } }));
+          window.dispatchEvent(new CustomEvent('cart:open'));
         });
       });
     }
@@ -530,15 +539,6 @@ const whatsappLink = buildWhatsAppLink(site.whatsappNumber, site.whatsappMessage
   }
 
   .mobile-cart-btn {
-    width: 100%;
-  }
-
-  .mobile-cart-btn-link {
-    width: 100%;
-    text-decoration: none;
-  }
-
-  .mobile-cart-btn-link .mobile-cart-btn {
     width: 100%;
   }
 

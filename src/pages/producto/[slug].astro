@@ -43,7 +43,7 @@ const productSchema = {
   ogImage={`og/${perfume.slug}.jpg`}
   ogType="product"
 >
-  <script type="application/ld+json" is:inline set:html={JSON.stringify(productSchema)} />
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(productSchema).replace(/</g, '\\u003c')} />
   <div class="container">
     <ProductDetail perfume={perfume} />
   </div>

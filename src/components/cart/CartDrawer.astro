@@ -30,7 +30,7 @@ import Drawer from '@/components/ui/Drawer.astro';
     clearCart,
     getCartSubtotal
   } from '@/utils/cart';
-  import { formatPrice } from '@/utils/formatters';
+  import { formatPrice, escapeHtml } from '@/utils/formatters';
   import { getPerfumesMap } from '@/utils/perfumes-client';
   import type { CartItem as CartItemType } from '@/data/types';
   import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
@@ -43,7 +43,6 @@ import Drawer from '@/components/ui/Drawer.astro';
     const content = document.querySelector('#cart-content') as HTMLElement | null;
     if (!content) return;
 
-    perfumesMap = await getPerfumesMap();
     const cart = getCart();
 
     if (cart.items.length === 0) {
@@ -61,6 +60,9 @@ import Drawer from '@/components/ui/Drawer.astro';
       return;
     }
 
+    // Solo se descarga el catálogo cuando hay items (evita el fetch en cada
+    // página para visitantes con el carrito vacío).
+    perfumesMap = await getPerfumesMap();
     const itemsHtml = cart.items.map(itemHtml).join('');
     const subtotal = getCartSubtotal();
 
@@ -90,19 +92,20 @@ import Drawer from '@/components/ui/Drawer.astro';
     const brand = perfume.brand || item.perfumeId;
     const name = perfume.name || item.perfumeId;
     const image = assetUrl(perfume.images?.[0]?.src);
-    const lineTotal = item.size.price * item.quantity;
     const size = item.size;
+    const lineTotal = size.price * item.quantity;
+    const es = escapeHtml;
 
     return `
-      <li class="cart-item" data-perfume-id="${item.perfumeId}" data-size-ml="${size.ml}">
+      <li class="cart-item" data-perfume-id="${es(item.perfumeId)}" data-size-ml="${es(size.ml)}">
         <div class="cart-item-image">
-          <img src="${image}" alt="${brand} ${name}" loading="lazy" width="64" height="64" />
+          <img src="${es(image)}" alt="${es(brand)} ${es(name)}" loading="lazy" width="64" height="64" />
         </div>
         <div class="cart-item-info">
-          <div class="cart-item-brand">${brand}</div>
-          <div class="cart-item-name">${name}</div>
+          <div class="cart-item-brand">${es(brand)}</div>
+          <div class="cart-item-name">${es(name)}</div>
           <div class="cart-item-meta">
-            <span class="cart-item-size">${size.ml}ml</span>
+            <span class="cart-item-size">${es(size.ml)}ml</span>
             <span class="cart-item-price">${formatPrice(size.price)}</span>
           </div>
         </div>
@@ -113,7 +116,7 @@ import Drawer from '@/components/ui/Drawer.astro';
                 <line x1="5" y1="12" x2="19" y2="12"></line>
               </svg>
             </button>
-            <span class="quantity-value" aria-live="polite">${item.quantity}</span>
+            <span class="quantity-value" aria-live="polite">${es(item.quantity)}</span>
             <button type="button" class="quantity-btn quantity-btn--increase" data-action="increase" aria-label="Aumentar cantidad" ${item.quantity >= size.stock ? 'disabled' : ''}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <line x1="12" y1="5" x2="12" y2="19"></line>

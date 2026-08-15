@@ -76,6 +76,38 @@ test.describe('Catalog to Cart Flow', () => {
     expect(allMatch).toBe(true);
   });
 
+  test('shows an empty state when no results match', async ({ page }) => {
+    await page.goto(CATALOG);
+    await page.waitForLoadState('networkidle');
+
+    await page.fill('input[type="search"]', 'zzzzz-no-existe');
+    await page.waitForTimeout(500);
+
+    await expect(page.locator('.product-card:visible')).toHaveCount(0);
+    await expect(page.locator('.product-grid-empty')).toBeVisible();
+  });
+
+  test('restores search input and filters from the URL', async ({ page }) => {
+    await page.goto(`${CATALOG}?filter=femenino&search=baroque`);
+    await page.waitForLoadState('networkidle');
+
+    await expect(page.locator('input[type="search"]')).toHaveValue('baroque');
+    await expect(page.locator('button[data-filter="femenino"]')).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('.product-card:visible').first()).toBeVisible();
+  });
+
+  test('mobile "Ver carrito" opens the cart drawer', async ({ page }) => {
+    await page.goto(HOME);
+    await page.waitForLoadState('networkidle');
+
+    const menuBtn = page.locator('button[aria-label="Abrir menú"]');
+    test.skip(!(await menuBtn.isVisible()), 'Solo aplica al menú móvil');
+
+    await menuBtn.click();
+    await page.click('[data-mobile-cart-open]');
+    await expect(page.locator('#cart-drawer .drawer--open')).toBeVisible();
+  });
+
   test('should navigate to product detail from catalog', async ({ page }) => {
     await page.goto(CATALOG);
     await page.waitForLoadState('networkidle');

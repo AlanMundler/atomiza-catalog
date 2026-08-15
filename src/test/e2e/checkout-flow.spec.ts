@@ -13,6 +13,32 @@ test.describe('Checkout Flow', () => {
     await page.waitForLoadState('networkidle');
   });
 
+  test('renders malicious cart data as escaped text, not HTML', async ({ page }) => {
+    await page.goto(HOME);
+    await page.evaluate(() => {
+      const payload = {
+        items: [
+          {
+            perfumeId: '<img src=x onerror="window.__xss=1">',
+            size: { ml: 5, price: 32000, stock: 2 },
+            quantity: 1
+          }
+        ],
+        updatedAt: Date.now()
+      };
+      localStorage.setItem('atomiza-cart', JSON.stringify(payload));
+    });
+    await page.reload();
+    await page.waitForLoadState('networkidle');
+
+    await page.click('[data-cart-trigger]');
+    await page.waitForTimeout(300);
+
+    const xssFired = await page.evaluate(() => (window as any).__xss === 1);
+    expect(xssFired).toBe(false);
+    await expect(page.locator('#cart-content')).toContainText('<img src=x');
+  });
+
   test('should add multiple items and finalize order', async ({ page }) => {
     // Add first product (drawer opens automatically)
     await page.goto(PRODUCT_1);

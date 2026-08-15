@@ -3,6 +3,11 @@ import type { Perfume } from '@/data/types';
 
 type PerfumeMap = Map<string, Perfume>;
 
+interface CachedCatalog {
+  version: string;
+  data: { perfumes: Perfume[] };
+}
+
 let cached: PerfumeMap | null = null;
 let inFlight: Promise<PerfumeMap> | null = null;
 
@@ -14,8 +19,13 @@ async function load(): Promise<PerfumeMap> {
   const stored = localStorage.getItem(site.storage.perfumes);
   if (stored) {
     try {
-      cached = toMap(JSON.parse(stored));
-      return cached;
+      const parsed = JSON.parse(stored) as Partial<CachedCatalog>;
+      // La versión evita que un deploy con precios/stock nuevos quede
+      // oculto para visitantes que ya tienen el catálogo cacheado.
+      if (parsed?.version === site.dataVersion && Array.isArray(parsed.data?.perfumes)) {
+        cached = toMap(parsed.data);
+        return cached;
+      }
     } catch {
       // cache corrupto, se vuelve a buscar
     }
@@ -23,7 +33,8 @@ async function load(): Promise<PerfumeMap> {
   const res = await fetch(site.basePath + 'data/perfumes.json');
   if (!res.ok) throw new Error(`No se pudo cargar el catálogo (${res.status})`);
   const data = await res.json();
-  localStorage.setItem(site.storage.perfumes, JSON.stringify(data));
+  const payload: CachedCatalog = { version: site.dataVersion, data };
+  localStorage.setItem(site.storage.perfumes, JSON.stringify(payload));
   cached = toMap(data);
   return cached;
 }

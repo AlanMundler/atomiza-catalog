@@ -55,6 +55,18 @@ const perfumes = perfumesData.perfumes as Perfume[];
   let currentFilter = 'all';
   let currentSearch = '';
 
+  function readUrlState() {
+    const params = new URL(window.location.href).searchParams;
+    const rawFilter = params.get('filter') || 'all';
+    currentFilter = Object.hasOwn(GENDERS, rawFilter) ? rawFilter : 'all';
+    currentSearch = params.get('search') || '';
+  }
+
+  function syncSearchInput() {
+    const input = document.querySelector('[data-search-input]') as HTMLInputElement | null;
+    if (input && input.value !== currentSearch) input.value = currentSearch;
+  }
+
   function applyFilters() {
     const cards = Array.from(document.querySelectorAll('.product-card')) as HTMLElement[];
     const countEl = document.querySelector('[data-results-count]') as HTMLElement | null;
@@ -87,9 +99,16 @@ const perfumes = perfumesData.perfumes as Perfume[];
     }
 
     if (emptyEl && gridEl) {
-      emptyEl.style.display = visible === 0 ? '' : 'none';
+      emptyEl.hidden = visible !== 0;
       gridEl.style.display = visible === 0 ? 'none' : '';
     }
+  }
+
+  function applyUrlState() {
+    readUrlState();
+    syncSearchInput();
+    updateActiveChip();
+    applyFilters();
   }
 
   function updateActiveChip() {
@@ -113,10 +132,12 @@ const perfumes = perfumesData.perfumes as Perfume[];
     applyFilters();
   });
 
-  onPageLoad('catalogo', () => {
-    currentFilter = new URL(window.location.href).searchParams.get('filter') || 'all';
-    currentSearch = new URL(window.location.href).searchParams.get('search') || '';
+  // Back/forward del navegador re-aplica el estado de filtros y búsqueda
+  onWindowOnce('catalogo-popstate', 'popstate', () => {
+    applyUrlState();
+  });
 
+  onPageLoad('catalogo', () => {
     const filterButtons = document.querySelectorAll('.filter-chip') as NodeListOf<HTMLButtonElement>;
     filterButtons.forEach((button) => {
       bindOnce(button, (el) => {
@@ -138,8 +159,7 @@ const perfumes = perfumesData.perfumes as Perfume[];
       });
     });
 
-    updateActiveChip();
-    applyFilters();
+    applyUrlState();
   });
 </script>
 

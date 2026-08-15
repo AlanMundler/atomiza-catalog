@@ -18,6 +18,7 @@ const filters: { value: GenderFilter; label: string }[] = [
 <div class="filters" role="group" aria-label="Filtrar por categoría">
   {filters.map((filter) => (
     <button
+      type="button"
       class={`filter-chip ${currentFilter === filter.value ? 'filter-chip--active' : ''}`}
       data-filter={filter.value}
       aria-pressed={currentFilter === filter.value}
