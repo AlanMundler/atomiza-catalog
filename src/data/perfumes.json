@@ -5,7 +5,7 @@
       "slug": "luminous-sahara",
       "brand": "Maison Alhambra",
       "name": "Luminous Sahara",
-      "gender": "masculino",
+      "gender": "unisex",
       "olfactoryFamily": "Cítrico Dulce Amaderado",
       "description": "Inspirado en Althaïr de Parfums de Marly. Un cítrico dulce y envolvente: flor de azahar, cardamomo y canela que desembocan en una vainilla cremosa con almendras acarameladas y praliné sobre un fondo ambarado y almizclado.",
       "notes": {
@@ -221,7 +221,7 @@
       "slug": "glacier-ultra",
       "brand": "Maison Alhambra",
       "name": "Glacier Ultra",
-      "gender": "masculino",
+      "gender": "unisex",
       "olfactoryFamily": "Cálido Especiado",
       "description": "Inspirado en Ultra Male de Jean Paul Gaultier. Canela, pimienta y lima sobre lavanda y pachulí, con un fondo dulce de vainilla, ámbar y cedro. Potente, cálido, difícil de no oler.",
       "notes": {
@@ -424,7 +424,7 @@
       "slug": "your-touch-intense",
       "brand": "Maison Alhambra",
       "name": "Your Touch Intense",
-      "gender": "masculino",
+      "gender": "unisex",
       "olfactoryFamily": "Gourmand Dulce",
       "description": "Inspirado en Stronger With You Intensely de Giorgio Armani. Pimienta rosa, violeta y enebro que dan paso a tófe y canela con lavanda y esclarea, sobre vainilla, haba tonka, ámbar y gamuza. Dulce y cálido, de los que se quedan toda la noche.",
       "notes": {
@@ -510,7 +510,7 @@
       "slug": "baroque-rouge-540",
       "brand": "Maison Alhambra",
       "name": "Baroque Rouge 540",
-      "gender": "femenino",
+      "gender": "unisex",
       "olfactoryFamily": "Ámbar Floral",
       "description": "Inspirado en Baccarat Rouge 540 de Maison Francis Kurkdjian. Azafrán y pera con mandarina, corazón de jazmín, ylang-ylang y azucena, sobre ámbar, cachemira y almizcle. Cálido y especiado, con estela poderosa.",
       "notes": {
@@ -672,7 +672,7 @@
       "slug": "ameer-al-oudh",
       "brand": "Lattafa Perfumes",
       "name": "Ameer Al Oudh Intense Oud",
-      "gender": "masculino",
+      "gender": "unisex",
       "olfactoryFamily": "Oud Avainillado",
       "description": "Comparado con By the Fireplace de Maison Margiela. Notas amaderadas y oud con azúcar y vainilla, sobre un fondo de oud, sándalo y notas herbales. Dulce, ahumado; de los que se quedan días en la ropa.",
       "notes": {
@@ -754,7 +754,7 @@
       "slug": "rouat-ajial",
       "brand": "Lattafa Perfumes",
       "name": "Rouat Ajial",
-      "gender": "masculino",
+      "gender": "unisex",
       "olfactoryFamily": "Especiado Amaderado",
       "description": "Un aromático-amaderado árabe, elegante y unisex. Abre fresco con lavanda, bergamota y vainilla, gira a un corazón floral y especiado de jazmín, nuez moscada y ylang-ylang, y cierra terroso con pachulí, ámbar y cedro.",
       "notes": {
@@ -842,7 +842,7 @@
       "slug": "qaed-al-fursan-untamed",
       "brand": "Lattafa Perfumes",
       "name": "Qaed Al Fursan Untamed",
-      "gender": "masculino",
+      "gender": "unisex",
       "olfactoryFamily": "Ámbar Cálido",
       "description": "Inspirado en Eros Najim de Versace. Canela, cardamomo, mandarina y nuez moscada bañadas en caramelo, con lavanda, esclarea y geranio, sobre ámbar, cedro, incienso y ládano. Dulce, especiado y elegante, con buena duración.",
       "notes": {
@@ -930,7 +930,7 @@
       "slug": "24-carat-white-gold",
       "brand": "Lattafa Perfumes",
       "name": "24 Carat White Gold",
-      "gender": "masculino",
+      "gender": "unisex",
       "olfactoryFamily": "Cítrico Aromático",
       "description": "Bergamota y flor de azahar con lavanda, geranio, pimienta rosa y nuez moscada, sobre vetiver, oud y haba tonka. Aromático, amaderado y almizclado, con aire de lujo.",
       "notes": {
@@ -970,7 +970,7 @@
       "id": "hayaati-black",
       "slug": "hayaati-black",
       "brand": "Lattafa Perfumes",
-      "name": "Hayaati Black",
+      "name": "Hayaati",
       "gender": "masculino",
       "olfactoryFamily": "Frutal Atalcado",
       "description": "ADN de Invictus de Paco Rabanne: manzana, bergamota y canela con notas amaderadas, sobre almizcle y vainilla. Frutal y dulce, fácil de gustar, de esos que te llenan de cumplidos.",
@@ -992,7 +992,7 @@
       "images": [
         {
           "src": "images/perfumes/hayaati-black.svg",
-          "alt": "Lattafa Hayaati Black"
+          "alt": "Lattafa Hayaati"
         }
       ],
       "sizes": [
@@ -1053,7 +1053,7 @@
       "slug": "opulent-dubai",
       "brand": "Lattafa Perfumes",
       "name": "Opulent Dubai",
-      "gender": "masculino",
+      "gender": "unisex",
       "olfactoryFamily": "Frutal Tropical",
       "description": "Inspirado en God of Fire de Stéphane Humbert Lucas 777. Mango jugoso y dulce con toronja, limón y jengibre, sobre jazmín, cedro y violeta, con un fondo amaderado y ambarado. Tropical, hecho para el calor.",
       "notes": {
