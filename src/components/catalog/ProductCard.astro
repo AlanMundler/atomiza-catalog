@@ -31,7 +31,7 @@ const isOutOfStock = stockStatus === 'out-of-stock';
     <img 
       src={mainImage} 
       alt={mainAlt} 
-      class="product-card-image"
+      class={`product-card-image${perfume.slug === 'rouat-ajial' ? ' product-card-image--large' : ''}`}
       loading="lazy"
       width="400"
       height="400"
@@ -91,6 +91,10 @@ const isOutOfStock = stockStatus === 'out-of-stock';
     padding: 13%;
     object-fit: contain;
     transition: transform 400ms var(--transition-easing);
+  }
+
+  .product-card-image--large {
+    padding: 2%;
   }
 
   .product-card:hover .product-card-image {

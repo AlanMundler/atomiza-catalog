@@ -17,7 +17,7 @@ const available = isSizeAvailable(selectedSize);
 <article class="product-detail" data-perfume-id={perfume.id}>
   <div class="product-detail-grid">
     <div class="product-detail-gallery">
-      <ImageGallery images={perfume.images} alt={`${perfume.brand} ${perfume.name}`} />
+      <ImageGallery images={perfume.images} alt={`${perfume.brand} ${perfume.name}`} large={perfume.slug === 'rouat-ajial'} />
     </div>
 
     <div class="product-detail-info">
