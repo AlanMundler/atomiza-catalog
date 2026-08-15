@@ -88,6 +88,7 @@ html {
   scroll-behavior: smooth;
   scrollbar-width: thin;
   scrollbar-color: var(--color-outline-variant) transparent;
+  overflow-x: clip;
 }
 
 html::-webkit-scrollbar {
@@ -110,6 +111,7 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
 }
 
 img {

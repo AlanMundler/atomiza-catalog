@@ -67,7 +67,7 @@ const total = quizQuestions.length;
         <p class="quiz-loading" id="quiz-loading" hidden>Analizando tu perfil…</p>
         <div class="quiz-result-list" id="quiz-result-list"></div>
         <div class="quiz-result-actions">
-          <button type="button" class="btn btn--secondary btn--lg" data-quiz-restart>Hacer el quiz de nuevo</button>
+          <button type="button" class="btn btn--secondary btn--md" data-quiz-restart>Hacer el quiz de nuevo</button>
           <a href={`${BASE}catalogo/`} class="btn btn--ghost">Ver todo el catálogo</a>
         </div>
       </section>
@@ -79,6 +79,7 @@ const total = quizQuestions.length;
   import { getPerfumesMap } from '@/utils/perfumes-client';
   import { recommendPerfumes, recommendationReason, type QuizAnswers } from '@/utils/quiz';
   import { formatPrice } from '@/utils/formatters';
+  import { getStockStatus, getStockLabel } from '@/utils/stock';
   import { assetUrl, site } from '@/site.config';
   import { bindOnce, onPageLoad } from '@/utils/view-transitions';
   import type { Perfume } from '@/data/types';
@@ -169,10 +170,11 @@ const total = quizQuestions.length;
     function resultCard(perfume: Perfume): HTMLElement {
       const size = perfume.sizes.find((s) => s.ml === 5) ?? perfume.sizes[0];
       const image = perfume.images[0];
-      const lowStock = size.stock >= 1 && size.stock < 5;
+      const stockStatus = getStockStatus(size);
+      const stockLabel = getStockLabel(stockStatus);
 
       const card = document.createElement('article');
-      card.className = 'quiz-result-card quiz-result-card--top';
+      card.className = 'quiz-result-card';
       card.dataset.price = String(size.price);
       card.dataset.gender = perfume.gender;
       card.dataset.perfumeId = perfume.id;
@@ -183,15 +185,24 @@ const total = quizQuestions.length;
       img.src = assetUrl(image?.src);
       img.alt = image?.alt ?? perfume.name;
       img.loading = 'lazy';
+      img.width = 400;
+      img.height = 400;
       media.appendChild(img);
 
       const body = document.createElement('div');
       body.className = 'quiz-result-body';
 
+      const eyebrow = document.createElement('div');
+      eyebrow.className = 'quiz-result-eyebrow';
+      const rule = document.createElement('span');
+      rule.className = 'quiz-result-rule';
+      rule.setAttribute('aria-hidden', 'true');
+      eyebrow.appendChild(rule);
       const badge = document.createElement('span');
       badge.className = 'quiz-result-badge';
       badge.textContent = 'Tu match ideal';
-      body.appendChild(badge);
+      eyebrow.appendChild(badge);
+      body.appendChild(eyebrow);
 
       const brand = document.createElement('span');
       brand.className = 'quiz-result-brand';
@@ -208,6 +219,11 @@ const total = quizQuestions.length;
       reason.textContent = recommendationReason(answers as QuizAnswers);
       body.appendChild(reason);
 
+      const divider = document.createElement('div');
+      divider.className = 'quiz-result-divider';
+      divider.setAttribute('aria-hidden', 'true');
+      body.appendChild(divider);
+
       const meta = document.createElement('div');
       meta.className = 'quiz-result-meta';
       const price = document.createElement('span');
@@ -215,14 +231,14 @@ const total = quizQuestions.length;
       price.textContent = formatPrice(size.price);
       meta.appendChild(price);
       const stock = document.createElement('span');
-      stock.className = lowStock ? 'quiz-result-stock quiz-result-stock--low' : 'quiz-result-stock';
-      stock.textContent = lowStock ? 'Poco stock' : 'En stock';
+      stock.className = `quiz-result-stock quiz-result-stock--${stockStatus}`;
+      stock.textContent = stockLabel;
       meta.appendChild(stock);
       body.appendChild(meta);
 
       const addBtn = document.createElement('button');
       addBtn.type = 'button';
-      addBtn.className = 'btn btn--primary quiz-result-add';
+      addBtn.className = 'btn btn--primary btn--lg quiz-result-add';
       addBtn.textContent = 'Agregar al carrito';
       addBtn.dataset.addPerfumeId = perfume.id;
       bindOnce(addBtn, (el) => {
@@ -363,7 +379,8 @@ const total = quizQuestions.length;
     letter-spacing: var(--font-headline-md-tracking);
     text-transform: uppercase;
     color: var(--color-on-surface);
-    margin: 0;
+    margin: 0 0 var(--spacing-stack-sm);
+    text-align: center;
   }
 
   .quiz-question h2:focus {
@@ -456,60 +473,119 @@ const total = quizQuestions.length;
     font-family: var(--font-family);
     font-size: var(--font-body-lg-size);
     color: var(--color-on-surface-variant);
+    text-align: center;
   }
 
   .quiz-result-list {
     margin-bottom: var(--spacing-stack-md);
   }
 
+  .quiz-result-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin-top: var(--spacing-stack-md);
+  }
+</style>
+
+<style is:global>
   .quiz-result-card {
     display: flex;
     flex-direction: column;
-    max-width: 640px;
+    max-width: 680px;
     margin-inline: auto;
     background-color: var(--color-surface-container);
     border: var(--border-width) solid var(--color-primary);
     border-radius: var(--border-radius);
     overflow: hidden;
+    box-shadow:
+      0 24px 60px rgba(0, 0, 0, 0.35),
+      0 0 48px rgba(233, 193, 118, 0.08);
+    animation: slide-up 400ms var(--transition-easing) both;
+    transition: box-shadow var(--transition-duration) var(--transition-easing);
   }
 
-  @media (min-width: 641px) {
+  .quiz-result-card:hover {
+    box-shadow:
+      0 24px 60px rgba(0, 0, 0, 0.35),
+      0 0 64px rgba(233, 193, 118, 0.16);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .quiz-result-card {
+      animation: none;
+    }
+  }
+
+  @media (min-width: 768px) {
     .quiz-result-card {
       flex-direction: row;
     }
   }
 
   .quiz-result-media {
-    aspect-ratio: 3 / 2;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 4 / 3;
     background-color: var(--color-surface-container-high);
+    border-bottom: var(--border-width) solid var(--color-outline-variant);
+    overflow: hidden;
   }
 
-  @media (min-width: 641px) {
+  @media (min-width: 768px) {
     .quiz-result-media {
+      flex: 0 0 300px;
       aspect-ratio: auto;
-      flex: 0 0 240px;
+      border-bottom: none;
+      border-right: var(--border-width) solid var(--color-outline-variant);
     }
   }
 
   .quiz-result-media img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    display: block;
+    object-fit: contain;
+    transition: transform 400ms var(--transition-easing);
+  }
+
+  .quiz-result-card:hover .quiz-result-media img {
+    transform: scale(1.04);
   }
 
   .quiz-result-body {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 8px;
-    padding: var(--spacing-stack-md);
+    gap: 10px;
+    padding: 28px;
   }
 
-  @media (min-width: 641px) {
+  @media (max-width: 767px) {
+    .quiz-result-body {
+      padding: 24px;
+    }
+  }
+
+  @media (min-width: 768px) {
     .quiz-result-body {
       flex: 1;
     }
+  }
+
+  .quiz-result-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 2px;
+  }
+
+  .quiz-result-rule {
+    width: 28px;
+    height: 2px;
+    background-color: var(--color-primary);
   }
 
   .quiz-result-badge {
@@ -518,10 +594,7 @@ const total = quizQuestions.length;
     font-weight: var(--font-label-sm-weight);
     letter-spacing: var(--font-label-sm-tracking);
     text-transform: uppercase;
-    color: var(--color-on-primary);
-    background-color: var(--color-primary);
-    padding: 3px 10px;
-    border-radius: var(--border-radius);
+    color: var(--color-primary);
   }
 
   .quiz-result-brand {
@@ -529,6 +602,7 @@ const total = quizQuestions.length;
     font-size: var(--font-label-sm-size);
     font-weight: var(--font-label-sm-weight);
     letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
     color: var(--color-on-surface-variant);
   }
 
@@ -537,6 +611,7 @@ const total = quizQuestions.length;
     font-size: var(--font-headline-md-size);
     font-weight: var(--font-headline-md-weight);
     letter-spacing: var(--font-headline-md-tracking);
+    line-height: 1.3;
     color: var(--color-on-surface);
     margin: 0;
   }
@@ -546,7 +621,14 @@ const total = quizQuestions.length;
     font-size: var(--font-body-md-size);
     line-height: var(--font-body-md-line-height);
     color: var(--color-on-surface-variant);
-    margin: 0 0 4px;
+    margin: 0;
+  }
+
+  .quiz-result-divider {
+    width: 100%;
+    height: var(--border-width);
+    background-color: var(--color-outline-variant);
+    margin: 10px 0;
   }
 
   .quiz-result-meta {
@@ -555,7 +637,6 @@ const total = quizQuestions.length;
     justify-content: space-between;
     gap: 12px;
     width: 100%;
-    margin: 4px 0 8px;
   }
 
   .quiz-result-price {
@@ -566,20 +647,38 @@ const total = quizQuestions.length;
   }
 
   .quiz-result-stock {
+    display: inline-flex;
+    align-items: center;
     font-family: var(--font-family);
     font-size: var(--font-label-sm-size);
     font-weight: var(--font-label-sm-weight);
     letter-spacing: var(--font-label-sm-tracking);
+    line-height: var(--font-label-sm-line-height);
     text-transform: uppercase;
-    color: var(--color-status-in-stock);
+    white-space: nowrap;
+    border: var(--border-width) solid;
+    padding: 3px 10px;
+    height: 22px;
   }
 
-  .quiz-result-stock--low {
+  .quiz-result-stock--in-stock {
+    color: var(--color-status-in-stock);
+    border-color: var(--color-status-in-stock);
+  }
+
+  .quiz-result-stock--low-stock {
     color: var(--color-status-low-stock);
+    border-color: var(--color-status-low-stock);
+  }
+
+  .quiz-result-stock--out-of-stock {
+    color: var(--color-status-out-of-stock);
+    border-color: var(--color-status-out-of-stock);
   }
 
   .quiz-result-add {
     width: 100%;
+    margin-top: 8px;
   }
 
   .quiz-result-detail {
@@ -593,18 +692,16 @@ const total = quizQuestions.length;
     align-self: center;
   }
 
+  .quiz-result-detail:hover {
+    text-decoration: none;
+  }
+
   .quiz-result-empty {
     font-family: var(--font-family);
     font-size: var(--font-body-lg-size);
     color: var(--color-on-surface-variant);
     text-align: center;
-  }
-
-  .quiz-result-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    justify-content: center;
-    margin-top: var(--spacing-stack-md);
+    max-width: 480px;
+    margin-inline: auto;
   }
 </style>
