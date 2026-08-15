@@ -49,6 +49,10 @@ const { perfumes } = Astro.props;
     grid-column: 1 / -1;
   }
 
+  .product-grid-empty[hidden] {
+    display: none;
+  }
+
   .empty-title {
     font-family: var(--font-family);
     font-size: var(--font-headline-md-size);

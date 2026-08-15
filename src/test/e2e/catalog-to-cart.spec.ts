@@ -87,6 +87,19 @@ test.describe('Catalog to Cart Flow', () => {
     await expect(page.locator('.product-grid-empty')).toBeVisible();
   });
 
+  test('hides the empty state while there are results', async ({ page }) => {
+    await page.goto(CATALOG);
+    await page.waitForLoadState('networkidle');
+
+    await expect(page.locator('.product-card:visible').first()).toBeVisible();
+    await expect(page.locator('.product-grid-empty')).toBeHidden();
+
+    await page.fill('input[type="search"]', 'hercules');
+    await page.waitForTimeout(500);
+    await expect(page.locator('.product-card:visible').first()).toBeVisible();
+    await expect(page.locator('.product-grid-empty')).toBeHidden();
+  });
+
   test('restores search input and filters from the URL', async ({ page }) => {
     await page.goto(`${CATALOG}?filter=femenino&search=baroque`);
     await page.waitForLoadState('networkidle');
