@@ -163,7 +163,7 @@ test.describe('Accessibility', () => {
     await page.goto(HOME);
     await page.waitForLoadState('networkidle');
 
-    // Check hero CTA is visible
-    await expect(page.locator('.hero-cta')).toBeVisible();
+    // Check header is visible
+    await expect(page.locator('.header')).toBeVisible();
   });
 });

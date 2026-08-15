@@ -23,9 +23,12 @@ test.describe('Perfume Quiz Flow', () => {
   });
 
   test('should access the quiz from the home CTA', async ({ page }) => {
-    const cta = page.locator('.hero-cta').getByRole('link', { name: 'Descubrí tu perfume' });
-    await expect(cta).toBeVisible();
-    await cta.click();
+    const heroCta = page.locator('.hero-cta').getByRole('link', { name: 'Descubrí tu perfume' });
+    const headerLink = page.locator('.header-quiz-btn');
+    const link = (await heroCta.isVisible()) ? heroCta : headerLink;
+
+    await expect(link).toBeVisible();
+    await link.click();
     await expect(page).toHaveURL(/\/quiz/);
     await expect(page.locator('h1')).toContainText('Encontrá tu perfume');
   });

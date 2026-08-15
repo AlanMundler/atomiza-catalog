@@ -19,9 +19,10 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
 ---
 
 <Layout title={site.tagline} description={`${site.name}. ${site.tagline}. ${site.description}`}>
-  <section class="hero" aria-labelledby="hero-title">
+  <h1 class="visually-hidden">{site.tagline}</h1>
+
+  <section class="hero" aria-label="Accesos rápidos">
     <div class="container">
-      <h1 id="hero-title" class="visually-hidden">{site.tagline}</h1>
       <div class="hero-cta">
         <a href={`${BASE}quiz/`} class="btn btn--secondary btn--lg">Descubrí tu perfume</a>
         <a href={`${BASE}catalogo/`} class="btn btn--primary btn--lg">Ver catálogo</a>
@@ -176,31 +177,24 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
 
 <style>
   .hero {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 24px 0;
-  }
-
-  .hero-cta {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    gap: 12px;
-    margin-top: 0;
-  }
-
-  @media (min-width: 641px) {
-    .hero-cta {
-      flex-wrap: nowrap;
-    }
+    display: none;
   }
 
   @media (max-width: 640px) {
     .hero {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       padding: 24px 0 14px;
+    }
+
+    .hero-cta {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
     }
 
     .hero-cta .btn {
