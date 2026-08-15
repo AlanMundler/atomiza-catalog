@@ -1,0 +1,579 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import { quizQuestions } from '@/utils/quiz';
+import { site } from '@/site.config';
+
+const BASE = site.basePath;
+const total = quizQuestions.length;
+---
+
+<Layout
+  title="¿Cuál es tu perfume ideal?"
+  description="Respondé unas pocas preguntas y descubrí qué decant de nuestro catálogo se adapta mejor a tu perfil."
+>
+  <section class="quiz-page" aria-labelledby="quiz-title">
+    <div class="container quiz-container">
+      <header class="quiz-header">
+        <h1 id="quiz-title" class="quiz-title">Encontrá tu perfume</h1>
+        <p class="quiz-subtitle">
+          Respondé unas pocas preguntas y te recomendamos los decants que más se adaptan a tu perfil.
+        </p>
+      </header>
+
+      <div class="quiz-card" id="quiz-card">
+        <div class="quiz-progress" aria-live="polite">
+          <p class="quiz-progress-text" data-quiz-progress>Pregunta 1 de {total}</p>
+          <div
+            class="quiz-progress-bar"
+            role="progressbar"
+            aria-valuemin="1"
+            aria-valuemax={total}
+            aria-valuenow="1"
+            data-quiz-bar
+          >
+            <div class="quiz-progress-fill" style={`width: ${100 / total}%`}></div>
+          </div>
+        </div>
+
+        {quizQuestions.map((question, index) => (
+          <fieldset class="quiz-step" data-quiz-step={index} data-quiz-id={question.id} hidden={index !== 0}>
+            <legend class="quiz-question">
+              <h2 tabindex="-1">{question.title}</h2>
+            </legend>
+            <div class="quiz-options">
+              {question.options.map((option) => (
+                <button
+                  type="button"
+                  class="quiz-option"
+                  aria-pressed="false"
+                  data-quiz-value={option.value}
+                >
+                  <span class="quiz-option-label">{option.label}</span>
+                  {option.hint && <span class="quiz-option-hint">{option.hint}</span>}
+                </button>
+              ))}
+            </div>
+          </fieldset>
+        ))}
+
+        <div class="quiz-nav">
+          <button type="button" class="btn btn--ghost quiz-back" data-quiz-back hidden>Volver</button>
+          <button type="button" class="btn btn--primary btn--lg quiz-next" data-quiz-next disabled>Continuar</button>
+        </div>
+      </div>
+
+      <section class="quiz-result" id="quiz-result" hidden aria-live="polite">
+        <h2 class="quiz-result-title" tabindex="-1">Tu recomendación</h2>
+        <p class="quiz-result-subtitle">
+          Según tu perfil, estos son los decants que mejor te van. Sumalos directo al carrito.
+        </p>
+        <p class="quiz-loading" id="quiz-loading" hidden>Analizando tu perfil…</p>
+        <div class="quiz-result-list" id="quiz-result-list"></div>
+        <div class="quiz-result-actions">
+          <button type="button" class="btn btn--secondary btn--lg" data-quiz-restart>Empezar de nuevo</button>
+          <a href={`${BASE}catalogo/`} class="btn btn--ghost">Ver todo el catálogo</a>
+        </div>
+      </section>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  import { getPerfumesMap } from '@/utils/perfumes-client';
+  import { recommendPerfumes, type QuizAnswers } from '@/utils/quiz';
+  import { formatPrice } from '@/utils/formatters';
+  import { assetUrl, site } from '@/site.config';
+  import { bindOnce, onPageLoad } from '@/utils/view-transitions';
+  import type { Perfume } from '@/data/types';
+
+  onPageLoad('quiz', () => {
+    const steps = Array.from(document.querySelectorAll<HTMLElement>('[data-quiz-step]'));
+    const nextBtn = document.querySelector<HTMLButtonElement>('[data-quiz-next]');
+    const backBtn = document.querySelector<HTMLButtonElement>('[data-quiz-back]');
+    const progressText = document.querySelector('[data-quiz-progress]');
+    const progressBar = document.querySelector('[data-quiz-bar]');
+    const progressFill = document.querySelector<HTMLElement>('.quiz-progress-fill');
+    const quizCard = document.getElementById('quiz-card');
+    const resultSection = document.getElementById('quiz-result');
+    const resultList = document.getElementById('quiz-result-list');
+    const loading = document.getElementById('quiz-loading');
+    const restartBtn = document.querySelector<HTMLButtonElement>('[data-quiz-restart]');
+
+    if (!steps.length || !nextBtn || !backBtn || !quizCard || !resultSection || !resultList || !loading) return;
+
+    let current = 0;
+    const answers: Partial<Record<keyof QuizAnswers, QuizAnswers[keyof QuizAnswers]>> = {};
+
+    function selectedValue(step: HTMLElement): string | null {
+      const checked = step.querySelector('[aria-pressed="true"]');
+      return checked ? checked.getAttribute('data-quiz-value') : null;
+    }
+
+    function showStep(index: number) {
+      current = index;
+      steps.forEach((step, i) => {
+        step.hidden = i !== index;
+      });
+      backBtn!.hidden = index === 0;
+      nextBtn!.disabled = !selectedValue(steps[index]);
+      nextBtn!.textContent = index === steps.length - 1 ? 'Ver mi recomendación' : 'Continuar';
+      if (progressText) progressText.textContent = `Pregunta ${index + 1} de ${steps.length}`;
+      if (progressBar) progressBar.setAttribute('aria-valuenow', String(index + 1));
+      if (progressFill) progressFill.style.width = `${((index + 1) / steps.length) * 100}%`;
+      const heading = steps[index]?.querySelector('h2');
+      heading?.focus();
+    }
+
+    steps.forEach((step) => {
+      const options = Array.from(step.querySelectorAll<HTMLButtonElement>('.quiz-option'));
+      options.forEach((option) => {
+        bindOnce(option, (el) => {
+          el.addEventListener('click', () => {
+            options.forEach((other) => other.setAttribute('aria-pressed', 'false'));
+            el.setAttribute('aria-pressed', 'true');
+            const questionId = step.dataset.quizId as keyof QuizAnswers;
+            const value = el.dataset.quizValue;
+            if (value != null) answers[questionId] = value as QuizAnswers[keyof QuizAnswers];
+            nextBtn.disabled = false;
+          });
+        });
+      });
+    });
+
+    bindOnce(nextBtn, (el) => {
+      el.addEventListener('click', () => {
+        if (current < steps.length - 1) {
+          showStep(current + 1);
+        } else {
+          finishQuiz();
+        }
+      });
+    });
+
+    bindOnce(backBtn, (el) => {
+      el.addEventListener('click', () => {
+        showStep(current - 1);
+      });
+    });
+
+    bindOnce(restartBtn!, (el) => {
+      el.addEventListener('click', () => {
+        steps.forEach((step) => {
+          step.querySelectorAll('.quiz-option').forEach((option) => option.setAttribute('aria-pressed', 'false'));
+        });
+        quizCard!.hidden = false;
+        resultSection!.hidden = true;
+        resultList!.innerHTML = '';
+        showStep(0);
+        document.getElementById('quiz-title')?.focus();
+      });
+    });
+
+    function resultCard(perfume: Perfume, isTop: boolean): HTMLElement {
+      const size = perfume.sizes.find((s) => s.ml === 5) ?? perfume.sizes[0];
+      const image = perfume.images[0];
+
+      const card = document.createElement('article');
+      card.className = isTop ? 'quiz-result-card quiz-result-card--top' : 'quiz-result-card';
+      card.dataset.price = String(size.price);
+      card.dataset.gender = perfume.gender;
+
+      const media = document.createElement('div');
+      media.className = 'quiz-result-media';
+      const img = document.createElement('img');
+      img.src = assetUrl(image?.src);
+      img.alt = image?.alt ?? perfume.name;
+      img.loading = 'lazy';
+      media.appendChild(img);
+
+      const body = document.createElement('div');
+      body.className = 'quiz-result-body';
+
+      if (isTop) {
+        const badge = document.createElement('span');
+        badge.className = 'quiz-result-badge';
+        badge.textContent = 'Tu match ideal';
+        body.appendChild(badge);
+      }
+
+      const brand = document.createElement('span');
+      brand.className = 'quiz-result-brand';
+      brand.textContent = perfume.brand.toUpperCase();
+      body.appendChild(brand);
+
+      const name = document.createElement('h3');
+      name.className = 'quiz-result-name';
+      name.textContent = perfume.name;
+      body.appendChild(name);
+
+      const meta = document.createElement('div');
+      meta.className = 'quiz-result-meta';
+      const price = document.createElement('span');
+      price.className = 'quiz-result-price';
+      price.textContent = formatPrice(size.price);
+      meta.appendChild(price);
+      body.appendChild(meta);
+
+      const addBtn = document.createElement('button');
+      addBtn.type = 'button';
+      addBtn.className = 'btn btn--primary quiz-result-add';
+      addBtn.textContent = 'Agregar al carrito';
+      addBtn.dataset.addPerfumeId = perfume.id;
+      bindOnce(addBtn, (el) => {
+        el.addEventListener('click', () => {
+          const event = new CustomEvent('cart:add', {
+            detail: { perfumeId: perfume.id, sizeMl: size.ml, quantity: 1 },
+          });
+          window.dispatchEvent(event);
+          window.dispatchEvent(new CustomEvent('cart:open'));
+        });
+      });
+      body.appendChild(addBtn);
+
+      const detail = document.createElement('a');
+      detail.className = 'quiz-result-detail';
+      detail.href = `${site.basePath}producto/${perfume.slug}/`;
+      detail.textContent = 'Ver detalle';
+      body.appendChild(detail);
+
+      card.appendChild(media);
+      card.appendChild(body);
+      return card;
+    }
+
+    async function finishQuiz() {
+      quizCard!.hidden = true;
+      resultSection!.hidden = false;
+      loading!.hidden = false;
+      resultList!.innerHTML = '';
+      const heading = resultSection!.querySelector('h2');
+      heading?.focus();
+
+      const perfumes = Array.from((await getPerfumesMap()).values());
+      const results = recommendPerfumes(answers as QuizAnswers, perfumes);
+      loading!.hidden = true;
+
+      if (!results.length) {
+        const empty = document.createElement('p');
+        empty.className = 'quiz-result-empty';
+        empty.textContent = 'No encontramos coincidencias para tu perfil. Probá de nuevo o mirá el catálogo completo.';
+        resultList!.appendChild(empty);
+        return;
+      }
+
+      results.forEach((perfume, index) => {
+        resultList!.appendChild(resultCard(perfume, index === 0));
+      });
+    }
+  });
+</script>
+
+<style>
+  .quiz-page {
+    padding: var(--spacing-stack-md) 0 var(--spacing-stack-lg);
+  }
+
+  .quiz-container {
+    max-width: 760px;
+  }
+
+  .quiz-header {
+    text-align: center;
+    margin-bottom: var(--spacing-stack-md);
+  }
+
+  .quiz-title {
+    font-family: var(--font-family);
+    font-size: var(--font-headline-lg-size);
+    font-weight: var(--font-headline-lg-weight);
+    line-height: var(--font-headline-lg-line-height);
+    letter-spacing: var(--font-headline-lg-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    margin: 0 0 var(--spacing-stack-sm);
+  }
+
+  .quiz-subtitle {
+    font-family: var(--font-family);
+    font-size: var(--font-body-lg-size);
+    line-height: var(--font-body-lg-line-height);
+    color: var(--color-on-surface-variant);
+    margin: 0;
+    max-width: 520px;
+    margin-inline: auto;
+  }
+
+  .quiz-card {
+    background-color: var(--color-surface-container);
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-stack-md);
+  }
+
+  .quiz-progress {
+    margin-bottom: var(--spacing-stack-sm);
+  }
+
+  .quiz-progress-text {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+    margin: 0 0 8px;
+  }
+
+  .quiz-progress-bar {
+    height: 4px;
+    background-color: var(--color-outline-variant);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .quiz-progress-fill {
+    height: 100%;
+    background-color: var(--color-primary);
+    border-radius: 2px;
+    transition: width var(--transition-duration) var(--transition-easing);
+  }
+
+  .quiz-step {
+    border: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .quiz-question {
+    padding: 0;
+    margin: 0 0 var(--spacing-stack-sm);
+  }
+
+  .quiz-question h2 {
+    font-family: var(--font-family);
+    font-size: var(--font-headline-md-size);
+    font-weight: var(--font-headline-md-weight);
+    line-height: var(--font-headline-md-line-height);
+    letter-spacing: var(--font-headline-md-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    margin: 0;
+  }
+
+  .quiz-question h2:focus {
+    outline: none;
+  }
+
+  .quiz-options {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  @media (min-width: 641px) {
+    .quiz-options {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .quiz-option {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 16px;
+    font-family: var(--font-family);
+    color: var(--color-on-surface);
+    background-color: var(--color-surface-container-high);
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    text-align: left;
+    transition: border-color var(--transition-duration) var(--transition-easing),
+      background-color var(--transition-duration) var(--transition-easing);
+  }
+
+  .quiz-option:hover {
+    border-color: var(--color-primary);
+  }
+
+  .quiz-option:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .quiz-option[aria-pressed='true'] {
+    border-color: var(--color-primary);
+    background-color: var(--color-surface-container);
+  }
+
+  .quiz-option-label {
+    font-size: var(--font-body-md-size);
+    font-weight: var(--font-body-md-weight);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .quiz-option-hint {
+    font-size: var(--font-label-sm-size);
+    color: var(--color-on-surface-variant);
+  }
+
+  .quiz-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: var(--spacing-stack-md);
+  }
+
+  .quiz-back[hidden] {
+    display: none;
+  }
+
+  .quiz-result-title {
+    font-family: var(--font-family);
+    font-size: var(--font-headline-lg-size);
+    font-weight: var(--font-headline-lg-weight);
+    line-height: var(--font-headline-lg-line-height);
+    letter-spacing: var(--font-headline-lg-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    margin: 0 0 var(--spacing-stack-sm);
+  }
+
+  .quiz-result-title:focus {
+    outline: none;
+  }
+
+  .quiz-result-subtitle {
+    font-family: var(--font-family);
+    font-size: var(--font-body-lg-size);
+    line-height: var(--font-body-lg-line-height);
+    color: var(--color-on-surface-variant);
+    margin: 0 0 var(--spacing-stack-md);
+  }
+
+  .quiz-loading {
+    font-family: var(--font-family);
+    font-size: var(--font-body-lg-size);
+    color: var(--color-on-surface-variant);
+  }
+
+  .quiz-result-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-stack-md);
+    margin-bottom: var(--spacing-stack-md);
+  }
+
+  @media (min-width: 641px) {
+    .quiz-result-list {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .quiz-result-card {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-surface-container);
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+  }
+
+  .quiz-result-card--top {
+    border-color: var(--color-primary);
+  }
+
+  .quiz-result-media {
+    aspect-ratio: 3 / 4;
+    background-color: var(--color-surface-container-high);
+  }
+
+  .quiz-result-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .quiz-result-body {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 16px;
+  }
+
+  .quiz-result-badge {
+    align-self: flex-start;
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-primary);
+    background-color: var(--color-primary);
+    padding: 3px 10px;
+    border-radius: var(--border-radius);
+  }
+
+  .quiz-result-brand {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    color: var(--color-on-surface-variant);
+  }
+
+  .quiz-result-name {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    font-weight: var(--font-body-md-weight);
+    color: var(--color-on-surface);
+    margin: 0;
+  }
+
+  .quiz-result-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .quiz-result-price {
+    font-family: var(--font-family);
+    font-size: var(--font-body-lg-size);
+    font-weight: var(--font-body-lg-weight);
+    color: var(--color-primary);
+  }
+
+  .quiz-result-add {
+    width: 100%;
+  }
+
+  .quiz-result-detail {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-primary);
+    text-decoration: underline;
+    align-self: center;
+  }
+
+  .quiz-result-empty {
+    font-family: var(--font-family);
+    font-size: var(--font-body-lg-size);
+    color: var(--color-on-surface-variant);
+  }
+
+  .quiz-result-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin-top: var(--spacing-stack-md);
+  }
+</style>

@@ -43,6 +43,7 @@ const whatsappLink = buildWhatsAppLink(site.whatsappNumber, site.whatsappMessage
         </svg>
       </a>
       <a href={`${BASE}catalogo/`} class="header-catalogo-btn">Catálogo</a>
+      <a href={`${BASE}quiz/`} class="header-quiz-btn">Descubrí tu perfume</a>
 
       <button 
         class="header-cart-btn"
@@ -83,6 +84,7 @@ const whatsappLink = buildWhatsAppLink(site.whatsappNumber, site.whatsappMessage
   <nav class="mobile-nav" role="navigation" aria-label="Menú móvil">
     <a href={BASE} class="mobile-nav-link">Inicio</a>
     <a href={`${BASE}catalogo/`} class="mobile-nav-link">Catálogo</a>
+    <a href={`${BASE}quiz/`} class="mobile-nav-link">Descubrí tu perfume</a>
   </nav>
   <div class="mobile-cart-summary">
     <h3 class="mobile-cart-title">Carrito</h3>
@@ -350,6 +352,41 @@ const whatsappLink = buildWhatsAppLink(site.whatsappNumber, site.whatsappMessage
   }
 
   .header-catalogo-btn:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .header-quiz-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    background-color: transparent;
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 8px 12px;
+    height: 40px;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: all var(--transition-duration) var(--transition-easing);
+  }
+
+  @media (max-width: 640px) {
+    .header-quiz-btn {
+      display: none;
+    }
+  }
+
+  .header-quiz-btn:hover {
+    color: var(--color-primary);
+  }
+
+  .header-quiz-btn:focus-visible {
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
   }

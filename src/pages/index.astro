@@ -23,8 +23,9 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
     <div class="container">
       <h1 id="hero-title" class="visually-hidden">{site.tagline}</h1>
       <div class="hero-cta">
+        <a href={`${BASE}quiz/`} class="btn btn--secondary btn--lg">Descubrí tu perfume</a>
         <a href={`${BASE}catalogo/`} class="btn btn--primary btn--lg">Ver catálogo</a>
-        <a href={whatsappLink} target="_blank" rel="noopener noreferrer" class="btn btn--secondary btn--lg">Consultar por WhatsApp</a>
+        <a href={whatsappLink} target="_blank" rel="noopener noreferrer" class="btn btn--ghost btn--lg quiz-hero-link">Consultar por WhatsApp</a>
       </div>
     </div>
   </section>
