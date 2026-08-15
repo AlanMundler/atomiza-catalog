@@ -447,8 +447,19 @@ const total = quizQuestions.length;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap;
     gap: 12px;
     margin-top: var(--spacing-stack-md);
+  }
+
+  @media (max-width: 640px) {
+    .quiz-nav .btn--lg {
+      flex: 1 1 auto;
+      white-space: normal;
+      height: auto;
+      min-height: 52px;
+      padding: 14px 24px;
+    }
   }
 
   .quiz-back[hidden] {

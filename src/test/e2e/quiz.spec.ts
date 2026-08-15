@@ -127,6 +127,27 @@ test.describe('Perfume Quiz Flow', () => {
     await expect(page.locator('[data-quiz-next]')).toBeDisabled();
   });
 
+  test('the final CTA fits inside the quiz card on narrow phones', async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 780 });
+    await page.goto(QUIZ);
+    await page.waitForLoadState('networkidle');
+
+    await answerCurrentQuestion(page, 'Para él');
+    await answerCurrentQuestion(page, 'Cítrico y fresco');
+    await answerCurrentQuestion(page, 'Todo el día');
+    await answerCurrentQuestion(page, 'Notoria');
+    await answerCurrentQuestion(page, 'Todo el año');
+
+    await expect(page.locator('[data-quiz-next]')).toHaveText('Ver mi recomendación');
+
+    const card = await page.locator('#quiz-card').boundingBox();
+    const btn = await page.locator('[data-quiz-next]').boundingBox();
+    expect(card).not.toBeNull();
+    expect(btn).not.toBeNull();
+    expect(btn!.x + btn!.width).toBeLessThanOrEqual(card!.x + card!.width + 0.5);
+    expect(btn!.y + btn!.height).toBeLessThanOrEqual(card!.y + card!.height + 0.5);
+  });
+
   test('quiz options work even if the view-transitions router bundle fails (old WebViews)', async ({ page }) => {
     // Simula un WebView embebido (Instagram/WhatsApp) que no puede ejecutar el
     // bundle moderno del router de transiciones. Las opciones deben seguir
