@@ -117,6 +117,7 @@ const PROFILES: Record<string, PerfumeProfile> = {
   'hayaati-al-maleky': { styles: ['ambarado-especiado', 'citrico-fresco'], occasions: ['todo-el-dia'], intensity: 'intensa', weather: ['todo-el-ano'] },
   'opulent-dubai': { styles: ['frutal', 'citrico-fresco'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'intensa', weather: ['calor'] },
   'hawas-ice': { styles: ['frutal', 'citrico-fresco'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'notoria', weather: ['calor'] },
+  'hawas-black': { styles: ['frutal', 'citrico-fresco'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'notoria', weather: ['calor'] },
   'ameer-al-oudh': { styles: ['dulce-vainilla', 'amaderado', 'tabaco-cuero'], occasions: ['noche', 'especiales'], intensity: 'intensa', weather: ['frio'] },
   liam: { styles: ['amaderado', 'ambarado-especiado'], occasions: ['todo-el-dia', 'especiales'], intensity: 'notoria', weather: ['frio'] },
   'baroque-rouge-540': { styles: ['floral', 'ambarado-especiado'], occasions: ['noche', 'especiales'], intensity: 'intensa', weather: ['frio'] },
