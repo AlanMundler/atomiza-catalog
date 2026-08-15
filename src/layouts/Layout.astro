@@ -35,7 +35,6 @@ const ogImageUrl = new URL(assetUrl(ogImage).replace(site.basePath, ''), Astro.s
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link rel="icon" type="image/svg+xml" href={assetUrl('/favicon.svg')} />
     <ClientRouter />
   </head>

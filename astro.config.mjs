@@ -1,7 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
-import image from '@astrojs/image';
 import { fileURLToPath } from 'url';
 import { resolve } from 'path';
 
@@ -18,15 +17,7 @@ export default defineConfig({
   trailingSlash: 'always',
   integrations: [
     sitemap(),
-    image({
-      serviceEntryPoint: '@astrojs/image/sharp',
-    }),
   ],
-  image: {
-    service: {
-      entrypoint: 'astro/assets/services/sharp',
-    },
-  },
   vite: {
     resolve: {
       alias: {

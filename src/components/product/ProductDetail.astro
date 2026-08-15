@@ -79,14 +79,7 @@ const available = isSizeAvailable(selectedSize);
 </article>
 
 <script>
-  import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
-
-  // Listen for size changes
-  onWindowOnce('product-size-change', 'size:change', (e) => {
-    const detail = (e as CustomEvent).detail;
-    const sizeMl = detail?.sizeMl;
-    console.log('Size changed to:', sizeMl);
-  });
+  import { bindOnce, onPageLoad } from '@/utils/view-transitions';
 
   onPageLoad('product-detail', () => {
     const addBtn = document.querySelector('[data-add-to-cart]');

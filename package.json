@@ -7,6 +7,7 @@
   },
   "scripts": {
     "dev": "astro dev",
+    "prebuild": "node scripts/generate-og-images.mjs",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
@@ -18,7 +19,6 @@
     "lint": "astro check"
   },
   "dependencies": {
-    "@astrojs/image": "^0.18.0",
     "astro": "^7.2.1"
   },
   "devDependencies": {

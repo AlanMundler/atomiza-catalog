@@ -27,3 +27,9 @@ pnpm-debug.log*
 playwright-report/
 test-results/
 playwright/.cache/
+
+# generated og:image thumbnails
+public/og/
+
+# test coverage
+coverage/

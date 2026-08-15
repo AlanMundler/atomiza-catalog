@@ -12,6 +12,7 @@ export default defineConfig({
   use: {
     baseURL: `http://localhost:4321${BASE_PATH}`,
     trace: 'on-first-retry',
+    permissions: ['clipboard-read', 'clipboard-write'],
   },
   projects: [
     {
