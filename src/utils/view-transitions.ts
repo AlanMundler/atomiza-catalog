@@ -15,20 +15,18 @@ export function onPageLoad(key: string, cb: () => void): void {
   const run = () => cb();
 
   // Con ClientRouter, `astro:page-load` se dispara en la carga inicial
-  // (evento `load`) y en cada navegación por vista de transición. Ejecutar
-  // `cb` también de forma inmediata duplicaría el callback en la primera
-  // carga, por eso acá solo se registra el listener.
-  const hasClientRouter = !!document.querySelector(
-    'meta[name="astro-view-transitions-enabled"]'
-  );
-
-  if (hasClientRouter) {
+  // (evento `load`) y en cada navegación por vista de transición, y es lo
+  // que permite re-inicializar los handlers tras el swap de la página nueva.
+  // Se mantiene además el arranque en DOMContentLoaded como respaldo: si el
+  // bundle del router no llega a ejecutarse (WebViews embebidos antiguos),
+  // el callback igual corre en la carga inicial. `cb` es idempotente vía
+  // bindOnce, por eso el doble disparo en la primera carga es inofensivo.
+  if (document.querySelector('meta[name="astro-view-transitions-enabled"]')) {
     document.addEventListener('astro:page-load', run);
-    return;
   }
 
   if (document.readyState === 'loading') {
-    window.addEventListener('DOMContentLoaded', run);
+    window.addEventListener('DOMContentLoaded', run, { once: true });
   } else {
     run();
   }

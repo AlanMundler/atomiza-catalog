@@ -126,4 +126,17 @@ test.describe('Perfume Quiz Flow', () => {
     await expect(page.locator('[data-quiz-progress]')).toHaveText('Pregunta 1 de 5');
     await expect(page.locator('[data-quiz-next]')).toBeDisabled();
   });
+
+  test('quiz options work even if the view-transitions router bundle fails (old WebViews)', async ({ page }) => {
+    // Simula un WebView embebido (Instagram/WhatsApp) que no puede ejecutar el
+    // bundle moderno del router de transiciones. Las opciones deben seguir
+    // siendo seleccionables por el fallback de DOMContentLoaded.
+    await page.route('**/_astro/*ClientRouter*.js', (route) => route.abort());
+    await page.goto(QUIZ);
+    await page.waitForLoadState('networkidle');
+
+    await page.locator('.quiz-step:not([hidden]) .quiz-option').first().click();
+    await expect(page.locator('.quiz-step:not([hidden]) [aria-pressed="true"]')).toHaveCount(1);
+    await expect(page.locator('[data-quiz-next]')).toBeEnabled();
+  });
 });
