@@ -41,9 +41,6 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
           </div>
         ))}
       </div>
-      <div class="home-perfume-cta">
-        <a href={`${BASE}catalogo/`} class="btn btn--secondary btn--lg">Ver todo el catálogo</a>
-      </div>
     </div>
   </section>
 
@@ -178,8 +175,11 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
 
 <style>
   .hero {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
-    padding: 24px 0 16px;
+    padding: 24px 0;
   }
 
   .hero-cta {
@@ -192,10 +192,6 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
   }
 
   @media (min-width: 641px) {
-    .hero {
-      padding: 16px 0 24px;
-    }
-
     .hero-cta {
       flex-wrap: nowrap;
     }
@@ -367,11 +363,6 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
     .home-perfume-grid {
       grid-template-columns: repeat(3, 1fr);
     }
-  }
-
-  .home-perfume-cta {
-    text-align: center;
-    margin-top: var(--spacing-stack-md);
   }
 
   /* Decant info */
