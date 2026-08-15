@@ -2,7 +2,8 @@
 import Layout from '@/layouts/Layout.astro';
 import ProductDetail from '@/components/product/ProductDetail.astro';
 import perfumesData from '@/data/perfumes.json';
-import { site } from '@/site.config';
+import { site, assetUrl } from '@/site.config';
+import { isSizeAvailable } from '@/utils/stock';
 import type { Perfume } from '@/data/types';
 
 export async function getStaticPaths() {
@@ -15,6 +16,25 @@ export async function getStaticPaths() {
 }
 
 const { perfume } = Astro.props;
+
+const primarySize = perfume.sizes.find((s) => s.ml === 5) || perfume.sizes[0];
+const productSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: `${perfume.brand} ${perfume.name}`,
+  description: `${perfume.brand} ${perfume.name} - ${perfume.olfactoryFamily}. Decant de 5ml.`,
+  brand: { '@type': 'Brand', name: perfume.brand },
+  image: new URL(assetUrl(perfume.images[0]?.src), Astro.site).href,
+  offers: {
+    '@type': 'Offer',
+    priceCurrency: site.currency,
+    price: primarySize?.price,
+    availability: primarySize && isSizeAvailable(primarySize)
+      ? 'https://schema.org/InStock'
+      : 'https://schema.org/OutOfStock',
+    url: new URL(Astro.url.pathname, Astro.site).href,
+  },
+};
 ---
 
 <Layout 
@@ -22,6 +42,7 @@ const { perfume } = Astro.props;
   description={`${perfume.brand} ${perfume.name} - ${perfume.olfactoryFamily}. Decant de 5ml disponible.`}
   ogImage={`og/${perfume.slug}.jpg`}
 >
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(productSchema)} />
   <div class="container">
     <ProductDetail perfume={perfume} />
   </div>

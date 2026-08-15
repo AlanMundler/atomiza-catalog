@@ -16,7 +16,7 @@ interface Props {
 }
 
 const { title, description = `${site.name} - ${site.tagline}. ${site.description}`, ogImage = '/og-image.jpg', children } = Astro.props;
-const ogImageUrl = new URL(assetUrl(ogImage).replace(site.basePath, ''), Astro.site).href;
+const ogImageUrl = new URL(assetUrl(ogImage), Astro.site).href;
 ---
 
 <!DOCTYPE html>

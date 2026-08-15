@@ -22,6 +22,7 @@ export const site = {
   whatsappUrl: 'https://wa.me/5493472559307',
   whatsappMessage: 'Hola, quiero hacer un pedido',
   phoneDisplay: '54 9 3472 559307',
+  currency: 'ARS',
   storage: {
     cart: 'atomiza-cart',
     perfumes: 'perfumes-data',
