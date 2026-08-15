@@ -172,8 +172,23 @@ import { site } from '@/site.config';
     }
     if (instagramBtn) {
       bindOnce(instagramBtn, (el) => el.addEventListener('click', async () => {
-        const text = encodeURIComponent(await buildOrderText('instagram'));
-        window.open(`https://ig.me/m/${INSTAGRAM_HANDLE}?text=${text}`, '_blank');
+        const text = await buildOrderText('instagram');
+        const label = el.querySelector('.order-modal-btn-label');
+        const originalText = label?.textContent || '';
+        let copied = false;
+        try {
+          await navigator.clipboard.writeText(text);
+          copied = true;
+        } catch {
+          if (preview) preview.select();
+        }
+        window.open(`https://ig.me/m/${INSTAGRAM_HANDLE}`, '_blank');
+        if (copied && label) {
+          label.textContent = '¡Copiado!';
+          setTimeout(() => {
+            if (label) label.textContent = originalText;
+          }, 2000);
+        }
       }));
     }
     if (copyBtn) {

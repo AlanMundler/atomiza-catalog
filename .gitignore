@@ -31,5 +31,8 @@ playwright/.cache/
 # generated og:image thumbnails
 public/og/
 
+# generated perfumes data (copia de src/data via prebuild)
+public/data/
+
 # test coverage
 coverage/
