@@ -221,7 +221,7 @@
       "slug": "glacier-ultra",
       "brand": "Maison Alhambra",
       "name": "Glacier Ultra",
-      "gender": "unisex",
+      "gender": "masculino",
       "olfactoryFamily": "Cálido Especiado",
       "description": "Inspirado en Ultra Male de Jean Paul Gaultier. Canela, pimienta y lima sobre lavanda y pachulí, con un fondo dulce de vainilla, ámbar y cedro. Potente, cálido, difícil de no oler.",
       "notes": {
@@ -424,7 +424,7 @@
       "slug": "your-touch-intense",
       "brand": "Maison Alhambra",
       "name": "Your Touch Intense",
-      "gender": "unisex",
+      "gender": "masculino",
       "olfactoryFamily": "Gourmand Dulce",
       "description": "Inspirado en Stronger With You Intensely de Giorgio Armani. Pimienta rosa, violeta y enebro que dan paso a tófe y canela con lavanda y esclarea, sobre vainilla, haba tonka, ámbar y gamuza. Dulce y cálido, de los que se quedan toda la noche.",
       "notes": {
@@ -510,7 +510,7 @@
       "slug": "baroque-rouge-540",
       "brand": "Maison Alhambra",
       "name": "Baroque Rouge 540",
-      "gender": "unisex",
+      "gender": "femenino",
       "olfactoryFamily": "Ámbar Floral",
       "description": "Inspirado en Baccarat Rouge 540 de Maison Francis Kurkdjian. Azafrán y pera con mandarina, corazón de jazmín, ylang-ylang y azucena, sobre ámbar, cachemira y almizcle. Cálido y especiado, con estela poderosa.",
       "notes": {
@@ -672,7 +672,7 @@
       "slug": "ameer-al-oudh",
       "brand": "Lattafa Perfumes",
       "name": "Ameer Al Oudh Intense Oud",
-      "gender": "unisex",
+      "gender": "masculino",
       "olfactoryFamily": "Oud Avainillado",
       "description": "Comparado con By the Fireplace de Maison Margiela. Notas amaderadas y oud con azúcar y vainilla, sobre un fondo de oud, sándalo y notas herbales. Dulce, ahumado; de los que se quedan días en la ropa.",
       "notes": {
@@ -754,9 +754,9 @@
       "slug": "rouat-ajial",
       "brand": "Lattafa Perfumes",
       "name": "Rouat Ajial",
-      "gender": "unisex",
+      "gender": "masculino",
       "olfactoryFamily": "Especiado Amaderado",
-      "description": "Un aromático-amaderado árabe, elegante y unisex. Abre fresco con lavanda, bergamota y vainilla, gira a un corazón floral y especiado de jazmín, nuez moscada y ylang-ylang, y cierra terroso con pachulí, ámbar y cedro.",
+      "description": "Un aromático-amaderado árabe, elegante. Abre fresco con lavanda, bergamota y vainilla, gira a un corazón floral y especiado de jazmín, nuez moscada y ylang-ylang, y cierra terroso con pachulí, ámbar y cedro.",
       "notes": {
         "top": [
           "Lavanda",
@@ -842,7 +842,7 @@
       "slug": "qaed-al-fursan-untamed",
       "brand": "Lattafa Perfumes",
       "name": "Qaed Al Fursan Untamed",
-      "gender": "unisex",
+      "gender": "masculino",
       "olfactoryFamily": "Ámbar Cálido",
       "description": "Inspirado en Eros Najim de Versace. Canela, cardamomo, mandarina y nuez moscada bañadas en caramelo, con lavanda, esclarea y geranio, sobre ámbar, cedro, incienso y ládano. Dulce, especiado y elegante, con buena duración.",
       "notes": {
@@ -930,7 +930,7 @@
       "slug": "24-carat-white-gold",
       "brand": "Lattafa Perfumes",
       "name": "24 Carat White Gold",
-      "gender": "unisex",
+      "gender": "masculino",
       "olfactoryFamily": "Cítrico Aromático",
       "description": "Bergamota y flor de azahar con lavanda, geranio, pimienta rosa y nuez moscada, sobre vetiver, oud y haba tonka. Aromático, amaderado y almizclado, con aire de lujo.",
       "notes": {
