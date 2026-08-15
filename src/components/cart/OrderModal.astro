@@ -101,6 +101,7 @@ import { site } from '@/site.config';
 <script>
   import { getCart } from '@/utils/cart';
   import { generateOrderText, buildWhatsAppLink } from '@/utils/formatters';
+  import type { OrderChannel } from '@/utils/formatters';
   import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
   import { site } from '@/site.config';
 
@@ -121,12 +122,12 @@ import { site } from '@/site.config';
     }
   }
 
-  function buildOrderText(): string {
+  function buildOrderText(channel: OrderChannel = 'whatsapp'): string {
     const cart = getCart();
     const perfumesMap = getPerfumesMap();
     const name = nameInput?.value.trim() || '[Tu nombre]';
     const contact = contactInput?.value.trim() || '[Tu WhatsApp/Instagram]';
-    return generateOrderText(cart.items, perfumesMap, name, contact);
+    return generateOrderText(cart.items, perfumesMap, name, contact, channel);
   }
 
   function refreshPreview() {
@@ -179,7 +180,7 @@ import { site } from '@/site.config';
     }
     if (instagramBtn) {
       bindOnce(instagramBtn, (el) => el.addEventListener('click', () => {
-        const text = encodeURIComponent(buildOrderText());
+        const text = encodeURIComponent(buildOrderText('instagram'));
         window.open(`https://ig.me/m/${INSTAGRAM_HANDLE}?text=${text}`, '_blank');
       }));
     }

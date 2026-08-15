@@ -3,10 +3,8 @@ import Drawer from '@/components/ui/Drawer.astro';
 ---
 
 <Drawer 
-  isOpen={false} 
   position="right" 
   id="cart-drawer"
-  onClose={() => {}}
   class="cart-drawer"
 >
   <div class="cart-header" slot="header">
@@ -35,7 +33,7 @@ import Drawer from '@/components/ui/Drawer.astro';
   import { formatPrice } from '@/utils/formatters';
   import type { CartItem as CartItemType } from '@/data/types';
   import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
-  import { site } from '@/site.config';
+  import { site, assetUrl } from '@/site.config';
 
   let drawerRoot: HTMLElement | null = null;
   let perfumesMap = new Map<string, any>();
@@ -99,7 +97,7 @@ import Drawer from '@/components/ui/Drawer.astro';
     const perfume = perfumesMap.get(item.perfumeId) || {};
     const brand = perfume.brand || item.perfumeId;
     const name = perfume.name || item.perfumeId;
-    const image = perfume.images?.[0]?.src ? site.basePath + perfume.images[0].src.replace(/^\//, '') : `${site.basePath}images/placeholder.jpg`;
+    const image = assetUrl(perfume.images?.[0]?.src);
     const lineTotal = item.size.price * item.quantity;
     const size = item.size;
 
@@ -196,24 +194,6 @@ import Drawer from '@/components/ui/Drawer.astro';
   // Listen for cart updates
   onWindowOnce('cart-update', 'cart:update', () => {
     render();
-  });
-
-  onWindowOnce('cart-update-quantity', 'cart:update-quantity', (e) => {
-    const { perfumeId, sizeMl, quantity } = (e as CustomEvent).detail;
-    const perfume = getPerfumesMap().get(perfumeId);
-    const size = perfume?.sizes?.find((s: any) => s.ml === sizeMl);
-    if (!perfumeId || !size) return;
-    updateCartItemQuantity(perfumeId, size, quantity);
-    updateAndRerender();
-  });
-
-  onWindowOnce('cart-remove', 'cart:remove', (e) => {
-    const { perfumeId, sizeMl } = (e as CustomEvent).detail;
-    const perfume = getPerfumesMap().get(perfumeId);
-    const size = perfume?.sizes?.find((s: any) => s.ml === sizeMl);
-    if (!perfumeId || !size) return;
-    removeFromCart(perfumeId, size);
-    updateAndRerender();
   });
 
   onPageLoad('cart-drawer', () => {

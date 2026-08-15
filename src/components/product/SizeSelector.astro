@@ -47,26 +47,6 @@ const { sizes, selectedSize } = Astro.props;
   </div>
 </fieldset>
 
-<script>
-  import { bindOnce, onPageLoad } from '@/utils/view-transitions';
-
-  onPageLoad('size-selector', () => {
-    document.querySelectorAll('.size-option input[type="radio"]').forEach((radio) => {
-      bindOnce(radio, (el) => {
-        el.addEventListener('change', (e) => {
-          const target = e.target as HTMLInputElement;
-          const sizeMl = parseInt(target.getAttribute('data-size-ml') || '0');
-
-          const event = new CustomEvent('size:change', {
-            detail: { sizeMl }
-          });
-          window.dispatchEvent(event);
-        });
-      });
-    });
-  });
-</script>
-
 <style>
   .size-selector {
     border: none;

@@ -6,8 +6,7 @@ import {
   updateCartItemQuantity, 
   clearCart,
   getCartItemCount,
-  getCartSubtotal,
-  canAddToCart
+  getCartSubtotal
 } from '@/utils/cart';
 import type { CartItem, PerfumeSize } from '@/data/types';
 
@@ -203,31 +202,6 @@ describe('cart utilities', () => {
 
     it('returns 0 for empty cart', () => {
       expect(getCartSubtotal()).toBe(0);
-    });
-  });
-
-  describe('canAddToCart', () => {
-    it('returns true when stock is available', () => {
-      expect(canAddToCart(mockPerfumeSize, 1)).toBe(true);
-    });
-
-    it('returns false when stock is 0', () => {
-      expect(canAddToCart({ ...mockPerfumeSize, stock: 0 }, 1)).toBe(false);
-    });
-
-    it('returns false when requested quantity exceeds stock', () => {
-      expect(canAddToCart(mockPerfumeSize, 5)).toBe(false);
-    });
-
-    it('accounts for existing items in cart', () => {
-      localStorage.setItem('atomiza-cart', JSON.stringify({
-        items: [{ ...mockCartItem1, quantity: 1 }],
-        updatedAt: Date.now()
-      }));
-      
-      // Already 1 in cart, stock is 2, so can add 1 more
-      expect(canAddToCart(mockPerfumeSize, 1)).toBe(true);
-      expect(canAddToCart(mockPerfumeSize, 2)).toBe(false);
     });
   });
 });

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getStockStatus, getStockLabel, getStockColor, isSizeAvailable } from '@/utils/stock';
+import { getStockStatus, getStockLabel, isSizeAvailable } from '@/utils/stock';
 import type { PerfumeSize } from '@/data/types';
 
 describe('stock utilities', () => {
@@ -45,14 +45,6 @@ describe('stock utilities', () => {
       expect(getStockLabel('in-stock')).toBe('EN STOCK');
       expect(getStockLabel('low-stock')).toBe('POCO STOCK');
       expect(getStockLabel('out-of-stock')).toBe('SIN STOCK');
-    });
-  });
-
-  describe('getStockColor', () => {
-    it('returns correct color values from design tokens', () => {
-      expect(getStockColor('in-stock')).toBe('#8dba7d');
-      expect(getStockColor('low-stock')).toBe('#c5a059');
-      expect(getStockColor('out-of-stock')).toBe('#8a8a8a');
     });
   });
 

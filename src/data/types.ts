@@ -47,10 +47,4 @@ export interface CartState {
   updatedAt: number;
 }
 
-export interface OrderSummary {
-  subtotal: number;
-  total: number;
-  itemCount: number;
-}
-
 export type GenderFilter = 'all' | 'masculino' | 'femenino' | 'unisex';

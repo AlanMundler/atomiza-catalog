@@ -1,6 +1,6 @@
 ---
 interface Props {
-  variant?: 'in-stock' | 'low-stock' | 'out-of-stock' | 'gender' | 'default';
+  variant?: 'in-stock' | 'low-stock' | 'out-of-stock' | 'default';
   class?: string;
   children: any;
 }
@@ -11,7 +11,6 @@ const variantClasses = {
   'in-stock': 'chip--in-stock',
   'low-stock': 'chip--low-stock',
   'out-of-stock': 'chip--out-of-stock',
-  'gender': 'chip--gender',
   'default': 'chip--default'
 };
 ---
@@ -50,19 +49,6 @@ const variantClasses = {
   .chip--out-of-stock {
     color: var(--color-status-out-of-stock);
     border-color: var(--color-status-out-of-stock);
-  }
-
-  .chip--gender {
-    color: var(--color-on-surface-variant);
-    border-color: var(--color-outline-variant);
-    background-color: var(--color-surface-container-low);
-  }
-
-  .chip--gender[aria-selected="true"],
-  .chip--gender[data-selected="true"] {
-    color: var(--color-primary);
-    border-color: var(--color-primary);
-    background-color: rgba(197, 160, 89, 0.1);
   }
 
   .chip--default {

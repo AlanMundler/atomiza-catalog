@@ -18,7 +18,7 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
 });
 ---
 
-<Layout title={`${site.name} - ${site.tagline}`} description={`${site.name}. ${site.tagline}. ${site.description}`}>
+<Layout title={site.tagline} description={`${site.name}. ${site.tagline}. ${site.description}`}>
   <section class="hero" aria-labelledby="hero-title">
     <div class="container">
       <h1 id="hero-title" class="hero-title">{site.name}</h1>
@@ -38,7 +38,7 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
       <div class="home-perfume-grid" id="home-perfume-grid">
         {inStockPerfumes.map((perfume, index) => (
           <div class="home-perfume-item" hidden={index >= 3}>
-            <ProductCard perfume={perfume} basePath={BASE} />
+            <ProductCard perfume={perfume} />
           </div>
         ))}
       </div>

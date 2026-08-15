@@ -54,15 +54,6 @@ export function generateOrderText(
   return lines.join('\n');
 }
 
-export function generateInstagramOrderText(
-  items: CartItem[],
-  perfumesMap: Map<string, Perfume>,
-  customerName: string,
-  customerContact: string
-): string {
-  return generateOrderText(items, perfumesMap, customerName, customerContact, 'instagram');
-}
-
 export function buildWhatsAppLink(phone: string, text: string): string {
   return `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
 }

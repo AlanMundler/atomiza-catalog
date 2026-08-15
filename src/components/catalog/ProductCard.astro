@@ -6,10 +6,9 @@ import type { Perfume } from '@/data/types';
 
 interface Props {
   perfume: Perfume;
-  basePath?: string;
 }
 
-const { perfume, basePath = site.basePath } = Astro.props;
+const { perfume } = Astro.props;
 const mainImage = assetUrl(perfume.images[0]?.src);
 const mainAlt = perfume.images[0]?.alt || `${perfume.brand} ${perfume.name}`;
 
@@ -21,7 +20,7 @@ const isOutOfStock = stockStatus === 'out-of-stock';
 ---
 
 <a
-  href={`${basePath}producto/${perfume.slug}/`}
+  href={`${site.basePath}producto/${perfume.slug}/`}
   class="product-card"
   aria-label={`Ver ${perfume.brand} ${perfume.name}`}
   data-gender={perfume.gender}

@@ -25,12 +25,6 @@ function findItemIndex(items: CartItem[], perfumeId: string, size: PerfumeSize):
   );
 }
 
-function findItemIndexBySize(items: CartItem[], size: PerfumeSize): number {
-  return items.findIndex(
-    (item) => item.size.ml === size.ml
-  );
-}
-
 export function getCart(): CartState {
   return getStoredCart();
 }
@@ -105,18 +99,4 @@ export function getCartItemCount(): number {
 export function getCartSubtotal(): number {
   const cart = getStoredCart();
   return cart.items.reduce((sum, item) => sum + item.size.price * item.quantity, 0);
-}
-
-export function canAddToCart(size: PerfumeSize, quantity: number): boolean {
-  if (size.stock === 0) return false;
-  if (quantity > size.stock) return false;
-
-  const cart = getStoredCart();
-  const existingIndex = findItemIndexBySize(cart.items, size);
-
-  if (existingIndex >= 0) {
-    return cart.items[existingIndex].quantity + quantity <= size.stock;
-  }
-
-  return true;
 }

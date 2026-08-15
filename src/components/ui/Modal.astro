@@ -3,12 +3,10 @@ interface Props {
   id?: string;
   title?: string;
   class?: string;
-  onClose?: () => void;
   children: any;
 }
 
-const { id = '', title, class: className = '', onClose = () => {}, children } = Astro.props;
-void onClose;
+const { id = '', title, class: className = '', children } = Astro.props;
 const modalId = id || `modal-${Math.random().toString(36).slice(2, 9)}`;
 ---
 

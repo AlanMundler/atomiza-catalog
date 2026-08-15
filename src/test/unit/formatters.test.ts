@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { formatPrice, generateInstagramOrderText } from '@/utils/formatters';
+﻿import { describe, it, expect } from 'vitest';
+import { formatPrice, generateOrderText } from '@/utils/formatters';
 import type { CartItem, Perfume } from '@/data/types';
 
 describe('formatters', () => {
@@ -21,7 +21,7 @@ describe('formatters', () => {
     });
   });
 
-  describe('generateInstagramOrderText', () => {
+  describe('generateOrderText (Instagram channel)', () => {
     const mockPerfume1: Perfume = {
       id: 'tobacco-vanille',
       slug: 'tobacco-vanille',
@@ -79,7 +79,7 @@ describe('formatters', () => {
     ]);
 
     it('generates correct Instagram order text with all sections', () => {
-      const result = generateInstagramOrderText(cartItems, perfumesMap, 'Juan Pérez', '+54 9 11 1234-5678');
+      const result = generateOrderText(cartItems, perfumesMap, 'Juan Pérez', '+54 9 11 1234-5678', 'instagram');
 
       expect(result).toContain('📦 NUEVO PEDIDO - ΛTOMIZΛ');
       expect(result).toContain('👤 Cliente: Juan Pérez');
@@ -94,7 +94,7 @@ describe('formatters', () => {
     });
 
     it('handles empty cart', () => {
-      const result = generateInstagramOrderText([], perfumesMap, 'Test', 'Test');
+      const result = generateOrderText([], perfumesMap, 'Test', 'Test', 'instagram');
       expect(result).toContain('💰 TOTAL: $0');
     });
 
@@ -102,7 +102,7 @@ describe('formatters', () => {
       const items: CartItem[] = [
         { perfumeId: 'tobacco-vanille', size: { ml: 2, price: 15000, stock: 5 }, quantity: 3 }
       ];
-      const result = generateInstagramOrderText(items, perfumesMap, 'Test', 'Test');
+      const result = generateOrderText(items, perfumesMap, 'Test', 'Test', 'instagram');
       expect(result).toContain('$45.000');
       expect(result).toContain('x3');
     });

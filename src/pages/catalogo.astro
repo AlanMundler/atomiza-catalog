@@ -3,25 +3,13 @@ import Layout from '@/layouts/Layout.astro';
 import Filters from '@/components/catalog/Filters.astro';
 import Search from '@/components/catalog/Search.astro';
 import ProductGrid from '@/components/catalog/ProductGrid.astro';
-import { filterPerfumes, searchPerfumes } from '@/utils/filters';
-import type { Perfume, GenderFilter } from '@/data/types';
+import type { Perfume } from '@/data/types';
 import perfumesData from '@/data/perfumes.json';
-import { site } from '@/site.config';
 
-const allPerfumes: Perfume[] = perfumesData.perfumes as Perfume[];
-
-// Get filter and search from URL params
-const url = new URL(Astro.request.url);
-const filterParam = url.searchParams.get('filter') as GenderFilter | null;
-const searchParam = url.searchParams.get('search') || '';
-
-const currentFilter: GenderFilter = filterParam || 'all';
-const currentSearch = searchParam;
-
-const filteredPerfumes = searchPerfumes(filterPerfumes(allPerfumes, currentFilter), currentSearch);
+const perfumes = perfumesData.perfumes as Perfume[];
 ---
 
-<Layout title={`Catálogo - ${site.name}`} description="Explora nuestro catálogo de decants de perfumes árabes. Filtra por género y busca tus fragancias favoritas.">
+<Layout title="Catálogo" description="Explora nuestro catálogo de decants de perfumes árabes. Filtra por género y busca tus fragancias favoritas.">
   <section class="catalog-hero" aria-labelledby="catalog-title">
     <div class="container">
       <h1 id="catalog-title" class="catalog-title">Catálogo</h1>
@@ -33,7 +21,7 @@ const filteredPerfumes = searchPerfumes(filterPerfumes(allPerfumes, currentFilte
     <div class="container">
       <div class="toolbar-content">
         <div class="toolbar-filters">
-          <Filters currentFilter={currentFilter} />
+          <Filters />
         </div>
         <div class="toolbar-search">
           <Search />
@@ -46,12 +34,10 @@ const filteredPerfumes = searchPerfumes(filterPerfumes(allPerfumes, currentFilte
     <div class="container">
       <div class="results-header">
         <p class="results-count" data-results-count>
-          {filteredPerfumes.length} {filteredPerfumes.length === 1 ? 'perfume' : 'perfumes'} encontrado{filteredPerfumes.length !== 1 ? 's' : ''}
-          {currentFilter !== 'all' && <span data-filter-label> en {currentFilter}</span>}
-          {currentSearch && <span data-search-label> para "{currentSearch}"</span>}
+          {perfumes.length} {perfumes.length === 1 ? 'perfume' : 'perfumes'} encontrado{perfumes.length !== 1 ? 's' : ''}
         </p>
       </div>
-      <ProductGrid perfumes={filteredPerfumes} />
+      <ProductGrid perfumes={perfumes} />
     </div>
   </section>
 </Layout>
@@ -94,9 +80,10 @@ const filteredPerfumes = searchPerfumes(filterPerfumes(allPerfumes, currentFilte
     });
 
     if (countEl) {
-      countEl.innerHTML = `${visible} ${visible === 1 ? 'perfume' : 'perfumes'} encontrado${visible !== 1 ? 's' : ''}` +
-        (currentFilter !== 'all' ? ` <span>en ${currentFilter}</span>` : '') +
-        (currentSearch ? ` <span>para "${currentSearch}"</span>` : '');
+      let text = `${visible} ${visible === 1 ? 'perfume' : 'perfumes'} encontrado${visible !== 1 ? 's' : ''}`;
+      if (currentFilter !== 'all') text += ` en ${currentFilter}`;
+      if (currentSearch) text += ` para "${currentSearch}"`;
+      countEl.textContent = text;
     }
 
     if (emptyEl && gridEl) {

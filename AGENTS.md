@@ -20,11 +20,11 @@ Para reutilizar el proyecto en otro emprendimiento, ver `README.md`.
 
 El stock se maneja **manualmente** editando `src/data/perfumes.json`, campo `stock` de la talla de cada perfume (todas las tallas son de 5 ml).
 
-Los tres estados preconfigurados (etiquetas y colores viven en `src/utils/stock.ts` y `src/components/ui/Chip.astro`):
+Los tres estados preconfigurados (etiquetas en `src/utils/stock.ts`; colores en `src/styles/global.css` con las variables `--color-status-*`, aplicadas por `src/components/ui/Chip.astro`):
 
 - **EN STOCK** (verde `#8dba7d`): `stock >= 5`
 - **POCO STOCK** (amarillo `#c5a059`): `stock` entre 1 y 4
-- **SIN STOCK** (gris `#333333`): `stock = 0`
+- **SIN STOCK** (gris `#8a8a8a`): `stock = 0`
 
 ### Convención con el usuario
 

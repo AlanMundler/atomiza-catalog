@@ -1,20 +1,16 @@
 ---
 interface Props {
-  isOpen: boolean;
   position?: 'left' | 'right';
   id?: string;
   class?: string;
-  onClose: () => void;
-  children: any;
 }
 
-const { isOpen, position = 'right', id, class: className = '', onClose, children } = Astro.props;
-void onClose;
+const { position = 'right', id, class: className = '' } = Astro.props;
 ---
 
 <div class={`drawer-root ${className}`} data-drawer-root {id}>
   <aside 
-    class={`drawer drawer--${position} ${isOpen ? 'drawer--open' : ''}`}
+    class={`drawer drawer--${position}`}
     role="dialog"
     aria-modal="true"
     aria-label={position === 'right' ? 'Carrito de compras' : 'Menú de navegación'}
@@ -35,7 +31,7 @@ void onClose;
       </button>
     </div>
     <div class="drawer-content">
-      <slot>{children}</slot>
+      <slot />
     </div>
   </aside>
   <div 

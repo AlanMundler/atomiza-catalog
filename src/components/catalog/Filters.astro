@@ -2,10 +2,10 @@
 import type { GenderFilter } from '@/data/types';
 
 interface Props {
-  currentFilter: GenderFilter;
+  currentFilter?: GenderFilter;
 }
 
-const { currentFilter } = Astro.props;
+const { currentFilter = 'all' } = Astro.props;
 
 const filters: { value: GenderFilter; label: string }[] = [
   { value: 'all', label: 'TODOS' },

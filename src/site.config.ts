@@ -31,7 +31,7 @@ export const site = {
 
 /** Resuelve una ruta de asset (ej. "images/…" o "/images/…") contra el base path. */
 export function assetUrl(src: string | undefined): string {
-  if (!src) return `${site.basePath}images/placeholder.jpg`;
+  if (!src) return `${site.basePath}images/placeholder.svg`;
   if (/^([a-z][a-z0-9+.-]*:)?\/\//i.test(src)) return src;
   return site.basePath + src.replace(/^\//, '');
 }

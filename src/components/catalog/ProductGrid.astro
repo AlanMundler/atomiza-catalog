@@ -1,20 +1,18 @@
 ---
 import ProductCard from '@/components/catalog/ProductCard.astro';
-import { site } from '@/site.config';
 import type { Perfume } from '@/data/types';
 
 interface Props {
   perfumes: Perfume[];
-  basePath?: string;
 }
 
-const { perfumes, basePath = site.basePath } = Astro.props;
+const { perfumes } = Astro.props;
 ---
 
 {perfumes.length > 0 ? (
   <div class="product-grid" role="list" aria-label="Catálogo de perfumes">
     {perfumes.map((perfume) => (
-      <ProductCard perfume={perfume} basePath={basePath} />
+      <ProductCard perfume={perfume} />
     ))}
   </div>
 ) : (
@@ -33,12 +31,6 @@ const { perfumes, basePath = site.basePath } = Astro.props;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: var(--spacing-stack-sm);
-  }
-
-  @media (min-width: 560px) {
-    .product-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
   }
 
   @media (min-width: 820px) {
