@@ -872,15 +872,15 @@
           "src": "images/perfumes/qaed-al-fursan-untamed.avif",
           "alt": "Lattafa Qaed Al Fursan Untamed"
         }
-      ],
-      "sizes": [
-        {
-          "ml": 5,
-          "price": 6000,
-          "stock": 3
-        }
-      ],
-      "isBoutiqueExclusive": false,
+],
+       "sizes": [
+         {
+           "ml": 5,
+           "price": 10000,
+           "stock": 0
+         }
+       ],
+       "isBoutiqueExclusive": false,
       "featured": true
     },
     {
@@ -1297,46 +1297,46 @@
       "isBoutiqueExclusive": false,
       "featured": true
     },
-    {
-      "id": "hawas-black",
-      "slug": "hawas-black",
-      "brand": "Rasasi",
-      "name": "Hawas Black",
-      "gender": "masculino",
-      "olfactoryFamily": "Aromática Frutal",
-      "description": "Inspirado en Hacivat de Nishane. Bergamota, piña y toronja sobre pachulí, cedro y jazmín, con un fondo amaderado de musgo de roble y ámbar. Un fresco aromático y potente con gran proyección.",
-      "notes": {
-        "top": [
-          "Bergamota",
-          "Piña",
-          "Toronja (Pomelo)"
-        ],
-        "heart": [
-          "Pachulí",
-          "Cedro",
-          "Jazmín"
-        ],
-        "base": [
-          "Musgo de Roble",
-          "Notas Amaderadas",
-          "Ámbar"
-        ]
-      },
-      "images": [
-        {
-          "src": "images/perfumes/hawas-black.avif",
-          "alt": "Rasasi Hawas Black"
-        }
-      ],
-      "sizes": [
-        {
-          "ml": 5,
-          "price": 10000,
-          "stock": 10
-        }
-      ],
-      "isBoutiqueExclusive": false,
-      "featured": false
-    }
+{
+       "id": "hawas-black",
+       "slug": "hawas-black",
+       "brand": "Rasasi",
+       "name": "Hawas Black",
+       "gender": "masculino",
+       "olfactoryFamily": "Aromática Frutal",
+       "description": "Inspirado en Hacivat de Nishane. Bergamota, piña y toronja sobre pachulí, cedro y jazmín, con un fondo amaderado de musgo de roble y ámbar. Un fresco aromático y potente con gran proyección.",
+       "notes": {
+         "top": [
+           "Bergamota",
+           "Piña",
+           "Toronja (Pomelo)"
+         ],
+         "heart": [
+           "Pachulí",
+           "Cedro",
+           "Jazmín"
+         ],
+         "base": [
+           "Musgo de Roble",
+           "Notas Amaderadas",
+           "Ámbar"
+         ]
+       },
+       "images": [
+         {
+           "src": "images/perfumes/hawas-black.avif",
+           "alt": "Rasasi Hawas Black"
+         }
+       ],
+       "sizes": [
+         {
+           "ml": 5,
+           "price": 10000,
+           "stock": 0
+         }
+       ],
+       "isBoutiqueExclusive": false,
+       "featured": false
+     }
   ]
 }
