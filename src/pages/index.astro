@@ -179,15 +179,26 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
 <style>
   .hero {
     text-align: center;
-    padding: 12px 0 20px;
+    padding: 24px 0 16px;
   }
 
   .hero-cta {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    align-items: center;
     gap: 12px;
     margin-top: 0;
+  }
+
+  @media (min-width: 641px) {
+    .hero {
+      padding: 16px 0 24px;
+    }
+
+    .hero-cta {
+      flex-wrap: nowrap;
+    }
   }
 
   .section-title {
