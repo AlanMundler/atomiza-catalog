@@ -1288,12 +1288,12 @@
         }
       ],
 "sizes": [
-         {
-           "ml": 5,
-           "price": 10000,
-           "stock": 0
-         }
-       ],
+          {
+            "ml": 5,
+            "price": 10000,
+            "stock": 0
+          }
+        ],
       "isBoutiqueExclusive": false,
       "featured": true
     },
