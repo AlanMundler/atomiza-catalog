@@ -1,7 +1,7 @@
 // Genera las imágenes de compartir (og:image) para cada perfume, en JPG,
 // a partir de su foto (AVIF) o ilustración (SVG). Se ejecuta automáticamente
 // antes de cada `astro build` (ver script "prebuild" en package.json).
-// Salida: public/og/<slug>.jpg (1200x630, fondo oscuro, frasco centrado).
+// Salida: public/og/<slug>.jpg (1200x630, fondo blanco, frasco centrado).
 import { readdir, mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -11,7 +11,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const IMG_DIR = path.resolve(__dirname, '../public/images/perfumes');
 const OUT_DIR = path.resolve(__dirname, '../public/og');
 
-const BG = '#121414';
+const BG = '#ffffff';
 const W = 1200;
 const H = 630;
 
