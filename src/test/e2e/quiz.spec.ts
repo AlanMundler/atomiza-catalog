@@ -30,35 +30,34 @@ test.describe('Perfume Quiz Flow', () => {
     await expect(page.locator('h1')).toContainText('Encontrá tu perfume');
   });
 
-  test('should walk through all questions and show recommendations', async ({ page }) => {
+  test('should walk through all questions and show a single recommendation', async ({ page }) => {
     await page.goto(QUIZ);
     await page.waitForLoadState('networkidle');
 
     await expect(page.locator('.quiz-step:not([hidden])')).toBeVisible();
 
     await answerCurrentQuestion(page, 'Para él');
-    await expect(page.locator('[data-quiz-progress]')).toHaveText('Pregunta 2 de 6');
+    await expect(page.locator('[data-quiz-progress]')).toHaveText('Pregunta 2 de 5');
 
     await page.locator('[data-quiz-back]').click();
-    await expect(page.locator('[data-quiz-progress]')).toHaveText('Pregunta 1 de 6');
+    await expect(page.locator('[data-quiz-progress]')).toHaveText('Pregunta 1 de 5');
 
     await answerCurrentQuestion(page, 'Para él');
     await answerCurrentQuestion(page, 'Cítrico y fresco');
     await answerCurrentQuestion(page, 'Todo el día');
     await answerCurrentQuestion(page, 'Notoria');
     await answerCurrentQuestion(page, 'Todo el año');
-    await answerCurrentQuestion(page, 'No importa');
 
     await expect(page.locator('[data-quiz-next]')).toHaveText('Ver mi recomendación');
     await finishQuiz(page);
 
     await expect(page.locator('#quiz-result')).toBeVisible();
-    await expect(page.locator('.quiz-result-card')).toHaveCount(3);
-    await expect(page.locator('.quiz-result-card--top .quiz-result-badge')).toHaveText('Tu match ideal');
-    await expect(page.locator('.quiz-result-card').first().getByRole('button', { name: 'Agregar al carrito' })).toBeVisible();
+    await expect(page.locator('.quiz-result-card')).toHaveCount(1);
+    await expect(page.locator('.quiz-result-card .quiz-result-badge')).toHaveText('Tu match ideal');
+    await expect(page.locator('.quiz-result-card .quiz-result-reason')).toBeVisible();
   });
 
-  test('should add a recommended perfume to the cart', async ({ page }) => {
+  test('should add the recommended perfume to the cart', async ({ page }) => {
     await page.goto(QUIZ);
     await page.waitForLoadState('networkidle');
 
@@ -67,15 +66,14 @@ test.describe('Perfume Quiz Flow', () => {
     await answerCurrentQuestion(page, 'Salidas de noche');
     await answerCurrentQuestion(page, 'Intensa');
     await answerCurrentQuestion(page, 'Frío');
-    await answerCurrentQuestion(page, 'No importa');
 
     await finishQuiz(page);
 
-    const topCard = page.locator('.quiz-result-card--top');
-    await expect(topCard).toBeVisible();
-    const expectedId = await topCard.locator('[data-add-perfume-id]').getAttribute('data-add-perfume-id');
+    const card = page.locator('.quiz-result-card');
+    await expect(card).toBeVisible();
+    const expectedId = await card.getAttribute('data-perfume-id');
 
-    await topCard.getByRole('button', { name: 'Agregar al carrito' }).click();
+    await card.getByRole('button', { name: 'Agregar al carrito' }).click();
     await page.waitForTimeout(600);
 
     const cart = await page.evaluate(() =>
@@ -89,6 +87,23 @@ test.describe('Perfume Quiz Flow', () => {
     await expect(page.locator('#cart-content .cart-item')).toHaveCount(1);
   });
 
+  test('should recommend a perfume that matches a citrus and subtle profile', async ({ page }) => {
+    await page.goto(QUIZ);
+    await page.waitForLoadState('networkidle');
+
+    await answerCurrentQuestion(page, 'Para él');
+    await answerCurrentQuestion(page, 'Cítrico y fresco');
+    await answerCurrentQuestion(page, 'Trabajo o diario');
+    await answerCurrentQuestion(page, 'Sutil');
+    await answerCurrentQuestion(page, 'Calor');
+
+    await finishQuiz(page);
+
+    const card = page.locator('.quiz-result-card');
+    await expect(card).toBeVisible();
+    await expect(card).toHaveAttribute('data-perfume-id', 'dark-door-sport');
+  });
+
   test('should restart the quiz from the results', async ({ page }) => {
     await page.goto(QUIZ);
     await page.waitForLoadState('networkidle');
@@ -98,35 +113,14 @@ test.describe('Perfume Quiz Flow', () => {
     await answerCurrentQuestion(page, 'Ocasiones especiales');
     await answerCurrentQuestion(page, 'Intensa');
     await answerCurrentQuestion(page, 'Todo el año');
-    await answerCurrentQuestion(page, 'Hasta \\$6\\.000');
 
     await finishQuiz(page);
-    await expect(page.locator('.quiz-result-card')).toHaveCount(3);
+    await expect(page.locator('.quiz-result-card')).toHaveCount(1);
 
     await page.locator('[data-quiz-restart]').click();
     await expect(page.locator('#quiz-card')).toBeVisible();
     await expect(page.locator('#quiz-result')).toBeHidden();
-    await expect(page.locator('[data-quiz-progress]')).toHaveText('Pregunta 1 de 6');
+    await expect(page.locator('[data-quiz-progress]')).toHaveText('Pregunta 1 de 5');
     await expect(page.locator('[data-quiz-next]')).toBeDisabled();
-  });
-
-  test('should respect the budget constraint in recommendations', async ({ page }) => {
-    await page.goto(QUIZ);
-    await page.waitForLoadState('networkidle');
-
-    await answerCurrentQuestion(page, 'Me da igual');
-    await answerCurrentQuestion(page, 'Ámbar y especiado');
-    await answerCurrentQuestion(page, 'Especiales');
-    await answerCurrentQuestion(page, 'Notoria');
-    await answerCurrentQuestion(page, 'Frío');
-    await answerCurrentQuestion(page, 'Hasta \\$6\\.000');
-
-    await finishQuiz(page);
-    await expect(page.locator('.quiz-result-card')).toHaveCount(3);
-
-    const allWithinBudget = await page.locator('.quiz-result-card').evaluateAll((cards) =>
-      cards.every((card) => Number(card.getAttribute('data-price')) <= 6000)
-    );
-    expect(allWithinBudget).toBe(true);
   });
 });
