@@ -115,6 +115,7 @@ const whatsappLink = buildWhatsAppLink(site.whatsappNumber, site.whatsappMessage
   import { site } from '@/site.config';
 
   let ticking = false;
+  let cartTrigger: HTMLElement | null = null;
 
   function handleScroll() {
     const header = document.querySelector('.header');
@@ -154,10 +155,16 @@ const whatsappLink = buildWhatsAppLink(site.whatsappNumber, site.whatsappMessage
     if (mobileCount) {
       mobileCount.textContent = `${newCount} ${newCount === 1 ? 'artículo' : 'artículos'}`;
     }
+    if (cartTrigger) {
+      cartTrigger.setAttribute(
+        'aria-label',
+        `Carrito de compras, ${newCount} ${newCount === 1 ? 'artículo' : 'artículos'}`
+      );
+    }
   }
 
   onPageLoad('header', () => {
-    const cartTrigger = document.querySelector('[data-cart-trigger]');
+    cartTrigger = document.querySelector('[data-cart-trigger]');
     const menuTrigger = document.querySelector('[data-menu-trigger]');
     const mobileDrawer = document.querySelector('#mobile-drawer');
 

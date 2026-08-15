@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "prebuild": "node scripts/generate-og-images.mjs",
+    "prebuild": "node scripts/generate-og-images.mjs && node scripts/copy-perfumes.mjs",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",

@@ -14,6 +14,8 @@ const { position = 'right', id, class: className = '' } = Astro.props;
     role="dialog"
     aria-modal="true"
     aria-label={position === 'right' ? 'Carrito de compras' : 'Menú de navegación'}
+    inert
+    aria-hidden="true"
   >
     <div class="drawer-header">
       <slot name="header">
@@ -50,12 +52,21 @@ const { position = 'right', id, class: className = '' } = Astro.props;
     }
   }
 
+  function getFocusable(drawer: Element): HTMLElement[] {
+    return Array.from(
+      drawer.querySelectorAll<HTMLElement>(
+        'button, [href], input, textarea, select, [tabindex]:not([tabindex="-1"])'
+      )
+    ).filter((el) => !el.hasAttribute('disabled') && el.offsetParent !== null);
+  }
+
   onWindowOnce('drawer-escape', 'keydown', (e) => {
     if ((e as KeyboardEvent).key === 'Escape') {
-      const openDrawer = document.querySelector('.drawer--open');
-      if (openDrawer) {
-        openDrawer.classList.remove('drawer--open');
-        resetBodyOverflowIfClosed();
+      const openDrawerEl = document.querySelector('.drawer--open');
+      if (openDrawerEl) {
+        openDrawerEl.closest('[data-drawer-root]')?.dispatchEvent(
+          new CustomEvent('drawer:toggle', { detail: { open: false } })
+        );
       }
     }
   });
@@ -63,20 +74,47 @@ const { position = 'right', id, class: className = '' } = Astro.props;
   onPageLoad('drawer', () => {
     document.querySelectorAll('[data-drawer-root]').forEach((root) => {
       bindOnce(root, (el) => {
-        const drawer = el.querySelector('.drawer');
+        const drawer = el.querySelector('.drawer') as HTMLElement;
         const backdrop = el.querySelector('.drawer-backdrop') as HTMLElement | null;
         if (!drawer || !backdrop) return;
+        let lastFocused: HTMLElement | null = null;
 
         const openDrawer = () => {
+          lastFocused = document.activeElement as HTMLElement;
           drawer.classList.add('drawer--open');
+          drawer.inert = false;
+          drawer.setAttribute('aria-hidden', 'false');
           backdrop.style.opacity = '1';
           document.body.style.overflow = 'hidden';
+          const first = getFocusable(drawer)[0];
+          (first || drawer).focus();
         };
 
         const closeDrawer = () => {
           drawer.classList.remove('drawer--open');
+          drawer.inert = true;
+          drawer.setAttribute('aria-hidden', 'true');
           backdrop.style.opacity = '0';
           resetBodyOverflowIfClosed();
+          if (lastFocused && typeof lastFocused.focus === 'function') {
+            lastFocused.focus();
+          }
+        };
+
+        const trapFocus = (e: KeyboardEvent) => {
+          if (e.key !== 'Tab') return;
+          const focusables = getFocusable(drawer);
+          if (focusables.length === 0) return;
+          const first = focusables[0];
+          const last = focusables[focusables.length - 1];
+          const active = document.activeElement;
+          if (e.shiftKey && (active === first || active === drawer)) {
+            e.preventDefault();
+            last.focus();
+          } else if (!e.shiftKey && active === last) {
+            e.preventDefault();
+            first.focus();
+          }
         };
 
         const closeBtn = el.querySelector('[data-drawer-close]');
@@ -92,11 +130,18 @@ const { position = 'right', id, class: className = '' } = Astro.props;
             closeDrawer();
           }
         });
+
+        drawer.addEventListener('keydown', trapFocus);
       });
     });
 
     // Close any drawer left open by the previous navigation
-    document.querySelectorAll('.drawer--open').forEach((d) => d.classList.remove('drawer--open'));
+    document.querySelectorAll('.drawer--open').forEach((d) => {
+      const drawer = d as HTMLElement;
+      drawer.classList.remove('drawer--open');
+      drawer.inert = true;
+      drawer.setAttribute('aria-hidden', 'true');
+    });
     resetBodyOverflowIfClosed();
   });
 </script>

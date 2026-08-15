@@ -102,6 +102,7 @@ import { site } from '@/site.config';
   import { getCart } from '@/utils/cart';
   import { generateOrderText, buildWhatsAppLink } from '@/utils/formatters';
   import type { OrderChannel } from '@/utils/formatters';
+  import { getPerfumesMap } from '@/utils/perfumes-client';
   import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
   import { site } from '@/site.config';
 
@@ -113,26 +114,17 @@ import { site } from '@/site.config';
   let preview: HTMLTextAreaElement | null = null;
   let copyBtn: HTMLElement | null = null;
 
-  function getPerfumesMap(): Map<string, any> {
-    try {
-      const data = JSON.parse(localStorage.getItem(site.storage.perfumes) || '{"perfumes":[]}');
-      return new Map((data.perfumes || []).map((p: any) => [p.id, p]));
-    } catch {
-      return new Map();
-    }
-  }
-
-  function buildOrderText(channel: OrderChannel = 'whatsapp'): string {
+  async function buildOrderText(channel: OrderChannel = 'whatsapp'): Promise<string> {
     const cart = getCart();
-    const perfumesMap = getPerfumesMap();
+    const perfumesMap = await getPerfumesMap();
     const name = nameInput?.value.trim() || '[Tu nombre]';
     const contact = contactInput?.value.trim() || '[Tu WhatsApp/Instagram]';
     return generateOrderText(cart.items, perfumesMap, name, contact, channel);
   }
 
-  function refreshPreview() {
+  async function refreshPreview() {
     if (preview) {
-      preview.value = buildOrderText();
+      preview.value = await buildOrderText();
       autoResizePreview();
     }
   }
@@ -173,14 +165,14 @@ import { site } from '@/site.config';
       bindOnce(contactInput, (el) => el.addEventListener('input', refreshPreview));
     }
     if (whatsappBtn) {
-      bindOnce(whatsappBtn, (el) => el.addEventListener('click', () => {
-        const text = buildOrderText();
+      bindOnce(whatsappBtn, (el) => el.addEventListener('click', async () => {
+        const text = await buildOrderText();
         window.open(buildWhatsAppLink(WHATSAPP_NUMBER, text), '_blank');
       }));
     }
     if (instagramBtn) {
-      bindOnce(instagramBtn, (el) => el.addEventListener('click', () => {
-        const text = encodeURIComponent(buildOrderText('instagram'));
+      bindOnce(instagramBtn, (el) => el.addEventListener('click', async () => {
+        const text = encodeURIComponent(await buildOrderText('instagram'));
         window.open(`https://ig.me/m/${INSTAGRAM_HANDLE}?text=${text}`, '_blank');
       }));
     }

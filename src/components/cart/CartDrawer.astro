@@ -31,27 +31,19 @@ import Drawer from '@/components/ui/Drawer.astro';
     getCartSubtotal
   } from '@/utils/cart';
   import { formatPrice } from '@/utils/formatters';
+  import { getPerfumesMap } from '@/utils/perfumes-client';
   import type { CartItem as CartItemType } from '@/data/types';
   import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
-  import { site, assetUrl } from '@/site.config';
+  import { assetUrl } from '@/site.config';
 
   let drawerRoot: HTMLElement | null = null;
   let perfumesMap = new Map<string, any>();
 
-  function getPerfumesMap(): Map<string, any> {
-    try {
-      const data = JSON.parse(localStorage.getItem(site.storage.perfumes) || '{"perfumes":[]}');
-      return new Map((data.perfumes || []).map((p: any) => [p.id, p]));
-    } catch {
-      return new Map();
-    }
-  }
-
-  function render() {
+  async function render() {
     const content = document.querySelector('#cart-content') as HTMLElement | null;
     if (!content) return;
 
-    perfumesMap = getPerfumesMap();
+    perfumesMap = await getPerfumesMap();
     const cart = getCart();
 
     if (cart.items.length === 0) {
@@ -147,14 +139,14 @@ import Drawer from '@/components/ui/Drawer.astro';
     window.dispatchEvent(new CustomEvent('cart:update'));
   }
 
-  function handleAction(target: HTMLElement) {
+  async function handleAction(target: HTMLElement) {
     const action = target.getAttribute('data-action');
     const itemEl = target.closest('.cart-item') as HTMLElement | null;
     if (!itemEl) return;
 
     const perfumeId = itemEl.getAttribute('data-perfume-id');
     const sizeMl = parseInt(itemEl.getAttribute('data-size-ml') || '', 10);
-    const perfume = getPerfumesMap().get(perfumeId || '');
+    const perfume = (await getPerfumesMap()).get(perfumeId || '');
     const size = perfume?.sizes?.find((s: any) => s.ml === sizeMl);
     if (!perfumeId || !size) return;
 
@@ -181,9 +173,9 @@ import Drawer from '@/components/ui/Drawer.astro';
   });
 
   // Listen for add to cart event
-  onWindowOnce('cart-add', 'cart:add', (e) => {
+  onWindowOnce('cart-add', 'cart:add', async (e) => {
     const { perfumeId, sizeMl, quantity } = (e as CustomEvent).detail;
-    const perfume = getPerfumesMap().get(perfumeId);
+    const perfume = (await getPerfumesMap()).get(perfumeId);
     const size = perfume?.sizes?.find((s: any) => s.ml === sizeMl);
     if (!perfumeId || !size) return;
 

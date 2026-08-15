@@ -3,7 +3,6 @@ import Header from '@/components/layout/Header.astro';
 import Footer from '@/components/layout/Footer.astro';
 import CartDrawer from '@/components/cart/CartDrawer.astro';
 import OrderModal from '@/components/cart/OrderModal.astro';
-import perfumesData from '@/data/perfumes.json';
 import { site, assetUrl } from '@/site.config';
 import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
@@ -61,13 +60,6 @@ const pageUrl = new URL(Astro.url.pathname, Astro.site).href;
     <OrderModal />
   </body>
 </html>
-
-<script is:inline define:vars={{ perfumesData, perfumesStorageKey: site.storage.perfumes }}>
-  // Store perfumes data in localStorage for cart functionality
-  if (typeof window !== 'undefined') {
-    localStorage.setItem(perfumesStorageKey, JSON.stringify({ perfumes: perfumesData.perfumes }));
-  }
-</script>
 
 <style>
   body {
