@@ -21,7 +21,7 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
 <Layout title={site.tagline} description={`${site.name}. ${site.tagline}. ${site.description}`}>
   <section class="hero" aria-labelledby="hero-title">
     <div class="container">
-      <h1 id="hero-title" class="hero-title">{site.tagline}</h1>
+      <h1 id="hero-title" class="visually-hidden">{site.tagline}</h1>
       <div class="hero-cta">
         <a href={`${BASE}catalogo/`} class="btn btn--primary btn--lg">Ver catálogo</a>
         <a href={whatsappLink} target="_blank" rel="noopener noreferrer" class="btn btn--secondary btn--lg">Consultar por WhatsApp</a>
@@ -179,24 +179,7 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
 <style>
   .hero {
     text-align: center;
-    padding: var(--spacing-stack-md) 0 var(--spacing-stack-lg);
-  }
-
-  .hero-title {
-    font-family: var(--font-family);
-    font-size: var(--font-display-lg-size);
-    font-weight: var(--font-display-lg-weight);
-    line-height: var(--font-display-lg-line-height);
-    letter-spacing: var(--font-display-lg-tracking);
-    text-transform: uppercase;
-    color: var(--color-on-surface);
-    margin: 0 0 var(--spacing-stack-sm);
-  }
-
-  @media (max-width: 640px) {
-    .hero-title {
-      font-size: 48px;
-    }
+    padding: var(--spacing-stack-sm) 0 var(--spacing-stack-lg);
   }
 
   .hero-cta {
