@@ -21,8 +21,7 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
 <Layout title={site.tagline} description={`${site.name}. ${site.tagline}. ${site.description}`}>
   <section class="hero" aria-labelledby="hero-title">
     <div class="container">
-      <h1 id="hero-title" class="hero-title">{site.name}</h1>
-      <p class="hero-subtitle">{site.tagline}</p>
+      <h1 id="hero-title" class="hero-title">{site.tagline}</h1>
       <div class="hero-cta">
         <a href={`${BASE}catalogo/`} class="btn btn--primary btn--lg">Ver catálogo</a>
         <a href={whatsappLink} target="_blank" rel="noopener noreferrer" class="btn btn--secondary btn--lg">Consultar por WhatsApp</a>
@@ -198,16 +197,6 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
     .hero-title {
       font-size: 48px;
     }
-  }
-
-  .hero-subtitle {
-    font-family: var(--font-family);
-    font-size: var(--font-body-lg-size);
-    font-weight: var(--font-body-lg-weight);
-    line-height: var(--font-body-lg-line-height);
-    letter-spacing: var(--font-body-lg-tracking);
-    color: var(--color-on-surface-variant);
-    margin: 0;
   }
 
   .hero-cta {
