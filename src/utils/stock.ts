@@ -24,7 +24,7 @@ export function getStockColor(status: StockStatus): string {
     case 'low-stock':
       return '#c5a059';
     case 'out-of-stock':
-      return '#333333';
+      return '#8a8a8a';
   }
 }
 

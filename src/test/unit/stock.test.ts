@@ -52,7 +52,7 @@ describe('stock utilities', () => {
     it('returns correct color values from design tokens', () => {
       expect(getStockColor('in-stock')).toBe('#8dba7d');
       expect(getStockColor('low-stock')).toBe('#c5a059');
-      expect(getStockColor('out-of-stock')).toBe('#333333');
+      expect(getStockColor('out-of-stock')).toBe('#8a8a8a');
     });
   });
 

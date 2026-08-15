@@ -20,6 +20,7 @@ export const site = {
   instagramUrl: 'https://instagram.com/atomiza.cba',
   whatsappNumber: '5493472559307',
   whatsappUrl: 'https://wa.me/5493472559307',
+  whatsappMessage: 'Hola, quiero hacer un pedido',
   phoneDisplay: '54 9 3472 559307',
   storage: {
     cart: 'atomiza-cart',

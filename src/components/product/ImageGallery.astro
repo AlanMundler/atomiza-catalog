@@ -59,21 +59,7 @@ const mainAlt = images[0]?.alt || alt;
 </div>
 
 <script>
-  import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
-
-  function resetBodyOverflowIfClosed() {
-    if (!document.querySelector('.drawer--open') && !document.querySelector('dialog[open]')) {
-      document.body.style.overflow = '';
-    }
-  }
-
-  // Close zoom modal on Escape
-  onWindowOnce('gallery-escape', 'keydown', (e) => {
-    if ((e as KeyboardEvent).key === 'Escape') {
-      document.querySelectorAll('dialog[open]').forEach((dialog) => (dialog as HTMLDialogElement).close());
-      resetBodyOverflowIfClosed();
-    }
-  });
+  import { bindOnce, onPageLoad } from '@/utils/view-transitions';
 
   onPageLoad('image-gallery', () => {
     const mainImageEl = document.querySelector('[data-main-image]') as HTMLImageElement | null;

@@ -4,9 +4,11 @@ import ProductCard from '@/components/catalog/ProductCard.astro';
 import perfumesData from '@/data/perfumes.json';
 import { isSizeAvailable } from '@/utils/stock';
 import { site } from '@/site.config';
+import { buildWhatsAppLink } from '@/utils/formatters';
 import type { Perfume } from '@/data/types';
 
 const BASE = site.basePath;
+const whatsappLink = buildWhatsAppLink(site.whatsappNumber, site.whatsappMessage);
 
 // Perfumes in stock to rotate on the home page
 const allPerfumes = perfumesData.perfumes as Perfume[];
@@ -17,6 +19,17 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
 ---
 
 <Layout title={`${site.name} - ${site.tagline}`} description={`${site.name}. ${site.tagline}. ${site.description}`}>
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="container">
+      <h1 id="hero-title" class="hero-title">{site.name}</h1>
+      <p class="hero-subtitle">{site.tagline}</p>
+      <div class="hero-cta">
+        <a href={`${BASE}catalogo/`} class="btn btn--primary btn--lg">Ver catálogo</a>
+        <a href={whatsappLink} target="_blank" rel="noopener noreferrer" class="btn btn--secondary btn--lg">Consultar por WhatsApp</a>
+      </div>
+    </div>
+  </section>
+
   <section class="home-perfumes" aria-labelledby="home-perfumes-title">
     <div class="container">
       <div class="home-perfume-head">
@@ -32,13 +45,6 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
       <div class="home-perfume-cta">
         <a href={`${BASE}catalogo/`} class="btn btn--secondary btn--lg">Ver todo el catálogo</a>
       </div>
-    </div>
-  </section>
-
-  <section class="hero" aria-labelledby="hero-title">
-    <div class="container">
-      <h1 id="hero-title" class="hero-title">{site.name}</h1>
-      <p class="hero-subtitle">{site.tagline}</p>
     </div>
   </section>
 
@@ -169,6 +175,14 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
     letter-spacing: var(--font-body-lg-tracking);
     color: var(--color-on-surface-variant);
     margin: 0;
+  }
+
+  .hero-cta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-stack-sm);
+    margin-top: var(--spacing-stack-md);
   }
 
   .section-title {

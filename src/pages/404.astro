@@ -1,0 +1,119 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import { site } from '@/site.config';
+
+const BASE = site.basePath;
+---
+
+<Layout title="Página no encontrada" description={`La página que buscás no existe en ${site.name}.`}>
+  <section class="not-found">
+    <div class="container">
+      <p class="not-found-code" aria-hidden="true">404</p>
+      <h1 class="not-found-title">Página no encontrada</h1>
+      <p class="not-found-text">La página que buscás no existe o fue movida.</p>
+      <div class="not-found-actions">
+        <a href={BASE} class="btn btn--primary btn--lg">Volver al inicio</a>
+        <a href={`${BASE}catalogo/`} class="btn btn--secondary btn--lg">Ver catálogo</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .not-found {
+    text-align: center;
+    padding: var(--spacing-stack-lg) 0;
+  }
+
+  .not-found-code {
+    font-family: var(--font-family);
+    font-size: 96px;
+    font-weight: 200;
+    letter-spacing: 0.1em;
+    line-height: 1.1;
+    color: var(--color-primary);
+    margin: 0;
+  }
+
+  .not-found-title {
+    font-family: var(--font-family);
+    font-size: var(--font-headline-lg-size);
+    font-weight: var(--font-headline-lg-weight);
+    line-height: var(--font-headline-lg-line-height);
+    letter-spacing: var(--font-headline-lg-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    margin: var(--spacing-stack-sm) 0 var(--spacing-stack-sm);
+  }
+
+  .not-found-text {
+    font-family: var(--font-family);
+    font-size: var(--font-body-lg-size);
+    line-height: var(--font-body-lg-line-height);
+    letter-spacing: var(--font-body-lg-tracking);
+    color: var(--color-on-surface-variant);
+    margin: 0;
+  }
+
+  .not-found-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-stack-sm);
+    margin-top: var(--spacing-stack-md);
+  }
+
+  .btn {
+    font-family: var(--font-family);
+    font-weight: 500;
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    border-radius: var(--border-radius);
+    border: var(--border-width) solid transparent;
+    cursor: pointer;
+    transition: all var(--transition-duration) var(--transition-easing);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+
+  .btn:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .btn--primary {
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+    border-color: var(--color-primary);
+  }
+
+  .btn--primary:hover {
+    background-color: var(--color-primary-container);
+    border-color: var(--color-primary-container);
+  }
+
+  .btn--primary:active {
+    transform: scale(0.98);
+  }
+
+  .btn--secondary {
+    background-color: transparent;
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+  }
+
+  .btn--secondary:hover {
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+  }
+
+  .btn--lg {
+    font-size: var(--font-body-md-size);
+    padding: 18px 32px;
+    height: 52px;
+  }
+</style>
