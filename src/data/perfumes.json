@@ -867,21 +867,21 @@
           "Vetiver"
         ]
       },
-      "images": [
+"images": [
         {
           "src": "images/perfumes/qaed-al-fursan-untamed.avif",
           "alt": "Lattafa Qaed Al Fursan Untamed"
         }
-],
+      ],
        "sizes": [
          {
            "ml": 5,
-           "price": 10000,
-           "stock": 0
+           "price": 6000,
+           "stock": 3
          }
        ],
        "isBoutiqueExclusive": false,
-      "featured": true
+       "featured": true
     },
     {
       "id": "liam",
@@ -1327,12 +1327,12 @@
            "src": "images/perfumes/hawas-black.avif",
            "alt": "Rasasi Hawas Black"
          }
-       ],
+],
        "sizes": [
          {
            "ml": 5,
-           "price": 10000,
-           "stock": 0
+           "price": 6000,
+           "stock": 3
          }
        ],
        "isBoutiqueExclusive": false,
