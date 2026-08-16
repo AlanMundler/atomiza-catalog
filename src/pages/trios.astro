@@ -618,4 +618,45 @@ function getSize(p: Perfume) {
   .trio-summary [hidden] {
     display: none !important;
   }
+
+  @media (max-width: 640px) {
+    .trio-summary-inner {
+      flex-direction: column;
+      align-items: stretch;
+      text-align: center;
+      gap: 12px;
+    }
+
+    .trio-summary-info {
+      flex: none;
+      text-align: center;
+    }
+
+    .trio-summary-list {
+      white-space: normal;
+    }
+
+    .trio-summary-price {
+      flex: none;
+      align-items: center;
+      text-align: center;
+    }
+
+    .trio-summary-actions {
+      flex: none;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .trio-clear {
+      width: 100%;
+    }
+
+    .trio-cta {
+      width: 100%;
+      height: 48px;
+    }
+  }
 </style>
