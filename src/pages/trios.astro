@@ -40,7 +40,7 @@ function getSize(p: Perfume) {
       </div>
       <div class="trio-step">
         <span class="trio-step-number">2</span>
-        <p class="trio-step-text">Confirmá tu trío por WhatsApp</p>
+        <p class="trio-step-text">Confirmá tu tridente por WhatsApp</p>
       </div>
       <div class="trio-step">
         <span class="trio-step-number">3</span>
@@ -51,7 +51,7 @@ function getSize(p: Perfume) {
 
   <section class="trio-section" aria-labelledby="trio-grid-title">
     <div class="container">
-      <h2 id="trio-grid-title" class="trio-grid-title">Elegí tu trío</h2>
+      <h2 id="trio-grid-title" class="trio-grid-title">Elegí tu tridente</h2>
 
       {available.length < TRIO_COUNT ? (
         <p class="trio-empty">Por ahora hay menos de {TRIO_COUNT} perfumes con stock. Volvé pronto.</p>
@@ -98,12 +98,12 @@ function getSize(p: Perfume) {
     </div>
   </section>
 
-  <aside class="trio-summary" aria-label="Resumen de tu trío">
+  <aside class="trio-summary" aria-label="Resumen de tu tridente">
     <div class="container trio-summary-inner">
       <div class="trio-summary-info">
         <p class="trio-summary-count" data-trio-count>Elegiste 0 de 3</p>
         <p class="trio-summary-list" data-trio-list hidden></p>
-        <p class="trio-summary-hint" data-trio-hint>Elegí 3 perfumes para armar tu trío</p>
+        <p class="trio-summary-hint" data-trio-hint>Elegí 3 perfumes para armar tu tridente</p>
       </div>
       <div class="trio-summary-price">
         <strong class="trio-summary-total" data-trio-total hidden></strong>
@@ -176,7 +176,7 @@ function getSize(p: Perfume) {
       if (!ready) {
         const missing = TRIO_COUNT - count;
         hintEl.textContent = count === 0
-          ? `Elegí ${TRIO_COUNT} perfumes para armar tu trío`
+          ? `Elegí ${TRIO_COUNT} perfumes para armar tu tridente`
           : `Te faltan ${missing} ${missing === 1 ? 'perfume' : 'perfumes'}`;
       }
     }
