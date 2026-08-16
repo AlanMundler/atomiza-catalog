@@ -89,6 +89,28 @@ describe('recommendPerfumes', () => {
     expect(result.map((p) => p.id)).toEqual(['a']);
   });
 
+  it('does not boost a perfume for cold weather just because its base note list includes vanilla', () => {
+    const citrus = makePerfume({
+      id: 'citrus',
+      sizes: [{ ml: 5, price: 6000, stock: 10 }],
+      olfactoryFamily: 'Aromática',
+      description: 'fresco y aromático',
+      notes: { top: ['Bergamota'], heart: ['Lavanda'], base: ['Vainilla'] },
+    });
+    const aquatic = makePerfume({
+      id: 'aquatic',
+      sizes: [{ ml: 5, price: 5000, stock: 10 }],
+      olfactoryFamily: 'Acuática',
+      description: 'fresco acuático y marino',
+      notes: { top: ['Bergamota'], heart: ['Violeta'], base: ['Ámbar'] },
+    });
+    const result = recommendPerfumes(
+      { gender: 'indistinto', style: 'frutal', occasion: 'especiales', intensity: 'sutil', weather: 'frio' },
+      [citrus, aquatic]
+    );
+    expect(result.map((p) => p.id)).toEqual(['aquatic']);
+  });
+
   it('does not filter by price', () => {
     const pricey = textFor('a', 'cítrico bergamota lima fresco', 'unisex', 10000);
     const result = recommendPerfumes({ ...answers, style: 'citrico-fresco' }, [pricey]);

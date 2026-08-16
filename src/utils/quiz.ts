@@ -103,31 +103,31 @@ const PROFILES: Record<string, PerfumeProfile> = {
   'jorge-di-profumo': { styles: ['citrico-fresco', 'ambarado-especiado'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'notoria', weather: ['todo-el-ano'] },
   'your-touch': { styles: ['dulce-vainilla', 'ambarado-especiado'], occasions: ['noche', 'todo-el-dia'], intensity: 'notoria', weather: ['frio'] },
   'glacier-ultra': { styles: ['dulce-vainilla', 'ambarado-especiado'], occasions: ['noche'], intensity: 'intensa', weather: ['frio'] },
-  'perseus-exclusif': { styles: ['dulce-vainilla', 'amaderado'], occasions: ['especiales', 'todo-el-dia'], intensity: 'notoria', weather: ['todo-el-ano'] },
+  'perseus-exclusif': { styles: ['dulce-vainilla', 'amaderado'], occasions: ['noche', 'especiales'], intensity: 'notoria', weather: ['frio'] },
   'tonic-malt': { styles: ['ambarado-especiado', 'dulce-vainilla'], occasions: ['noche', 'todo-el-dia'], intensity: 'intensa', weather: ['frio'] },
   'salvo-intense': { styles: ['citrico-fresco', 'ambarado-especiado'], occasions: ['trabajo', 'todo-el-dia', 'noche'], intensity: 'intensa', weather: ['todo-el-ano'] },
   'glacier-bold': { styles: ['dulce-vainilla', 'frutal'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'notoria', weather: ['calor'] },
   'your-touch-intense': { styles: ['dulce-vainilla'], occasions: ['noche'], intensity: 'intensa', weather: ['frio'] },
-  yeah: { styles: ['citrico-fresco'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'notoria', weather: ['calor'] },
-  'rouat-ajial': { styles: ['ambarado-especiado', 'amaderado'], occasions: ['especiales', 'todo-el-dia'], intensity: 'intensa', weather: ['frio'] },
+  yeah: { styles: ['citrico-fresco', 'frutal'], occasions: ['trabajo', 'todo-el-dia', 'noche'], intensity: 'notoria', weather: ['todo-el-ano'] },
+  'rouat-ajial': { styles: ['ambarado-especiado', 'amaderado'], occasions: ['todo-el-dia', 'noche'], intensity: 'intensa', weather: ['todo-el-ano'] },
   'now-rave': { styles: ['frutal', 'citrico-fresco'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'notoria', weather: ['calor'] },
   'qaed-al-fursan-untamed': { styles: ['ambarado-especiado', 'dulce-vainilla'], occasions: ['noche'], intensity: 'intensa', weather: ['frio'] },
   '24-carat-white-gold': { styles: ['citrico-fresco', 'amaderado'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'notoria', weather: ['calor'] },
   'hayaati-black': { styles: ['frutal', 'dulce-vainilla'], occasions: ['todo-el-dia', 'noche'], intensity: 'notoria', weather: ['todo-el-ano'] },
-  'hayaati-al-maleky': { styles: ['ambarado-especiado', 'citrico-fresco'], occasions: ['todo-el-dia'], intensity: 'intensa', weather: ['todo-el-ano'] },
+  'hayaati-al-maleky': { styles: ['ambarado-especiado'], occasions: ['noche'], intensity: 'intensa', weather: ['frio'] },
   'opulent-dubai': { styles: ['frutal', 'citrico-fresco'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'intensa', weather: ['calor'] },
   'hawas-ice': { styles: ['frutal', 'citrico-fresco'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'notoria', weather: ['calor'] },
   'hawas-black': { styles: ['frutal', 'citrico-fresco'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'notoria', weather: ['calor'] },
   'ameer-al-oudh': { styles: ['dulce-vainilla', 'amaderado', 'tabaco-cuero'], occasions: ['noche', 'especiales'], intensity: 'intensa', weather: ['frio'] },
-  liam: { styles: ['amaderado', 'ambarado-especiado'], occasions: ['todo-el-dia', 'especiales'], intensity: 'notoria', weather: ['frio'] },
+  liam: { styles: ['amaderado', 'ambarado-especiado'], occasions: ['todo-el-dia', 'noche', 'especiales'], intensity: 'notoria', weather: ['todo-el-ano'] },
   'baroque-rouge-540': { styles: ['floral', 'ambarado-especiado'], occasions: ['noche', 'especiales'], intensity: 'intensa', weather: ['frio'] },
-  'glacier-bella': { styles: ['dulce-vainilla', 'frutal'], occasions: ['todo-el-dia', 'noche'], intensity: 'notoria', weather: ['todo-el-ano'] },
+  'glacier-bella': { styles: ['dulce-vainilla', 'frutal'], occasions: ['todo-el-dia', 'noche'], intensity: 'notoria', weather: ['frio'] },
   delilah: { styles: ['floral', 'frutal'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'notoria', weather: ['calor'] },
   mayar: { styles: ['floral', 'frutal'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'notoria', weather: ['calor'] },
   angham: { styles: ['dulce-vainilla', 'ambarado-especiado'], occasions: ['todo-el-dia', 'noche'], intensity: 'notoria', weather: ['frio'] },
   'badee-al-oud-sublime': { styles: ['frutal', 'floral'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'notoria', weather: ['calor'] },
   'hayaati-florence': { styles: ['floral', 'citrico-fresco', 'dulce-vainilla'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'sutil', weather: ['calor'] },
-  'confidential-private-gold': { styles: ['frutal', 'dulce-vainilla'], occasions: ['todo-el-dia', 'noche'], intensity: 'intensa', weather: ['todo-el-ano'] },
+  'confidential-private-gold': { styles: ['frutal', 'dulce-vainilla'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'intensa', weather: ['calor'] },
   'oud-lail-maleki': { styles: ['dulce-vainilla', 'ambarado-especiado', 'floral'], occasions: ['noche', 'especiales'], intensity: 'intensa', weather: ['frio'] },
 };
 
@@ -145,6 +145,7 @@ const OCCASION_KEYWORDS: Partial<Record<Occasion, string[]>> = {
   trabajo: ['fresco', 'aromatico', 'limpieza', 'limpio', 'verde', 'sutil', 'atemporal', 'versatil', 'elegante', 'cotidiano', 'diario', 'suave'],
   noche: ['noche', 'potente', 'seductor', 'intenso', 'poderoso', 'adictivo', 'opulento', 'proyeccion', 'magnetico', 'envolvente', 'profundo', 'calido'],
   especiales: ['opulento', 'exclusivo', 'especial', 'elegante', 'lujoso', 'lujo', 'atemporal'],
+  'todo-el-dia': ['todo el dia', 'dia a dia', 'diario', 'versatil', 'atemporal'],
 };
 
 const INTENSITY_KEYWORDS: Record<Intensity, string[]> = {
@@ -154,8 +155,9 @@ const INTENSITY_KEYWORDS: Record<Intensity, string[]> = {
 };
 
 const WEATHER_KEYWORDS: Partial<Record<Weather, string[]>> = {
-  calor: ['fresco', 'citrico', 'acuatico', 'tropical', 'veraniego', 'luminoso', 'verde', 'marino', 'frutal'],
-  frio: ['calido', 'ambar', 'vainilla', 'especiado', 'cuero', 'tabaco', 'oud', 'incienso', 'dulce', 'ahumad', 'invernal', 'cremoso', 'profundo', 'opulento'],
+  calor: ['fresco', 'citrico', 'acuatico', 'tropical', 'veraniego', 'luminoso', 'verde', 'marino', 'frutal', 'primavera', 'verano'],
+  frio: ['calido', 'ambar', 'especiado', 'cuero', 'tabaco', 'oud', 'incienso', 'dulce', 'ahumad', 'invernal', 'cremoso', 'profundo', 'opulento', 'invierno', 'otono'],
+  'todo-el-ano': ['todo el ano', 'cualquier estacion', 'todo terreno', 'versatil', 'atemporal'],
 };
 
 const STYLE_WEIGHT = 4;
@@ -180,9 +182,12 @@ function countMatches(text: string, keywords: string[] | undefined): number {
   return count;
 }
 
-function perfumeText(perfume: Perfume): string {
-  const notes = [...perfume.notes.top, ...perfume.notes.heart, ...perfume.notes.base];
-  return normalize(`${perfume.olfactoryFamily} ${perfume.description} ${notes.join(' ')}`);
+function primaryText(perfume: Perfume): string {
+  return normalize(`${perfume.olfactoryFamily} ${perfume.description}`);
+}
+
+function notesText(perfume: Perfume): string {
+  return normalize([...perfume.notes.top, ...perfume.notes.heart, ...perfume.notes.base].join(' '));
 }
 
 function primarySize(perfume: Perfume) {
@@ -212,13 +217,19 @@ function profileScore(perfume: Perfume, profile: PerfumeProfile, answers: QuizAn
   return score;
 }
 
+// El estilo se puntúa también por las notas, pero con la mitad de peso que
+// la familia y la descripción: que una nota contenga vainilla o coco no
+// convierte al perfume en "dulce y avainillado". Ocasión, intensidad y clima
+// solo miran familia + descripción.
 function keywordScore(perfume: Perfume, answers: QuizAnswers): number {
-  const text = perfumeText(perfume);
+  const primary = primaryText(perfume);
+  const notes = notesText(perfume);
   return (
-    countMatches(text, STYLE_KEYWORDS[answers.style]) * STYLE_WEIGHT +
-    countMatches(text, OCCASION_KEYWORDS[answers.occasion]) * OCCASION_WEIGHT +
-    countMatches(text, INTENSITY_KEYWORDS[answers.intensity]) * INTENSITY_WEIGHT +
-    countMatches(text, WEATHER_KEYWORDS[answers.weather]) * WEATHER_WEIGHT
+    countMatches(primary, STYLE_KEYWORDS[answers.style]) * STYLE_WEIGHT +
+    countMatches(notes, STYLE_KEYWORDS[answers.style]) * Math.ceil(STYLE_WEIGHT / 2) +
+    countMatches(primary, OCCASION_KEYWORDS[answers.occasion]) * OCCASION_WEIGHT +
+    countMatches(primary, INTENSITY_KEYWORDS[answers.intensity]) * INTENSITY_WEIGHT +
+    countMatches(primary, WEATHER_KEYWORDS[answers.weather]) * WEATHER_WEIGHT
   );
 }
 
