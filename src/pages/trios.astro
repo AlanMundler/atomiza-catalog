@@ -1,0 +1,621 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Chip from '@/components/ui/Chip.astro';
+import { formatPrice } from '@/utils/formatters';
+import { getStockStatus, getStockLabel } from '@/utils/stock';
+import { TRIO_COUNT, TRIO_DISCOUNT } from '@/utils/trio';
+import { assetUrl } from '@/site.config';
+import type { Perfume } from '@/data/types';
+import perfumesData from '@/data/perfumes.json';
+
+const perfumes = perfumesData.perfumes as Perfume[];
+const available = perfumes.filter((p) => {
+  const size = p.sizes.find((s) => s.ml === 5) || p.sizes[0];
+  return size && size.stock > 0;
+});
+
+function getSize(p: Perfume) {
+  return p.sizes.find((s) => s.ml === 5) || p.sizes[0];
+}
+---
+
+<Layout
+  title="Armá tu trío"
+  description={`Elegí ${TRIO_COUNT} decants de 5ml y ahorrá ${formatPrice(TRIO_DISCOUNT)} en tu pedido. Perfumes árabes de lujo para regalar o descubrir.`}
+>
+  <section class="trio-hero" aria-labelledby="trio-title">
+    <div class="container">
+      <h1 id="trio-title" class="trio-title">Armá tu trío</h1>
+      <p class="trio-subtitle">
+        Elegí {TRIO_COUNT} decants de 5ml y ahorrá <strong>{formatPrice(TRIO_DISCOUNT)}</strong> en tu pedido
+      </p>
+    </div>
+  </section>
+
+  <section class="trio-steps" aria-label="Cómo funciona">
+    <div class="container trio-steps-grid">
+      <div class="trio-step">
+        <span class="trio-step-number">1</span>
+        <p class="trio-step-text">Elegí tus {TRIO_COUNT} perfumes de la lista</p>
+      </div>
+      <div class="trio-step">
+        <span class="trio-step-number">2</span>
+        <p class="trio-step-text">Confirmá tu trío por WhatsApp</p>
+      </div>
+      <div class="trio-step">
+        <span class="trio-step-number">3</span>
+        <p class="trio-step-text">Coordinamos el envío o punto de entrega</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="trio-section" aria-labelledby="trio-grid-title">
+    <div class="container">
+      <h2 id="trio-grid-title" class="trio-grid-title">Elegí tu trío</h2>
+
+      {available.length < TRIO_COUNT ? (
+        <p class="trio-empty">Por ahora hay menos de {TRIO_COUNT} perfumes con stock. Volvé pronto.</p>
+      ) : (
+        <div class="trio-grid">
+          {available.map((p) => {
+            const size = getSize(p)!;
+            const stockStatus = getStockStatus(size);
+            const isVector = (p.images[0]?.src || '').toLowerCase().endsWith('.svg');
+            return (
+              <button
+                type="button"
+                class="trio-card"
+                data-trio-card
+                data-slug={p.slug}
+                data-brand={p.brand}
+                data-name={p.name}
+                data-price={size.price}
+                aria-pressed="false"
+                aria-label={`Seleccionar ${p.brand} ${p.name}, ${formatPrice(size.price)}`}
+              >
+                <span class="trio-card-image-wrapper">
+                  <img
+                    src={assetUrl(p.images[0]?.src)}
+                    alt={p.images[0]?.alt || `${p.brand} ${p.name}`}
+                    class={`trio-card-image${isVector ? ' trio-card-image--large' : ''}`}
+                    loading="lazy"
+                    width="400"
+                    height="400"
+                  />
+                  <span class="trio-card-check" aria-hidden="true">✓</span>
+                </span>
+                <span class="trio-card-info">
+                  <span class="trio-card-brand">{p.brand}</span>
+                  <span class="trio-card-name">{p.name}</span>
+                  <span class="trio-card-price">{formatPrice(size.price)}</span>
+                  <Chip variant={stockStatus}>{getStockLabel(stockStatus)}</Chip>
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  </section>
+
+  <aside class="trio-summary" aria-label="Resumen de tu trío">
+    <div class="container trio-summary-inner">
+      <div class="trio-summary-info">
+        <p class="trio-summary-count" data-trio-count>Elegiste 0 de 3</p>
+        <p class="trio-summary-list" data-trio-list hidden></p>
+        <p class="trio-summary-hint" data-trio-hint>Elegí 3 perfumes para armar tu trío</p>
+      </div>
+      <div class="trio-summary-price">
+        <strong class="trio-summary-total" data-trio-total hidden></strong>
+        <span class="trio-summary-breakdown" data-trio-breakdown hidden></span>
+      </div>
+      <div class="trio-summary-actions">
+        <button type="button" class="trio-clear" data-trio-clear hidden>Vaciar</button>
+        <a class="trio-cta" data-trio-cta href="" hidden>Confirmar por WhatsApp</a>
+      </div>
+    </div>
+  </aside>
+</Layout>
+
+<script>
+  import { bindOnce, onPageLoad } from '@/utils/view-transitions';
+  import { buildWhatsAppLink, formatPrice } from '@/utils/formatters';
+  import { site } from '@/site.config';
+  import { TRIO_COUNT, TRIO_DISCOUNT, buildTrioOrderText, computeTrioTotal } from '@/utils/trio';
+
+  interface Selected {
+    slug: string;
+    brand: string;
+    name: string;
+    price: number;
+  }
+
+  interface TrioCard {
+    el: HTMLButtonElement;
+    slug: string;
+    brand: string;
+    name: string;
+    price: number;
+  }
+
+  let selected: Selected[] = [];
+
+  function render() {
+    const cards = Array.from(document.querySelectorAll('[data-trio-card]')) as HTMLButtonElement[];
+    const countEl = document.querySelector('[data-trio-count]') as HTMLElement | null;
+    const listEl = document.querySelector('[data-trio-list]') as HTMLElement | null;
+    const hintEl = document.querySelector('[data-trio-hint]') as HTMLElement | null;
+    const subtotalEl = document.querySelector('[data-trio-breakdown]') as HTMLElement | null;
+    const totalEl = document.querySelector('[data-trio-total]') as HTMLElement | null;
+    const clearEl = document.querySelector('[data-trio-clear]') as HTMLElement | null;
+    const ctaEl = document.querySelector('[data-trio-cta]') as HTMLAnchorElement | null;
+
+    const count = selected.length;
+    if (countEl) countEl.textContent = `Elegiste ${count} de ${TRIO_COUNT}`;
+
+    if (listEl) {
+      listEl.hidden = count === 0;
+      listEl.textContent = selected.map((s) => s.name).join(' · ');
+    }
+
+    const prices = selected.map((s) => s.price);
+    const subtotal = prices.reduce((acc, p) => acc + p, 0);
+    const total = computeTrioTotal(prices);
+    const ready = total !== null;
+
+    if (subtotalEl) {
+      subtotalEl.hidden = !ready;
+      if (ready) subtotalEl.textContent = `Subtotal ${formatPrice(subtotal)} − ${formatPrice(TRIO_DISCOUNT)}`;
+    }
+    if (totalEl) {
+      totalEl.hidden = !ready;
+      if (ready) totalEl.textContent = `Total: ${formatPrice(total!)}`;
+    }
+    if (hintEl) {
+      hintEl.hidden = ready;
+      if (!ready) {
+        const missing = TRIO_COUNT - count;
+        hintEl.textContent = count === 0
+          ? `Elegí ${TRIO_COUNT} perfumes para armar tu trío`
+          : `Te faltan ${missing} ${missing === 1 ? 'perfume' : 'perfumes'}`;
+      }
+    }
+    if (clearEl) clearEl.hidden = count === 0;
+
+    if (ctaEl) {
+      ctaEl.hidden = !ready;
+      if (ready) {
+        const lines = selected.map((s) => ({ brand: s.brand, name: s.name, price: s.price }));
+        ctaEl.href = buildWhatsAppLink(site.whatsappNumber, buildTrioOrderText(lines, total!));
+      } else {
+        ctaEl.href = '';
+      }
+    }
+
+    cards.forEach((card) => {
+      const isSelected = selected.some((s) => s.slug === card.dataset.slug);
+      card.classList.toggle('trio-card--selected', isSelected);
+      card.setAttribute('aria-pressed', String(isSelected));
+      card.classList.toggle('trio-card--full', !isSelected && ready);
+    });
+  }
+
+  function makeCard(el: HTMLButtonElement): TrioCard {
+    return {
+      el,
+      slug: el.dataset.slug || '',
+      brand: el.dataset.brand || '',
+      name: el.dataset.name || '',
+      price: Number(el.dataset.price) || 0,
+    };
+  }
+
+  onPageLoad('trios', () => {
+    const cards = Array.from(document.querySelectorAll('[data-trio-card]')) as HTMLButtonElement[];
+    cards.forEach((card) => {
+      bindOnce(card, () => {
+        card.addEventListener('click', () => {
+          const item = makeCard(card);
+          const idx = selected.findIndex((s) => s.slug === item.slug);
+          if (idx !== -1) {
+            selected.splice(idx, 1);
+          } else if (selected.length < TRIO_COUNT) {
+            selected.push(item);
+          }
+          render();
+        });
+      });
+    });
+
+    const clearBtn = document.querySelector('[data-trio-clear]') as HTMLButtonElement | null;
+    if (clearBtn) {
+      bindOnce(clearBtn, () => {
+        clearBtn.addEventListener('click', () => {
+          selected = [];
+          render();
+        });
+      });
+    }
+
+    render();
+  });
+</script>
+
+<style>
+  .trio-hero {
+    padding: var(--spacing-stack-md) 0 var(--spacing-stack-sm);
+    text-align: center;
+  }
+
+  .trio-title {
+    font-family: var(--font-family);
+    font-size: var(--font-display-lg-size);
+    font-weight: var(--font-display-lg-weight);
+    line-height: var(--font-display-lg-line-height);
+    letter-spacing: var(--font-display-lg-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    margin: 0 0 12px;
+  }
+
+  @media (max-width: 640px) {
+    .trio-title {
+      font-size: 36px;
+    }
+  }
+
+  .trio-subtitle {
+    font-family: var(--font-family);
+    font-size: var(--font-body-lg-size);
+    font-weight: var(--font-body-lg-weight);
+    line-height: var(--font-body-lg-line-height);
+    letter-spacing: var(--font-body-lg-tracking);
+    color: var(--color-on-surface-variant);
+    margin: 0;
+  }
+
+  .trio-subtitle strong {
+    color: var(--color-primary);
+  }
+
+  .trio-steps {
+    padding: var(--spacing-stack-sm) 0;
+    border-top: var(--border-width) solid var(--color-outline-variant);
+    border-bottom: var(--border-width) solid var(--color-outline-variant);
+  }
+
+  .trio-steps-grid {
+    display: grid;
+    gap: var(--spacing-stack-md);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 768px) {
+    .trio-steps-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .trio-step {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .trio-step-number {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    color: var(--color-on-primary);
+    background-color: var(--color-primary);
+    border-radius: 50%;
+  }
+
+  .trio-step-text {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    font-weight: var(--font-body-md-weight);
+    line-height: var(--font-body-md-line-height);
+    color: var(--color-on-surface);
+    margin: 0;
+  }
+
+  .trio-section {
+    padding: var(--spacing-stack-md) 0 var(--spacing-stack-lg);
+  }
+
+  .trio-grid-title {
+    font-family: var(--font-family);
+    font-size: var(--font-headline-sm-size);
+    font-weight: var(--font-headline-sm-weight);
+    line-height: var(--font-headline-sm-line-height);
+    letter-spacing: var(--font-headline-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    margin: 0 0 var(--spacing-stack-sm);
+  }
+
+  .trio-empty {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    color: var(--color-on-surface-variant);
+    margin: 0;
+  }
+
+  .trio-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+  }
+
+  .trio-card {
+    display: block;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    text-align: left;
+    color: inherit;
+    background-color: var(--color-surface-container);
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    cursor: pointer;
+    transition: all var(--transition-duration) var(--transition-easing);
+  }
+
+  .trio-card:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 20px rgba(233, 193, 118, 0.15);
+    transform: translateY(-4px);
+  }
+
+  .trio-card:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .trio-card--selected {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 20px rgba(233, 193, 118, 0.25);
+  }
+
+  .trio-card--full {
+    opacity: 0.45;
+    pointer-events: none;
+  }
+
+  .trio-card-image-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    background-color: #ffffff;
+  }
+
+  .trio-card-image {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 13%;
+    object-fit: contain;
+    transition: transform 400ms var(--transition-easing);
+  }
+
+  .trio-card-image--large {
+    padding: 2%;
+    transform: scale(1.1);
+  }
+
+  .trio-card:hover .trio-card-image {
+    transform: scale(1.04);
+  }
+
+  .trio-card:hover .trio-card-image--large {
+    transform: scale(1.144);
+  }
+
+  .trio-card-check {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-family);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-on-primary);
+    background-color: var(--color-primary);
+    border-radius: 50%;
+    opacity: 0;
+    transform: scale(0.6);
+    transition: all var(--transition-duration) var(--transition-easing);
+    z-index: 1;
+  }
+
+  .trio-card--selected .trio-card-check {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .trio-card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px;
+  }
+
+  .trio-card-brand {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+  }
+
+  .trio-card-name {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    font-weight: var(--font-body-md-weight);
+    line-height: 1.3;
+    color: var(--color-on-surface);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .trio-card-price {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-primary);
+    margin-top: 4px;
+  }
+
+  .trio-summary {
+    position: sticky;
+    bottom: 0;
+    z-index: 60;
+    background-color: var(--color-background);
+    border-top: var(--border-width) solid var(--color-outline-variant);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+    padding: var(--spacing-stack-sm) 0;
+  }
+
+  .trio-summary-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .trio-summary-info {
+    flex: 1 1 220px;
+    min-width: 0;
+  }
+
+  .trio-summary-count {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    margin: 0;
+  }
+
+  .trio-summary-list {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    color: var(--color-on-surface-variant);
+    margin: 4px 0 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .trio-summary-hint {
+    font-family: var(--font-family);
+    font-size: var(--font-body-sm-size);
+    color: var(--color-on-surface-variant);
+    margin: 4px 0 0;
+  }
+
+  .trio-summary-price {
+    flex: 0 0 auto;
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+  }
+
+  .trio-summary-total {
+    font-family: var(--font-family);
+    font-size: var(--font-headline-sm-size);
+    font-weight: var(--font-headline-sm-weight);
+    letter-spacing: var(--font-headline-sm-tracking);
+    color: var(--color-primary);
+  }
+
+  .trio-summary-breakdown {
+    font-family: var(--font-family);
+    font-size: var(--font-body-sm-size);
+    color: var(--color-on-surface-variant);
+  }
+
+  .trio-summary-actions {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .trio-clear {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+    background: transparent;
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: color var(--transition-duration) var(--transition-easing);
+  }
+
+  .trio-clear:hover {
+    color: var(--color-primary);
+  }
+
+  .trio-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-primary);
+    background-color: var(--color-primary);
+    border: var(--border-width) solid var(--color-primary);
+    border-radius: var(--border-radius);
+    padding: 10px 20px;
+    height: 44px;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: all var(--transition-duration) var(--transition-easing);
+  }
+
+  .trio-cta:hover {
+    background-color: transparent;
+    color: var(--color-primary);
+  }
+
+  .trio-cta:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .trio-summary [hidden] {
+    display: none !important;
+  }
+</style>
