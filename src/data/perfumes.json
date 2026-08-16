@@ -6,8 +6,8 @@
       "brand": "Maison Alhambra",
       "name": "Luminous Sahara",
       "gender": "unisex",
-      "olfactoryFamily": "Cítrico Dulce Amaderado",
-      "description": "Inspirado en Althaïr de Parfums de Marly. Un cítrico dulce y envolvente: flor de azahar, cardamomo y canela que desembocan en una vainilla cremosa con almendras acarameladas y praliné sobre un fondo ambarado y almizclado.",
+      "olfactoryFamily": "Oriental Vainilla",
+      "description": "Inspirado en Althaïr de Parfums de Marly. Un cítrico dulce y envolvente: flor de azahar, cardamomo y canela que desembocan en una vainilla cremosa con almendras acarameladas y praliné sobre un fondo ambarado y almizclado. Goloso y envolvente, rinde mejor en invierno y de noche.",
       "notes": {
         "top": [
           "Flor de Azahar",
@@ -50,8 +50,8 @@
       "brand": "Maison Alhambra",
       "name": "Hercules",
       "gender": "masculino",
-      "olfactoryFamily": "Tabaco Amaderado",
-      "description": "Inspirado en Herod de Parfums de Marly. Hojas de tabaco, incienso y ládano sobre vainilla, cedro y vetiver, con un toque de canela. Un tabaco dulce y especiado que brilla en los días fríos.",
+      "olfactoryFamily": "Aromática Especiada",
+      "description": "Inspirado en Herod de Parfums de Marly. Hojas de tabaco, incienso y ládano sobre vainilla, cedro y vetiver, con un toque de canela. Un tabaco dulce y especiado que brilla en los días fríos: otoño e invierno y de noche es donde mejor funciona.",
       "notes": {
         "top": [
           "Canela",
@@ -93,8 +93,8 @@
       "brand": "Maison Alhambra",
       "name": "Dark Door Sport",
       "gender": "masculino",
-      "olfactoryFamily": "Cítrico Aromático",
-      "description": "Inspirado en Dior Homme Sport. Limón y pomelo con elemí y bergamota, corazón de jengibre y cedro sobre un fondo de romero, lavanda y sándalo. Fresco y aromático, elegante sin esfuerzo.",
+      "olfactoryFamily": "Amaderada Aromática",
+      "description": "Inspirado en Dior Homme Sport. Limón y pomelo con elemí y bergamota, corazón de jengibre y cedro sobre un fondo de romero, lavanda y sándalo. Fresco y aromático, elegante sin esfuerzo. Perfecto para el día, sobre todo en primavera y verano.",
       "notes": {
         "top": [
           "Limón",
@@ -135,8 +135,8 @@
       "brand": "Maison Alhambra",
       "name": "Jorge Di Profumo",
       "gender": "masculino",
-      "olfactoryFamily": "Aromático Acuático",
-      "description": "Inspirado en Acqua di Giò Profumo de Giorgio Armani. Bergamota y pimienta negra con lavanda, tabaco y geranio sobre un fondo de sándalo, vetiver y almizcle. Un clásico: fresco, especiado y atemporal.",
+      "olfactoryFamily": "Aromática",
+      "description": "Inspirado en Acqua di Giò Profumo de Giorgio Armani. Bergamota y pimienta negra con lavanda, tabaco y geranio sobre un fondo de sándalo, vetiver y almizcle. Un clásico: fresco, especiado y atemporal. Funciona de día y de noche; en primavera y otoño se luce.",
       "notes": {
         "top": [
           "Bergamota",
@@ -176,8 +176,8 @@
       "brand": "Maison Alhambra",
       "name": "Your Touch",
       "gender": "masculino",
-      "olfactoryFamily": "Cálido Especiado",
-      "description": "Inspirado en Stronger With You de Giorgio Armani. Cardamomo, pimienta rosa y menta que dan paso a canela, lavanda y un corazón frutal de sandía y piña, sobre castaña, vainilla y amberwood.",
+      "olfactoryFamily": "Oriental",
+      "description": "Inspirado en Stronger With You de Giorgio Armani. Cardamomo, pimienta rosa y menta que dan paso a canela, lavanda y un corazón frutal de sandía y piña, sobre castaña, vainilla y amberwood. Cálido y dulce, va mejor en otoño e invierno y de noche.",
       "notes": {
         "top": [
           "Cardamomo",
@@ -223,7 +223,7 @@
       "name": "Glacier Ultra",
       "gender": "masculino",
       "olfactoryFamily": "Cálido Especiado",
-      "description": "Inspirado en Ultra Male de Jean Paul Gaultier. Canela, pimienta y lima sobre lavanda y pachulí, con un fondo dulce de vainilla, ámbar y cedro. Potente, cálido, difícil de no oler.",
+      "description": "Inspirado en Ultra Male de Jean Paul Gaultier. Canela, pimienta y lima sobre lavanda y pachulí, con un fondo dulce de vainilla, ámbar y cedro. Potente, cálido, difícil de no oler: hecho para el invierno y las noches de salida.",
       "notes": {
         "top": [
           "Canela",
@@ -263,8 +263,8 @@
       "brand": "Maison Alhambra",
       "name": "Perseus Exclusif",
       "gender": "masculino",
-      "olfactoryFamily": "Almendrado Amaderado",
-      "description": "Inspirado en Pegasus Exclusif de Parfums de Marly. Almendra, cardamomo y heliotropo con lavanda, jazmín y geranio, sobre vainilla, gaiac, sándalo y ámbar gris. Dulce, avainillado y elegante, hecho para noches frías.",
+      "olfactoryFamily": "Amaderada Aromática",
+      "description": "Inspirado en Pegasus Exclusif de Parfums de Marly. Almendra, cardamomo y heliotropo con lavanda, jazmín y geranio, sobre vainilla, gaiac, sándalo y ámbar gris. Dulce, avainillado y elegante: hecho para las noches y el frío de otoño-invierno.",
       "notes": {
         "top": [
           "Cardamomo",
@@ -307,8 +307,8 @@
       "brand": "Maison Alhambra",
       "name": "Tonic Malt",
       "gender": "masculino",
-      "olfactoryFamily": "Aromático Cálido",
-      "description": "Inspirado en Le Male Elixir de Jean Paul Gaultier. Lavanda, menta y cardamomo con flor de azahar y esclarea, sobre haba tonka, benjuí y cacao. Aromático y dulce, con un secado a galletitas horneadas.",
+      "olfactoryFamily": "Oriental Fougère",
+      "description": "Inspirado en Le Male Elixir de Jean Paul Gaultier. Lavanda, menta y cardamomo con flor de azahar y esclarea, sobre haba tonka, benjuí y cacao. Aromático y dulce, con un secado a galletitas horneadas; para el frío y la noche.",
       "notes": {
         "top": [
           "Lavanda",
@@ -348,8 +348,8 @@
       "brand": "Maison Alhambra",
       "name": "Salvo Intense",
       "gender": "masculino",
-      "olfactoryFamily": "Fresco Especiado",
-      "description": "Inspirado en Sauvage Eau de Parfum de Dior. Bergamota con lavanda, pimienta de Sichuan y anís estrellado, sobre un fondo de ambroxan y vainilla. Fresco y especiado, con ese almizcle que se hace notar.",
+      "olfactoryFamily": "Aromática",
+      "description": "Inspirado en Sauvage Eau de Parfum de Dior. Bergamota con lavanda, pimienta de Sichuan y anís estrellado, sobre un fondo de ambroxan y vainilla. Fresco y especiado, con ese almizcle que se hace notar. Se banca el día y la noche en cualquier estación.",
       "notes": {
         "top": [
           "Bergamota"
@@ -388,19 +388,16 @@
       "name": "Glacier Bold",
       "gender": "masculino",
       "olfactoryFamily": "Coco Dulce",
-      "description": "Inspirado en Le Beau de Jean Paul Gaultier. Coco cremoso con haba tonka y bergamota, más fresco que el original. Dulce y tropical, ideal para el verano.",
+      "description": "Inspirado en Le Beau de Jean Paul Gaultier. Coco cremoso con haba tonka y bergamota, más fresco que el original. Dulce, tropical y fiestero: brilla en verano, de día o de noche.",
       "notes": {
         "top": [
-          "Coco",
           "Bergamota"
         ],
         "heart": [
-          "Coco",
-          "Haba Tonka"
+          "Coco"
         ],
         "base": [
-          "Haba Tonka",
-          "Almizcle"
+          "Haba Tonka"
         ]
       },
       "images": [
@@ -425,8 +422,8 @@
       "brand": "Maison Alhambra",
       "name": "Your Touch Intense",
       "gender": "masculino",
-      "olfactoryFamily": "Gourmand Dulce",
-      "description": "Inspirado en Stronger With You Intensely de Giorgio Armani. Pimienta rosa, violeta y enebro que dan paso a tófe y canela con lavanda y esclarea, sobre vainilla, haba tonka, ámbar y gamuza. Dulce y cálido, de los que se quedan toda la noche.",
+      "olfactoryFamily": "Oriental Vainilla",
+      "description": "Inspirado en Stronger With You Intensely de Giorgio Armani. Pimienta rosa, violeta y enebro que dan paso a tófe y canela con lavanda y esclarea, sobre vainilla, haba tonka, ámbar y gamuza. Dulce y cálido, de los que se quedan toda la noche: otoño, invierno y salidas nocturnas.",
       "notes": {
         "top": [
           "Pimienta Rosa",
@@ -468,8 +465,8 @@
       "brand": "Maison Alhambra",
       "name": "Yeah!",
       "gender": "masculino",
-      "olfactoryFamily": "Fresco Especiado",
-      "description": "Inspirado en Y Eau de Parfum de YSL. Manzana, jengibre y bergamota con salvia, bayas de enebro y geranio, sobre amberwood, haba tonka, cedro, vetiver e incienso. Azul, limpio y versátil; va con todo.",
+      "olfactoryFamily": "Aromática Frutal",
+      "description": "Inspirado en Y Eau de Parfum de YSL. Manzana, jengibre y bergamota con salvia, bayas de enebro y geranio, sobre amberwood, haba tonka, cedro, vetiver e incienso. Azul, limpio y versátil; va con todo: lo mismo de día que de noche, todo el año.",
       "notes": {
         "top": [
           "Manzana",
@@ -511,8 +508,8 @@
       "brand": "Maison Alhambra",
       "name": "Baroque Rouge 540",
       "gender": "femenino",
-      "olfactoryFamily": "Ámbar Floral",
-      "description": "Inspirado en Baccarat Rouge 540 de Maison Francis Kurkdjian. Azafrán y pera con mandarina, corazón de jazmín, ylang-ylang y azucena, sobre ámbar, cachemira y almizcle. Cálido y especiado, con estela poderosa.",
+      "olfactoryFamily": "Oriental",
+      "description": "Inspirado en Baccarat Rouge 540 de Maison Francis Kurkdjian. Azafrán y pera con mandarina, corazón de jazmín, ylang-ylang y azucena, sobre ámbar, cachemira y almizcle. Cálido y especiado, con estela poderosa: brilla de noche, sobre todo en otoño e invierno.",
       "notes": {
         "top": [
           "Azafrán",
@@ -553,18 +550,16 @@
       "name": "Glacier Bella",
       "gender": "femenino",
       "olfactoryFamily": "Pera Avainillada",
-      "description": "Inspirado en La Belle de Jean Paul Gaultier. Pera verde, vainilla y bergamota. Avainillada, atalcada, con un fondo especiado que la equilibra.",
+      "description": "Inspirado en La Belle de Jean Paul Gaultier. Pera verde, vainilla y bergamota. Avainillada, atalcada y golosa: se disfruta más en frío, tanto de día como de noche.",
       "notes": {
         "top": [
-          "Pera Verde",
           "Bergamota"
         ],
         "heart": [
-          "Vainilla"
+          "Pera Verde"
         ],
         "base": [
-          "Vainilla",
-          "Almizcle"
+          "Vainilla"
         ]
       },
       "images": [
@@ -589,8 +584,8 @@
       "brand": "Maison Alhambra",
       "name": "Delilah",
       "gender": "femenino",
-      "olfactoryFamily": "Rosa Floral Frutal",
-      "description": "Inspirado en Delina de Parfums de Marly. Ruibarbo y lichi con bergamota, corazón de rosa turca, peonía y azucena, sobre almizcle, cachemira y vainilla. Un floral frutal que no pasa desapercibido.",
+      "olfactoryFamily": "Floral Frutal",
+      "description": "Inspirado en Delina de Parfums de Marly. Ruibarbo y lichi con bergamota, corazón de rosa turca, peonía y azucena, sobre almizcle, cachemira y vainilla. Un floral frutal que no pasa desapercibido; para el día en primavera y verano.",
       "notes": {
         "top": [
           "Ruibarbo",
@@ -630,8 +625,8 @@
       "brand": "Lattafa Perfumes",
       "name": "Confidential Private Gold",
       "gender": "unisex",
-      "olfactoryFamily": "Frutal Dulce",
-      "description": "Inspirado en Kirkè de Tiziana Terenzi y Erba Pura de Xerjoff. Durazno, maracuyá, pera y frambuesa con muguete, sobre una base almizclada, avainillada y amaderada. El durazno es el protagonista: frutal, dulce y radiante, pensado para el verano.",
+      "olfactoryFamily": "Chipre Frutal",
+      "description": "Inspirado en Kirkè de Tiziana Terenzi y Erba Pura de Xerjoff. Durazno, maracuyá, pera y frambuesa con muguete, sobre una base almizclada, avainillada y amaderada. El durazno es el protagonista: frutal, dulce y radiante, pensado para el verano y el día.",
       "notes": {
         "top": [
           "Durazno",
@@ -673,8 +668,8 @@
       "brand": "Lattafa Perfumes",
       "name": "Ameer Al Oudh Intense Oud",
       "gender": "masculino",
-      "olfactoryFamily": "Oud Avainillado",
-      "description": "Comparado con By the Fireplace de Maison Margiela. Notas amaderadas y oud con azúcar y vainilla, sobre un fondo de oud, sándalo y notas herbales. Dulce, ahumado; de los que se quedan días en la ropa.",
+      "olfactoryFamily": "Oriental",
+      "description": "Comparado con By the Fireplace de Maison Margiela. Notas amaderadas y oud con azúcar y vainilla, sobre un fondo de oud, sándalo y notas herbales. Dulce, ahumado; de los que se quedan días en la ropa. Mejor de noche y en otoño-invierno.",
       "notes": {
         "top": [
           "Notas Amaderadas",
@@ -754,9 +749,9 @@
       "slug": "rouat-ajial",
       "brand": "Lattafa Perfumes",
       "name": "Rouat Ajial",
-      "gender": "masculino",
+      "gender": "unisex",
       "olfactoryFamily": "Especiado Amaderado",
-      "description": "Un aromático-amaderado árabe, elegante. Abre fresco con lavanda, bergamota y vainilla, gira a un corazón floral y especiado de jazmín, nuez moscada y ylang-ylang, y cierra terroso con pachulí, ámbar y cedro.",
+      "description": "Un aromático-amaderado árabe, elegante. Abre fresco con lavanda, bergamota y vainilla, gira a un corazón floral y especiado de jazmín, nuez moscada, ylang-ylang y pimienta, y cierra terroso con pachulí, ámbar y cedro. Versátil: sirve de día y de noche, en cualquier estación.",
       "notes": {
         "top": [
           "Lavanda",
@@ -767,7 +762,6 @@
         "heart": [
           "Jazmín",
           "Nuez Moscada",
-          "Especias",
           "Ylang-ylang",
           "Pimienta"
         ],
@@ -799,8 +793,8 @@
       "brand": "RAVE",
       "name": "Now",
       "gender": "masculino",
-      "olfactoryFamily": "Frutal Tropical",
-      "description": "Inspirado en Qaed Al Fursan de Lattafa y en el ADN de Aventus de Creed. Piña, bergamota, manzana y grosellas negras con pachulí, abedul, jazmín y rosa, sobre almizcle, vainilla y ámbar gris. Piña jugosa y dulce, ideal para el calor.",
+      "olfactoryFamily": "Amaderada Aromática",
+      "description": "Inspirado en Qaed Al Fursan de Lattafa y en el ADN de Aventus de Creed. Piña, bergamota, manzana y grosellas negras con pachulí, abedul, jazmín y rosa, sobre almizcle, vainilla y ámbar gris. Piña jugosa y dulce, ideal para el calor: de día en primavera y verano.",
       "notes": {
         "top": [
           "Piña",
@@ -843,8 +837,8 @@
       "brand": "Lattafa Perfumes",
       "name": "Qaed Al Fursan Untamed",
       "gender": "masculino",
-      "olfactoryFamily": "Ámbar Cálido",
-      "description": "Inspirado en Eros Najim de Versace. Canela, cardamomo, mandarina y nuez moscada bañadas en caramelo, con lavanda, esclarea y geranio, sobre ámbar, cedro, incienso y ládano. Dulce, especiado y elegante, con buena duración.",
+      "olfactoryFamily": "Amaderada Especiada",
+      "description": "Inspirado en Eros Najim de Versace. Canela, cardamomo, mandarina y nuez moscada bañadas en caramelo, con lavanda, esclarea y geranio, sobre ámbar, cedro, incienso y ládano. Dulce, especiado y elegante, con buena duración; va mejor en frío y de noche.",
       "notes": {
         "top": [
           "Canela",
@@ -890,7 +884,7 @@
       "name": "Liam",
       "gender": "unisex",
       "olfactoryFamily": "Amaderado Especiado",
-      "description": "Inspirado en Gris Charnel de BDK Parfums. Cardamomo, té negro e higo con iris, vetiver y ládano, sobre sándalo, vainilla, haba tonka y pachulí. Cremoso y sofisticado; huele mucho más caro de lo que es.",
+      "description": "Inspirado en Gris Charnel de BDK Parfums. Cardamomo, té negro e higo con iris, vetiver y ládano, sobre sándalo, vainilla, haba tonka y pachulí. Cremoso y sofisticado; huele mucho más caro de lo que es. Todo terreno: de día y de noche, con un extra en otoño-invierno.",
       "notes": {
         "top": [
           "Cardamomo",
@@ -931,8 +925,8 @@
       "brand": "Lattafa Perfumes",
       "name": "24 Carat White Gold",
       "gender": "masculino",
-      "olfactoryFamily": "Cítrico Aromático",
-      "description": "Bergamota y flor de azahar con lavanda, geranio, pimienta rosa y nuez moscada, sobre vetiver, oud y haba tonka. Aromático, amaderado y almizclado, con aire de lujo.",
+      "olfactoryFamily": "Oriental",
+      "description": "Bergamota y flor de azahar con lavanda, geranio, pimienta rosa y nuez moscada, sobre vetiver, oud y haba tonka. Aromático, amaderado y almizclado, con aire de lujo. Va de día o de noche; se disfruta más en otoño.",
       "notes": {
         "top": [
           "Bergamota",
@@ -972,21 +966,20 @@
       "brand": "Lattafa Perfumes",
       "name": "Hayaati",
       "gender": "masculino",
-      "olfactoryFamily": "Frutal Atalcado",
-      "description": "ADN de Invictus de Paco Rabanne: manzana, bergamota y canela con notas amaderadas, sobre almizcle y vainilla. Frutal y dulce, fácil de gustar, de esos que te llenan de cumplidos.",
+      "olfactoryFamily": "Amaderada Aromática",
+      "description": "ADN de Invictus de Paco Rabanne: manzana y bergamota con un corazón de canela y notas amaderadas, sobre almizcle y vainilla. Frutal y dulce, fácil de gustar, de esos que te llenan de cumplidos: sirve de día y de noche, todo el año.",
       "notes": {
         "top": [
           "Manzana",
-          "Bergamota",
-          "Canela"
+          "Bergamota"
         ],
         "heart": [
-          "Almizcle",
-          "Vainilla"
+          "Canela",
+          "Notas Amaderadas"
         ],
         "base": [
-          "Vainilla",
-          "Notas Amaderadas"
+          "Almizcle",
+          "Vainilla"
         ]
       },
       "images": [
@@ -1011,8 +1004,8 @@
       "brand": "Lattafa Perfumes",
       "name": "Hayaati Al Maleky",
       "gender": "masculino",
-      "olfactoryFamily": "Ámbar Especiado",
-      "description": "Inspirado en Phantom de Paco Rabanne. Pimienta rosa, bergamota, jengibre y nuez moscada con cedro, incienso y ládano, sobre almizcle y ámbar gris. Dulce y especiado, de gran presencia.",
+      "olfactoryFamily": "Oriental Especiada",
+      "description": "Inspirado en Phantom de Paco Rabanne. Pimienta rosa, bergamota, jengibre y nuez moscada con cedro, incienso y ládano, sobre almizcle y ámbar gris. Dulce y especiado, de gran presencia; para la noche y el frío.",
       "notes": {
         "top": [
           "Pimienta Rosa",
@@ -1054,8 +1047,8 @@
       "brand": "Lattafa Perfumes",
       "name": "Opulent Dubai",
       "gender": "unisex",
-      "olfactoryFamily": "Frutal Tropical",
-      "description": "Inspirado en God of Fire de Stéphane Humbert Lucas 777. Mango jugoso y dulce con toronja, limón y jengibre, sobre jazmín, cedro y violeta, con un fondo amaderado y ambarado. Tropical, hecho para el calor.",
+      "olfactoryFamily": "Oriental Floral",
+      "description": "Inspirado en God of Fire de Stéphane Humbert Lucas 777. Mango jugoso y dulce con toronja, limón y jengibre, sobre jazmín, cedro y violeta, con un fondo amaderado y ambarado. Tropical, hecho para el calor: de día, en primavera y verano.",
       "notes": {
         "top": [
           "Mango",
@@ -1097,8 +1090,8 @@
       "brand": "Lattafa Perfumes",
       "name": "Mayar",
       "gender": "femenino",
-      "olfactoryFamily": "Rosa Frutal",
-      "description": "Inspirado en Angel Nova de Mugler. Lichi y frambuesa chispeantes con hoja de violeta, sobre rosa, peonía y jazmín, con un fondo almizclado y avainillado. Dulce, juvenil y luminoso.",
+      "olfactoryFamily": "Floral Frutal",
+      "description": "Inspirado en Angel Nova de Mugler. Lichi y frambuesa chispeantes con hoja de violeta, sobre rosa, peonía y jazmín, con un fondo almizclado y avainillado. Dulce, juvenil y luminoso; perfecto para el día en primavera y verano.",
       "notes": {
         "top": [
           "Lichi",
@@ -1137,8 +1130,8 @@
       "brand": "Lattafa Perfumes",
       "name": "Angham",
       "gender": "femenino",
-      "olfactoryFamily": "Gourmand Avainillado",
-      "description": "Inspirado en Burberry Goddess. Vainilla elegante y lavanda con jengibre, mandarina y pimienta rosa, corazón de praliné, cacao y jazmín, sobre una base ambarada y almizclada. Dulce pero sobria, de las que huelen a perfume caro.",
+      "olfactoryFamily": "Oriental Vainilla",
+      "description": "Inspirado en Burberry Goddess. Vainilla elegante y lavanda con jengibre, mandarina y pimienta rosa, corazón de praliné, cacao y jazmín, sobre una base ambarada y almizclada. Dulce pero sobria, de las que huelen a perfume caro; se disfruta más en frío, de día y de noche.",
       "notes": {
         "top": [
           "Jengibre",
@@ -1148,7 +1141,7 @@
         "heart": [
           "Lavanda",
           "Praliné",
-          "Vaina de Cacao",
+          "Cacao",
           "Jazmín"
         ],
         "base": [
@@ -1179,8 +1172,8 @@
       "brand": "Lattafa Perfumes",
       "name": "Bade'e Al Oud Sublime",
       "gender": "femenino",
-      "olfactoryFamily": "Frutal Fresco",
-      "description": "Inspirado en Eden Juicy Apple de Kayali. Manzana verde jugosa y lichi con rosa, corazón de ciruela y jazmín, sobre musgo, vainilla y pachulí. Frutal, fresco y poco empalagoso, ideal para el verano.",
+      "olfactoryFamily": "Amaderada Aromática",
+      "description": "Inspirado en Eden Juicy Apple de Kayali. Manzana verde jugosa y lichi con rosa, corazón de ciruela y jazmín, sobre musgo, vainilla y pachulí. Frutal, fresco y poco empalagoso, ideal para el verano y el día.",
       "notes": {
         "top": [
           "Manzana",
@@ -1219,23 +1212,19 @@
       "brand": "Lattafa Perfumes",
       "name": "Hayaati Florence",
       "gender": "femenino",
-      "olfactoryFamily": "Cítrico Floral",
-      "description": "Lichi, pomelo rosado y bayas rojas con rosa, durazno y cedro, sobre vainilla, praliné y ámbar. Chispeante en la salida, dulce y floral al secado; ideal para el día.",
+      "olfactoryFamily": "Floral Frutal Gourmand",
+      "description": "Inspirado en Very Good Girl de Carolina Herrera. Salida chispeante de cítricos y toronja rosada, un corazón dulce y floral, y un fondo almizclado que la deja fresca y limpia. Juvenil y luminoso: de día, ideal en primavera y verano.",
       "notes": {
         "top": [
-          "Lichi",
-          "Pomelo Rosado",
-          "Bayas Rojas"
+          "Cítricos",
+          "Toronja (Pomelo) Rosada"
         ],
         "heart": [
-          "Rosa",
-          "Durazno",
-          "Cedro"
+          "Notas Florales",
+          "Notas Dulces"
         ],
         "base": [
-          "Vainilla",
-          "Praliné",
-          "Ámbar"
+          "Almizcle"
         ]
       },
       "images": [
@@ -1260,8 +1249,8 @@
       "brand": "Rasasi",
       "name": "Hawas Ice",
       "gender": "masculino",
-      "olfactoryFamily": "Frutal Acuático",
-      "description": "ADN de Invictus de Paco Rabanne con un twist helado: manzana fresca, ciruela dulce y anís estrellado con notas mentoladas, sobre almizcle, ámbar y musgo. Fresco y dulce a la vez, potente pero usable.",
+      "olfactoryFamily": "Aromática",
+      "description": "ADN de Invictus de Paco Rabanne con un twist helado: manzana fresca, ciruela dulce y anís estrellado con notas mentoladas, sobre almizcle, ámbar y musgo. Fresco y dulce a la vez, potente pero usable; de día en primavera y verano, aunque aguanta también la noche.",
       "notes": {
         "top": [
           "Manzana",

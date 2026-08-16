@@ -19,7 +19,7 @@ export const site = {
   basePath: import.meta.env.BASE_URL,
   // Incrementar cuando cambie el catálogo publicado para invalidar la
   // caché local `perfumes-data` en los navegadores de los visitantes.
-  dataVersion: '2',
+  dataVersion: '3',
   instagramHandle: 'atomiza.cba',
   instagramUrl: 'https://instagram.com/atomiza.cba',
   whatsappNumber: '5493472559307',
