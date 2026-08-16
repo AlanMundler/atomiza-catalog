@@ -23,10 +23,10 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
     <div class="container">
       <h1 class="hero-title">{site.tagline}</h1>
       <div class="hero-cta">
-        <a href={`${BASE}quiz/`} class="btn btn--secondary btn--lg">Descubrí tu perfume</a>
-        <a href={`${BASE}catalogo/`} class="btn btn--primary btn--lg">Ver catálogo</a>
-        <a href={`${BASE}trios/`} class="btn btn--secondary btn--lg">Elegí 3. Pagá menos.</a>
-        <a href={whatsappLink} target="_blank" rel="noopener noreferrer" class="btn btn--ghost btn--lg">Consultar por WhatsApp</a>
+        <a href={`${BASE}quiz/`} class="btn btn--secondary btn--md">Descubrí tu perfume</a>
+        <a href={`${BASE}catalogo/`} class="btn btn--primary btn--md">Ver catálogo</a>
+        <a href={`${BASE}trios/`} class="btn btn--secondary btn--md">Elegí 3. Pagá menos.</a>
+        <a href={whatsappLink} target="_blank" rel="noopener noreferrer" class="btn btn--ghost btn--md">Consultar por WhatsApp</a>
       </div>
     </div>
   </section>
@@ -181,18 +181,19 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 96px 0 64px;
+    padding: 16px 0 24px;
   }
 
   .hero-title {
-    font-family: var(--font-family);
-    font-size: var(--font-display-lg-size);
-    font-weight: var(--font-display-lg-weight);
-    line-height: var(--font-display-lg-line-height);
-    letter-spacing: var(--font-display-lg-tracking);
-    text-transform: uppercase;
-    color: var(--color-on-surface);
-    margin: 0 0 40px;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
   }
 
   .hero-cta {
@@ -200,10 +201,10 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
   }
 
-  @media (max-width: 640px) {
+  @media (max-width: 1024px) {
     .hero {
       padding: 24px 0 14px;
     }
