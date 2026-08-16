@@ -133,8 +133,3 @@ export function getCartItemCount(): number {
   const cart = getStoredCart();
   return cart.items.reduce((sum, item) => sum + item.quantity, 0);
 }
-
-export function getCartSubtotal(): number {
-  const cart = getStoredCart();
-  return cart.items.reduce((sum, item) => sum + item.size.price * item.quantity, 0);
-}

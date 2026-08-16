@@ -1,5 +1,5 @@
 ﻿import { describe, it, expect } from 'vitest';
-import { formatPrice, generateOrderText, escapeHtml } from '@/utils/formatters';
+import { formatPrice, generateOrderText, escapeHtml, resolveCartItems } from '@/utils/formatters';
 import type { CartItem, Perfume } from '@/data/types';
 
 describe('formatters', () => {
@@ -66,6 +66,143 @@ describe('formatters', () => {
       const result = generateOrderText([], perfumesMap, 'Test', 'Test', 'whatsapp');
       expect(result).toContain('Enviar por WhatsApp a ΛTOMIZΛ');
       expect(result).not.toContain('@atomiza.cba');
+    });
+  });
+
+  describe('resolveCartItems', () => {
+    const perfume: Perfume = {
+      id: 'tobacco-vanille',
+      slug: 'tobacco-vanille',
+      brand: 'Tom Ford',
+      name: 'Tobacco Vanille',
+      gender: 'unisex',
+      olfactoryFamily: 'Amaderada Especiada',
+      description: 'Rich, warm, iconic...',
+      notes: { top: [], heart: [], base: [] },
+      images: [],
+      sizes: [
+        { ml: 2, price: 15000, stock: 5 },
+        { ml: 5, price: 32000, stock: 2 }
+      ],
+      isBoutiqueExclusive: false,
+      featured: true
+    };
+
+    const perfumesMap = new Map([['tobacco-vanille', perfume]]);
+
+    it('uses the live price and stock over a stale snapshot', () => {
+      const items: CartItem[] = [
+        { perfumeId: 'tobacco-vanille', size: { ml: 5, price: 1, stock: 99 }, quantity: 1 }
+      ];
+      const [resolved] = resolveCartItems(items, perfumesMap);
+      expect(resolved.available).toBe(true);
+      expect(resolved.size.price).toBe(32000);
+      expect(resolved.size.stock).toBe(2);
+    });
+
+    it('clamps quantity to the live stock', () => {
+      const items: CartItem[] = [
+        { perfumeId: 'tobacco-vanille', size: { ml: 5, price: 32000, stock: 2 }, quantity: 7 }
+      ];
+      const [resolved] = resolveCartItems(items, perfumesMap);
+      expect(resolved.quantity).toBe(2);
+      expect(resolved.requestedQuantity).toBe(7);
+    });
+
+    it('marks out-of-stock perfumes as unavailable', () => {
+      const outOfStock: Perfume = {
+        ...perfume,
+        sizes: [{ ml: 5, price: 32000, stock: 0 }]
+      };
+      const map = new Map([['tobacco-vanille', outOfStock]]);
+      const items: CartItem[] = [
+        { perfumeId: 'tobacco-vanille', size: { ml: 5, price: 32000, stock: 0 }, quantity: 1 }
+      ];
+      const [resolved] = resolveCartItems(items, map);
+      expect(resolved.available).toBe(false);
+      expect(resolved.quantity).toBe(0);
+    });
+
+    it('marks unknown perfumes as unavailable keeping the snapshot size', () => {
+      const items: CartItem[] = [
+        { perfumeId: 'no-existe', size: { ml: 5, price: 6000, stock: 10 }, quantity: 1 }
+      ];
+      const [resolved] = resolveCartItems(items, perfumesMap);
+      expect(resolved.perfume).toBeNull();
+      expect(resolved.available).toBe(false);
+      expect(resolved.size.ml).toBe(5);
+    });
+
+    it('falls back to the primary 5ml size when the requested ml does not exist', () => {
+      const items = [
+        { perfumeId: 'tobacco-vanille', size: { ml: 99, price: 1, stock: 1 }, quantity: 1 }
+      ] as unknown as CartItem[];
+      const [resolved] = resolveCartItems(items, perfumesMap);
+      expect(resolved.available).toBe(true);
+      expect(resolved.size.ml).toBe(5);
+      expect(resolved.size.price).toBe(32000);
+    });
+
+    it('normalizes invalid quantities to 1', () => {
+      const items: CartItem[] = [
+        { perfumeId: 'tobacco-vanille', size: { ml: 5, price: 32000, stock: 2 }, quantity: 0 },
+        { perfumeId: 'tobacco-vanille', size: { ml: 5, price: 32000, stock: 2 }, quantity: NaN }
+      ];
+      const resolved = resolveCartItems(items, perfumesMap);
+      expect(resolved[0].requestedQuantity).toBe(1);
+      expect(resolved[1].requestedQuantity).toBe(1);
+    });
+  });
+
+  describe('generateOrderText (out-of-stock handling)', () => {
+    const inStock: Perfume = {
+      id: 'tobacco-vanille',
+      slug: 'tobacco-vanille',
+      brand: 'Tom Ford',
+      name: 'Tobacco Vanille',
+      gender: 'unisex',
+      olfactoryFamily: 'Amaderada Especiada',
+      description: 'Rich, warm, iconic...',
+      notes: { top: [], heart: [], base: [] },
+      images: [],
+      sizes: [{ ml: 5, price: 32000, stock: 2 }],
+      isBoutiqueExclusive: false,
+      featured: true
+    };
+
+    const outOfStock: Perfume = {
+      ...inStock,
+      id: 'hawas-black',
+      slug: 'hawas-black',
+      brand: 'Rasasi',
+      name: 'Hawas Black',
+      sizes: [{ ml: 5, price: 10000, stock: 0 }]
+    };
+
+    const perfumesMap = new Map([
+      ['tobacco-vanille', inStock],
+      ['hawas-black', outOfStock]
+    ]);
+
+    it('excludes out-of-stock items from the detail and the total', () => {
+      const items: CartItem[] = [
+        { perfumeId: 'tobacco-vanille', size: { ml: 5, price: 32000, stock: 2 }, quantity: 1 },
+        { perfumeId: 'hawas-black', size: { ml: 5, price: 10000, stock: 0 }, quantity: 1 }
+      ];
+      const result = generateOrderText(items, perfumesMap, 'Test', 'Test');
+      expect(result).toContain('• Tom Ford - Tobacco Vanille (5ml) x1 — $32.000');
+      expect(result).not.toContain('Hawas Black');
+      expect(result).toContain('💰 TOTAL: $32.000');
+      expect(result).toContain('⚠️ Un perfume quedó sin stock y no se incluyó.');
+    });
+
+    it('clamps quantity to live stock in the order text', () => {
+      const items: CartItem[] = [
+        { perfumeId: 'tobacco-vanille', size: { ml: 5, price: 32000, stock: 2 }, quantity: 5 }
+      ];
+      const result = generateOrderText(items, perfumesMap, 'Test', 'Test');
+      expect(result).toContain('x2 — $64.000');
+      expect(result).toContain('💰 TOTAL: $64.000');
     });
   });
 

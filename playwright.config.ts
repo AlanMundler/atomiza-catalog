@@ -12,16 +12,22 @@ export default defineConfig({
   use: {
     baseURL: `http://localhost:4321${BASE_PATH}`,
     trace: 'on-first-retry',
-    permissions: ['clipboard-read', 'clipboard-write'],
   },
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        // WebKit no soporta el permiso `clipboard-write`; se otorga solo en Chromium
+        permissions: ['clipboard-read', 'clipboard-write'],
+      },
     },
     {
       name: 'mobile-chrome',
-      use: { ...devices['Pixel 5'] },
+      use: {
+        ...devices['Pixel 5'],
+        permissions: ['clipboard-read', 'clipboard-write'],
+      },
     },
     {
       name: 'mobile-safari',

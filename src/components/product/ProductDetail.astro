@@ -12,12 +12,14 @@ interface Props {
 const { perfume } = Astro.props;
 const selectedSize = perfume.sizes.find(s => s.ml === 5) || perfume.sizes[0];
 const available = isSizeAvailable(selectedSize);
+// Las imágenes vectoriales (SVG) se muestran a mayor tamaño que las fotos
+const largeImage = (perfume.images[0]?.src || '').toLowerCase().endsWith('.svg');
 ---
 
 <article class="product-detail" data-perfume-id={perfume.id}>
   <div class="product-detail-grid">
     <div class="product-detail-gallery">
-      <ImageGallery images={perfume.images} alt={`${perfume.brand} ${perfume.name}`} large={perfume.slug === 'rouat-ajial'} />
+      <ImageGallery images={perfume.images} alt={`${perfume.brand} ${perfume.name}`} large={largeImage} />
     </div>
 
     <div class="product-detail-info">

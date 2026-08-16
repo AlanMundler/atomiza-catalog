@@ -27,12 +27,12 @@ import Drawer from '@/components/ui/Drawer.astro';
     addToCart,
     removeFromCart,
     updateCartItemQuantity,
-    clearCart,
-    getCartSubtotal
+    clearCart
   } from '@/utils/cart';
-  import { formatPrice, escapeHtml } from '@/utils/formatters';
+  import { formatPrice, escapeHtml, resolveCartItems } from '@/utils/formatters';
+  import type { ResolvedCartItem } from '@/utils/formatters';
+  import type { Perfume } from '@/data/types';
   import { getPerfumesMap } from '@/utils/perfumes-client';
-  import type { CartItem as CartItemType } from '@/data/types';
   import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
   import { assetUrl } from '@/site.config';
 
@@ -63,12 +63,18 @@ import Drawer from '@/components/ui/Drawer.astro';
     // Solo se descarga el catálogo cuando hay items (evita el fetch en cada
     // página para visitantes con el carrito vacío).
     perfumesMap = await getPerfumesMap();
-    const itemsHtml = cart.items.map(itemHtml).join('');
-    const subtotal = getCartSubtotal();
+    const resolved = resolveCartItems(cart.items, perfumesMap);
+    const unavailableCount = resolved.filter((r) => !r.available).length;
+    // El subtotal SIEMPRE se calcula contra el catálogo vivo (igual que el
+    // mensaje de pedido), nunca con el precio snapshot del carrito.
+    const subtotal = resolved.reduce(
+      (sum, r) => sum + (r.available ? r.size.price * r.quantity : 0),
+      0
+    );
 
     content.innerHTML = `
       <ul class="cart-items" role="list" aria-label="Artículos en el carrito">
-        ${itemsHtml}
+        ${resolved.map(itemHtml).join('')}
       </ul>
       <div class="order-summary" role="region" aria-label="Resumen del pedido">
         <div class="order-summary-line">
@@ -79,6 +85,11 @@ import Drawer from '@/components/ui/Drawer.astro';
           <span class="order-summary-label">Total estimado</span>
           <span class="order-summary-value">${formatPrice(subtotal)}</span>
         </div>
+        ${
+          unavailableCount > 0
+            ? `<p class="order-summary-note">${unavailableCount === 1 ? 'Un perfume quedó sin stock y no se incluye en el total' : `${unavailableCount} perfumes quedaron sin stock y no se incluyen en el total`}</p>`
+            : ''
+        }
         <p class="order-summary-note">El total final se confirma al coordinar el envío</p>
         <button type="button" class="btn btn--primary btn--lg order-summary-btn" data-finalize-order>
           Finalizar pedido
@@ -87,17 +98,19 @@ import Drawer from '@/components/ui/Drawer.astro';
     `;
   }
 
-  function itemHtml(item: CartItemType): string {
-    const perfume = perfumesMap.get(item.perfumeId) || {};
+  function itemHtml(item: ResolvedCartItem): string {
+    const perfume = item.perfume || ({} as Perfume);
     const brand = perfume.brand || item.perfumeId;
     const name = perfume.name || item.perfumeId;
     const image = assetUrl(perfume.images?.[0]?.src);
     const size = item.size;
-    const lineTotal = size.price * item.quantity;
+    const available = item.available;
+    const displayQuantity = available ? item.quantity : item.requestedQuantity;
+    const lineTotal = available ? size.price * item.quantity : 0;
     const es = escapeHtml;
 
     return `
-      <li class="cart-item" data-perfume-id="${es(item.perfumeId)}" data-size-ml="${es(size.ml)}">
+      <li class="cart-item${available ? '' : ' cart-item--unavailable'}" data-perfume-id="${es(item.perfumeId)}" data-size-ml="${es(size.ml)}">
         <div class="cart-item-image">
           <img src="${es(image)}" alt="${es(brand)} ${es(name)}" loading="lazy" width="64" height="64" />
         </div>
@@ -107,17 +120,18 @@ import Drawer from '@/components/ui/Drawer.astro';
           <div class="cart-item-meta">
             <span class="cart-item-size">${es(size.ml)}ml</span>
             <span class="cart-item-price">${formatPrice(size.price)}</span>
+            ${!available ? '<span class="cart-item-status">SIN STOCK</span>' : ''}
           </div>
         </div>
         <div class="cart-item-controls">
           <div class="cart-item-quantity">
-            <button type="button" class="quantity-btn quantity-btn--decrease" data-action="decrease" aria-label="Disminuir cantidad" ${item.quantity <= 1 ? 'disabled' : ''}>
+            <button type="button" class="quantity-btn quantity-btn--decrease" data-action="decrease" aria-label="Disminuir cantidad" ${!available || displayQuantity <= 1 ? 'disabled' : ''}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <line x1="5" y1="12" x2="19" y2="12"></line>
               </svg>
             </button>
-            <span class="quantity-value" aria-live="polite">${es(item.quantity)}</span>
-            <button type="button" class="quantity-btn quantity-btn--increase" data-action="increase" aria-label="Aumentar cantidad" ${item.quantity >= size.stock ? 'disabled' : ''}>
+            <span class="quantity-value" aria-live="polite">${es(displayQuantity)}</span>
+            <button type="button" class="quantity-btn quantity-btn--increase" data-action="increase" aria-label="Aumentar cantidad" ${!available || displayQuantity >= size.stock ? 'disabled' : ''}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -125,7 +139,7 @@ import Drawer from '@/components/ui/Drawer.astro';
             </button>
           </div>
           <div class="cart-item-total">
-            <span class="cart-item-line-total">${formatPrice(lineTotal)}</span>
+            <span class="cart-item-line-total">${available ? formatPrice(lineTotal) : '—'}</span>
             <button type="button" class="cart-item-remove" data-action="remove" aria-label="Eliminar del carrito">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -420,6 +434,27 @@ import Drawer from '@/components/ui/Drawer.astro';
     font-size: 13px;
     font-weight: 500;
     color: var(--color-on-surface-variant);
+  }
+
+  .cart-item--unavailable {
+    opacity: 0.6;
+    background-color: var(--color-surface-container);
+  }
+
+  .cart-item--unavailable .cart-item-image {
+    background-color: var(--color-surface-container-highest);
+  }
+
+  .cart-item-status {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-status-out-of-stock);
+    border: var(--border-width) solid var(--color-outline-variant);
+    padding: 3px 10px;
+    border-radius: var(--border-radius);
   }
 
   .cart-item-controls {

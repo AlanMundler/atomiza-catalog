@@ -91,6 +91,7 @@ const { position = 'right', id, class: className = '' } = Astro.props;
         };
 
         const closeDrawer = () => {
+          const wasOpen = drawer.classList.contains('drawer--open');
           drawer.classList.remove('drawer--open');
           drawer.inert = true;
           drawer.setAttribute('aria-hidden', 'true');
@@ -98,6 +99,9 @@ const { position = 'right', id, class: className = '' } = Astro.props;
           resetBodyOverflowIfClosed();
           if (lastFocused && typeof lastFocused.focus === 'function') {
             lastFocused.focus();
+          }
+          if (wasOpen) {
+            el.dispatchEvent(new CustomEvent('drawer:close', { bubbles: true }));
           }
         };
 
@@ -249,8 +253,9 @@ const { position = 'right', id, class: className = '' } = Astro.props;
   }
 
   @media (max-width: 640px) {
+    /* Deja una franja visible del backdrop para cerrar tocando afuera */
     .drawer {
-      max-width: 100%;
+      max-width: 85vw;
     }
   }
 </style>

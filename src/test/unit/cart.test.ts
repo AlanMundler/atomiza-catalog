@@ -5,8 +5,7 @@ import {
   removeFromCart, 
   updateCartItemQuantity, 
   clearCart,
-  getCartItemCount,
-  getCartSubtotal
+  getCartItemCount
 } from '@/utils/cart';
 import type { CartItem, PerfumeSize } from '@/data/types';
 
@@ -218,22 +217,6 @@ describe('cart utilities', () => {
 
     it('returns 0 for empty cart', () => {
       expect(getCartItemCount()).toBe(0);
-    });
-  });
-
-  describe('getCartSubtotal', () => {
-    it('calculates correct subtotal', () => {
-      localStorage.setItem('atomiza-cart', JSON.stringify({
-        items: [mockCartItem1, mockCartItem2],
-        updatedAt: Date.now()
-      }));
-      
-      // 32000 * 1 + 15000 * 2 = 62000
-      expect(getCartSubtotal()).toBe(62000);
-    });
-
-    it('returns 0 for empty cart', () => {
-      expect(getCartSubtotal()).toBe(0);
     });
   });
 });

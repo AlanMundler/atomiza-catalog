@@ -8,6 +8,9 @@ async function answerCurrentQuestion(page: Page, optionText: string) {
   await step.getByRole('button', { name: new RegExp(optionText, 'i') }).click();
   const next = page.locator('[data-quiz-next]');
   if ((await next.textContent()) === 'Continuar') {
+    // El click en la opción habilita el botón de forma asíncrona: esperar a
+    // que quede enabled evita el flake bajo carga (p. ej. WebKit lento).
+    await expect(next).toBeEnabled();
     await next.click();
   }
 }

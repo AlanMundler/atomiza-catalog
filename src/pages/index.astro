@@ -19,10 +19,9 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
 ---
 
 <Layout title={site.tagline} description={`${site.name}. ${site.tagline}. ${site.description}`}>
-  <h1 class="visually-hidden">{site.tagline}</h1>
-
   <section class="hero" aria-label="Accesos rápidos">
     <div class="container">
+      <h1 class="hero-title">{site.tagline}</h1>
       <div class="hero-cta">
         <a href={`${BASE}quiz/`} class="btn btn--secondary btn--lg">Descubrí tu perfume</a>
         <a href={`${BASE}catalogo/`} class="btn btn--primary btn--lg">Ver catálogo</a>
@@ -177,22 +176,42 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
 
 <style>
   .hero {
-    display: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 96px 0 64px;
+  }
+
+  .hero-title {
+    font-family: var(--font-family);
+    font-size: var(--font-display-lg-size);
+    font-weight: var(--font-display-lg-weight);
+    line-height: var(--font-display-lg-line-height);
+    letter-spacing: var(--font-display-lg-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    margin: 0 0 40px;
+  }
+
+  .hero-cta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
   }
 
   @media (max-width: 640px) {
     .hero {
-      display: flex;
-      align-items: center;
-      justify-content: center;
       padding: 24px 0 14px;
     }
 
+    .hero-title {
+      display: none;
+    }
+
     .hero-cta {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: center;
       gap: 8px;
       width: 100%;
     }

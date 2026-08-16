@@ -194,17 +194,21 @@ const whatsappLink = buildWhatsAppLink(site.whatsappNumber, site.whatsappMessage
     if (menuTrigger && mobileDrawer) {
       bindOnce(menuTrigger, () => {
         menuTrigger.addEventListener('click', () => {
-          const isExpanded = menuTrigger.getAttribute('aria-expanded') === 'true';
-          menuTrigger.setAttribute('aria-expanded', String(!isExpanded));
-
           const drawerComponent = mobileDrawer.querySelector('.drawer');
-          if (drawerComponent) {
-            const event = new CustomEvent('drawer:toggle', {
-              detail: { open: !isExpanded }
-            });
-            mobileDrawer.dispatchEvent(event);
-          }
+          const isOpen = drawerComponent
+            ? drawerComponent.classList.contains('drawer--open')
+            : false;
+          menuTrigger.setAttribute('aria-expanded', String(!isOpen));
+          mobileDrawer.dispatchEvent(new CustomEvent('drawer:toggle', { detail: { open: !isOpen } }));
         });
+      });
+
+      // El drawer puede cerrarse por backdrop, X o Escape: el trigger se
+      // sincroniza con el estado real para no quedar en "abierto". Se escucha
+      // en window vía evento burbujeante porque el root del drawer ya quedó
+      // marcado como bound por el propio Drawer (bindOnce es por elemento).
+      onWindowOnce('menu-aria-close', 'drawer:close', () => {
+        document.querySelector('[data-menu-trigger]')?.setAttribute('aria-expanded', 'false');
       });
     }
 
