@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-const BASE = process.env.BASE_PATH || '/atomiza-catalog/';
+const BASE = process.env.BASE_PATH || '/';
 
 test.describe('SEO', () => {
   test('product og:image apunta a un jpg bajo el base path', async ({ page }) => {

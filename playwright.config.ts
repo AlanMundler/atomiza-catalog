@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const BASE_PATH = process.env.BASE_PATH || '/atomiza-catalog/';
+const BASE_PATH = process.env.BASE_PATH || '/';
 
 export default defineConfig({
   testDir: './src/test/e2e',

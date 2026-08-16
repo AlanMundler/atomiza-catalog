@@ -28,8 +28,8 @@ jobs:
       - run: npm run lint
       - run: npm run build
         env:
-          BASE_PATH: ${{ vars.BASE_PATH || '/atomiza-catalog/' }}
-          SITE_URL: ${{ vars.SITE_URL || 'https://atomiza.github.io' }}
+          BASE_PATH: ${{ vars.BASE_PATH || '/' }}
+          SITE_URL: ${{ vars.SITE_URL || 'https://atomiza.qd.je' }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
