@@ -107,11 +107,12 @@ import Drawer from '@/components/ui/Drawer.astro';
     const available = item.available;
     const displayQuantity = available ? item.quantity : item.requestedQuantity;
     const lineTotal = available ? size.price * item.quantity : 0;
+    const isVector = (perfume.images?.[0]?.src || '').toLowerCase().endsWith('.svg');
     const es = escapeHtml;
 
     return `
       <li class="cart-item${available ? '' : ' cart-item--unavailable'}" data-perfume-id="${es(item.perfumeId)}" data-size-ml="${es(size.ml)}">
-        <div class="cart-item-image">
+        <div class="cart-item-image${isVector ? ' cart-item-image--square' : ''}">
           <img src="${es(image)}" alt="${es(brand)} ${es(name)}" loading="lazy" width="64" height="64" />
         </div>
         <div class="cart-item-info">
@@ -370,11 +371,15 @@ import Drawer from '@/components/ui/Drawer.astro';
 
   .cart-item-image {
     width: 56px;
-    height: 56px;
+    aspect-ratio: 3 / 4;
     border-radius: calc(var(--border-radius) - 4px);
     overflow: hidden;
     background-color: var(--color-surface-container-highest);
     flex-shrink: 0;
+  }
+
+  .cart-item-image--square {
+    aspect-ratio: 1 / 1;
   }
 
   .cart-item-image img {
