@@ -3,7 +3,7 @@ import Button from '@/components/ui/Button.astro';
 import Drawer from '@/components/ui/Drawer.astro';
 import { getCartItemCount } from '@/utils/cart';
 import { buildWhatsAppLink } from '@/utils/formatters';
-import { site } from '@/site.config';
+import { assetUrl, site } from '@/site.config';
 
 const cartCount = getCartItemCount();
 const BASE = site.basePath;
@@ -25,11 +25,7 @@ const whatsappLink = buildWhatsAppLink(site.whatsappNumber, site.whatsappMessage
         class="header-social-btn"
         aria-label={`Instagram @${site.instagramHandle}`}
       >
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-        </svg>
+        <img src={assetUrl('images/icons/instagram.svg')} width="22" height="22" alt="" aria-hidden="true" />
       </a>
       <a 
         href={whatsappLink} 
@@ -38,9 +34,7 @@ const whatsappLink = buildWhatsAppLink(site.whatsappNumber, site.whatsappMessage
         class="header-social-btn"
         aria-label="WhatsApp"
       >
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-        </svg>
+        <img src={assetUrl('images/icons/whatsapp.svg')} width="22" height="22" alt="" aria-hidden="true" />
       </a>
       <a href={`${BASE}catalogo/`} class="header-catalogo-btn">Catálogo</a>
       <a href={`${BASE}quiz/`} class="header-quiz-btn">Descubrí tu perfume</a>
@@ -95,17 +89,11 @@ const whatsappLink = buildWhatsAppLink(site.whatsappNumber, site.whatsappMessage
   </div>
   <div class="mobile-socials">
     <a href={site.instagramUrl} target="_blank" rel="noopener noreferrer" class="mobile-social-link">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-      </svg>
+      <img src={assetUrl('images/icons/instagram.svg')} width="18" height="18" alt="" aria-hidden="true" />
       Instagram
     </a>
     <a href={whatsappLink} target="_blank" rel="noopener noreferrer" class="mobile-social-link">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-      </svg>
+      <img src={assetUrl('images/icons/whatsapp.svg')} width="18" height="18" alt="" aria-hidden="true" />
       WhatsApp
     </a>
   </div>
