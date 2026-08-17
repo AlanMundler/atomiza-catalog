@@ -92,18 +92,15 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
     <div class="container">
       <h2 id="social-proof-title" class="section-title">Lo que dicen nuestros clientes</h2>
       <div class="testimonial-grid">
-        <blockquote class="testimonial">
-          <p class="testimonial-text">"Quedé fascinada con los decants. Pude probar 3 fragancias antes de decidirme por el frasco completo."</p>
-          <cite class="testimonial-author">— Valentina, Córdoba</cite>
-        </blockquote>
-        <blockquote class="testimonial">
-          <p class="testimonial-text">"El tridente me pareció una genialidad. Probé 3 perfumes nuevos por mucho menos de lo que cuesta uno solo."</p>
-          <cite class="testimonial-author">— Martín, Buenos Aires</cite>
-        </blockquote>
-        <blockquote class="testimonial">
-          <p class="testimonial-text">"Me asesoraron por WhatsApp para elegir la fragancia ideal. Súper rápido y profesional."</p>
-          <cite class="testimonial-author">— Lucía, Mendoza</cite>
-        </blockquote>
+        <figure class="testimonial-img">
+          <img src="images/testimonios/1.jpg" alt="Screenshot de chat con cliente satisfecho" loading="lazy" />
+        </figure>
+        <figure class="testimonial-img">
+          <img src="images/testimonios/2.jpg" alt="Screenshot de chat con cliente satisfecho" loading="lazy" />
+        </figure>
+        <figure class="testimonial-img">
+          <img src="images/testimonios/3.jpg" alt="Screenshot de chat con cliente satisfecho" loading="lazy" />
+        </figure>
       </div>
     </div>
   </section>
@@ -481,32 +478,17 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
     }
   }
 
-  .testimonial {
+  .testimonial-img {
     margin: 0;
-    padding: var(--spacing-stack-md);
-    border: var(--border-width) solid var(--color-outline-variant);
+    overflow: hidden;
     border-radius: var(--border-radius);
-    text-align: center;
   }
 
-  .testimonial-text {
-    font-family: var(--font-family);
-    font-size: var(--font-body-md-size);
-    line-height: var(--font-body-md-line-height);
-    letter-spacing: var(--font-body-md-tracking);
-    color: var(--color-on-surface);
-    font-style: italic;
-    margin: 0 0 var(--spacing-stack-sm);
-  }
-
-  .testimonial-author {
-    font-family: var(--font-family);
-    font-size: var(--font-label-sm-size);
-    font-weight: var(--font-label-sm-weight);
-    letter-spacing: var(--font-label-sm-tracking);
-    text-transform: uppercase;
-    color: var(--color-on-surface-variant);
-    font-style: normal;
+  .testimonial-img img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: var(--border-radius);
   }
 
   /* Decant info */
