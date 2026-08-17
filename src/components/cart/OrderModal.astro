@@ -395,22 +395,17 @@ import { assetUrl, site } from '@/site.config';
 
   @media (max-width: 479px) {
     .order-modal-actions {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 16px;
+      grid-template-columns: 1fr;
     }
 
     .order-modal-actions .order-modal-btn {
-      width: 56px;
-      height: 56px;
-      padding: 0;
-      border-radius: 50%;
-      flex: 0 0 auto;
+      height: 48px;
+      font-size: var(--font-label-sm-size);
+      justify-content: center;
     }
 
-    .order-modal-btn-label {
-      display: none;
+    .order-modal-actions .order-modal-btn--copy {
+      grid-column: 1;
     }
   }
 

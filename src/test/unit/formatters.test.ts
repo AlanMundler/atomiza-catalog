@@ -81,7 +81,6 @@ describe('formatters', () => {
       notes: { top: [], heart: [], base: [] },
       images: [],
       sizes: [
-        { ml: 2, price: 15000, stock: 5 },
         { ml: 5, price: 32000, stock: 2 }
       ],
       isBoutiqueExclusive: false,
@@ -133,7 +132,7 @@ describe('formatters', () => {
       expect(resolved.size.ml).toBe(5);
     });
 
-    it('falls back to the primary 5ml size when the requested ml does not exist', () => {
+    it('falls back to the catalog size when the requested ml does not match', () => {
       const items = [
         { perfumeId: 'tobacco-vanille', size: { ml: 99, price: 1, stock: 1 }, quantity: 1 }
       ] as unknown as CartItem[];
@@ -218,9 +217,7 @@ describe('formatters', () => {
       notes: { top: [], heart: [], base: [] },
       images: [],
       sizes: [
-        { ml: 2, price: 15000, stock: 5 },
-        { ml: 5, price: 32000, stock: 2 },
-        { ml: 10, price: 55000, stock: 0 }
+        { ml: 5, price: 32000, stock: 2 }
       ],
       isBoutiqueExclusive: false,
       featured: true
@@ -237,9 +234,7 @@ describe('formatters', () => {
       notes: { top: [], heart: [], base: [] },
       images: [],
       sizes: [
-        { ml: 2, price: 18000, stock: 8 },
-        { ml: 5, price: 42000, stock: 3 },
-        { ml: 10, price: 75000, stock: 1 }
+        { ml: 5, price: 42000, stock: 3 }
       ],
       isBoutiqueExclusive: false,
       featured: true
@@ -253,7 +248,7 @@ describe('formatters', () => {
       },
       {
         perfumeId: 'baccarat-rouge-540',
-        size: { ml: 2, price: 18000, stock: 8 },
+        size: { ml: 5, price: 42000, stock: 3 },
         quantity: 1
       }
     ];
@@ -271,8 +266,8 @@ describe('formatters', () => {
       expect(result).toContain('📱 Contacto: +54 9 11 1234-5678');
       expect(result).toContain('🛍️ DETALLE:');
       expect(result).toContain('• Tom Ford - Tobacco Vanille (5ml) x2 — $64.000');
-      expect(result).toContain('• Maison Francis Kurkdjian - Baccarat Rouge 540 (2ml) x1 — $18.000');
-      expect(result).toContain('💰 TOTAL: $82.000');
+      expect(result).toContain('• Maison Francis Kurkdjian - Baccarat Rouge 540 (5ml) x1 — $42.000');
+      expect(result).toContain('💰 TOTAL: $106.000');
       expect(result).toContain('📍 Envío: [A coordinar]');
       expect(result).toContain('💳 Pago: [Transferencia / Efectivo / A coordinar]');
       expect(result).toContain('Enviar a @atomiza.cba por Instagram DM');
@@ -285,11 +280,11 @@ describe('formatters', () => {
 
     it('calculates totals correctly for multiple quantities', () => {
       const items: CartItem[] = [
-        { perfumeId: 'tobacco-vanille', size: { ml: 2, price: 15000, stock: 5 }, quantity: 3 }
+        { perfumeId: 'tobacco-vanille', size: { ml: 5, price: 15000, stock: 5 }, quantity: 3 }
       ];
       const result = generateOrderText(items, perfumesMap, 'Test', 'Test', 'instagram');
-      expect(result).toContain('$45.000');
-      expect(result).toContain('x3');
+      expect(result).toContain('x2');
+      expect(result).toContain('$64.000');
     });
   });
 });

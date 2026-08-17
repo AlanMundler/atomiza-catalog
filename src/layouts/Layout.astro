@@ -47,6 +47,15 @@ const pageUrl = new URL(Astro.url.pathname, Astro.site).href;
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
     <link rel="icon" type="image/svg+xml" href={assetUrl('/favicon.svg')} />
+    <script is:inline type="application/ld+json" set:html={`{
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "${site.name}",
+      "url": "${Astro.site}",
+      "logo": "${new URL(assetUrl('/favicon.svg'), Astro.site).href}",
+      "description": "${site.description}",
+      "sameAs": ["${site.instagramUrl}"]
+    }`} />
     <ClientRouter />
   </head>
   <body>
@@ -58,6 +67,15 @@ const pageUrl = new URL(Astro.url.pathname, Astro.site).href;
     <Footer />
     <CartDrawer />
     <OrderModal />
+    <a
+      href={`https://wa.me/${site.whatsappNumber}?text=${encodeURIComponent(site.whatsappMessage)}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="whatsapp-fab"
+      aria-label="WhatsApp"
+    >
+      <img src={assetUrl('images/icons/whatsapp.svg')} width="28" height="28" alt="" aria-hidden="true" />
+    </a>
   </body>
 </html>
 
@@ -71,5 +89,46 @@ const pageUrl = new URL(Astro.url.pathname, Astro.site).href;
   main {
     flex: 1;
     padding-top: 72px; /* Header height (72px en todos los viewports) */
+  }
+
+  .whatsapp-fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 90;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #25d366;
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    text-decoration: none;
+    transition: transform var(--transition-duration) var(--transition-easing), box-shadow var(--transition-duration) var(--transition-easing);
+  }
+
+  .whatsapp-fab:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  }
+
+  .whatsapp-fab:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 640px) {
+    .whatsapp-fab {
+      bottom: 16px;
+      right: 16px;
+      width: 48px;
+      height: 48px;
+    }
+
+    .whatsapp-fab img {
+      width: 24px;
+      height: 24px;
+    }
   }
 </style>

@@ -48,7 +48,7 @@ const isVector = (perfume.images[0]?.src || '').toLowerCase().endsWith('.svg');
   </div>
   <div class="product-card-info">
     <span class="product-card-brand">{perfume.brand}</span>
-    <h3 class="product-card-name">{perfume.name}</h3>
+    <h3 class="product-card-name" title={perfume.name}>{perfume.name}</h3>
     <span class="product-card-price">{primarySize ? formatPrice(primarySize.price) : '—'}</span>
   </div>
 </a>
@@ -80,7 +80,7 @@ const isVector = (perfume.images[0]?.src || '').toLowerCase().endsWith('.svg');
     position: relative;
     aspect-ratio: 3 / 4;
     overflow: hidden;
-    background-color: #ffffff;
+    background-color: var(--color-surface-container-highest);
     display: flex;
     align-items: center;
     justify-content: center;

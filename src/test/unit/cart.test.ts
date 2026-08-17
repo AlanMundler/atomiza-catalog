@@ -10,7 +10,7 @@ import {
 import type { CartItem, PerfumeSize } from '@/data/types';
 
 const mockPerfumeSize: PerfumeSize = { ml: 5, price: 32000, stock: 2 };
-const mockPerfumeSize2: PerfumeSize = { ml: 2, price: 15000, stock: 5 };
+const mockPerfumeSize2: PerfumeSize = { ml: 5, price: 15000, stock: 5 };
 
 const mockCartItem1: CartItem = {
   perfumeId: 'tobacco-vanille',
@@ -106,7 +106,7 @@ describe('cart utilities', () => {
       expect(cart.items[0].quantity).toBe(2);
     });
 
-    it('adds separate entry for different size of same perfume', () => {
+    it('increments quantity when adding the same item again', () => {
       localStorage.setItem('atomiza-cart', JSON.stringify({
         items: [mockCartItem1],
         updatedAt: Date.now()
@@ -117,7 +117,8 @@ describe('cart utilities', () => {
         size: mockPerfumeSize2, 
         quantity: 1 
       });
-      expect(cart.items).toHaveLength(2);
+      expect(cart.items).toHaveLength(1);
+      expect(cart.items[0].quantity).toBe(2);
     });
 
     it('adds separate entry for different perfume', () => {

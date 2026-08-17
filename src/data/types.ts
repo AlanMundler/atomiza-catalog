@@ -1,5 +1,5 @@
 export interface PerfumeSize {
-  ml: 2 | 5 | 10;
+  ml: 5;
   price: number;
   stock: number;
 }

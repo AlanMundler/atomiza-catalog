@@ -3,6 +3,7 @@ import ImageGallery from '@/components/product/ImageGallery.astro';
 import SizeSelector from '@/components/product/SizeSelector.astro';
 import Button from '@/components/ui/Button.astro';
 import { isSizeAvailable } from '@/utils/stock';
+import { site } from '@/site.config';
 import type { Perfume } from '@/data/types';
 
 interface Props {
@@ -76,6 +77,11 @@ const largeImage = (perfume.images[0]?.src || '').toLowerCase().endsWith('.svg')
           {available ? 'Agregar al pedido' : 'Sin Stock'}
         </Button>
       </div>
+
+      <a href={`${site.basePath}trios/`} class="trident-cta">
+        <span class="trident-cta-text">Elegí 3 decants y ahorrá $2.000</span>
+        <span class="trident-cta-link">Armar mi tridente →</span>
+      </a>
     </div>
   </div>
 </article>
@@ -276,5 +282,39 @@ const largeImage = (perfume.images[0]?.src || '').toLowerCase().endsWith('.svg')
     .product-detail-actions {
       flex-direction: column;
     }
+  }
+
+  .trident-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: var(--spacing-stack-md);
+    margin-top: var(--spacing-stack-sm);
+    background-color: var(--color-surface-container-high);
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    text-align: center;
+    transition: border-color var(--transition-duration) var(--transition-easing);
+  }
+
+  .trident-cta:hover {
+    border-color: var(--color-primary);
+  }
+
+  .trident-cta-text {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    color: var(--color-on-surface-variant);
+  }
+
+  .trident-cta-link {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-primary);
   }
 </style>

@@ -1,6 +1,7 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import ProductDetail from '@/components/product/ProductDetail.astro';
+import ProductCard from '@/components/catalog/ProductCard.astro';
 import perfumesData from '@/data/perfumes.json';
 import { site, assetUrl } from '@/site.config';
 import { isSizeAvailable } from '@/utils/stock';
@@ -16,6 +17,11 @@ export async function getStaticPaths() {
 }
 
 const { perfume } = Astro.props;
+
+const allPerfumes: Perfume[] = perfumesData.perfumes as Perfume[];
+const related = allPerfumes
+  .filter((p) => p.id !== perfume.id && (p.olfactoryFamily === perfume.olfactoryFamily || p.gender === perfume.gender))
+  .slice(0, 4);
 
 const primarySize = perfume.sizes.find((s) => s.ml === 5) || perfume.sizes[0];
 const productSchema = {
@@ -47,4 +53,47 @@ const productSchema = {
   <div class="container">
     <ProductDetail perfume={perfume} />
   </div>
+  {related.length > 0 && (
+    <section class="related" aria-labelledby="related-title">
+      <div class="container">
+        <h2 id="related-title" class="related-title">Podría interesarte</h2>
+        <div class="related-grid">
+          {related.map((p) => (
+            <ProductCard perfume={p} />
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
 </Layout>
+
+<style>
+  .related {
+    padding: var(--spacing-stack-lg) 0;
+    border-top: var(--border-width) solid var(--color-outline-variant);
+  }
+
+  .related-title {
+    font-family: var(--font-family);
+    font-size: var(--font-headline-md-size);
+    font-weight: var(--font-headline-md-weight);
+    line-height: var(--font-headline-md-line-height);
+    letter-spacing: var(--font-headline-md-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    text-align: center;
+    margin: 0 0 var(--spacing-stack-md);
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-stack-md);
+  }
+
+  @media (min-width: 768px) {
+    .related-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+</style>

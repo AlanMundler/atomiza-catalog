@@ -21,6 +21,7 @@ const mainAlt = images[0]?.alt || alt;
       alt={mainAlt} 
       class={`image-gallery-main-image${large ? ' image-gallery-main-image--large' : ''}`}
       loading="eager"
+      fetchpriority="high"
       width="600"
       height="600"
       data-main-image
@@ -128,7 +129,7 @@ const mainAlt = images[0]?.alt || alt;
     aspect-ratio: 3 / 4;
     border-radius: var(--border-radius);
     overflow: hidden;
-    background-color: #ffffff;
+    background-color: var(--color-surface-container-highest);
   }
 
   .image-gallery-main-image {
