@@ -374,6 +374,25 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
     border-radius: var(--border-radius);
   }
 
+  @media (max-width: 640px) {
+    .step {
+      padding: var(--spacing-stack-sm);
+      gap: 8px;
+    }
+
+    .step-number {
+      font-size: var(--font-headline-md-size);
+    }
+
+    .step-title {
+      font-size: var(--font-body-md-size);
+    }
+
+    .step-text {
+      font-size: var(--font-body-md-size);
+    }
+  }
+
   .step-number {
     font-family: var(--font-family);
     font-size: var(--font-headline-lg-size);
