@@ -20,9 +20,9 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
   <section class="hero" aria-labelledby="hero-heading">
     <div class="container">
       <div class="hero-cta">
-        <a href={`${BASE}catalogo/`} class="btn btn-primary">Ver catálogo</a>
-        <a href={`${BASE}quiz/`} class="btn btn-secondary">Descubrí tu perfume</a>
-        <a href={`${BASE}trios/`} class="btn btn-accent">Elegí 3. Pagá menos.</a>
+        <a href={`${BASE}catalogo/`} class="btn btn--primary btn--md">Ver catálogo</a>
+        <a href={`${BASE}quiz/`} class="btn btn--secondary btn--md">Descubrí tu perfume</a>
+        <a href={`${BASE}trios/`} class="btn btn--secondary btn--md">Elegí 3. Pagá menos.</a>
       </div>
     </div>
   </section>
@@ -148,56 +148,35 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
   <section class="faq" aria-labelledby="faq-title">
     <div class="container">
       <h2 id="faq-title" class="section-title">Preguntas frecuentes</h2>
-      <div class="join join-vertical w-full">
-        <div class="collapse collapse-arrow bg-base-200 border border-base-300">
-          <input type="radio" name="faq-accordion" />
-          <div class="collapse-title font-medium">¿Los decants son originales?</div>
-          <div class="collapse-content text-sm text-base-content/70">
-            <p>Sí. Cada decant sale de un frasco original y sellado.</p>
-          </div>
-        </div>
-        <div class="collapse collapse-arrow bg-base-200 border border-base-300">
-          <input type="radio" name="faq-accordion" />
-          <div class="collapse-title font-medium">¿Cuánto dura un decant de 5ml?</div>
-          <div class="collapse-content text-sm text-base-content/70">
-            <p>5ml alcanza para usar la fragancia varios días seguidos y decidir con calma si querés el frasco completo.</p>
-          </div>
-        </div>
-        <div class="collapse collapse-arrow bg-base-200 border border-base-300">
-          <input type="radio" name="faq-accordion" />
-          <div class="collapse-title font-medium">¿Cómo hago mi pedido?</div>
-          <div class="collapse-content text-sm text-base-content/70">
-            <p>Sumá los decants que quieras, completá tu nombre y contacto, y enviá el pedido por WhatsApp o Instagram. Te respondemos para coordinar.</p>
-          </div>
-        </div>
-        <div class="collapse collapse-arrow bg-base-200 border border-base-300">
-          <input type="radio" name="faq-accordion" />
-          <div class="collapse-title font-medium">¿Cómo se coordina el envío y el pago?</div>
-          <div class="collapse-content text-sm text-base-content/70">
-            <p>El envío y el pago se coordinan por mensaje, a tu medida, una vez que enviás tu pedido.</p>
-          </div>
-        </div>
-        <div class="collapse collapse-arrow bg-base-200 border border-base-300">
-          <input type="radio" name="faq-accordion" />
-          <div class="collapse-title font-medium">¿Qué pasa si no me gusta la fragancia?</div>
-          <div class="collapse-content text-sm text-base-content/70">
-            <p>Por eso existen los decants: probás la fragancia unos días antes de comprometerte con el frasco completo. Si necesitás asesoramiento, escribinos y te ayudamos a elegir.</p>
-          </div>
-        </div>
-        <div class="collapse collapse-arrow bg-base-200 border border-base-300">
-          <input type="radio" name="faq-accordion" />
-          <div class="collapse-title font-medium">¿Puedo armar un tridente?</div>
-          <div class="collapse-content text-sm text-base-content/70">
-            <p>Sí. Elegí 3 decants y ahorrás $2.000. Visitá la página de tridentes para armar tu combinación.</p>
-          </div>
-        </div>
-        <div class="collapse collapse-arrow bg-base-200 border border-base-300">
-          <input type="radio" name="faq-accordion" />
-          <div class="collapse-title font-medium">¿Cuánto tarda en llegar mi pedido?</div>
-          <div class="collapse-content text-sm text-base-content/70">
-            <p>Depende de tu ubicación. Coordinamos los tiempos por mensaje después de que hacés tu pedido.</p>
-          </div>
-        </div>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>¿Los decants son originales?</summary>
+          <p class="faq-answer">Sí. Cada decant sale de un frasco original y sellado.</p>
+        </details>
+        <details class="faq-item">
+          <summary>¿Cuánto dura un decant de 5ml?</summary>
+          <p class="faq-answer">5ml alcanza para usar la fragancia varios días seguidos y decidir con calma si querés el frasco completo.</p>
+        </details>
+        <details class="faq-item">
+          <summary>¿Cómo hago mi pedido?</summary>
+          <p class="faq-answer">Sumá los decants que quieras, completá tu nombre y contacto, y enviá el pedido por WhatsApp o Instagram. Te respondemos para coordinar.</p>
+        </details>
+        <details class="faq-item">
+          <summary>¿Cómo se coordina el envío y el pago?</summary>
+          <p class="faq-answer">El envío y el pago se coordinan por mensaje, a tu medida, una vez que enviás tu pedido.</p>
+        </details>
+        <details class="faq-item">
+          <summary>¿Qué pasa si no me gusta la fragancia?</summary>
+          <p class="faq-answer">Por eso existen los decants: probás la fragancia unos días antes de comprometerte con el frasco completo. Si necesitás asesoramiento, escribinos y te ayudamos a elegir.</p>
+        </details>
+        <details class="faq-item">
+          <summary>¿Puedo armar un tridente?</summary>
+          <p class="faq-answer">Sí. Elegí 3 decants y ahorrás $2.000. Visitá la página de tridentes para armar tu combinación.</p>
+        </details>
+        <details class="faq-item">
+          <summary>¿Cuánto tarda en llegar mi pedido?</summary>
+          <p class="faq-answer">Depende de tu ubicación. Coordinamos los tiempos por mensaje después de que hacés tu pedido.</p>
+        </details>
       </div>
     </div>
   </section>
@@ -364,7 +343,6 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
   /* How to Buy */
   .how-to-buy {
     padding: var(--spacing-stack-lg) 0;
-    border-top: var(--border-width) solid var(--color-outline-variant);
   }
 
   .steps {
@@ -536,4 +514,65 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
     border-top: var(--border-width) solid var(--color-outline-variant);
   }
 
+  .faq-list {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .faq-item {
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: var(--border-radius);
+    margin-bottom: var(--spacing-stack-sm);
+  }
+
+  .faq-item summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--spacing-stack-sm);
+    cursor: pointer;
+    list-style: none;
+    padding: var(--spacing-stack-sm) var(--spacing-stack-md);
+    font-family: var(--font-family);
+    font-size: var(--font-body-lg-size);
+    font-weight: 500;
+    color: var(--color-on-surface);
+    transition: color var(--transition-duration) var(--transition-easing);
+  }
+
+  .faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-item summary:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
+    border-radius: var(--border-radius);
+  }
+
+  .faq-item summary::after {
+    content: '+';
+    font-size: 20px;
+    line-height: 1;
+    color: var(--color-primary);
+    flex-shrink: 0;
+  }
+
+  .faq-item[open] summary {
+    color: var(--color-primary);
+  }
+
+  .faq-item[open] summary::after {
+    content: '−';
+  }
+
+  .faq-answer {
+    padding: 0 var(--spacing-stack-md) var(--spacing-stack-sm);
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    line-height: var(--font-body-md-line-height);
+    letter-spacing: var(--font-body-md-tracking);
+    color: var(--color-on-surface-variant);
+    margin: 0;
+  }
 </style>

@@ -18,24 +18,12 @@ const {
   children,
   ...attrs 
 } = Astro.props;
-
-const variantMap = {
-  primary: 'btn-primary',
-  secondary: 'btn-secondary',
-  ghost: 'btn-ghost'
-};
-
-const sizeMap = {
-  sm: 'btn-sm',
-  md: 'btn-md',
-  lg: 'btn-lg'
-};
 ---
 
 <button
   type={type}
   disabled={disabled}
-  class={`btn ${variantMap[variant]} ${sizeMap[size]} ${className} ${disabled ? 'btn-disabled' : ''}`}
+  class={`btn btn--${variant} btn--${size} ${className} ${disabled ? 'btn--disabled' : ''}`}
   {...attrs}
 >
   <slot>{children}</slot>
