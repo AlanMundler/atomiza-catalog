@@ -112,7 +112,7 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
   <section class="how-to-buy" aria-labelledby="how-to-buy-title">
     <div class="container">
       <h2 id="how-to-buy-title" class="section-title">Cómo comprar</h2>
-      <div class="steps">
+      <div class="grid grid-cols-1 gap-[var(--spacing-stack-md)] sm:grid-cols-2 lg:grid-cols-4">
         <article class="step">
           <div class="step-number">01</div>
           <div class="step-content">
@@ -343,24 +343,6 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
   /* How to Buy */
   .how-to-buy {
     padding: var(--spacing-stack-lg) 0;
-  }
-
-  .steps {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--spacing-stack-md);
-  }
-
-  @media (min-width: 768px) {
-    .steps {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .steps {
-      grid-template-columns: repeat(4, 1fr);
-    }
   }
 
   .step {
