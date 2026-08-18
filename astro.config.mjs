@@ -4,6 +4,8 @@ import sitemap from '@astrojs/sitemap';
 import { fileURLToPath } from 'url';
 import { resolve } from 'path';
 
+import tailwindcss from '@tailwindcss/vite';
+
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 const SITE_URL = process.env.SITE_URL || 'https://atomiza.qd.je';
@@ -24,5 +26,7 @@ export default defineConfig({
         '@': resolve(__dirname, './src'),
       },
     },
+
+    plugins: [tailwindcss()],
   },
 });

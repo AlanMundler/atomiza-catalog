@@ -1,0 +1,8 @@
+
+> atomiza-catalog@0.0.1 astro
+> astro dev --background
+
+Dev server running at http://localhost:4321 (pid 14508)
+  Stop:   astro dev stop
+  Status: astro dev status
+  Logs:   astro dev logs
