@@ -8,51 +8,13 @@ interface Props {
 const { variant = 'default', class: className = '', children, ...attrs } = Astro.props;
 
 const variantClasses = {
-  'in-stock': 'chip--in-stock',
-  'low-stock': 'chip--low-stock',
-  'out-of-stock': 'chip--out-of-stock',
-  'default': 'chip--default'
+  'in-stock': 'badge-success',
+  'low-stock': 'badge-warning',
+  'out-of-stock': 'badge-error',
+  'default': 'badge-ghost'
 };
 ---
 
-<span class={`chip ${variantClasses[variant]} ${className}`} {...attrs}>
+<span class={`badge badge-sm border-0 ${variantClasses[variant]} ${className}`} {...attrs}>
   <slot>{children}</slot>
 </span>
-
-<style>
-  .chip {
-    display: inline-flex;
-    align-items: center;
-    font-family: var(--font-family);
-    font-size: var(--font-label-sm-size);
-    font-weight: var(--font-label-sm-weight);
-    line-height: var(--font-label-sm-line-height);
-    letter-spacing: var(--font-label-sm-tracking);
-    text-transform: uppercase;
-    border-radius: var(--border-radius);
-    border: var(--border-width) solid transparent;
-    padding: 3px 10px;
-    height: 22px;
-    white-space: nowrap;
-  }
-
-  .chip--in-stock {
-    color: var(--color-status-in-stock);
-    border-color: var(--color-status-in-stock);
-  }
-
-  .chip--low-stock {
-    color: var(--color-status-low-stock);
-    border-color: var(--color-status-low-stock);
-  }
-
-  .chip--out-of-stock {
-    color: var(--color-status-out-of-stock);
-    border-color: var(--color-status-out-of-stock);
-  }
-
-  .chip--default {
-    color: var(--color-on-surface-variant);
-    border-color: var(--color-outline-variant);
-  }
-</style>

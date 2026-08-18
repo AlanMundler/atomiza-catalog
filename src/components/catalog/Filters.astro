@@ -15,11 +15,11 @@ const filters: { value: GenderFilter; label: string }[] = [
 ];
 ---
 
-<div class="filters" role="group" aria-label="Filtrar por categoría">
+<div class="flex flex-wrap gap-2 justify-center" role="group" aria-label="Filtrar por categoría">
   {filters.map((filter) => (
     <button
       type="button"
-      class={`filter-chip ${currentFilter === filter.value ? 'filter-chip--active' : ''}`}
+      class={`btn btn-sm ${currentFilter === filter.value ? 'btn-primary' : 'btn-ghost border border-base-300 text-base-content/60 hover:text-primary hover:border-primary hover:bg-primary/10'}`}
       data-filter={filter.value}
       aria-pressed={currentFilter === filter.value}
     >
@@ -27,65 +27,3 @@ const filters: { value: GenderFilter; label: string }[] = [
     </button>
   ))}
 </div>
-<style>
-  .filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
-  }
-
-  .filter-chip {
-    font-family: var(--font-family);
-    font-size: var(--font-label-sm-size);
-    font-weight: var(--font-label-sm-weight);
-    letter-spacing: var(--font-label-sm-tracking);
-    text-transform: uppercase;
-    color: var(--color-on-surface-variant);
-    background-color: transparent;
-    border: var(--border-width) solid var(--color-outline-variant);
-    border-radius: var(--border-radius);
-    padding: 0 18px;
-    height: 40px;
-    line-height: 1;
-    white-space: nowrap;
-    cursor: pointer;
-    transition: all var(--transition-duration) var(--transition-easing);
-  }
-
-  .filter-chip:hover {
-    color: var(--color-primary);
-    border-color: var(--color-primary);
-    background-color: rgba(197, 160, 89, 0.08);
-  }
-
-  .filter-chip--active {
-    color: var(--color-on-primary);
-    background-color: var(--color-primary);
-    border-color: var(--color-primary);
-  }
-
-  .filter-chip--active:hover {
-    color: var(--color-on-primary);
-    background-color: var(--color-primary-container);
-    border-color: var(--color-primary-container);
-  }
-
-  .filter-chip:focus-visible {
-    outline: 2px solid var(--color-primary);
-    outline-offset: 2px;
-  }
-
-  @media (max-width: 640px) {
-    .filters {
-      gap: 6px;
-    }
-
-    .filter-chip {
-      padding: 0 10px;
-      height: 36px;
-      font-size: 10px;
-      letter-spacing: 0.08em;
-    }
-  }
-</style>

@@ -7,9 +7,9 @@ import Drawer from '@/components/ui/Drawer.astro';
   id="cart-drawer"
   class="cart-drawer"
 >
-  <div class="cart-header" slot="header">
-    <h2 class="cart-title">Tu pedido</h2>
-    <button class="cart-clear" data-clear-cart>
+  <div class="flex items-center justify-between p-5 border-b border-base-300" slot="header">
+    <h2 class="font-medium text-lg uppercase tracking-wider m-0">Tu pedido</h2>
+    <button class="btn btn-ghost btn-sm text-base-content/60 hover:text-error gap-1" data-clear-cart>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
         <polyline points="3 6 5 6 21 6"></polyline>
         <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -47,14 +47,14 @@ import Drawer from '@/components/ui/Drawer.astro';
 
     if (cart.items.length === 0) {
       content.innerHTML = `
-        <div class="cart-empty">
+        <div class="flex flex-col items-center justify-center flex-1 p-6 text-center text-base-content/60">
           <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
             <circle cx="9" cy="21" r="1"></circle>
             <circle cx="20" cy="21" r="1"></circle>
             <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
           </svg>
-          <p class="cart-empty-text">Tu carrito está vacío</p>
-          <p class="cart-empty-subtext">Agrega decants desde el catálogo</p>
+          <p class="text-lg font-medium uppercase tracking-wider mt-4 mb-2">Tu carrito está vacío</p>
+          <p class="text-sm m-0">Agrega decants desde el catálogo</p>
         </div>
       `;
       return;
@@ -73,21 +73,21 @@ import Drawer from '@/components/ui/Drawer.astro';
     );
 
     content.innerHTML = `
-      <ul class="cart-items" role="list" aria-label="Artículos en el carrito">
+      <ul class="flex flex-col gap-3 flex-1 min-h-0 overflow-y-auto scrollbar-thin list-none m-0 p-0 px-1" role="list" aria-label="Artículos en el carrito">
         ${resolved.map(itemHtml).join('')}
       </ul>
-      <div class="order-summary" role="region" aria-label="Resumen del pedido">
-        <div class="order-summary-line order-summary-line--total">
-          <span class="order-summary-label">Total estimado</span>
-          <span class="order-summary-value">${formatPrice(subtotal)}</span>
+      <div class="shrink-0 mt-3 p-3 bg-base-200 border border-base-300" role="region" aria-label="Resumen del pedido">
+        <div class="flex justify-between items-center pt-2 border-t border-base-300">
+          <span class="text-sm text-base-content/60">Total estimado</span>
+          <span class="text-sm font-medium text-primary">${formatPrice(subtotal)}</span>
         </div>
         ${
           unavailableCount > 0
-            ? `<p class="order-summary-note">${unavailableCount === 1 ? 'Un perfume quedó sin stock y no se incluye en el total' : `${unavailableCount} perfumes quedaron sin stock y no se incluyen en el total`}</p>`
+            ? `<p class="text-[10px] text-base-content/60 text-center my-1">${unavailableCount === 1 ? 'Un perfume quedó sin stock y no se incluye en el total' : `${unavailableCount} perfumes quedaron sin stock y no se incluyen en el total`}</p>`
             : ''
         }
-        <p class="order-summary-note">El total final se confirma al coordinar el envío</p>
-        <button type="button" class="btn btn--primary btn--lg order-summary-btn" data-finalize-order>
+        <p class="text-[10px] text-base-content/60 my-1 text-center">El total final se confirma al coordinar el envío</p>
+        <button type="button" class="btn btn-primary btn-lg w-full mt-2" data-finalize-order>
           Finalizar pedido
         </button>
       </div>
@@ -107,38 +107,38 @@ import Drawer from '@/components/ui/Drawer.astro';
     const es = escapeHtml;
 
     return `
-      <li class="cart-item${available ? '' : ' cart-item--unavailable'}" data-perfume-id="${es(item.perfumeId)}" data-size-ml="${es(size.ml)}">
-        <div class="cart-item-image${isVector ? ' cart-item-image--square' : ''}">
-          <img src="${es(image)}" alt="${es(brand)} ${es(name)}" loading="lazy" width="64" height="64" />
+      <li class="flex gap-3 p-2 bg-base-200 border border-base-300 ${available ? '' : 'opacity-60'}" data-perfume-id="${es(item.perfumeId)}" data-size-ml="${es(size.ml)}">
+        <div class="w-16 h-16 shrink-0 ${isVector ? 'bg-white rounded-sm p-1' : ''}">
+          <img class="w-full h-full object-contain" src="${es(image)}" alt="${es(brand)} ${es(name)}" loading="lazy" width="64" height="64" />
         </div>
-        <div class="cart-item-info">
-          <div class="cart-item-brand">${es(brand)}</div>
-          <div class="cart-item-name">${es(name)}</div>
-          <div class="cart-item-meta">
-            <span class="cart-item-size">${es(size.ml)}ml</span>
-            <span class="cart-item-price">${formatPrice(size.price)}</span>
-            ${!available ? '<span class="cart-item-status">SIN STOCK</span>' : ''}
+        <div class="flex-1 min-w-0">
+          <div class="text-[10px] font-medium tracking-[0.1em] uppercase text-base-content/60">${es(brand)}</div>
+          <div class="text-xs truncate">${es(name)}</div>
+          <div class="flex items-center gap-2 mt-1 text-[11px]">
+            <span class="font-medium tracking-[0.1em] uppercase">${es(size.ml)}ml</span>
+            <span class="font-medium text-primary">${formatPrice(size.price)}</span>
+            ${!available ? '<span class="badge badge-error badge-xs text-[8px] border-0">SIN STOCK</span>' : ''}
           </div>
         </div>
-        <div class="cart-item-controls">
-          <div class="cart-item-quantity">
-            <button type="button" class="quantity-btn quantity-btn--decrease" data-action="decrease" aria-label="Disminuir cantidad" ${!available || displayQuantity <= 1 ? 'disabled' : ''}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <div class="flex flex-col items-end justify-between shrink-0">
+          <div class="flex items-center gap-1">
+            <button type="button" class="btn btn-ghost btn-xs w-6 h-6 min-h-0 p-0" data-action="decrease" aria-label="Disminuir cantidad" ${!available || displayQuantity <= 1 ? 'disabled' : ''}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <line x1="5" y1="12" x2="19" y2="12"></line>
               </svg>
             </button>
-            <span class="quantity-value" aria-live="polite">${es(displayQuantity)}</span>
-            <button type="button" class="quantity-btn quantity-btn--increase" data-action="increase" aria-label="Aumentar cantidad" ${!available || displayQuantity >= size.stock ? 'disabled' : ''}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <span class="text-xs font-medium w-4 text-center" aria-live="polite">${es(displayQuantity)}</span>
+            <button type="button" class="btn btn-ghost btn-xs w-6 h-6 min-h-0 p-0" data-action="increase" aria-label="Aumentar cantidad" ${!available || displayQuantity >= size.stock ? 'disabled' : ''}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
               </svg>
             </button>
           </div>
-          <div class="cart-item-total">
-            <span class="cart-item-line-total">${available ? formatPrice(lineTotal) : '—'}</span>
-            <button type="button" class="cart-item-remove" data-action="remove" aria-label="Eliminar del carrito">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <div class="flex items-center gap-2 mt-1">
+            <span class="text-xs font-medium text-primary">${available ? formatPrice(lineTotal) : '—'}</span>
+            <button type="button" class="btn btn-ghost btn-xs text-base-content/60 hover:text-error w-5 h-5 min-h-0 p-0" data-action="remove" aria-label="Eliminar del carrito">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
               </svg>
@@ -245,413 +245,9 @@ import Drawer from '@/components/ui/Drawer.astro';
     --drawer-width: 400px;
   }
 
-  .cart-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px 24px;
-    border-bottom: var(--border-width) solid var(--color-outline-variant);
-  }
-
-  .cart-title {
-    font-family: var(--font-family);
-    font-size: var(--font-headline-md-size);
-    font-weight: var(--font-headline-md-weight);
-    line-height: var(--font-headline-md-line-height);
-    letter-spacing: var(--font-headline-md-tracking);
-    text-transform: uppercase;
-    color: var(--color-on-surface);
-    margin: 0;
-  }
-
-  .cart-clear {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-family: var(--font-family);
-    font-size: var(--font-label-sm-size);
-    font-weight: var(--font-label-sm-weight);
-    letter-spacing: var(--font-label-sm-tracking);
-    text-transform: uppercase;
-    color: var(--color-on-surface-variant);
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 8px;
-    transition: color var(--transition-duration) var(--transition-easing);
-  }
-
-  .cart-clear:hover {
-    color: var(--color-error);
-  }
-
-  .cart-clear:focus-visible {
-    outline: 2px solid var(--color-primary);
-    outline-offset: 2px;
-    border-radius: var(--border-radius);
-  }
-
-  .cart-content {
-    flex: 1;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-
-  .cart-empty {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 48px 24px;
-    text-align: center;
-    color: var(--color-on-surface-variant);
-    flex: 1;
-  }
-
-  .cart-empty-text {
-    font-family: var(--font-family);
-    font-size: var(--font-headline-md-size);
-    font-weight: var(--font-headline-md-weight);
-    letter-spacing: var(--font-headline-md-tracking);
-    text-transform: uppercase;
-    color: var(--color-on-surface);
-    margin: 16px 0 8px;
-  }
-
-  .cart-empty-subtext {
-    font-family: var(--font-family);
-    font-size: var(--font-body-md-size);
-    margin: 0;
-  }
-
-  .cart-items {
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: var(--color-outline-variant) transparent;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin: 0;
-    padding: 0 4px 0 0;
-    list-style: none;
-  }
-
-  .cart-items::-webkit-scrollbar {
-    width: 5px;
-  }
-
-  .cart-items::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  .cart-items::-webkit-scrollbar-thumb {
-    background-color: var(--color-outline-variant);
-    border-radius: 4px;
-  }
-
-  /* Cart item */
-  .cart-item {
-    display: grid;
-    grid-template-columns: 56px minmax(0, 1fr) auto;
-    gap: 12px;
-    padding: 14px;
-    background-color: var(--color-surface-container-high);
-    border: var(--border-width) solid var(--color-outline-variant);
-    border-radius: var(--border-radius);
-    align-items: start;
-  }
-
-  .cart-item-image {
-    width: 56px;
-    aspect-ratio: 3 / 4;
-    border-radius: calc(var(--border-radius) - 4px);
-    overflow: hidden;
-    background-color: var(--color-surface-container-highest);
-    flex-shrink: 0;
-  }
-
-  .cart-item-image--square {
-    aspect-ratio: 1 / 1;
-  }
-
-  .cart-item-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-  }
-
-  .cart-item-info {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    min-width: 0;
-  }
-
-  .cart-item-brand {
-    font-family: var(--font-family);
-    font-size: var(--font-label-sm-size);
-    font-weight: var(--font-label-sm-weight);
-    letter-spacing: var(--font-label-sm-tracking);
-    text-transform: uppercase;
-    color: var(--color-on-surface-variant);
-  }
-
-  .cart-item-name {
-    font-family: var(--font-family);
-    font-size: var(--font-body-md-size);
-    font-weight: var(--font-body-md-weight);
-    color: var(--color-on-surface);
-    line-height: 1.25;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .cart-item-meta {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 2px;
-  }
-
-  .cart-item-size {
-    font-family: var(--font-family);
-    font-size: var(--font-label-sm-size);
-    font-weight: var(--font-label-sm-weight);
-    letter-spacing: var(--font-label-sm-tracking);
-    text-transform: uppercase;
-    color: var(--color-on-primary);
-    background-color: var(--color-primary);
-    padding: 3px 10px;
-    border-radius: var(--border-radius);
-  }
-
-  .cart-item-price {
-    font-family: var(--font-family);
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--color-on-surface-variant);
-  }
-
-  .cart-item--unavailable {
-    opacity: 0.6;
-    background-color: var(--color-surface-container);
-  }
-
-  .cart-item--unavailable .cart-item-image {
-    background-color: var(--color-surface-container-highest);
-  }
-
-  .cart-item-status {
-    font-family: var(--font-family);
-    font-size: var(--font-label-sm-size);
-    font-weight: var(--font-label-sm-weight);
-    letter-spacing: var(--font-label-sm-tracking);
-    text-transform: uppercase;
-    color: var(--color-status-out-of-stock);
-    border: var(--border-width) solid var(--color-outline-variant);
-    padding: 3px 10px;
-    border-radius: var(--border-radius);
-  }
-
-  .cart-item-controls {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 10px;
-  }
-
-  .cart-item-quantity {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    background-color: var(--color-surface-container-highest);
-    border: var(--border-width) solid var(--color-outline-variant);
-    border-radius: var(--border-radius);
-    padding: 3px 4px;
-  }
-
-  .quantity-btn {
-    width: 28px;
-    height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--color-on-surface);
-    background: transparent;
-    border: none;
-    border-radius: var(--border-radius);
-    cursor: pointer;
-    transition: all var(--transition-duration) var(--transition-easing);
-  }
-
-  .quantity-btn:hover:not(:disabled) {
-    color: var(--color-primary);
-    background-color: var(--color-surface-container);
-  }
-
-  .quantity-btn:disabled {
-    opacity: 0.35;
-    cursor: not-allowed;
-  }
-
-  .quantity-btn:focus-visible {
-    outline: 2px solid var(--color-primary);
-    outline-offset: 2px;
-  }
-
-  .quantity-value {
-    font-family: var(--font-family);
-    font-size: var(--font-body-md-size);
-    font-weight: var(--font-body-md-weight);
-    color: var(--color-on-surface);
-    min-width: 22px;
-    text-align: center;
-  }
-
-  .cart-item-total {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .cart-item-line-total {
-    font-family: var(--font-family);
-    font-size: var(--font-body-md-size);
-    font-weight: var(--font-body-md-weight);
-    color: var(--color-on-surface);
-  }
-
-  .cart-item-remove {
-    width: 28px;
-    height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--color-on-surface-variant);
-    background: transparent;
-    border: none;
-    border-radius: var(--border-radius);
-    cursor: pointer;
-    transition: all var(--transition-duration) var(--transition-easing);
-  }
-
-  .cart-item-remove:hover {
-    color: var(--color-error);
-    background-color: var(--color-error-container);
-  }
-
-  .cart-item-remove:focus-visible {
-    outline: 2px solid var(--color-primary);
-    outline-offset: 2px;
-  }
-
   @media (max-width: 480px) {
-    .cart-item {
-      grid-template-columns: 56px minmax(0, 1fr);
-      gap: 12px;
+    .cart-drawer {
+      --drawer-width: 100vw;
     }
-
-    .cart-item-controls {
-      grid-column: 1 / -1;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-    }
-  }
-
-  /* Order summary */
-  .order-summary {
-    flex-shrink: 0;
-    margin-top: 12px;
-    padding: 12px;
-    background-color: var(--color-surface-container);
-    border: var(--border-width) solid var(--color-outline-variant);
-    border-radius: var(--border-radius);
-  }
-
-  .order-summary-line {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 2px 0;
-  }
-
-  .order-summary-line--total {
-    margin-top: 4px;
-    padding-top: 8px;
-    border-top: var(--border-width) solid var(--color-outline-variant);
-  }
-
-  .order-summary-label {
-    font-family: var(--font-family);
-    font-size: var(--font-body-md-size);
-    color: var(--color-on-surface-variant);
-  }
-
-  .order-summary-value {
-    font-family: var(--font-family);
-    font-size: var(--font-body-md-size);
-    font-weight: var(--font-body-md-weight);
-    color: var(--color-on-surface);
-  }
-
-  .order-summary-line--total .order-summary-label {
-    font-size: var(--font-label-sm-size);
-    font-weight: var(--font-label-sm-weight);
-    letter-spacing: var(--font-label-sm-tracking);
-    text-transform: uppercase;
-  }
-
-  .order-summary-line--total .order-summary-value {
-    font-size: 16px;
-    font-weight: 500;
-    color: var(--color-primary);
-  }
-
-  .order-summary-note {
-    font-family: var(--font-family);
-    font-size: 10px;
-    color: var(--color-on-surface-variant);
-    margin: 4px 0 8px;
-    text-align: center;
-  }
-
-  .order-summary-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 48px;
-    padding: 0 16px;
-    font-family: var(--font-family);
-    font-size: var(--font-label-sm-size);
-    font-weight: var(--font-label-sm-weight);
-    letter-spacing: var(--font-label-sm-tracking);
-    text-transform: uppercase;
-    color: var(--color-on-primary);
-    background-color: var(--color-primary);
-    border: var(--border-width) solid var(--color-primary);
-    border-radius: var(--border-radius);
-    cursor: pointer;
-    transition: all var(--transition-duration) var(--transition-easing);
-  }
-
-  .order-summary-btn:hover {
-    background-color: var(--color-primary-container);
-    border-color: var(--color-primary-container);
-  }
-
-  .order-summary-btn:active {
-    transform: scale(0.98);
-  }
-
-  .order-summary-btn:focus-visible {
-    outline: 2px solid var(--color-primary);
-    outline-offset: 2px;
   }
 </style>

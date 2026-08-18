@@ -1,5 +1,4 @@
 ---
-import Chip from '@/components/ui/Chip.astro';
 import { getStockStatus, getStockLabel } from '@/utils/stock';
 import { formatPrice } from '@/utils/formatters';
 import { site, assetUrl } from '@/site.config';
@@ -13,150 +12,48 @@ const { perfume } = Astro.props;
 const mainImage = assetUrl(perfume.images[0]?.src);
 const mainAlt = perfume.images[0]?.alt || `${perfume.brand} ${perfume.name}`;
 
-// Get primary size (5ml) for price display
 const primarySize = perfume.sizes.find(s => s.ml === 5) || perfume.sizes[0];
 const stockStatus = getStockStatus(primarySize);
 const stockLabel = getStockLabel(stockStatus);
 const isOutOfStock = stockStatus === 'out-of-stock';
-// Las imágenes vectoriales (SVG) se muestran a mayor tamaño que las fotos
 const isVector = (perfume.images[0]?.src || '').toLowerCase().endsWith('.svg');
+
+const badgeVariant = {
+  'in-stock': 'badge-success',
+  'low-stock': 'badge-warning',
+  'out-of-stock': 'badge-error',
+  'default': 'badge-ghost'
+};
 ---
 
 <a
   href={`${site.basePath}producto/${perfume.slug}/`}
-  class="product-card"
+  class="card bg-base-200 border border-base-300 hover:border-primary hover:shadow-[0_0_20px_rgba(233,193,118,0.15)] transition-all duration-200 hover:-translate-y-1 group"
   aria-label={`Ver ${perfume.brand} ${perfume.name}`}
   data-gender={perfume.gender}
   data-search={`${perfume.brand} ${perfume.name}`.toLowerCase()}
 >
-  <div class="product-card-image-wrapper">
+  <figure class="relative aspect-[3/4] overflow-hidden bg-white">
     <img 
       src={mainImage} 
       alt={mainAlt} 
-      class={`product-card-image${isVector ? ' product-card-image--large' : ''}`}
+      class={`w-full h-full object-contain transition-transform duration-400 ease-out group-hover:scale-105${isVector ? ' p-[2%] scale-110 group-hover:scale-[1.155]' : ' p-[13%]'}`}
       loading="lazy"
       width="400"
       height="400"
     />
-    {isOutOfStock && <div class="product-card-overlay" aria-hidden="true"></div>}
-    <Chip
-      variant={stockStatus}
-      class="product-card-stock"
-    >
-      {stockLabel}
-    </Chip>
-  </div>
-  <div class="product-card-info">
-    <span class="product-card-brand">{perfume.brand}</span>
-    <h3 class="product-card-name" title={perfume.name}>{perfume.name}</h3>
-    <span class="product-card-price">{primarySize ? formatPrice(primarySize.price) : '—'}</span>
+    {isOutOfStock && <div class="absolute inset-0 bg-black/60 pointer-events-none"></div>}
+    <div class="absolute bottom-3 left-3 z-10">
+      <span class={`badge badge-sm ${badgeVariant[stockStatus]} border-0`}>
+        {stockLabel}
+      </span>
+    </div>
+  </figure>
+  <div class="card-body p-4 gap-1">
+    <span class="text-xs font-medium tracking-[0.1em] uppercase text-base-content/60">{perfume.brand}</span>
+    <h3 class="text-sm font-normal text-base-content truncate m-0" title={perfume.name}>{perfume.name}</h3>
+    <span class="text-xs font-medium tracking-[0.1em] uppercase text-primary mt-1">
+      {primarySize ? formatPrice(primarySize.price) : '—'}
+    </span>
   </div>
 </a>
-
-<style>
-  .product-card {
-    display: block;
-    text-decoration: none;
-    color: inherit;
-    background-color: var(--color-surface-container);
-    border: var(--border-width) solid var(--color-on-surface);
-    border-radius: var(--border-radius);
-    overflow: hidden;
-    transition: all var(--transition-duration) var(--transition-easing);
-  }
-
-  .product-card:hover {
-    border-color: var(--color-primary);
-    box-shadow: 0 0 20px rgba(233, 193, 118, 0.15);
-    transform: translateY(-4px);
-  }
-
-  .product-card:focus-visible {
-    outline: 2px solid var(--color-primary);
-    outline-offset: 2px;
-  }
-
-  .product-card-image-wrapper {
-    position: relative;
-    aspect-ratio: 3 / 4;
-    overflow: hidden;
-    background-color: #ffffff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .product-card-image {
-    width: 100%;
-    height: 100%;
-    box-sizing: border-box;
-    padding: 13%;
-    object-fit: contain;
-    transition: transform 400ms var(--transition-easing);
-  }
-
-  .product-card-image--large {
-    padding: 2%;
-    transform: scale(1.1);
-  }
-
-  .product-card:hover .product-card-image {
-    transform: scale(1.04);
-  }
-
-  .product-card:hover .product-card-image--large {
-    transform: scale(1.144);
-  }
-
-  .product-card-overlay {
-    position: absolute;
-    inset: 0;
-    background-color: rgba(18, 20, 20, 0.6);
-    pointer-events: none;
-  }
-
-  .product-card-stock {
-    position: absolute;
-    bottom: 12px;
-    left: 12px;
-    z-index: 1;
-  }
-
-  .product-card-info {
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .product-card-brand {
-    font-family: var(--font-family);
-    font-size: var(--font-label-sm-size);
-    font-weight: var(--font-label-sm-weight);
-    letter-spacing: var(--font-label-sm-tracking);
-    text-transform: uppercase;
-    color: var(--color-on-surface-variant);
-  }
-
-  .product-card-name {
-    font-family: var(--font-family);
-    font-size: var(--font-body-md-size);
-    font-weight: var(--font-body-md-weight);
-    color: var(--color-on-surface);
-    line-height: 1.3;
-    margin: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .product-card-price {
-    font-family: var(--font-family);
-    font-size: var(--font-label-sm-size);
-    font-weight: var(--font-label-sm-weight);
-    letter-spacing: var(--font-label-sm-tracking);
-    text-transform: uppercase;
-    color: var(--color-primary);
-    margin-top: 4px;
-  }
-</style>

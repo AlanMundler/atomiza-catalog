@@ -58,8 +58,8 @@ const total = quizQuestions.length;
         ))}
 
         <div class="quiz-nav">
-          <button type="button" class="btn btn--ghost quiz-back" data-quiz-back hidden>Volver</button>
-          <button type="button" class="btn btn--primary btn--lg quiz-next" data-quiz-next disabled>Continuar</button>
+          <button type="button" class="btn btn-ghost quiz-back" data-quiz-back hidden>Volver</button>
+          <button type="button" class="btn btn-primary btn-lg quiz-next" data-quiz-next disabled>Continuar</button>
         </div>
       </div>
 
@@ -68,8 +68,8 @@ const total = quizQuestions.length;
         <p class="quiz-loading" id="quiz-loading" hidden>Analizando tu perfil…</p>
         <div class="quiz-result-list" id="quiz-result-list"></div>
         <div class="quiz-result-actions">
-          <button type="button" class="btn btn--secondary btn--md" data-quiz-restart>Hacer el quiz de nuevo</button>
-          <a href={`${BASE}catalogo/`} class="btn btn--ghost">Ver todo el catálogo</a>
+          <button type="button" class="btn btn-secondary" data-quiz-restart>Hacer el quiz de nuevo</button>
+          <a href={`${BASE}catalogo/`} class="btn btn-ghost">Ver todo el catálogo</a>
         </div>
       </section>
     </div>
@@ -239,7 +239,7 @@ const total = quizQuestions.length;
 
       const addBtn = document.createElement('button');
       addBtn.type = 'button';
-      addBtn.className = 'btn btn--primary btn--lg quiz-result-add';
+      addBtn.className = 'btn btn-primary btn-lg quiz-result-add';
       addBtn.textContent = 'Agregar al carrito';
       addBtn.dataset.addPerfumeId = perfume.id;
       bindOnce(addBtn, (el) => {
@@ -453,7 +453,7 @@ const total = quizQuestions.length;
   }
 
   @media (max-width: 640px) {
-    .quiz-nav .btn--lg {
+    .quiz-nav .btn-lg {
       flex: 1 1 auto;
       white-space: normal;
       height: auto;
