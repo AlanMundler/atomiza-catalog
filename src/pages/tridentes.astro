@@ -3,7 +3,7 @@ import Layout from '@/layouts/Layout.astro';
 import Chip from '@/components/ui/Chip.astro';
 import { formatPrice } from '@/utils/formatters';
 import { getStockStatus, getStockLabel } from '@/utils/stock';
-import { TRIO_COUNT, TRIO_DISCOUNT } from '@/utils/trio';
+import { TRIDENT_COUNT, TRIDENT_DISCOUNT } from '@/utils/trident';
 import { assetUrl } from '@/site.config';
 import type { Perfume } from '@/data/types';
 import perfumesData from '@/data/perfumes.json';
@@ -21,42 +21,42 @@ function getSize(p: Perfume) {
 
 <Layout
   title="Elegí 3. Pagá menos."
-  description={`Elegí ${TRIO_COUNT} decants de 5ml y ahorrá ${formatPrice(TRIO_DISCOUNT)} en tu pedido. Perfumes árabes de lujo para regalar o descubrir.`}
+  description={`Elegí ${TRIDENT_COUNT} decants de 5ml y ahorrá ${formatPrice(TRIDENT_DISCOUNT)} en tu pedido. Perfumes árabes de lujo para regalar o descubrir.`}
 >
-  <section class="trio-hero" aria-labelledby="trio-title">
+  <section class="trident-hero" aria-labelledby="trident-title">
     <div class="container">
-      <h1 id="trio-title" class="trio-title">Elegí 3. Pagá menos.</h1>
-      <p class="trio-subtitle">
-        Elegí {TRIO_COUNT} decants de 5ml y ahorrá <strong>{formatPrice(TRIO_DISCOUNT)}</strong> en tu pedido
+      <h1 id="trident-title" class="trident-title">Elegí 3. Pagá menos.</h1>
+      <p class="trident-subtitle">
+        Elegí {TRIDENT_COUNT} decants de 5ml y ahorrá <strong>{formatPrice(TRIDENT_DISCOUNT)}</strong> en tu pedido
       </p>
     </div>
   </section>
 
-  <section class="trio-steps" aria-label="Cómo funciona">
-    <div class="container trio-steps-grid">
-      <div class="trio-step">
-        <span class="trio-step-number">1</span>
-        <p class="trio-step-text">Elegí tus {TRIO_COUNT} perfumes de la lista</p>
+  <section class="trident-steps" aria-label="Cómo funciona">
+    <div class="container trident-steps-grid">
+      <div class="trident-step">
+        <span class="trident-step-number">1</span>
+        <p class="trident-step-text">Elegí tus {TRIDENT_COUNT} perfumes de la lista</p>
       </div>
-      <div class="trio-step">
-        <span class="trio-step-number">2</span>
-        <p class="trio-step-text">Confirmá tu tridente por WhatsApp</p>
+      <div class="trident-step">
+        <span class="trident-step-number">2</span>
+        <p class="trident-step-text">Confirmá tu tridente por WhatsApp</p>
       </div>
-      <div class="trio-step">
-        <span class="trio-step-number">3</span>
-        <p class="trio-step-text">Coordinamos el envío o punto de entrega</p>
+      <div class="trident-step">
+        <span class="trident-step-number">3</span>
+        <p class="trident-step-text">Coordinamos el envío o punto de entrega</p>
       </div>
     </div>
   </section>
 
-  <section class="trio-section" aria-labelledby="trio-grid-title">
+  <section class="trident-section" aria-labelledby="trident-grid-title">
     <div class="container">
-      <h2 id="trio-grid-title" class="trio-grid-title">Elegí tu tridente</h2>
+      <h2 id="trident-grid-title" class="trident-grid-title">Elegí tu tridente</h2>
 
-      {available.length < TRIO_COUNT ? (
-        <p class="trio-empty">Por ahora hay menos de {TRIO_COUNT} perfumes con stock. Volvé pronto.</p>
+      {available.length < TRIDENT_COUNT ? (
+        <p class="trident-empty">Por ahora hay menos de {TRIDENT_COUNT} perfumes con stock. Volvé pronto.</p>
       ) : (
-        <div class="trio-grid">
+        <div class="trident-grid">
           {available.map((p) => {
             const size = getSize(p)!;
             const stockStatus = getStockStatus(size);
@@ -64,8 +64,8 @@ function getSize(p: Perfume) {
             return (
               <button
                 type="button"
-                class="trio-card"
-                data-trio-card
+                class="trident-card"
+                data-trident-card
                 data-slug={p.slug}
                 data-brand={p.brand}
                 data-name={p.name}
@@ -73,21 +73,21 @@ function getSize(p: Perfume) {
                 aria-pressed="false"
                 aria-label={`Seleccionar ${p.brand} ${p.name}, ${formatPrice(size.price)}`}
               >
-                <span class="trio-card-image-wrapper">
+                <span class="trident-card-image-wrapper">
                   <img
                     src={assetUrl(p.images[0]?.src)}
                     alt={p.images[0]?.alt || `${p.brand} ${p.name}`}
-                    class={`trio-card-image${isVector ? ' trio-card-image--large' : ''}`}
+                    class={`trident-card-image${isVector ? ' trident-card-image--large' : ''}`}
                     loading="lazy"
                     width="400"
                     height="400"
                   />
-                  <span class="trio-card-check" aria-hidden="true">✓</span>
+                  <span class="trident-card-check" aria-hidden="true">✓</span>
                 </span>
-                <span class="trio-card-info">
-                  <span class="trio-card-brand">{p.brand}</span>
-                  <span class="trio-card-name">{p.name}</span>
-                  <span class="trio-card-price">{formatPrice(size.price)}</span>
+                <span class="trident-card-info">
+                  <span class="trident-card-brand">{p.brand}</span>
+                  <span class="trident-card-name">{p.name}</span>
+                  <span class="trident-card-price">{formatPrice(size.price)}</span>
                   <Chip variant={stockStatus}>{getStockLabel(stockStatus)}</Chip>
                 </span>
               </button>
@@ -98,20 +98,20 @@ function getSize(p: Perfume) {
     </div>
   </section>
 
-  <aside class="trio-summary" aria-label="Resumen de tu tridente">
-    <div class="container trio-summary-inner">
-      <div class="trio-summary-info">
-        <p class="trio-summary-count" data-trio-count>Elegiste 0 de 3</p>
-        <p class="trio-summary-list" data-trio-list hidden></p>
-        <p class="trio-summary-hint" data-trio-hint>Elegí 3 perfumes para armar tu tridente</p>
+  <aside class="trident-summary" aria-label="Resumen de tu tridente">
+    <div class="container trident-summary-inner">
+      <div class="trident-summary-info">
+        <p class="trident-summary-count" data-trident-count>Elegiste 0 de 3</p>
+        <p class="trident-summary-list" data-trident-list hidden></p>
+        <p class="trident-summary-hint" data-trident-hint>Elegí 3 perfumes para armar tu tridente</p>
       </div>
-      <div class="trio-summary-price">
-        <strong class="trio-summary-total" data-trio-total hidden></strong>
-        <span class="trio-summary-breakdown" data-trio-breakdown hidden></span>
+      <div class="trident-summary-price">
+        <strong class="trident-summary-total" data-trident-total hidden></strong>
+        <span class="trident-summary-breakdown" data-trident-breakdown hidden></span>
       </div>
-      <div class="trio-summary-actions">
-        <button type="button" class="trio-clear" data-trio-clear hidden>Vaciar</button>
-        <a class="trio-cta" data-trio-cta href="" hidden>Confirmar por WhatsApp</a>
+      <div class="trident-summary-actions">
+        <button type="button" class="trident-clear" data-trident-clear hidden>Vaciar</button>
+        <a class="trident-cta" data-trident-cta href="" hidden>Confirmar por WhatsApp</a>
       </div>
     </div>
   </aside>
@@ -121,7 +121,7 @@ function getSize(p: Perfume) {
   import { bindOnce, onPageLoad } from '@/utils/view-transitions';
   import { buildWhatsAppLink, formatPrice } from '@/utils/formatters';
   import { site } from '@/site.config';
-  import { TRIO_COUNT, TRIO_DISCOUNT, buildTrioOrderText, computeTrioTotal } from '@/utils/trio';
+  import { TRIDENT_COUNT, TRIDENT_DISCOUNT, buildTridentOrderText, computeTridentTotal } from '@/utils/trident';
 
   interface Selected {
     slug: string;
@@ -130,7 +130,7 @@ function getSize(p: Perfume) {
     price: number;
   }
 
-  interface TrioCard {
+  interface TridentCard {
     el: HTMLButtonElement;
     slug: string;
     brand: string;
@@ -141,17 +141,17 @@ function getSize(p: Perfume) {
   let selected: Selected[] = [];
 
   function render() {
-    const cards = Array.from(document.querySelectorAll('[data-trio-card]')) as HTMLButtonElement[];
-    const countEl = document.querySelector('[data-trio-count]') as HTMLElement | null;
-    const listEl = document.querySelector('[data-trio-list]') as HTMLElement | null;
-    const hintEl = document.querySelector('[data-trio-hint]') as HTMLElement | null;
-    const subtotalEl = document.querySelector('[data-trio-breakdown]') as HTMLElement | null;
-    const totalEl = document.querySelector('[data-trio-total]') as HTMLElement | null;
-    const clearEl = document.querySelector('[data-trio-clear]') as HTMLElement | null;
-    const ctaEl = document.querySelector('[data-trio-cta]') as HTMLAnchorElement | null;
+    const cards = Array.from(document.querySelectorAll('[data-trident-card]')) as HTMLButtonElement[];
+    const countEl = document.querySelector('[data-trident-count]') as HTMLElement | null;
+    const listEl = document.querySelector('[data-trident-list]') as HTMLElement | null;
+    const hintEl = document.querySelector('[data-trident-hint]') as HTMLElement | null;
+    const subtotalEl = document.querySelector('[data-trident-breakdown]') as HTMLElement | null;
+    const totalEl = document.querySelector('[data-trident-total]') as HTMLElement | null;
+    const clearEl = document.querySelector('[data-trident-clear]') as HTMLElement | null;
+    const ctaEl = document.querySelector('[data-trident-cta]') as HTMLAnchorElement | null;
 
     const count = selected.length;
-    if (countEl) countEl.textContent = `Elegiste ${count} de ${TRIO_COUNT}`;
+    if (countEl) countEl.textContent = `Elegiste ${count} de ${TRIDENT_COUNT}`;
 
     if (listEl) {
       listEl.hidden = count === 0;
@@ -160,12 +160,12 @@ function getSize(p: Perfume) {
 
     const prices = selected.map((s) => s.price);
     const subtotal = prices.reduce((acc, p) => acc + p, 0);
-    const total = computeTrioTotal(prices);
+    const total = computeTridentTotal(prices);
     const ready = total !== null;
 
     if (subtotalEl) {
       subtotalEl.hidden = !ready;
-      if (ready) subtotalEl.textContent = `Subtotal ${formatPrice(subtotal)} − ${formatPrice(TRIO_DISCOUNT)}`;
+      if (ready) subtotalEl.textContent = `Subtotal ${formatPrice(subtotal)} − ${formatPrice(TRIDENT_DISCOUNT)}`;
     }
     if (totalEl) {
       totalEl.hidden = !ready;
@@ -174,9 +174,9 @@ function getSize(p: Perfume) {
     if (hintEl) {
       hintEl.hidden = ready;
       if (!ready) {
-        const missing = TRIO_COUNT - count;
+        const missing = TRIDENT_COUNT - count;
         hintEl.textContent = count === 0
-          ? `Elegí ${TRIO_COUNT} perfumes para armar tu tridente`
+          ? `Elegí ${TRIDENT_COUNT} perfumes para armar tu tridente`
           : `Te faltan ${missing} ${missing === 1 ? 'perfume' : 'perfumes'}`;
       }
     }
@@ -186,7 +186,7 @@ function getSize(p: Perfume) {
       ctaEl.hidden = !ready;
       if (ready) {
         const lines = selected.map((s) => ({ brand: s.brand, name: s.name, price: s.price }));
-        ctaEl.href = buildWhatsAppLink(site.whatsappNumber, buildTrioOrderText(lines, total!));
+        ctaEl.href = buildWhatsAppLink(site.whatsappNumber, buildTridentOrderText(lines, total!));
       } else {
         ctaEl.href = '';
       }
@@ -194,13 +194,13 @@ function getSize(p: Perfume) {
 
     cards.forEach((card) => {
       const isSelected = selected.some((s) => s.slug === card.dataset.slug);
-      card.classList.toggle('trio-card--selected', isSelected);
+      card.classList.toggle('trident-card--selected', isSelected);
       card.setAttribute('aria-pressed', String(isSelected));
-      card.classList.toggle('trio-card--full', !isSelected && ready);
+      card.classList.toggle('trident-card--full', !isSelected && ready);
     });
   }
 
-  function makeCard(el: HTMLButtonElement): TrioCard {
+  function makeCard(el: HTMLButtonElement): TridentCard {
     return {
       el,
       slug: el.dataset.slug || '',
@@ -210,8 +210,8 @@ function getSize(p: Perfume) {
     };
   }
 
-  onPageLoad('trios', () => {
-    const cards = Array.from(document.querySelectorAll('[data-trio-card]')) as HTMLButtonElement[];
+  onPageLoad('tridentes', () => {
+    const cards = Array.from(document.querySelectorAll('[data-trident-card]')) as HTMLButtonElement[];
     cards.forEach((card) => {
       bindOnce(card, () => {
         card.addEventListener('click', () => {
@@ -219,7 +219,7 @@ function getSize(p: Perfume) {
           const idx = selected.findIndex((s) => s.slug === item.slug);
           if (idx !== -1) {
             selected.splice(idx, 1);
-          } else if (selected.length < TRIO_COUNT) {
+          } else if (selected.length < TRIDENT_COUNT) {
             selected.push(item);
           }
           render();
@@ -227,7 +227,7 @@ function getSize(p: Perfume) {
       });
     });
 
-    const clearBtn = document.querySelector('[data-trio-clear]') as HTMLButtonElement | null;
+    const clearBtn = document.querySelector('[data-trident-clear]') as HTMLButtonElement | null;
     if (clearBtn) {
       bindOnce(clearBtn, () => {
         clearBtn.addEventListener('click', () => {
@@ -242,12 +242,12 @@ function getSize(p: Perfume) {
 </script>
 
 <style>
-  .trio-hero {
+  .trident-hero {
     padding: var(--spacing-stack-md) 0 var(--spacing-stack-sm);
     text-align: center;
   }
 
-  .trio-title {
+  .trident-title {
     font-family: var(--font-family);
     font-size: var(--font-display-lg-size);
     font-weight: var(--font-display-lg-weight);
@@ -259,12 +259,12 @@ function getSize(p: Perfume) {
   }
 
   @media (max-width: 640px) {
-    .trio-title {
+    .trident-title {
       font-size: 36px;
     }
   }
 
-  .trio-subtitle {
+  .trident-subtitle {
     font-family: var(--font-family);
     font-size: var(--font-body-lg-size);
     font-weight: var(--font-body-lg-weight);
@@ -274,35 +274,35 @@ function getSize(p: Perfume) {
     margin: 0;
   }
 
-  .trio-subtitle strong {
+  .trident-subtitle strong {
     color: var(--color-primary);
   }
 
-  .trio-steps {
+  .trident-steps {
     padding: var(--spacing-stack-sm) 0;
     border-top: var(--border-width) solid var(--color-outline-variant);
     border-bottom: var(--border-width) solid var(--color-outline-variant);
   }
 
-  .trio-steps-grid {
+  .trident-steps-grid {
     display: grid;
     gap: var(--spacing-stack-md);
     grid-template-columns: 1fr;
   }
 
   @media (min-width: 768px) {
-    .trio-steps-grid {
+    .trident-steps-grid {
       grid-template-columns: repeat(3, 1fr);
     }
   }
 
-  .trio-step {
+  .trident-step {
     display: flex;
     align-items: center;
     gap: 12px;
   }
 
-  .trio-step-number {
+  .trident-step-number {
     flex-shrink: 0;
     width: 32px;
     height: 32px;
@@ -318,7 +318,7 @@ function getSize(p: Perfume) {
     border-radius: 50%;
   }
 
-  .trio-step-text {
+  .trident-step-text {
     font-family: var(--font-family);
     font-size: var(--font-body-md-size);
     font-weight: var(--font-body-md-weight);
@@ -327,11 +327,11 @@ function getSize(p: Perfume) {
     margin: 0;
   }
 
-  .trio-section {
+  .trident-section {
     padding: var(--spacing-stack-md) 0 var(--spacing-stack-lg);
   }
 
-  .trio-grid-title {
+  .trident-grid-title {
     font-family: var(--font-family);
     font-size: var(--font-headline-sm-size);
     font-weight: var(--font-headline-sm-weight);
@@ -342,20 +342,20 @@ function getSize(p: Perfume) {
     margin: 0 0 var(--spacing-stack-sm);
   }
 
-  .trio-empty {
+  .trident-empty {
     font-family: var(--font-family);
     font-size: var(--font-body-md-size);
     color: var(--color-on-surface-variant);
     margin: 0;
   }
 
-  .trio-grid {
+  .trident-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 16px;
   }
 
-  .trio-card {
+  .trident-card {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -371,28 +371,28 @@ function getSize(p: Perfume) {
     transition: all var(--transition-duration) var(--transition-easing);
   }
 
-  .trio-card:hover {
+  .trident-card:hover {
     border-color: var(--color-primary);
     box-shadow: 0 0 20px rgba(233, 193, 118, 0.15);
     transform: translateY(-4px);
   }
 
-  .trio-card:focus-visible {
+  .trident-card:focus-visible {
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
   }
 
-  .trio-card--selected {
+  .trident-card--selected {
     border-color: var(--color-primary);
     box-shadow: 0 0 20px rgba(233, 193, 118, 0.25);
   }
 
-  .trio-card--full {
+  .trident-card--full {
     opacity: 0.45;
     pointer-events: none;
   }
 
-  .trio-card-image-wrapper {
+  .trident-card-image-wrapper {
     position: relative;
     display: flex;
     align-items: center;
@@ -402,7 +402,7 @@ function getSize(p: Perfume) {
     background-color: #ffffff;
   }
 
-  .trio-card-image {
+  .trident-card-image {
     width: 100%;
     height: 100%;
     box-sizing: border-box;
@@ -411,20 +411,20 @@ function getSize(p: Perfume) {
     transition: transform 400ms var(--transition-easing);
   }
 
-  .trio-card-image--large {
+  .trident-card-image--large {
     padding: 2%;
     transform: scale(1.1);
   }
 
-  .trio-card:hover .trio-card-image {
+  .trident-card:hover .trident-card-image {
     transform: scale(1.04);
   }
 
-  .trio-card:hover .trio-card-image--large {
+  .trident-card:hover .trident-card-image--large {
     transform: scale(1.144);
   }
 
-  .trio-card-check {
+  .trident-card-check {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -445,12 +445,12 @@ function getSize(p: Perfume) {
     z-index: 1;
   }
 
-  .trio-card--selected .trio-card-check {
+  .trident-card--selected .trident-card-check {
     opacity: 1;
     transform: scale(1);
   }
 
-  .trio-card-info {
+  .trident-card-info {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -458,7 +458,7 @@ function getSize(p: Perfume) {
     padding: 16px;
   }
 
-  .trio-card-brand {
+  .trident-card-brand {
     font-family: var(--font-family);
     font-size: var(--font-label-sm-size);
     font-weight: var(--font-label-sm-weight);
@@ -469,7 +469,7 @@ function getSize(p: Perfume) {
     min-height: 30px;
   }
 
-  .trio-card-name {
+  .trident-card-name {
     font-family: var(--font-family);
     font-size: var(--font-body-md-size);
     font-weight: var(--font-body-md-weight);
@@ -480,7 +480,7 @@ function getSize(p: Perfume) {
     white-space: nowrap;
   }
 
-  .trio-card-price {
+  .trident-card-price {
     font-family: var(--font-family);
     font-size: var(--font-label-sm-size);
     font-weight: var(--font-label-sm-weight);
@@ -490,7 +490,7 @@ function getSize(p: Perfume) {
     margin-top: 4px;
   }
 
-  .trio-summary {
+  .trident-summary {
     position: sticky;
     bottom: 0;
     z-index: 60;
@@ -500,7 +500,7 @@ function getSize(p: Perfume) {
     padding: var(--spacing-stack-sm) 0;
   }
 
-  .trio-summary-inner {
+  .trident-summary-inner {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -508,12 +508,12 @@ function getSize(p: Perfume) {
     gap: 12px;
   }
 
-  .trio-summary-info {
+  .trident-summary-info {
     flex: 1 1 220px;
     min-width: 0;
   }
 
-  .trio-summary-count {
+  .trident-summary-count {
     font-family: var(--font-family);
     font-size: var(--font-label-sm-size);
     font-weight: var(--font-label-sm-weight);
@@ -523,7 +523,7 @@ function getSize(p: Perfume) {
     margin: 0;
   }
 
-  .trio-summary-list {
+  .trident-summary-list {
     font-family: var(--font-family);
     font-size: var(--font-body-md-size);
     color: var(--color-on-surface-variant);
@@ -533,14 +533,14 @@ function getSize(p: Perfume) {
     white-space: nowrap;
   }
 
-  .trio-summary-hint {
+  .trident-summary-hint {
     font-family: var(--font-family);
     font-size: var(--font-body-sm-size);
     color: var(--color-on-surface-variant);
     margin: 4px 0 0;
   }
 
-  .trio-summary-price {
+  .trident-summary-price {
     flex: 0 0 auto;
     text-align: right;
     display: flex;
@@ -549,7 +549,7 @@ function getSize(p: Perfume) {
     gap: 2px;
   }
 
-  .trio-summary-total {
+  .trident-summary-total {
     font-family: var(--font-family);
     font-size: var(--font-headline-sm-size);
     font-weight: var(--font-headline-sm-weight);
@@ -557,20 +557,20 @@ function getSize(p: Perfume) {
     color: var(--color-primary);
   }
 
-  .trio-summary-breakdown {
+  .trident-summary-breakdown {
     font-family: var(--font-family);
     font-size: var(--font-body-sm-size);
     color: var(--color-on-surface-variant);
   }
 
-  .trio-summary-actions {
+  .trident-summary-actions {
     flex: 0 0 auto;
     display: flex;
     align-items: center;
     gap: 12px;
   }
 
-  .trio-clear {
+  .trident-clear {
     font-family: var(--font-family);
     font-size: var(--font-label-sm-size);
     font-weight: var(--font-label-sm-weight);
@@ -585,11 +585,11 @@ function getSize(p: Perfume) {
     transition: color var(--transition-duration) var(--transition-easing);
   }
 
-  .trio-clear:hover {
+  .trident-clear:hover {
     color: var(--color-primary);
   }
 
-  .trio-cta {
+  .trident-cta {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -609,44 +609,44 @@ function getSize(p: Perfume) {
     transition: all var(--transition-duration) var(--transition-easing);
   }
 
-  .trio-cta:hover {
+  .trident-cta:hover {
     background-color: transparent;
     color: var(--color-primary);
   }
 
-  .trio-cta:focus-visible {
+  .trident-cta:focus-visible {
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
   }
 
-  .trio-summary [hidden] {
+  .trident-summary [hidden] {
     display: none !important;
   }
 
   @media (max-width: 640px) {
-    .trio-summary-inner {
+    .trident-summary-inner {
       flex-direction: column;
       align-items: stretch;
       text-align: center;
       gap: 12px;
     }
 
-    .trio-summary-info {
+    .trident-summary-info {
       flex: none;
       text-align: center;
     }
 
-    .trio-summary-list {
+    .trident-summary-list {
       white-space: normal;
     }
 
-    .trio-summary-price {
+    .trident-summary-price {
       flex: none;
       align-items: center;
       text-align: center;
     }
 
-    .trio-summary-actions {
+    .trident-summary-actions {
       flex: none;
       flex-direction: column;
       align-items: stretch;
@@ -654,11 +654,11 @@ function getSize(p: Perfume) {
       width: 100%;
     }
 
-    .trio-clear {
+    .trident-clear {
       width: 100%;
     }
 
-    .trio-cta {
+    .trident-cta {
       width: 100%;
       height: 48px;
     }

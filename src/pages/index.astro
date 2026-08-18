@@ -22,7 +22,7 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
       <div class="hero-cta">
         <a href={`${BASE}catalogo/`} class="btn btn--primary btn--md">Ver catálogo</a>
         <a href={`${BASE}quiz/`} class="btn btn--secondary btn--md">Descubrí tu perfume</a>
-        <a href={`${BASE}trios/`} class="btn btn--secondary btn--md">Elegí 3. Pagá menos.</a>
+        <a href={`${BASE}tridentes/`} class="btn btn--secondary btn--md">Elegí 3. Pagá menos.</a>
       </div>
     </div>
   </section>
@@ -372,6 +372,10 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
     padding: var(--spacing-stack-md);
     border: var(--border-width) solid var(--color-outline-variant);
     border-radius: var(--border-radius);
+  }
+
+  .step + .step {
+    border-top: none;
   }
 
   .step-number {
