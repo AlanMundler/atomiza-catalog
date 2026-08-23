@@ -8,7 +8,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
-const SITE_URL = process.env.SITE_URL || 'https://atomiza.qd.je';
+const SITE_URL = process.env.SITE_URL || 'https://atomiza.com.ar';
 const BASE_PATH = process.env.BASE_PATH || '/';
 
 // https://astro.build/config
