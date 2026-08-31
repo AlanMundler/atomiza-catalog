@@ -49,12 +49,26 @@ const pageUrl = new URL(Astro.url.pathname, Astro.site).href;
     <link rel="icon" type="image/svg+xml" href={assetUrl('/favicon.svg')} />
     <script is:inline type="application/ld+json" set:html={`{
       "@context": "https://schema.org",
-      "@type": "Organization",
+      "@type": "Store",
       "name": "${site.name}",
       "url": "${Astro.site}",
       "logo": "${new URL(assetUrl('/favicon.svg'), Astro.site).href}",
       "description": "${site.description}",
-      "sameAs": ["${site.instagramUrl}"]
+      "sameAs": ["${site.instagramUrl}",
+        "https://wa.me/${site.whatsappNumber}"],
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "${site.addressLocality}",
+        "addressRegion": "${site.addressRegion}",
+        "addressCountry": "${site.addressCountry}"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": ${site.geo.latitude},
+        "longitude": ${site.geo.longitude}
+      },
+      "telephone": "+${site.phoneDisplay.replace(/[^0-9]/g, '')}",
+      "priceRange": "$$"
     }`} />
     <ClientRouter />
     <script is:inline src="https://app.secureprivacy.ai/script/6a8c5d62ff5be19c869a2e9d.js"></script>

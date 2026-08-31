@@ -8,6 +8,7 @@ import type { Perfume } from '@/data/types';
 
 const BASE = site.basePath;
 
+const homeDescription = `${site.name}. ${site.tagline} en ${site.addressLocality}, ${site.addressRegion}. ${site.description}`;
 // Perfumes in stock to rotate on the home page
 const allPerfumes = perfumesData.perfumes as Perfume[];
 const inStockPerfumes = allPerfumes.filter((perfume) => {
@@ -16,13 +17,16 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
 });
 ---
 
-<Layout title={site.tagline} description={`${site.name}. ${site.tagline}. ${site.description}`}>
+<Layout title={site.tagline} description={homeDescription}>
   <section class="hero" aria-labelledby="hero-heading">
     <div class="container">
+      <h1 id="hero-heading" class="hero-title">{site.hero.title} <strong>{site.hero.titleHighlight}</strong></h1>
+      <p class="hero-subtitle">{site.hero.subtitle}</p>
+      <p class="hero-price-note">{site.hero.priceNote}</p>
       <div class="hero-cta">
-        <a href={`${BASE}catalogo/`} class="btn btn--primary btn--md">Ver catálogo</a>
-        <a href={`${BASE}quiz/`} class="btn btn--secondary btn--md">Descubrí tu perfume</a>
-        <a href={`${BASE}tridentes/`} class="btn btn--secondary btn--md">Elegí 3. Pagá menos.</a>
+        <a href={`${BASE}catalogo/`} class="btn btn--primary btn--md">{site.hero.ctaPrimary}</a>
+        <a href={`${BASE}quiz/`} class="btn btn--secondary btn--md">{site.hero.ctaSecondary}</a>
+        <a href={`${BASE}tridentes/`} class="btn btn--secondary btn--md">{site.hero.ctaTertiary}</a>
       </div>
     </div>
   </section>
@@ -77,7 +81,7 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
             </svg>
           </div>
           <h3 class="value-prop-card-title">Atención por mensaje</h3>
-          <p class="value-prop-card-text">Te asesoramos para elegir, y el envío y el pago se coordinan por mensaje.</p>
+          <p class="value-prop-card-text">Te asesoramos para elegir, y el envío y el pago los coordinamos por mensaje.</p>
         </article>
       </div>
     </div>
@@ -104,7 +108,7 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
     <div class="container">
       <h2 id="decant-info-title" class="section-title">¿Qué es un decant?</h2>
       <div class="decant-info-body">
-        <p class="decant-info-text">Un decant es una porción de perfume extraída de un frasco original y envasada en uno más chico. Acá cada decant es de 5ml y sale de un frasco original y sellado: suficiente para probar la fragancia unos días antes de comprar el frasco completo.</p>
+        <p class="decant-info-text">Un decant es una porción de perfume pasada de un frasco original a una botellita más chica. Acá cada uno lleva 5ml y sale de un frasco original y sellado: alcanza para probar la fragancia unos días antes de decidir si querés el frasco completo.</p>
       </div>
     </div>
   </section>
@@ -207,18 +211,22 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 16px 0 16px;
+    padding: 48px 0 40px;
   }
 
   .hero-title {
     font-family: var(--font-family);
-    font-size: var(--font-headline-lg-size);
-    font-weight: var(--font-headline-lg-weight);
-    line-height: var(--font-headline-lg-line-height);
-    letter-spacing: var(--font-headline-lg-tracking);
+    font-size: var(--font-display-lg-size);
+    font-weight: var(--font-display-lg-weight);
+    line-height: var(--font-display-lg-line-height);
+    letter-spacing: var(--font-display-lg-tracking);
     text-transform: uppercase;
     color: var(--color-on-surface);
     margin: 0;
+  }
+
+  .hero-title strong {
+    color: var(--color-primary);
   }
 
   .hero-subtitle {
@@ -227,7 +235,18 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
     line-height: var(--font-body-lg-line-height);
     letter-spacing: var(--font-body-lg-tracking);
     color: var(--color-on-surface-variant);
-    margin: var(--spacing-stack-sm) 0 var(--spacing-stack-md);
+    max-width: 640px;
+    margin: var(--spacing-stack-sm) auto 0;
+  }
+
+  .hero-price-note {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-primary);
+    margin: var(--spacing-stack-sm) 0 0;
   }
 
   .hero-cta {
@@ -236,6 +255,7 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
     justify-content: center;
     align-items: center;
     gap: 12px;
+    margin-top: var(--spacing-stack-md);
   }
 
   @media (max-width: 1024px) {

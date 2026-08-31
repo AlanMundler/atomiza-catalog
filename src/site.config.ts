@@ -27,6 +27,23 @@ export const site = {
   whatsappMessage: 'Hola, quiero hacer un pedido',
   phoneDisplay: '54 9 3472 559307',
   currency: 'ARS',
+  // Localización (Córdoba, Argentina) para SEO local y schema de negocio.
+  addressLocality: 'Córdoba Capital',
+  addressRegion: 'Córdoba',
+  addressCountry: 'AR',
+  geo: { latitude: -31.420083, longitude: -64.188776 },
+  // Copy del hero de la home. Los perfumes son árabes originales, así que
+  // el anclaje de precio va sobre el beneficio real (probar sin comprar el
+  // frasco), no sobre un valor inflado que no corresponde.
+  hero: {
+    title: 'Probá perfumes árabes originales',
+    titleHighlight: 'sin comprar el frasco completo',
+    subtitle: 'Decants de 5ml de fragancias árabes de autor. Los probás sobre tu piel unos días y recién ahí decidís si querés el frasco entero.',
+    priceNote: 'Decants de 5ml desde $6.000',
+    ctaPrimary: 'Ver catálogo',
+    ctaSecondary: 'Descubrí tu perfume',
+    ctaTertiary: 'Elegí 3. Pagá menos.',
+  },
   storage: {
     cart: 'atomiza-cart',
     perfumes: 'perfumes-data',
