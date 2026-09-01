@@ -73,7 +73,7 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
 
 <style>
   .hub-hero {
-    padding: var(--spacing-stack-lg) 0;
+    padding: var(--spacing-stack-md) 0 var(--spacing-stack-sm);
     text-align: center;
   }
 
@@ -98,6 +98,12 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
     .hub-title {
       font-size: var(--font-headline-md-size);
       letter-spacing: var(--font-headline-md-tracking);
+    }
+  }
+
+  @media (min-width: 641px) {
+    .hub-title {
+      margin-bottom: 12px;
     }
   }
 
