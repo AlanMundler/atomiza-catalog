@@ -137,6 +137,13 @@ const whatsappHref = buildWhatsAppLink(
     text-align: center;
   }
 
+  @media (max-width: 640px) {
+    .insphero,
+    .insp-hero {
+      padding: var(--spacing-stack-md) 0;
+    }
+  }
+
   .insp-breadcrumb {
     font-family: var(--font-family);
     font-size: var(--font-label-sm-size);
@@ -164,8 +171,8 @@ const whatsappHref = buildWhatsAppLink(
 
   @media (max-width: 640px) {
     .insp-title {
-      font-size: var(--font-headline-lg-mobile-size);
-      letter-spacing: var(--font-headline-lg-mobile-tracking);
+      font-size: var(--font-headline-md-size);
+      letter-spacing: var(--font-headline-md-tracking);
     }
   }
 
@@ -176,6 +183,12 @@ const whatsappHref = buildWhatsAppLink(
     color: var(--color-on-surface-variant);
     margin: 0 auto;
     max-width: 640px;
+  }
+
+  @media (max-width: 640px) {
+    .insp-subtitle {
+      font-size: var(--font-body-md-size);
+    }
   }
 
   .insp-price {

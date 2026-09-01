@@ -66,6 +66,12 @@ const pageDescription = `Decants de 5ml de perfumes árabes de la familia olfati
     text-align: center;
   }
 
+  @media (max-width: 640px) {
+    .fam-hero {
+      padding: var(--spacing-stack-md) 0;
+    }
+  }
+
   .fam-breadcrumb {
     font-family: var(--font-family);
     font-size: var(--font-label-sm-size);
@@ -92,8 +98,8 @@ const pageDescription = `Decants de 5ml de perfumes árabes de la familia olfati
 
   @media (max-width: 640px) {
     .fam-title {
-      font-size: var(--font-headline-lg-mobile-size);
-      letter-spacing: var(--font-headline-lg-mobile-tracking);
+      font-size: var(--font-headline-md-size);
+      letter-spacing: var(--font-headline-md-tracking);
     }
   }
 
@@ -104,6 +110,12 @@ const pageDescription = `Decants de 5ml de perfumes árabes de la familia olfati
     color: var(--color-on-surface-variant);
     margin: 0 auto;
     max-width: 640px;
+  }
+
+  @media (max-width: 640px) {
+    .fam-subtitle {
+      font-size: var(--font-body-md-size);
+    }
   }
 
   .fam-list {
