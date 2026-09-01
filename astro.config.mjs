@@ -17,6 +17,11 @@ export default defineConfig({
   base: BASE_PATH,
   output: 'static',
   trailingSlash: 'always',
+  // El Dev Toolbar de Astro solo aporta en desarrollo. En el preview (que usan
+  // los tests e2e) y en producción no debe inyectarse, porque si no inyecta un
+  // overlay con <h1> extra ("No islands detected.", "Settings"...) que ensucia
+  // el DOM y rompe los tests que consultan `h1`.
+  devToolbar: { enabled: false },
   integrations: [
     sitemap(),
   ],

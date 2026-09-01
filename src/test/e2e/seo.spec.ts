@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './test';
 
 const BASE = process.env.BASE_PATH || '/';
 

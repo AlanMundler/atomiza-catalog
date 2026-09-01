@@ -12,6 +12,9 @@ export default defineConfig({
   use: {
     baseURL: `http://localhost:4321${BASE_PATH}`,
     trace: 'on-first-retry',
+    // Los scripts de terceros (secureprivacy.ai, Google Analytics) se bloquean
+    // por test vía el fixture `src/test/e2e/test.ts`, porque su overlay de
+    // consentimiento cubre toda la pantalla y bloquea los clics del sitio.
   },
   projects: [
     {

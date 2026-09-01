@@ -77,19 +77,76 @@ const mainAlt = images[0]?.alt || alt;
       });
     }
 
-    // Open zoom modal on main image click
+    // Open zoom popout on main image click
     if (mainImageEl) {
       bindOnce(mainImageEl, (el) => {
         el.addEventListener('click', () => {
-          if (zoomModal) {
-            const modalDialog = zoomModal.querySelector('dialog');
-            if (modalDialog && zoomImage) {
-              zoomImage.src = el.src;
-              modalDialog.showModal();
-              document.body.style.overflow = 'hidden';
+          if (zoomModal && zoomImage) {
+            zoomImage.src = el.src;
+            resetZoom();
+            const opener = (zoomModal as any)._modalOpen;
+            if (opener) {
+              opener();
+            } else {
+              const dialogEl2 = zoomModal.querySelector('dialog');
+              if (dialogEl2 && !dialogEl2.open) {
+                dialogEl2.showModal();
+                document.body.style.overflow = 'hidden';
+              }
             }
           }
         });
+      });
+    }
+
+    let zoomed = false;
+
+    function resetZoom() {
+      zoomed = false;
+      if (zoomImage) {
+        zoomImage.style.transform = '';
+        zoomImage.style.transformOrigin = '50% 50%';
+      }
+    }
+
+    function zoomToPoint(clientX: number, clientY: number) {
+      if (!zoomImage) return;
+      const rect = zoomImage.getBoundingClientRect();
+      if (rect.width === 0) return;
+      const px = (clientX - rect.left) / rect.width;
+      const py = (clientY - rect.top) / rect.height;
+      zoomImage.style.transformOrigin = `${px * 100}% ${py * 100}%`;
+      zoomImage.style.transform = 'scale(2.4)';
+    }
+
+    const desktopHover = window.matchMedia('(hover: hover)');
+    const dialogEl = zoomModal?.querySelector('dialog');
+
+    if (zoomImage) {
+      bindOnce(zoomImage, (img) => {
+        if (desktopHover.matches) {
+          img.addEventListener('pointermove', (e) => {
+            if (!zoomed && e.pointerType === 'mouse') {
+              zoomed = true;
+              zoomToPoint(e.clientX, e.clientY);
+            } else if (zoomed && e.pointerType === 'mouse') {
+              zoomToPoint(e.clientX, e.clientY);
+            }
+          });
+          img.addEventListener('pointerleave', () => {
+            if (zoomed && desktopHover.matches) resetZoom();
+          });
+        } else {
+          img.addEventListener('click', () => {
+            if (zoomed) {
+              resetZoom();
+            } else {
+              zoomed = true;
+              zoomToPoint(img.clientWidth / 2, img.clientHeight / 2);
+            }
+          });
+        }
+        if (dialogEl) dialogEl.addEventListener('close', resetZoom);
       });
     }
 
@@ -209,11 +266,17 @@ const mainAlt = images[0]?.alt || alt;
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
+    cursor: zoom-in;
+    touch-action: manipulation;
   }
 
   .image-zoom-image {
     max-width: 100%;
     max-height: 80vh;
     object-fit: contain;
+    will-change: transform;
+    user-select: none;
+    -webkit-user-select: none;
   }
 </style>
