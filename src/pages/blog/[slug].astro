@@ -1,0 +1,303 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import { guias } from '@/data/guias';
+import { site } from '@/site.config';
+
+export function getStaticPaths() {
+  return guias.map((guia) => ({
+    params: { slug: guia.slug },
+    props: { guia },
+  }));
+}
+
+const { guia } = Astro.props;
+const BASE = site.basePath;
+const pageTitle = `${guia.title} | ${site.addressLocality}`;
+const pageDescription = `${guia.description} En ${site.name}, decants de 5ml para probar perfumes árabes originales.`;
+
+const faq = guia.faq.map((f) => ({
+  '@type': 'Question',
+  name: f.question,
+  acceptedAnswer: { '@type': 'Answer', text: f.answer },
+}));
+---
+
+<Layout title={pageTitle} description={pageDescription}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq,
+  }).replace(/</g, '\\u003c')} />
+
+  <article class="guia">
+    <div class="container">
+      <header class="guia-hero">
+        <p class="guia-breadcrumb"><a href={`${BASE}blog/`}>Guías</a> › {guia.title}</p>
+        <h1 class="guia-title">{guia.title}</h1>
+        <p class="guia-meta">{guia.category} · {guia.mins} min</p>
+        <p class="guia-intro">{guia.intro}</p>
+      </header>
+
+      <div class="guia-body">
+        {guia.sections.map((s) => (
+          <section class="guia-section">
+            <h2 class="guia-heading">{s.heading}</h2>
+            {s.body.map((p) => (
+              <p class="guia-paragraph">{p}</p>
+            ))}
+          </section>
+        ))}
+      </div>
+
+      {guia.related.length > 0 && (
+        <section class="guia-related" aria-labelledby="guia-related-title">
+          <h2 id="guia-related-title" class="guia-related-title">Probá estos aromas en decant</h2>
+          <div class="guia-related-list">
+            {guia.related.map((r) => (
+              <a href={`${BASE}decants/${r.slug}/`} class="guia-related-link">{r.original}</a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <section class="guia-faq" aria-labelledby="guia-faq-title">
+        <h2 id="guia-faq-title" class="guia-faq-title">Preguntas frecuentes</h2>
+        {guia.faq.map((f) => (
+          <details class="guia-faq-item">
+            <summary>{f.question}</summary>
+            <p class="guia-faq-answer">{f.answer}</p>
+          </details>
+        ))}
+      </section>
+
+      <section class="guia-cta">
+        <p class="guia-cta-text">Probalo sobre tu piel antes de comprar el frasco. Coordinamos la entrega en mano o por Uber dentro de {site.addressLocality}.</p>
+        <a
+          href={`https://wa.me/${site.whatsappNumber}?text=${encodeURIComponent('Hola, leí una guía en la web y quiero que me recomienden decants')}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn btn--primary btn--md"
+        >Pedir recomendación por WhatsApp</a>
+      </section>
+    </div>
+  </article>
+</Layout>
+
+<style>
+  .guia {
+    padding: var(--spacing-stack-lg) 0;
+  }
+
+  @media (max-width: 640px) {
+    .guia {
+      padding: var(--spacing-stack-md) 0;
+    }
+  }
+
+  .guia-hero {
+    text-align: center;
+    margin-bottom: var(--spacing-stack-lg);
+  }
+
+  .guia-breadcrumb {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    color: var(--color-on-surface-variant);
+    margin: 0 0 var(--spacing-stack-sm);
+  }
+
+  .guia-breadcrumb a {
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .guia-title {
+    font-family: var(--font-family);
+    font-size: var(--font-display-lg-size);
+    font-weight: var(--font-display-lg-weight);
+    letter-spacing: var(--font-display-lg-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    margin: 0 auto var(--spacing-stack-sm);
+    max-width: 720px;
+  }
+
+  @media (max-width: 640px) {
+    .guia-title {
+      font-size: var(--font-headline-md-size);
+      letter-spacing: var(--font-headline-md-tracking);
+    }
+  }
+
+  .guia-meta {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-primary);
+    margin: 0 0 var(--spacing-stack-sm);
+  }
+
+  .guia-intro {
+    font-family: var(--font-family);
+    font-size: var(--font-body-lg-size);
+    line-height: var(--font-body-lg-line-height);
+    color: var(--color-on-surface-variant);
+    margin: 0 auto;
+    max-width: 720px;
+  }
+
+  @media (max-width: 640px) {
+    .guia-intro {
+      font-size: var(--font-body-md-size);
+    }
+  }
+
+  .guia-body {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .guia-section {
+    margin-bottom: var(--spacing-stack-lg);
+  }
+
+  .guia-heading {
+    font-family: var(--font-family);
+    font-size: var(--font-headline-lg-size);
+    font-weight: var(--font-headline-lg-weight);
+    color: var(--color-on-surface);
+    margin: 0 0 var(--spacing-stack-sm);
+  }
+
+  @media (max-width: 640px) {
+    .guia-heading {
+      font-size: var(--font-headline-lg-mobile-size);
+    }
+  }
+
+  .guia-paragraph {
+    font-family: var(--font-family);
+    font-size: var(--font-body-lg-size);
+    line-height: var(--font-body-lg-line-height);
+    color: var(--color-on-surface-variant);
+    margin: 0 0 var(--spacing-stack-sm);
+  }
+
+  @media (max-width: 640px) {
+    .guia-paragraph {
+      font-size: var(--font-body-md-size);
+    }
+  }
+
+  .guia-related {
+    max-width: 720px;
+    margin: 0 auto var(--spacing-stack-lg);
+    padding-top: var(--spacing-stack-lg);
+    border-top: var(--border-width) solid var(--color-outline-variant);
+  }
+
+  .guia-related-title,
+  .guia-faq-title {
+    font-family: var(--font-family);
+    font-size: var(--font-headline-lg-size);
+    font-weight: var(--font-headline-lg-weight);
+    text-align: center;
+    margin: 0 0 var(--spacing-stack-md);
+  }
+
+  @media (max-width: 640px) {
+    .guia-related-title,
+    .guia-faq-title {
+      font-size: var(--font-headline-lg-mobile-size);
+    }
+  }
+
+  .guia-related-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .guia-related-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 14px;
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: 999px;
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    color: var(--color-on-surface);
+    text-decoration: none;
+    transition: border-color var(--transition-duration) var(--transition-easing), color var(--transition-duration) var(--transition-easing);
+  }
+
+  .guia-related-link:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+
+  .guia-faq {
+    max-width: 720px;
+    margin: 0 auto var(--spacing-stack-lg);
+  }
+
+  .guia-faq-item {
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: var(--border-radius);
+    margin-bottom: var(--spacing-stack-sm);
+  }
+
+  .guia-faq-item summary {
+    cursor: pointer;
+    list-style: none;
+    padding: var(--spacing-stack-sm) var(--spacing-stack-md);
+    font-family: var(--font-family);
+    font-size: var(--font-body-lg-size);
+    font-weight: 500;
+    color: var(--color-on-surface);
+  }
+
+  .guia-faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .guia-faq-item[open] summary {
+    color: var(--color-primary);
+  }
+
+  .guia-faq-answer {
+    padding: 0 var(--spacing-stack-md) var(--spacing-stack-sm);
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    line-height: var(--font-body-md-line-height);
+    color: var(--color-on-surface-variant);
+    margin: 0;
+  }
+
+  .guia-cta {
+    max-width: 720px;
+    margin: 0 auto;
+    text-align: center;
+    padding-top: var(--spacing-stack-lg);
+    border-top: var(--border-width) solid var(--color-outline-variant);
+  }
+
+  .guia-cta-text {
+    font-family: var(--font-family);
+    font-size: var(--font-body-lg-size);
+    line-height: var(--font-body-lg-line-height);
+    color: var(--color-on-surface-variant);
+    margin: 0 auto var(--spacing-stack-md);
+    max-width: 640px;
+  }
+
+  @media (max-width: 640px) {
+    .guia-cta-text {
+      font-size: var(--font-body-md-size);
+    }
+  }
+</style>

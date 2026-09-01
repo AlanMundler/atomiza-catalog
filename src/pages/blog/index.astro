@@ -1,0 +1,187 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import { guias } from '@/data/guias';
+import { site } from '@/site.config';
+
+const BASE = site.basePath;
+const pageTitle = `Guías de perfumes y decants · ${site.addressLocality}`;
+const pageDescription = `Aprendé cómo elegir tu perfume, cuánto dura un decant de 5ml y qué fragancias bancan el calor de Córdoba. Guías simples para comprar con confianza.`;
+---
+
+<Layout title={pageTitle} description={pageDescription}>
+  <section class="blog-hero" aria-labelledby="blog-title">
+    <div class="container">
+      <h1 id="blog-title" class="blog-title">Guías para comprar con confianza</h1>
+      <p class="blog-subtitle">
+        Respuestas simples a las dudas que aparecen antes de comprar un perfume:
+        cuánto dura, qué regalar, qué banca el calor y por dónde empezar.
+      </p>
+    </div>
+  </section>
+
+  <section class="blog-list" aria-label="Artículos del blog">
+    <div class="container">
+      <div class="blog-grid">
+        {guias.map((guia) => (
+          <a href={`${BASE}blog/${guia.slug}/`} class="blog-card">
+            <div class="blog-card-body">
+              <p class="blog-card-meta">
+                {guia.category} · {guia.mins} min
+              </p>
+              <h2 class="blog-card-title">{guia.title}</h2>
+              <p class="blog-card-sub">{guia.description}</p>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="blog-cta" aria-labelledby="blog-cta-title">
+    <div class="container">
+      <h2 id="blog-cta-title" class="blog-cta-title">¿No encontrás lo que buscás?</h2>
+      <p class="blog-cta-sub">
+        Escribinos por WhatsApp y te recomendamos decants según tu gusto. Probalo sobre tu piel y recién ahí decidís.
+      </p>
+      <a
+        href={`https://wa.me/${site.whatsappNumber}?text=${encodeURIComponent('Hola, tengo una duda sobre perfumes y quería que me recomienden')}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn btn--primary btn--md"
+      >Consultar por WhatsApp</a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .blog-hero {
+    padding: var(--spacing-stack-lg) 0;
+    text-align: center;
+  }
+
+  @media (max-width: 640px) {
+    .blog-hero {
+      padding: var(--spacing-stack-md) 0;
+    }
+  }
+
+  .blog-title {
+    font-family: var(--font-family);
+    font-size: var(--font-display-lg-size);
+    font-weight: var(--font-display-lg-weight);
+    letter-spacing: var(--font-display-lg-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    margin: 0 auto var(--spacing-stack-sm);
+    max-width: 720px;
+  }
+
+  @media (max-width: 640px) {
+    .blog-title {
+      font-size: var(--font-headline-md-size);
+      letter-spacing: var(--font-headline-md-tracking);
+    }
+  }
+
+  .blog-subtitle {
+    font-family: var(--font-family);
+    font-size: var(--font-body-lg-size);
+    line-height: var(--font-body-lg-line-height);
+    color: var(--color-on-surface-variant);
+    margin: 0 auto;
+    max-width: 640px;
+  }
+
+  @media (max-width: 640px) {
+    .blog-subtitle {
+      font-size: var(--font-body-md-size);
+    }
+  }
+
+  .blog-list {
+    padding: var(--spacing-stack-lg) 0;
+  }
+
+  .blog-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-stack-sm);
+  }
+
+  @media (min-width: 768px) {
+    .blog-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .blog-card {
+    display: flex;
+    padding: var(--spacing-stack-md);
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: var(--border-radius);
+    background-color: var(--color-surface-container);
+    text-decoration: none;
+    transition: border-color var(--transition-duration) var(--transition-easing);
+  }
+
+  .blog-card:hover {
+    border-color: var(--color-primary);
+  }
+
+  .blog-card-meta {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    color: var(--color-on-surface-variant);
+    margin: 0 0 var(--spacing-stack-sm);
+  }
+
+  .blog-card-title {
+    font-family: var(--font-family);
+    font-size: var(--font-headline-md-size);
+    font-weight: var(--font-headline-md-weight);
+    color: var(--color-on-surface);
+    margin: 0 0 8px;
+  }
+
+  .blog-card-sub {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    line-height: var(--font-body-md-line-height);
+    color: var(--color-on-surface-variant);
+    margin: 0;
+  }
+
+  .blog-cta {
+    padding: var(--spacing-stack-lg) 0;
+    border-top: var(--border-width) solid var(--color-outline-variant);
+    text-align: center;
+  }
+
+  .blog-cta-title {
+    font-family: var(--font-family);
+    font-size: var(--font-headline-lg-size);
+    font-weight: var(--font-headline-lg-weight);
+    margin: 0 0 var(--spacing-stack-sm);
+  }
+
+  @media (max-width: 640px) {
+    .blog-cta-title {
+      font-size: var(--font-headline-lg-mobile-size);
+    }
+  }
+
+  .blog-cta-sub {
+    font-family: var(--font-family);
+    font-size: var(--font-body-lg-size);
+    line-height: var(--font-body-lg-line-height);
+    color: var(--color-on-surface-variant);
+    margin: 0 auto var(--spacing-stack-md);
+    max-width: 640px;
+  }
+
+  @media (max-width: 640px) {
+    .blog-cta-sub {
+      font-size: var(--font-body-md-size);
+    }
+  }
+</style>

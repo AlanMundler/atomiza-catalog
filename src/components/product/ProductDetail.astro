@@ -71,6 +71,17 @@ const waMessage = buildWhatsAppLink(
         />
       </div>
 
+      {selectedSize.stock > 0 && selectedSize.stock < 5 && (
+        <div class="stock-countdown" data-stock-count={selectedSize.stock} role="status">
+          <p class="stock-countdown-title">
+            Quedan solo {selectedSize.stock} {selectedSize.stock === 1 ? 'decant' : 'decants'} de este aroma
+          </p>
+          <p class="stock-countdown-text">
+            La reposición de stock no está asegurada: este precio de probadita corre solo por hoy, quedan <strong data-countdown-target></strong>.
+          </p>
+        </div>
+      )}
+
       <div class="product-detail-actions">
         <Button 
           variant="primary" 
@@ -101,6 +112,31 @@ const waMessage = buildWhatsAppLink(
 
 <script>
   import { bindOnce, onPageLoad } from '@/utils/view-transitions';
+
+  onPageLoad('product-detail-countdown', () => {
+    const el = document.querySelector('.stock-countdown');
+    if (!el) return;
+
+    bindOnce(el, (countdown) => {
+      const target = countdown.querySelector('[data-countdown-target]');
+      if (!target) return;
+
+      const fmt = (n: number) => String(n).padStart(2, '0');
+      const tick = () => {
+        const now = new Date();
+        const end = new Date(now);
+        end.setHours(23, 59, 59, 999);
+        const diff = Math.max(0, end.getTime() - now.getTime());
+        const h = Math.floor(diff / 3600000);
+        const m = Math.floor((diff % 3600000) / 60000);
+        const s = Math.floor((diff % 60000) / 1000);
+        target.textContent = `${fmt(h)}:${fmt(m)}:${fmt(s)}`;
+      };
+      tick();
+      const id = setInterval(tick, 1000);
+      (countdown as any).__vtCountdownId = id;
+    });
+  });
 
   onPageLoad('product-detail', () => {
     const addBtn = document.querySelector('[data-add-to-cart]');
@@ -293,7 +329,33 @@ const waMessage = buildWhatsAppLink(
   }
 
   @media (max-width: 640px) {
-    .product-detail-actions {
+.stock-countdown {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: var(--spacing-stack-sm) var(--spacing-stack-md);
+    margin-top: var(--spacing-stack-sm);
+    background-color: var(--color-surface-container-high);
+    border: var(--border-width) solid var(--color-error);
+    border-radius: var(--border-radius);
+  }
+
+  .stock-countdown-title {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    font-weight: 600;
+    color: var(--color-error);
+    margin: 0;
+  }
+
+  .stock-countdown-text {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    color: var(--color-on-surface-variant);
+    margin: 0;
+  }
+
+  .product-detail-actions {
       flex-direction: column;
     }
   }

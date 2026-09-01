@@ -4,6 +4,7 @@ import Footer from '@/components/layout/Footer.astro';
 import CartDrawer from '@/components/cart/CartDrawer.astro';
 import OrderModal from '@/components/cart/OrderModal.astro';
 import { site, assetUrl } from '@/site.config';
+import { resenasRating } from '@/data/resenas';
 import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
 
@@ -26,6 +27,8 @@ const {
 } = Astro.props;
 const ogImageUrl = new URL(assetUrl(ogImage), Astro.site).href;
 const pageUrl = new URL(Astro.url.pathname, Astro.site).href;
+const hasMetaPixel = site.metaPixelId.length > 0;
+const hasTiktokPixel = site.tiktokPixelId.length > 0;
 ---
 
 <!DOCTYPE html>
@@ -82,6 +85,11 @@ const pageUrl = new URL(Astro.url.pathname, Astro.site).href;
         "areaServed": "${site.addressLocality}",
         "availableLanguage": ["es"]
       },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "${resenasRating.ratingValue}",
+        "reviewCount": "${resenasRating.reviewCount}"
+      },
       "areaServed": {
         "@type": "City",
         "name": "${site.addressLocality}"
@@ -96,6 +104,46 @@ const pageUrl = new URL(Astro.url.pathname, Astro.site).href;
       gtag('js', new Date());
       gtag('config', 'G-H2H8WDPR0M');
     </script>
+    <script is:inline>
+      // Evento de conversión: click a WhatsApp, para medir de dónde viene el pedido.
+      document.addEventListener('click', (e) => {
+        const t = e && e.target;
+        if (!t || typeof t.closest !== 'function') return;
+        const link = t.closest('a[href*="wa.me"]');
+        if (!link) return;
+        const href = link.getAttribute('href') || '';
+        const text = (/.*\?text=(.*)$/g.exec(href)?.[1] || '').substring(0, 120);
+        gtag('event', 'click_to_whatsapp', { page_path: location.pathname, text });
+      });
+    </script>
+    {hasMetaPixel && (
+      <script is:inline define:vars={{ metaPixelId: site.metaPixelId }}>
+        !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+        n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+        document,'script','https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', metaPixelId);
+        fbq('track', 'PageView');
+      </script>
+    )}
+    {hasTiktokPixel && (
+      <script is:inline define:vars={{ tiktokPixelId: site.tiktokPixelId }}>
+        !function (w, _d, t) {
+          w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};
+          for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.defer=!0,ttq.load=function(e,n){var i="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{},ttq._i[e]={},ttq._i[e].id=n,ttq._i[e].url=i,ttq._i[e].pixel_id=e,ttq._i[e].ss=null,ttq.load=function(){};var r=document.createElement("script");r.async=!0,ttq.defer=!0,r.src=i;var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(r,s)};
+          ttq.load(tiktokPixelId);
+          ttq.page();
+        }(window, document, 'ttq');
+      </script>
+    )}
+    {hasMetaPixel && (
+      <script is:inline>
+        document.querySelectorAll('a[href*="wa.me"]').forEach((el) => {
+          el.addEventListener('click', () => fbq('track', 'Contact'));
+        });
+      </script>
+    )}
   </head>
   <body>
     <a href="#main-content" class="skip-link">Saltar al contenido</a>

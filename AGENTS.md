@@ -36,6 +36,10 @@ Cuando el usuario dice **"(perfume) esta en (estado)"**, por ejemplo "qaed-al-fu
 
 Luego correr tests (`npm test`), `npm run lint` (`astro check`), `npm run build` y hacer commit + push (deploy automático a GitHub Pages).
 
+## Decisiones del usuario (no proponer de nuevo)
+
+- **Páginas por barrio no van.** El usuario rechazó la idea de armar landing pages por barrio (`/barrios/...`). Retirarla de cualquier plan futuro. El SEO local se cubre con la ficha de Google Business, no con páginas por barrio.
+
 ## Documentation
 
 Full documentation: https://docs.astro.build

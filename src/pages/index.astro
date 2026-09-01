@@ -3,6 +3,7 @@ import Layout from '@/layouts/Layout.astro';
 import ProductCard from '@/components/catalog/ProductCard.astro';
 import perfumesData from '@/data/perfumes.json';
 import { isSizeAvailable } from '@/utils/stock';
+import { resenas, resenasRating } from '@/data/resenas';
 import { site } from '@/site.config';
 import type { Perfume } from '@/data/types';
 
@@ -158,6 +159,24 @@ const faqs = [
           <img src="images/testimonios/3.jpg" alt="Screenshot de chat con cliente satisfecho" loading="lazy" />
         </figure>
       </div>
+    </div>
+  </section>
+
+  <section class="reviews" aria-labelledby="reviews-title">
+    <div class="container">
+      <h2 id="reviews-title" class="section-title">Reseñas de clientes de {site.addressLocality}</h2>
+      <div class="reviews-grid">
+        {resenas.map((r) => (
+          <article class="review-card">
+            <div class="review-stars" aria-label="5 de 5 estrellas" role="img">★★★★★</div>
+            <p class="review-text">"{r.text}"</p>
+            <p class="review-name">{r.name} · {r.locality}{r.perfume ? ` · ${r.perfume}` : ''}</p>
+          </article>
+        ))}
+      </div>
+      <p class="reviews-note">
+        {resenasRating.ratingValue} de 5, según {resenasRating.reviewCount} reseñas de clientes reales.
+      </p>
     </div>
   </section>
 
@@ -582,6 +601,68 @@ const faqs = [
     height: auto;
     display: block;
     border-radius: 12px;
+  }
+
+  /* Reviews */
+  .reviews {
+    padding: var(--spacing-stack-lg) 0;
+    border-top: var(--border-width) solid var(--color-outline-variant);
+  }
+
+  .reviews-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-stack-md);
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  @media (min-width: 768px) {
+    .reviews-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .review-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-stack-sm);
+    padding: var(--spacing-stack-md);
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: var(--border-radius);
+    background-color: var(--color-surface-container);
+  }
+
+  .review-stars {
+    font-size: 16px;
+    color: var(--color-primary);
+    letter-spacing: 2px;
+  }
+
+  .review-text {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    line-height: var(--font-body-md-line-height);
+    color: var(--color-on-surface);
+    margin: 0;
+  }
+
+  .review-name {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    color: var(--color-on-surface-variant);
+    margin: 0;
+  }
+
+  .reviews-note {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-primary);
+    text-align: center;
+    margin: var(--spacing-stack-md) 0 0;
   }
 
   /* Decant info */
