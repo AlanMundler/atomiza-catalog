@@ -48,7 +48,7 @@ const faqs = [
 ] as const;
 ---
 
-<Layout title={site.tagline} description={homeDescription}>
+<Layout title={site.tagline} description={homeDescription} preloadImages={inStockPerfumes[0] ? [inStockPerfumes[0].images[0]?.src] : []}>
   <script is:inline type="application/ld+json" set:html={JSON.stringify({
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -182,7 +182,7 @@ const faqs = [
           <div class="step-number">04</div>
           <div class="step-content">
             <h3 class="step-title">Coordiná</h3>
-            <p class="step-text">Enviá el pedido por WhatsApp o Instagram y coordinamos envío y pago.</p>
+            <p class="step-text">Enviá el pedido por WhatsApp o Instagram y coordinamos envío y pago. <a href={`${BASE}envios/`} class="step-link">Ver opciones de envío</a></p>
           </div>
         </article>
       </div>
@@ -426,6 +426,16 @@ const faqs = [
     letter-spacing: var(--font-body-md-tracking);
     color: var(--color-on-surface-variant);
     margin: 0;
+  }
+
+  .step-link {
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .step-link:hover {
+    color: var(--color-primary-container);
   }
 
   /* Home perfumes (random rotation) */

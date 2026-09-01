@@ -12,6 +12,7 @@ interface Props {
   description?: string;
   ogImage?: string;
   ogType?: string;
+  preloadImages?: string[];
   children: any;
 }
 
@@ -20,6 +21,7 @@ const {
   description = `${site.name} - ${site.tagline}. ${site.description}`,
   ogImage = '/og-image.jpg',
   ogType = 'website',
+  preloadImages = [],
   children,
 } = Astro.props;
 const ogImageUrl = new URL(assetUrl(ogImage), Astro.site).href;
@@ -47,6 +49,9 @@ const pageUrl = new URL(Astro.url.pathname, Astro.site).href;
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
     <link rel="icon" type="image/svg+xml" href={assetUrl('/favicon.svg')} />
+    {preloadImages.map((src) => (
+      <link rel="preload" as="image" href={new URL(assetUrl(src), Astro.site).href} />
+    ))}
     <script is:inline type="application/ld+json" set:html={`{
       "@context": "https://schema.org",
       "@type": "Store",

@@ -1,0 +1,157 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import { site } from '@/site.config';
+
+const shippingDescription = `Envío y entrega en mano de decants de perfumes árabes en ${site.addressLocality}, ${site.addressRegion}. Coordinamos fecha y punto de entrega por mensaje.`;
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Envíos y entregas en Córdoba',
+  description: shippingDescription,
+  inLanguage: 'es-AR',
+  about: {
+    '@type': 'Store',
+    name: site.name,
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: site.addressLocality,
+      addressRegion: site.addressRegion,
+      addressCountry: site.addressCountry,
+    },
+  },
+};
+---
+
+<Layout title="Envíos y entregas en Córdoba | Perfumes árabes" description={shippingDescription}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(schema).replace(/</g, '\\u003c')} />
+  <section class="shipping-hero" aria-labelledby="shipping-title">
+    <div class="container">
+      <h1 id="shipping-title" class="shipping-title">Envíos y entregas en {site.addressLocality}</h1>
+      <p class="shipping-subtitle">Te llevamos tus decants de perfumes árabes en mano o por envío. Todo se coordina por mensaje, a tu medida.</p>
+    </div>
+  </section>
+
+  <section class="shipping-options" aria-label="Opciones de entrega">
+    <div class="container shipping-grid">
+      <article class="shipping-card">
+        <h2 class="shipping-card-title">Entrega en mano</h2>
+        <p class="shipping-card-text">
+          Coordinamos un punto de encuentro en {site.addressLocality} capital (Nueva Córdoba, Centro y zonas cercanas). Perfecto para pagar y recibir al momento.
+        </p>
+      </article>
+      <article class="shipping-card">
+        <h2 class="shipping-card-title">Envío a domicilio</h2>
+        <p class="shipping-card-text">
+          Si estás en otra zona de {site.addressRegion} o el interior, coordinamos el envío por mensaje. El costo y los tiempos dependen del destino.
+        </p>
+      </article>
+      <article class="shipping-card">
+        <h2 class="shipping-card-title">El tridente viaja junto</h2>
+        <p class="shipping-card-text">
+          Armá tu tridente (3 decants, ahorrás $2.000) y te llega todo junto. Menos envíos, más fragancias para probar.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <section class="shipping-cta" aria-label="Cómo coordinar la entrega">
+    <div class="container">
+      <h2 class="shipping-cta-title">¿Cómo coordinamos?</h2>
+      <p class="shipping-cta-text">
+        Hacés tu pedido por WhatsApp o Instagram con el resumen armado, y coordinamos fecha, punto de entrega y forma de pago por mensaje. Así de simple.
+      </p>
+      <div class="shipping-cta-actions">
+        <a href={`https://wa.me/${site.whatsappNumber}?text=${encodeURIComponent('Hola, quiero coordinar envío y entrega de mis decants')}`} class="btn btn--primary btn--md" target="_blank" rel="noopener noreferrer">
+          Coordinar por WhatsApp
+        </a>
+        <a href={`${site.basePath}tridentes/`} class="btn btn--secondary btn--md">Armar mi tridente</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .shipping-hero {
+    padding: var(--spacing-stack-lg) 0;
+  }
+
+  .shipping-title {
+    font-family: var(--font-family);
+    font-size: var(--font-display-lg-size);
+    font-weight: var(--font-display-lg-weight);
+    letter-spacing: var(--font-display-lg-tracking);
+    text-transform: uppercase;
+    margin: 0 0 var(--spacing-stack-sm);
+  }
+
+  .shipping-subtitle {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    color: var(--color-on-surface-variant);
+    max-width: 640px;
+  }
+
+  .shipping-options {
+    padding: var(--spacing-stack-lg) 0;
+  }
+
+  .shipping-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-stack-md);
+  }
+
+  @media (min-width: 768px) {
+    .shipping-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .shipping-card {
+    background-color: var(--color-surface-container);
+    border: var(--border-width) solid var(--color-on-surface);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-stack-md);
+  }
+
+  .shipping-card-title {
+    font-family: var(--font-family);
+    font-size: var(--font-headline-md-size);
+    font-weight: var(--font-headline-md-weight);
+    margin: 0 0 var(--spacing-stack-sm);
+  }
+
+  .shipping-card-text {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    color: var(--color-on-surface-variant);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .shipping-cta {
+    padding: var(--spacing-stack-lg) 0;
+  }
+
+  .shipping-cta-title {
+    font-family: var(--font-family);
+    font-size: var(--font-headline-lg-size);
+    font-weight: var(--font-headline-lg-weight);
+    margin: 0 0 var(--spacing-stack-sm);
+  }
+
+  .shipping-cta-text {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    color: var(--color-on-surface-variant);
+    max-width: 560px;
+    margin: 0 0 var(--spacing-stack-md);
+    line-height: 1.5;
+  }
+
+  .shipping-cta-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-stack-sm);
+  }
+</style>
