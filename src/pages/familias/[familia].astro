@@ -1,0 +1,162 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import ProductCard from '@/components/catalog/ProductCard.astro';
+import { getFamilias } from '@/data/familias';
+import { site } from '@/site.config';
+
+export const getStaticPaths = () =>
+  getFamilias().map((f) => ({
+    params: { familia: f.slug },
+    props: { familia: f },
+  }));
+
+const { familia } = Astro.props;
+const BASE = site.basePath;
+const familias = getFamilias();
+
+const pageTitle = `Perfumes de ${familia.name} en decant · ${site.addressLocality}`;
+const pageDescription = `Decants de 5ml de perfumes árabes de la familia olfativa ${familia.name}, disponibles en ${site.addressLocality}. Probalos sobre tu piel antes de comprar el frasco completo.`;
+---
+
+<Layout title={pageTitle} description={pageDescription}>
+  <section class="fam-hero" aria-labelledby="fam-title">
+    <div class="container">
+      <p class="fam-breadcrumb">
+        <a href={`${BASE}decants/`}>Aromas</a> › {familia.name}
+      </p>
+      <h1 id="fam-title" class="fam-title">Perfumes árabes de {familia.name} en decant</h1>
+      <p class="fam-subtitle">
+        {familia.items.length} {familia.items.length === 1 ? 'fragancia' : 'fragancias'} de esta familia,
+        en decant de 5ml, con entrega en {site.addressLocality}. Probalas sobre tu piel unos días y
+        recién ahí decidís si querés el frasco completo.
+      </p>
+    </div>
+  </section>
+
+  <section class="fam-list" aria-label="Perfumes de esta familia">
+    <div class="container">
+      <div class="fam-grid">
+        {familia.items.map((p) => (
+          <ProductCard perfume={p} />
+        ))}
+      </div>
+      <div class="fam-cta">
+        <a href={`${BASE}catalogo/`} class="btn btn--secondary btn--md">Ver todo el catálogo</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="fam-other" aria-labelledby="fam-other-title">
+    <div class="container">
+      <h2 id="fam-other-title" class="fam-other-title">Otras familias olfativas</h2>
+      <div class="fam-other-list">
+        {familias
+          .filter((f) => f.slug !== familia.slug)
+          .map((f) => (
+            <a href={`${BASE}familias/${f.slug}/`} class="fam-other-link">{f.name} ({f.items.length})</a>
+          ))}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .fam-hero {
+    padding: var(--spacing-stack-lg) 0;
+    text-align: center;
+  }
+
+  .fam-breadcrumb {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    color: var(--color-on-surface-variant);
+    margin: 0 0 var(--spacing-stack-sm);
+  }
+
+  .fam-breadcrumb a {
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .fam-title {
+    font-family: var(--font-family);
+    font-size: var(--font-display-lg-size);
+    font-weight: var(--font-display-lg-weight);
+    letter-spacing: var(--font-display-lg-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    margin: 0 auto var(--spacing-stack-sm);
+    max-width: 720px;
+  }
+
+  .fam-subtitle {
+    font-family: var(--font-family);
+    font-size: var(--font-body-lg-size);
+    line-height: var(--font-body-lg-line-height);
+    color: var(--color-on-surface-variant);
+    margin: 0 auto;
+    max-width: 640px;
+  }
+
+  .fam-list {
+    padding: var(--spacing-stack-lg) 0;
+  }
+
+  .fam-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-stack-md);
+  }
+
+  @media (min-width: 768px) {
+    .fam-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .fam-cta {
+    text-align: center;
+    margin-top: var(--spacing-stack-lg);
+  }
+
+  .fam-other {
+    padding: var(--spacing-stack-lg) 0;
+    border-top: var(--border-width) solid var(--color-outline-variant);
+  }
+
+  .fam-other-title {
+    font-family: var(--font-family);
+    font-size: var(--font-headline-lg-size);
+    font-weight: var(--font-headline-lg-weight);
+    text-align: center;
+    margin: 0 0 var(--spacing-stack-md);
+  }
+
+  .fam-other-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .fam-other-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 14px;
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: 999px;
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    color: var(--color-on-surface);
+    text-decoration: none;
+    transition: border-color var(--transition-duration) var(--transition-easing), color var(--transition-duration) var(--transition-easing);
+  }
+
+  .fam-other-link:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+</style>

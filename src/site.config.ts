@@ -22,6 +22,8 @@ export const site = {
   dataVersion: '4',
   instagramHandle: 'atomiza.cba',
   instagramUrl: 'https://instagram.com/atomiza.cba',
+  tiktokHandle: 'atomiza.cba',
+  tiktokUrl: 'https://www.tiktok.com/@atomiza.cba',
   whatsappNumber: '5493472559307',
   whatsappUrl: 'https://wa.me/5493472559307',
   whatsappMessage: 'Hola, quiero hacer un pedido',

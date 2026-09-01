@@ -90,6 +90,20 @@ const faqs = [
     </div>
   </section>
 
+  <section class="aroma-band" aria-labelledby="aroma-band-title">
+    <div class="container">
+      <div class="aroma-band-inner">
+        <div class="aroma-band-text">
+          <h2 id="aroma-band-title" class="aroma-band-title">Buscá por el aroma famoso que te gusta</h2>
+          <p class="aroma-band-sub">
+            ¿Te gusta cómo huele Baccarat Rouge, Sauvage o Delina? Tenemos el decant inspirado en cada uno.
+          </p>
+        </div>
+        <a href={`${BASE}decants/`} class="btn btn--primary btn--md">Ver aromas famosos</a>
+      </div>
+    </div>
+  </section>
+
   <section class="value-prop" aria-labelledby="value-prop-title">
     <div class="container">
       <h2 id="value-prop-title" class="section-title">Por qué elegir {site.name}</h2>
@@ -325,6 +339,55 @@ const faqs = [
     .section-title {
       font-size: var(--font-headline-lg-mobile-size);
     }
+  }
+
+  /* Aroma hub band */
+  .aroma-band {
+    padding: var(--spacing-stack-lg) 0;
+    border-top: var(--border-width) solid var(--color-outline-variant);
+    border-bottom: var(--border-width) solid var(--color-outline-variant);
+    background-color: var(--color-surface-container);
+  }
+
+  .aroma-band-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-stack-md);
+    text-align: center;
+  }
+
+  @media (min-width: 768px) {
+    .aroma-band-inner {
+      flex-direction: row;
+      justify-content: space-between;
+      text-align: left;
+    }
+  }
+
+  .aroma-band-title {
+    font-family: var(--font-family);
+    font-size: var(--font-headline-lg-size);
+    font-weight: var(--font-headline-lg-weight);
+    line-height: var(--font-headline-lg-line-height);
+    letter-spacing: var(--font-headline-lg-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    margin: 0 0 var(--spacing-stack-sm);
+  }
+
+  @media (max-width: 640px) {
+    .aroma-band-title {
+      font-size: var(--font-headline-lg-mobile-size);
+    }
+  }
+
+  .aroma-band-sub {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    line-height: var(--font-body-md-line-height);
+    color: var(--color-on-surface-variant);
+    margin: 0;
   }
 
   /* Value Prop */

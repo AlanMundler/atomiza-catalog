@@ -1,0 +1,201 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import { inspiraciones } from '@/data/inspiraciones';
+import perfumesData from '@/data/perfumes.json';
+import { site } from '@/site.config';
+import { formatPrice } from '@/utils/formatters';
+import type { Perfume } from '@/data/types';
+
+const BASE = site.basePath;
+const perfumes = perfumesData.perfumes as Perfume[];
+
+function slugify(input: string): string {
+  return input
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+const familias = Array.from(new Set(perfumes.map((p) => p.olfactoryFamily)))
+  .sort();
+
+const pageTitle = `Decants de perfumes famosos en decant · ${site.addressLocality}`;
+const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: decants de 5ml inspirados en Baccarat Rouge, Sauvage, Delina y más, en ${site.addressLocality}.`;
+---
+
+<Layout title={pageTitle} description={pageDescription}>
+  <section class="hub-hero" aria-labelledby="hub-title">
+    <div class="container">
+      <h1 id="hub-title" class="hub-title">Buscá tu perfume por el aroma famoso</h1>
+      <p class="hub-subtitle">
+        Todos nuestros decants tienen una fragancia famosa detrás. Elegí la que más te gusta y
+        probala sobre tu piel en decant de 5ml antes de comprar el frasco completo.
+      </p>
+    </div>
+  </section>
+
+  <section class="hub-list" aria-label="Aromas famosos en decant">
+    <div class="container">
+      <div class="hub-grid">
+        {inspiraciones.map((insp) => {
+          const perfume = perfumes.find((p) => p.slug === insp.perfumeSlug);
+          const price = perfume?.sizes.find((s) => s.ml === 5) || perfume?.sizes[0];
+          return (
+            <a href={`${BASE}decants/${insp.slug}/`} class="hub-card">
+              <div class="hub-card-body">
+                <h2 class="hub-card-title">{insp.original}</h2>
+                <p class="hub-card-sub">{insp.perfumeName} · {insp.casa}</p>
+              </div>
+              <span class="hub-card-price">{price ? formatPrice(price.price) : ''}</span>
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <section class="hub-fam" aria-labelledby="hub-fam-title">
+    <div class="container">
+      <h2 id="hub-fam-title" class="hub-fam-title">O buscá por familia olfativa</h2>
+      <div class="hub-fam-list">
+        {familias.map((fam) => (
+          <a href={`${BASE}familias/${slugify(fam)}/`} class="hub-fam-link">{fam}</a>
+        ))}
+      </div>
+      <div class="hub-cta">
+        <a href={`${BASE}catalogo/`} class="btn btn--primary btn--md">Ver el catálogo completo</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hub-hero {
+    padding: var(--spacing-stack-lg) 0;
+    text-align: center;
+  }
+
+  .hub-title {
+    font-family: var(--font-family);
+    font-size: var(--font-display-lg-size);
+    font-weight: var(--font-display-lg-weight);
+    letter-spacing: var(--font-display-lg-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    margin: 0 auto var(--spacing-stack-sm);
+    max-width: 720px;
+  }
+
+  .hub-subtitle {
+    font-family: var(--font-family);
+    font-size: var(--font-body-lg-size);
+    line-height: var(--font-body-lg-line-height);
+    color: var(--color-on-surface-variant);
+    margin: 0 auto;
+    max-width: 640px;
+  }
+
+  .hub-list {
+    padding: var(--spacing-stack-lg) 0;
+  }
+
+  .hub-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-stack-sm);
+  }
+
+  @media (min-width: 768px) {
+    .hub-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .hub-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: var(--spacing-stack-md);
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: var(--border-radius);
+    background-color: var(--color-surface-container);
+    text-decoration: none;
+    transition: border-color var(--transition-duration) var(--transition-easing);
+  }
+
+  .hub-card:hover {
+    border-color: var(--color-primary);
+  }
+
+  .hub-card-title {
+    font-family: var(--font-family);
+    font-size: var(--font-headline-md-size);
+    font-weight: var(--font-headline-md-weight);
+    color: var(--color-on-surface);
+    margin: 0;
+  }
+
+  .hub-card-sub {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    color: var(--color-on-surface-variant);
+    margin: 4px 0 0;
+  }
+
+  .hub-card-price {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-primary);
+    white-space: nowrap;
+  }
+
+  .hub-fam {
+    padding: var(--spacing-stack-lg) 0;
+    border-top: var(--border-width) solid var(--color-outline-variant);
+  }
+
+  .hub-fam-title {
+    font-family: var(--font-family);
+    font-size: var(--font-headline-lg-size);
+    font-weight: var(--font-headline-lg-weight);
+    text-align: center;
+    margin: 0 0 var(--spacing-stack-md);
+  }
+
+  .hub-fam-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    max-width: 720px;
+    margin: 0 auto var(--spacing-stack-md);
+  }
+
+  .hub-fam-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 14px;
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: 999px;
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    color: var(--color-on-surface);
+    text-decoration: none;
+    transition: border-color var(--transition-duration) var(--transition-easing), color var(--transition-duration) var(--transition-easing);
+  }
+
+  .hub-fam-link:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+
+  .hub-cta {
+    text-align: center;
+  }
+</style>

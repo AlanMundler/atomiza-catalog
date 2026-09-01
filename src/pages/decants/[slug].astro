@@ -1,0 +1,283 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import ProductCard from '@/components/catalog/ProductCard.astro';
+import perfumesData from '@/data/perfumes.json';
+import { inspiraciones } from '@/data/inspiraciones';
+import { getStockStatus, getStockLabel } from '@/utils/stock';
+import { formatPrice, buildWhatsAppLink } from '@/utils/formatters';
+import { site } from '@/site.config';
+import type { Perfume } from '@/data/types';
+
+export function getStaticPaths() {
+  return inspiraciones.map((insp) => ({
+    params: { slug: insp.slug },
+    props: { insp },
+  }));
+}
+
+const { insp } = Astro.props;
+const BASE = site.basePath;
+const perfume: Perfume | undefined = (perfumesData.perfumes as Perfume[]).find(
+  (p) => p.slug === insp.perfumeSlug
+);
+
+const pageTitle = `Decant que huele a ${insp.original} | Perfumes árabes en ${site.addressLocality}`;
+const pageDescription = `${insp.perfumeBrand} ${insp.perfumeName}, inspirado en ${insp.original} de ${insp.casa}, en decant de 5ml. Probalo sobre tu piel en ${site.addressLocality} antes de comprar el frasco completo.`;
+
+const primarySize = perfume?.sizes.find((s) => s.ml === 5) || perfume?.sizes[0];
+const stockStatus = primarySize ? getStockStatus(primarySize) : undefined;
+const stockLabel = stockStatus ? getStockLabel(stockStatus) : undefined;
+
+const faq = [
+  {
+    question: `¿${insp.perfumeBrand} ${insp.perfumeName} es igual a ${insp.original}?`,
+    answer: `${insp.perfumeBrand} ${insp.perfumeName} es una fragancia árabe inspirada en el ADN de ${insp.original} de ${insp.casa}. Comparte las notas clave del original a una fracción del precio.`,
+  },
+  {
+    question: '¿Cuánto cuesta un decant de 5ml?',
+    answer: `Un decant de 5ml de ${insp.perfumeBrand} ${insp.perfumeName} cuesta ${primarySize ? formatPrice(primarySize.price) : '$6.000'}. Con 5ml alcanza para probarlo unos días sobre tu piel.`,
+  },
+  {
+    question: `¿Dónde puedo probar o comprar un decant de ${insp.original} en ${site.addressLocality}?`,
+    answer: `Te lo acercamos en ${site.addressLocality}: coordinás la entrega en mano o el envío por WhatsApp. Pedí tu decant de ${insp.perfumeBrand} ${insp.perfumeName} y lo coordinamos por mensaje.`,
+  },
+] as const;
+
+const whatsappHref = buildWhatsAppLink(
+  site.whatsappNumber,
+  `¡Hola! Quiero consultar por el decant ${insp.perfumeBrand} ${insp.perfumeName} (inspirado en ${insp.original}). ¿Me ayudás?`
+);
+---
+
+<Layout title={pageTitle} description={pageDescription}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: { '@type': 'Answer', text: f.answer },
+    })),
+  }).replace(/</g, '\\u003c')} />
+
+  {perfume ? (
+    <section class="insphero" aria-labelledby="insp-title">
+      <div class="container">
+        <p class="insp-breadcrumb">
+          <a href={`${BASE}decants/`}>Decants por aroma</a> › {insp.original}
+        </p>
+        <h1 id="insp-title" class="insp-title">Perfume que huele a {insp.original} en {site.addressLocality}</h1>
+        <p class="insp-subtitle">
+          {insp.perfumeName} de {insp.perfumeBrand} es una fragancia árabe inspirada en el ADN de
+          {insp.original} de {insp.casa}. Se consigue en decant de 5ml: la probás sobre tu piel unos
+          días y recién ahí decidís si querés el frasco completo. Todo original y sellado.
+        </p>
+        <p class="insp-price">
+          {formatPrice(primarySize ? primarySize.price : 6000)} · {stockLabel}
+        </p>
+        <div class="insp-cta">
+          <a href={`${BASE}producto/${perfume.slug}/`} class="btn btn--primary btn--md">Ver {insp.perfumeName}</a>
+          <a href={whatsappHref} target="_blank" rel="noopener noreferrer" class="btn btn--secondary btn--md">Consultar por WhatsApp</a>
+        </div>
+      </div>
+    </section>
+  ) : (
+    <section class="insp-hero">
+      <div class="container">
+        <h1 class="insp-title">Fragancia inspirada en {insp.original}</h1>
+        <p class="insp-subtitle">Revisá nuestro catálogo o preguntanos por WhatsApp: seguramente la tenemos en decant.</p>
+        <div class="insp-cta">
+          <a href={`${BASE}catalogo/`} class="btn btn--primary btn--md">Ver catálogo</a>
+        </div>
+      </div>
+    </section>
+  )}
+
+  {perfume && (
+    <section class="insp-card" aria-label="Producto sugerido">
+      <div class="container">
+        <ProductCard perfume={perfume} />
+      </div>
+    </section>
+  )}
+
+  <section class="insp-faq" aria-labelledby="insp-faq-title">
+    <div class="container">
+      <h2 id="insp-faq-title" class="insp-faq-title">Preguntas frecuentes sobre {insp.original} en decant</h2>
+      <div class="insp-faq-list">
+        {faq.map((f) => (
+          <details class="insp-faq-item">
+            <summary>{f.question}</summary>
+            <p class="insp-faq-answer">{f.answer}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="insp-more" aria-labelledby="insp-more-title">
+    <div class="container">
+      <h2 id="insp-more-title" class="insp-more-title">Probá otros aromas famosos en decant</h2>
+      <div class="insp-more-list">
+        {inspiraciones
+          .filter((i) => i.slug !== insp.slug)
+          .slice(0, 8)
+          .map((i) => (
+            <a href={`${BASE}decants/${i.slug}/`} class="insp-more-link">{i.original}</a>
+          ))}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .insphero,
+  .insp-hero {
+    padding: var(--spacing-stack-lg) 0;
+    text-align: center;
+  }
+
+  .insp-breadcrumb {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    color: var(--color-on-surface-variant);
+    margin: 0 0 var(--spacing-stack-sm);
+  }
+
+  .insp-breadcrumb a {
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .insp-title {
+    font-family: var(--font-family);
+    font-size: var(--font-display-lg-size);
+    font-weight: var(--font-display-lg-weight);
+    line-height: var(--font-display-lg-line-height);
+    letter-spacing: var(--font-display-lg-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    margin: 0 auto var(--spacing-stack-sm);
+    max-width: 720px;
+  }
+
+  .insp-subtitle {
+    font-family: var(--font-family);
+    font-size: var(--font-body-lg-size);
+    line-height: var(--font-body-lg-line-height);
+    color: var(--color-on-surface-variant);
+    margin: 0 auto;
+    max-width: 640px;
+  }
+
+  .insp-price {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-primary);
+    margin: var(--spacing-stack-sm) 0 0;
+  }
+
+  .insp-cta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: var(--spacing-stack-md);
+  }
+
+  .insp-card {
+    padding: 0 0 var(--spacing-stack-lg);
+  }
+
+  .insp-card .container {
+    max-width: 420px;
+  }
+
+  .insp-faq {
+    padding: var(--spacing-stack-lg) 0;
+    border-top: var(--border-width) solid var(--color-outline-variant);
+  }
+
+  .insp-faq-title,
+  .insp-more-title {
+    font-family: var(--font-family);
+    font-size: var(--font-headline-lg-size);
+    font-weight: var(--font-headline-lg-weight);
+    text-align: center;
+    margin: 0 0 var(--spacing-stack-md);
+  }
+
+  .insp-faq-list {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .insp-faq-item {
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: var(--border-radius);
+    margin-bottom: var(--spacing-stack-sm);
+  }
+
+  .insp-faq-item summary {
+    cursor: pointer;
+    list-style: none;
+    padding: var(--spacing-stack-sm) var(--spacing-stack-md);
+    font-family: var(--font-family);
+    font-size: var(--font-body-lg-size);
+    font-weight: 500;
+    color: var(--color-on-surface);
+  }
+
+  .insp-faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .insp-faq-item[open] summary {
+    color: var(--color-primary);
+  }
+
+  .insp-faq-answer {
+    padding: 0 var(--spacing-stack-md) var(--spacing-stack-sm);
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    line-height: var(--font-body-md-line-height);
+    color: var(--color-on-surface-variant);
+    margin: 0;
+  }
+
+  .insp-more {
+    padding: var(--spacing-stack-lg) 0;
+    border-top: var(--border-width) solid var(--color-outline-variant);
+  }
+
+  .insp-more-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .insp-more-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 14px;
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: 999px;
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    color: var(--color-on-surface);
+    text-decoration: none;
+    transition: border-color var(--transition-duration) var(--transition-easing), color var(--transition-duration) var(--transition-easing);
+  }
+
+  .insp-more-link:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+</style>

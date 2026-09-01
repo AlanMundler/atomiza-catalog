@@ -60,6 +60,7 @@ const pageUrl = new URL(Astro.url.pathname, Astro.site).href;
       "logo": "${new URL(assetUrl('/favicon.svg'), Astro.site).href}",
       "description": "${site.description}",
       "sameAs": ["${site.instagramUrl}",
+        "${site.tiktokUrl}",
         "https://wa.me/${site.whatsappNumber}"],
       "address": {
         "@type": "PostalAddress",

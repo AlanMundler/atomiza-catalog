@@ -25,6 +25,15 @@ const BASE = site.basePath;
       >
         <img src={assetUrl('images/icons/instagram.svg')} width="32" height="32" alt="" aria-hidden="true" />
       </a>
+      <a 
+        href={site.tiktokUrl} 
+        target="_blank" 
+        rel="noopener noreferrer"
+        class="header-social-btn"
+        aria-label={`TikTok @${site.tiktokHandle}`}
+      >
+        <img src={assetUrl('images/icons/tiktok.svg')} width="32" height="32" alt="" aria-hidden="true" />
+      </a>
       <a href={`${BASE}catalogo/`} class="header-catalogo-btn">Catálogo</a>
       <a href={`${BASE}quiz/`} class="header-quiz-btn">Descubrí tu perfume</a>
 
@@ -81,6 +90,10 @@ const BASE = site.basePath;
     <a href={site.instagramUrl} target="_blank" rel="noopener noreferrer" class="mobile-social-link">
       <img src={assetUrl('images/icons/instagram.svg')} width="24" height="24" alt="" aria-hidden="true" />
       Instagram
+    </a>
+    <a href={site.tiktokUrl} target="_blank" rel="noopener noreferrer" class="mobile-social-link">
+      <img src={assetUrl('images/icons/tiktok.svg')} width="24" height="24" alt="" aria-hidden="true" />
+      TikTok
     </a>
   </div>
 </Drawer>
