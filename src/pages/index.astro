@@ -9,6 +9,9 @@ import type { Perfume } from '@/data/types';
 const BASE = site.basePath;
 
 const homeDescription = `${site.name}. ${site.tagline} en ${site.addressLocality}, ${site.addressRegion}. ${site.description}`;
+// Título con keyword local: es lo que busca quien quiere comprar perfumes árabes
+// en Córdoba. El "decants" + ciudad diferencia a ATOMIZA de otros "ATOMIZA" del mundo.
+const homeTitle = `Perfumes árabes en decants · ${site.addressLocality}`;
 // Perfumes in stock to rotate on the home page
 const allPerfumes = perfumesData.perfumes as Perfume[];
 const inStockPerfumes = allPerfumes.filter((perfume) => {
@@ -48,7 +51,7 @@ const faqs = [
 ] as const;
 ---
 
-<Layout title={site.tagline} description={homeDescription} preloadImages={inStockPerfumes[0] ? [inStockPerfumes[0].images[0]?.src] : []}>
+<Layout title={homeTitle} description={homeDescription} preloadImages={inStockPerfumes[0] ? [inStockPerfumes[0].images[0]?.src] : []}>
   <script is:inline type="application/ld+json" set:html={JSON.stringify({
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
