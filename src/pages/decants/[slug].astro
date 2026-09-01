@@ -162,6 +162,13 @@ const whatsappHref = buildWhatsAppLink(
     max-width: 720px;
   }
 
+  @media (max-width: 640px) {
+    .insp-title {
+      font-size: var(--font-headline-lg-mobile-size);
+      letter-spacing: var(--font-headline-lg-mobile-tracking);
+    }
+  }
+
   .insp-subtitle {
     font-family: var(--font-family);
     font-size: var(--font-body-lg-size);
@@ -209,6 +216,13 @@ const whatsappHref = buildWhatsAppLink(
     font-weight: var(--font-headline-lg-weight);
     text-align: center;
     margin: 0 0 var(--spacing-stack-md);
+  }
+
+  @media (max-width: 640px) {
+    .insp-faq-title,
+    .insp-more-title {
+      font-size: var(--font-headline-lg-mobile-size);
+    }
   }
 
   .insp-faq-list {

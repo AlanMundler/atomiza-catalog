@@ -88,6 +88,13 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
     max-width: 720px;
   }
 
+  @media (max-width: 640px) {
+    .hub-title {
+      font-size: var(--font-headline-lg-mobile-size);
+      letter-spacing: var(--font-headline-lg-mobile-tracking);
+    }
+  }
+
   .hub-subtitle {
     font-family: var(--font-family);
     font-size: var(--font-body-lg-size);
@@ -166,6 +173,12 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
     font-weight: var(--font-headline-lg-weight);
     text-align: center;
     margin: 0 0 var(--spacing-stack-md);
+  }
+
+  @media (max-width: 640px) {
+    .hub-fam-title {
+      font-size: var(--font-headline-lg-mobile-size);
+    }
   }
 
   .hub-fam-list {
