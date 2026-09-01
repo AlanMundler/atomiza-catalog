@@ -3,6 +3,7 @@ import ImageGallery from '@/components/product/ImageGallery.astro';
 import SizeSelector from '@/components/product/SizeSelector.astro';
 import Button from '@/components/ui/Button.astro';
 import { isSizeAvailable } from '@/utils/stock';
+import { buildWhatsAppLink, formatPrice } from '@/utils/formatters';
 import { site } from '@/site.config';
 import type { Perfume } from '@/data/types';
 
@@ -15,6 +16,10 @@ const selectedSize = perfume.sizes.find(s => s.ml === 5) || perfume.sizes[0];
 const available = isSizeAvailable(selectedSize);
 // Las imágenes vectoriales (SVG) se muestran a mayor tamaño que las fotos
 const largeImage = (perfume.images[0]?.src || '').toLowerCase().endsWith('.svg');
+const waMessage = buildWhatsAppLink(
+  site.whatsappNumber,
+  `Hola! Quiero consultar por ${perfume.brand} ${perfume.name} (5ml, ${formatPrice(selectedSize.price)}). ¿Me ayudás?`
+);
 ---
 
 <article class="product-detail" data-perfume-id={perfume.id}>
@@ -76,6 +81,14 @@ const largeImage = (perfume.images[0]?.src || '').toLowerCase().endsWith('.svg')
         >
           {available ? 'Agregar al pedido' : 'Sin Stock'}
         </Button>
+        <a
+          href={waMessage}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn btn--secondary btn--lg product-detail-wa-btn"
+        >
+          Consultar por WhatsApp
+        </a>
       </div>
 
       <a href={`${site.basePath}tridentes/`} class="trident-cta">
@@ -274,7 +287,8 @@ const largeImage = (perfume.images[0]?.src || '').toLowerCase().endsWith('.svg')
     padding-top: var(--spacing-stack-sm);
   }
 
-  .product-detail-add-btn {
+  .product-detail-add-btn,
+  .product-detail-wa-btn {
     flex: 1;
   }
 

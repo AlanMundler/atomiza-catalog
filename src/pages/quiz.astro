@@ -79,7 +79,7 @@ const total = quizQuestions.length;
 <script>
   import { getPerfumesMap } from '@/utils/perfumes-client';
   import { recommendPerfumes, recommendationReason, type QuizAnswers } from '@/utils/quiz';
-  import { formatPrice } from '@/utils/formatters';
+  import { formatPrice, buildWhatsAppLink } from '@/utils/formatters';
   import { getStockStatus, getStockLabel } from '@/utils/stock';
   import { assetUrl, site } from '@/site.config';
   import { bindOnce, onPageLoad } from '@/utils/view-transitions';
@@ -252,6 +252,18 @@ const total = quizQuestions.length;
         });
       });
       body.appendChild(addBtn);
+
+      const waMessage = buildWhatsAppLink(
+        site.whatsappNumber,
+        `Hola! Hice el quiz de ${site.name} y me recomendó ${perfume.brand} ${perfume.name} (5ml, ${formatPrice(size.price)}). ¿Me ayudás a confirmarlo?`
+      );
+      const waBtn = document.createElement('a');
+      waBtn.className = 'btn btn--secondary btn--lg quiz-result-wa';
+      waBtn.href = waMessage;
+      waBtn.target = '_blank';
+      waBtn.rel = 'noopener noreferrer';
+      waBtn.textContent = 'Consultar por WhatsApp';
+      body.appendChild(waBtn);
 
       const detail = document.createElement('a');
       detail.className = 'quiz-result-detail';
@@ -691,6 +703,11 @@ const total = quizQuestions.length;
   .quiz-result-add {
     width: 100%;
     margin-top: 8px;
+  }
+
+  .quiz-result-wa {
+    width: 100%;
+    margin-top: 4px;
   }
 
   .quiz-result-detail {
