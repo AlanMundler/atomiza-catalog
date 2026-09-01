@@ -7,9 +7,24 @@ import type { Perfume } from '@/data/types';
 import perfumesData from '@/data/perfumes.json';
 
 const perfumes = perfumesData.perfumes as Perfume[];
+
+const catalogDescription = `Catálogo de decants de 5ml de perfumes árabes originales en ${'Córdoba'}. Filtra por género y busca tu fragancia favorita.`;
+const catalogSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'Catálogo de decants ATOMIZA',
+  numberOfItems: perfumes.length,
+  itemListElement: perfumes.map((perfume, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: `${perfume.brand} ${perfume.name}`,
+    url: new URL(`/producto/${perfume.slug}/`, Astro.site).href,
+  })),
+};
 ---
 
-<Layout title="Catálogo" description="Explora nuestro catálogo de decants de perfumes árabes. Filtra por género y busca tus fragancias favoritas.">
+<Layout title="Catálogo de decants de perfumes árabes en Córdoba" description={catalogDescription}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(catalogSchema).replace(/</g, '\\u003c')} />
   <section class="catalog-hero" aria-labelledby="catalog-title">
     <div class="container">
       <h1 id="catalog-title" class="catalog-title">Catálogo</h1>

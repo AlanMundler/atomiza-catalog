@@ -15,9 +15,49 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
   const primary = perfume.sizes.find((s) => s.ml === 5) || perfume.sizes[0];
   return primary ? isSizeAvailable(primary) : false;
 });
+// FAQ real de la home: el JSON-LD FAQPage refleja exactamente el contenido visible
+const faqs = [
+  {
+    question: '¿Los decants son originales?',
+    answer: 'Sí. Cada decant sale de un frasco original y sellado.',
+  },
+  {
+    question: '¿Cuánto dura un decant de 5ml?',
+    answer: '5ml alcanza para usar la fragancia varios días seguidos y decidir con calma si querés el frasco completo.',
+  },
+  {
+    question: '¿Cómo hago mi pedido?',
+    answer: 'Sumá los decants que quieras, completá tu nombre y contacto, y enviá el pedido por WhatsApp o Instagram. Te respondemos para coordinar.',
+  },
+  {
+    question: '¿Cómo se coordina el envío y el pago?',
+    answer: 'El envío y el pago se coordinan por mensaje, a tu medida, una vez que enviás tu pedido.',
+  },
+  {
+    question: '¿Qué pasa si no me gusta la fragancia?',
+    answer: 'Por eso existen los decants: probás la fragancia unos días antes de comprometerte con el frasco completo. Si necesitás asesoramiento, escribinos y te ayudamos a elegir.',
+  },
+  {
+    question: '¿Puedo armar un tridente?',
+    answer: 'Sí. Elegí 3 decants y ahorrás $2.000. Visitá la página de tridentes para armar tu combinación.',
+  },
+  {
+    question: '¿Cuánto tarda en llegar mi pedido?',
+    answer: 'Depende de tu ubicación. Coordinamos los tiempos por mensaje después de que hacés tu pedido.',
+  },
+] as const;
 ---
 
 <Layout title={site.tagline} description={homeDescription}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: { '@type': 'Answer', text: faq.answer },
+    })),
+  }).replace(/</g, '\\u003c')} />
   <section class="hero" aria-labelledby="hero-heading">
     <div class="container">
       <h1 id="hero-heading" class="hero-title">{site.hero.title} <strong>{site.hero.titleHighlight}</strong></h1>
@@ -153,34 +193,12 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
     <div class="container">
       <h2 id="faq-title" class="section-title">Preguntas frecuentes</h2>
       <div class="faq-list">
-        <details class="faq-item">
-          <summary>¿Los decants son originales?</summary>
-          <p class="faq-answer">Sí. Cada decant sale de un frasco original y sellado.</p>
-        </details>
-        <details class="faq-item">
-          <summary>¿Cuánto dura un decant de 5ml?</summary>
-          <p class="faq-answer">5ml alcanza para usar la fragancia varios días seguidos y decidir con calma si querés el frasco completo.</p>
-        </details>
-        <details class="faq-item">
-          <summary>¿Cómo hago mi pedido?</summary>
-          <p class="faq-answer">Sumá los decants que quieras, completá tu nombre y contacto, y enviá el pedido por WhatsApp o Instagram. Te respondemos para coordinar.</p>
-        </details>
-        <details class="faq-item">
-          <summary>¿Cómo se coordina el envío y el pago?</summary>
-          <p class="faq-answer">El envío y el pago se coordinan por mensaje, a tu medida, una vez que enviás tu pedido.</p>
-        </details>
-        <details class="faq-item">
-          <summary>¿Qué pasa si no me gusta la fragancia?</summary>
-          <p class="faq-answer">Por eso existen los decants: probás la fragancia unos días antes de comprometerte con el frasco completo. Si necesitás asesoramiento, escribinos y te ayudamos a elegir.</p>
-        </details>
-        <details class="faq-item">
-          <summary>¿Puedo armar un tridente?</summary>
-          <p class="faq-answer">Sí. Elegí 3 decants y ahorrás $2.000. Visitá la página de tridentes para armar tu combinación.</p>
-        </details>
-        <details class="faq-item">
-          <summary>¿Cuánto tarda en llegar mi pedido?</summary>
-          <p class="faq-answer">Depende de tu ubicación. Coordinamos los tiempos por mensaje después de que hacés tu pedido.</p>
-        </details>
+        {faqs.map((faq) => (
+          <details class="faq-item">
+            <summary>{faq.question}</summary>
+            <p class="faq-answer">{faq.answer}</p>
+          </details>
+        ))}
       </div>
     </div>
   </section>

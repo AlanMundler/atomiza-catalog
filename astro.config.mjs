@@ -23,7 +23,10 @@ export default defineConfig({
   // el DOM y rompe los tests que consultan `h1`.
   devToolbar: { enabled: false },
   integrations: [
-    sitemap(),
+    sitemap({
+      // Fecha de baja de la página: usa la fecha del último commit o la de build.
+      lastmod: new Date(),
+    }),
   ],
   vite: {
     resolve: {

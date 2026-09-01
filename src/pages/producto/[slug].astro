@@ -44,12 +44,21 @@ const productSchema = {
 ---
 
 <Layout 
-  title={`${perfume.brand} ${perfume.name}`} 
-  description={`${perfume.brand} ${perfume.name} - ${perfume.olfactoryFamily}. Decant de 5ml disponible.`}
-  ogImage={`og/${perfume.slug}.jpg`}
-  ogType="product"
->
-  <script type="application/ld+json" is:inline set:html={JSON.stringify(productSchema).replace(/</g, '\\u003c')} />
+    title={`Decant 5ml ${perfume.brand} ${perfume.name} | Perfume árabe en ${site.addressLocality}`} 
+    description={`Decant 5ml de ${perfume.brand} ${perfume.name}. ${perfume.olfactoryFamily}, perfume árabe original. Probalo sobre tu piel antes de comprar el frasco en ${site.addressLocality}.`}
+    ogImage={`og/${perfume.slug}.jpg`}
+    ogType="product"
+  >
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(productSchema).replace(/</g, '\\u003c')} />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Inicio', item: new URL('/', Astro.site).href },
+        { '@type': 'ListItem', position: 2, name: 'Catálogo', item: new URL('/catalogo/', Astro.site).href },
+        { '@type': 'ListItem', position: 3, name: `${perfume.brand} ${perfume.name}` },
+      ],
+    }).replace(/</g, '\\u003c')} />
   <div class="container">
     <ProductDetail perfume={perfume} />
   </div>

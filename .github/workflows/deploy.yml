@@ -41,5 +41,13 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
       - id: deployment
         uses: actions/deploy-pages@v4
+      - name: Notificar IndexNow (indexación inmediata)
+        run: node scripts/indexnow.mjs
+        env:
+          SITE_URL: ${{ vars.SITE_URL || 'https://atomiza.com.ar' }}
