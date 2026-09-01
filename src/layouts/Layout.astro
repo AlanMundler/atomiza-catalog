@@ -4,7 +4,7 @@ import Footer from '@/components/layout/Footer.astro';
 import CartDrawer from '@/components/cart/CartDrawer.astro';
 import OrderModal from '@/components/cart/OrderModal.astro';
 import { site, assetUrl } from '@/site.config';
-import { resenasRating } from '@/data/resenas';
+import { resenasRating, hasResenas } from '@/data/resenas';
 import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
 
@@ -55,46 +55,49 @@ const hasTiktokPixel = site.tiktokPixelId.length > 0;
     {preloadImages.map((src) => (
       <link rel="preload" as="image" href={new URL(assetUrl(src), Astro.site).href} />
     ))}
-    <script is:inline type="application/ld+json" set:html={`{
-      "@context": "https://schema.org",
-      "@type": "Store",
-      "name": "${site.name}",
-      "url": "${Astro.site}",
-      "logo": "${new URL(assetUrl('/favicon.svg'), Astro.site).href}",
-      "description": "${site.description}",
-      "sameAs": ["${site.instagramUrl}",
-        "${site.tiktokUrl}",
-        "https://wa.me/${site.whatsappNumber}"],
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "${site.addressLocality}",
-        "addressRegion": "${site.addressRegion}",
-        "addressCountry": "${site.addressCountry}"
+    <script is:inline type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Store',
+      name: site.name,
+      url: Astro.site,
+      logo: new URL(assetUrl('/favicon.svg'), Astro.site).href,
+      description: site.description,
+      sameAs: [site.instagramUrl, site.tiktokUrl, `https://wa.me/${site.whatsappNumber}`],
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: site.addressLocality,
+        addressRegion: site.addressRegion,
+        addressCountry: site.addressCountry,
       },
-      "geo": {
-        "@type": "GeoCoordinates",
-        "latitude": ${site.geo.latitude},
-        "longitude": ${site.geo.longitude}
+      geo: {
+        '@type': 'GeoCoordinates',
+        latitude: site.geo.latitude,
+        longitude: site.geo.longitude,
       },
-      "telephone": "+${site.phoneDisplay.replace(/[^0-9]/g, '')}",
-      "priceRange": "$$",
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "telephone": "+${site.phoneDisplay.replace(/[^0-9]/g, '')}",
-        "contactType": "customer service",
-        "areaServed": "${site.addressLocality}",
-        "availableLanguage": ["es"]
+      telephone: `+${site.phoneDisplay.replace(/[^0-9]/g, '')}`,
+      priceRange: '$$',
+      contactPoint: {
+        '@type': 'ContactPoint',
+        telephone: `+${site.phoneDisplay.replace(/[^0-9]/g, '')}`,
+        contactType: 'customer service',
+        areaServed: site.addressLocality,
+        availableLanguage: ['es'],
       },
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "${resenasRating.ratingValue}",
-        "reviewCount": "${resenasRating.reviewCount}"
+      ...(hasResenas
+        ? {
+            aggregateRating: {
+              '@type': 'AggregateRating',
+              ratingValue: resenasRating.ratingValue,
+              reviewCount: resenasRating.reviewCount,
+              bestRating: 5,
+            },
+          }
+        : {}),
+      areaServed: {
+        '@type': 'City',
+        name: site.addressLocality,
       },
-      "areaServed": {
-        "@type": "City",
-        "name": "${site.addressLocality}"
-      }
-    }`} />
+    })} />
     <ClientRouter />
     <script is:inline defer src="https://app.secureprivacy.ai/script/6a8c5d62ff5be19c869a2e9d.js"></script>
     <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-H2H8WDPR0M"></script>

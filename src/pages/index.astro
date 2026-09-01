@@ -3,7 +3,7 @@ import Layout from '@/layouts/Layout.astro';
 import ProductCard from '@/components/catalog/ProductCard.astro';
 import perfumesData from '@/data/perfumes.json';
 import { isSizeAvailable } from '@/utils/stock';
-import { resenas, resenasRating } from '@/data/resenas';
+import { resenas, resenasRating, hasResenas } from '@/data/resenas';
 import { site } from '@/site.config';
 import type { Perfume } from '@/data/types';
 
@@ -162,6 +162,7 @@ const faqs = [
     </div>
   </section>
 
+  {hasResenas && (
   <section class="reviews" aria-labelledby="reviews-title">
     <div class="container">
       <h2 id="reviews-title" class="section-title">Reseñas de clientes de {site.addressLocality}</h2>
@@ -179,6 +180,7 @@ const faqs = [
       </p>
     </div>
   </section>
+  )}
 
   <section class="decant-info" aria-labelledby="decant-info-title">
     <div class="container">
