@@ -1324,8 +1324,213 @@
            "stock": 0
          }
        ],
-       "isBoutiqueExclusive": false,
-       "featured": false
-     }
+      "isBoutiqueExclusive": false,
+        "featured": false
+      },
+    {
+      "id": "hawas-fire",
+      "slug": "hawas-fire",
+      "brand": "Rasasi",
+      "name": "Hawas Fire",
+      "gender": "masculino",
+      "olfactoryFamily": "Aromática Acuática",
+      "description": "Una fragancia original de Rasasi, sin imitar a nadie. Esclarea, notas marinas y jazmín egipcio sobre un fondo de ámbar, notas minerales y ámbar gris. Acuática y aromática, con un toque ambarado que la hace potente. Brilla en el día y en días cálidos.",
+      "notes": {
+        "top": [
+          "Esclarea"
+        ],
+        "heart": [
+          "Notas Marinas",
+          "Jazmín Egipcio"
+        ],
+        "base": [
+          "Ámbar",
+          "Notas Minerales",
+          "Ámbar Gris"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/hawas-fire.avif",
+          "alt": "Rasasi Hawas Fire"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 10000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    },
+    {
+      "id": "hawas-tropical",
+      "slug": "hawas-tropical",
+      "brand": "Rasasi",
+      "name": "Hawas Tropical",
+      "gender": "masculino",
+      "olfactoryFamily": "Aromática Verde",
+      "description": "Inspirado en Le Beau Paradise Garden de Jean Paul Gaultier. Agua de coco, hojas de higuera y jengibre sobre un corazón de coco, higo y menta, con un fondo de sándalo, haba tonka y almizcle. Verde, tropical y refrescante, perfecto para el calor y el día a día.",
+      "notes": {
+        "top": [
+          "Agua de Coco",
+          "Hojas de Higuera",
+          "Jengibre"
+        ],
+        "heart": [
+          "Coco",
+          "Higo",
+          "Menta"
+        ],
+        "base": [
+          "Sándalo",
+          "Haba Tonka",
+          "Almizcle"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/hawas-tropical.avif",
+          "alt": "Rasasi Hawas Tropical"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 10000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    },
+    {
+      "id": "haya",
+      "slug": "haya",
+      "brand": "Lattafa Perfumes",
+      "name": "Haya",
+      "gender": "femenino",
+      "olfactoryFamily": "Frutal Floral",
+      "description": "Sugerido que evoca a Viva La Juicy de Juicy Couture. Champaña, fresa, naranja tangerina, naranja sanguina y rosa sobre un corazón de gardenia, jazmín y orquídea de vainilla, con un fondo de ámbar, sándalo y castaña. Frutal y floral, fresca y dulce, ideal para el día.",
+      "notes": {
+        "top": [
+          "Champaña",
+          "Fresa",
+          "Naranja Tangerina",
+          "Naranja Sanguina",
+          "Rosa"
+        ],
+        "heart": [
+          "Gardenia",
+          "Jazmín",
+          "Orquídea de Vainilla"
+        ],
+        "base": [
+          "Ámbar",
+          "Sándalo",
+          "Castaña"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/haya.avif",
+          "alt": "Lattafa Perfumes Haya"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 8000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    },
+    {
+      "id": "emaan",
+      "slug": "emaan",
+      "brand": "Lattafa Perfumes",
+      "name": "Emaan",
+      "gender": "femenino",
+      "olfactoryFamily": "Chipre Floral",
+      "description": "Inspirado en My Way de Giorgio Armani. Flor de azahar del naranjo, grosellas negras y bergamota sobre un corazón de nardos, jazmín y caléndula, con un fondo de almizcle, vainilla, cedro y pachulí. Elegante y floral, ideal para el día a día y ocasiones especiales.",
+      "notes": {
+        "top": [
+          "Flor de Azahar del Naranjo",
+          "Grosellas Negras",
+          "Bergamota"
+        ],
+        "heart": [
+          "Nardos",
+          "Jazmín",
+          "Caléndula"
+        ],
+        "base": [
+          "Almizcle",
+          "Vainilla",
+          "Cedro",
+          "Pachulí"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/emaan.avif",
+          "alt": "Lattafa Perfumes Emaan"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 7000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    },
+    {
+      "id": "l-intrude",
+      "slug": "l-intrude",
+      "brand": "Maison Alhambra",
+      "name": "L'Intrude",
+      "gender": "femenino",
+      "olfactoryFamily": "Floral",
+      "description": "Inspirado en L'Interdit de Givenchy. Pera y bergamota sobre un corazón de nardos, flor de azahar del naranjo y jazmín sambac, con un fondo de pachulí, ambroxan, vainilla y vetiver. Flor blanca y elegante, sofisticada, perfecta para la noche y ocasiones especiales.",
+      "notes": {
+        "top": [
+          "Pera",
+          "Bergamota"
+        ],
+        "heart": [
+          "Nardos",
+          "Flor de Azahar del Naranjo",
+          "Jazmín Sambac"
+        ],
+        "base": [
+          "Pachulí",
+          "Ambroxan",
+          "Vainilla",
+          "Vetiver"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/l-intrude.avif",
+          "alt": "Maison Alhambra L'Intrude"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 7000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    }
   ]
 }

@@ -129,6 +129,11 @@ const PROFILES: Record<string, PerfumeProfile> = {
   'hayaati-florence': { styles: ['floral', 'citrico-fresco', 'dulce-vainilla'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'sutil', weather: ['calor'] },
   'confidential-private-gold': { styles: ['frutal', 'dulce-vainilla'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'intensa', weather: ['calor'] },
   'oud-lail-maleki': { styles: ['dulce-vainilla', 'ambarado-especiado', 'floral'], occasions: ['noche', 'especiales'], intensity: 'intensa', weather: ['frio'] },
+  'hawas-fire': { styles: ['citrico-fresco', 'ambarado-especiado'], occasions: ['trabajo', 'todo-el-dia', 'noche'], intensity: 'intensa', weather: ['calor'] },
+  'hawas-tropical': { styles: ['frutal', 'citrico-fresco'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'notoria', weather: ['calor'] },
+  haya: { styles: ['frutal', 'floral', 'dulce-vainilla'], occasions: ['todo-el-dia', 'noche'], intensity: 'notoria', weather: ['calor'] },
+  emaan: { styles: ['floral', 'frutal'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'notoria', weather: ['todo-el-ano'] },
+  'l-intrude': { styles: ['floral', 'ambarado-especiado'], occasions: ['noche', 'especiales'], intensity: 'notoria', weather: ['frio'] },
 };
 
 const STYLE_KEYWORDS: Record<Style, string[]> = {
