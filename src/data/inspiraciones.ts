@@ -309,6 +309,15 @@ export const inspiraciones: Inspiracion[] = [
     slug: 'l-interdit-givenchy',
     familia: 'Floral',
   },
+  {
+    perfumeSlug: '24-carat-white-gold',
+    perfumeBrand: 'Lattafa Perfumes',
+    perfumeName: '24 Carat White Gold',
+    original: 'Light Blue',
+    casa: 'Dolce & Gabbana',
+    slug: 'light-blue-dolce-gabbana',
+    familia: 'Aromática Cítrica',
+  },
 ];
 
 /** Devuelve la inspiración de un perfume por su slug, si existe. */
