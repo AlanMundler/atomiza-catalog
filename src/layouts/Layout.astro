@@ -118,7 +118,49 @@ const hasTiktokPixel = site.tiktokPixelId.length > 0;
         const text = (/.*\?text=(.*)$/g.exec(href)?.[1] || '').substring(0, 120);
         gtag('event', 'click_to_whatsapp', { page_path: location.pathname, text });
       });
+      // Evento: agregar al pedido (solo cuando hay cookies/pixeles activos).
+      document.addEventListener('cart:add', (e) => {
+        const detail = e.detail || {};
+        gtag('event', 'add_to_cart', { perfume_id: detail.perfumeId, size_ml: detail.sizeMl });
+      });
+      // Evento: iniciar checkout (click en enviar pedido), con importe del carrito.
+      document.addEventListener('click', (e) => {
+        const t = e && e.target;
+        if (!t || typeof t.closest !== 'function') return;
+        if (!t.closest('[data-send-whatsapp],[data-send-instagram]')) return;
+        const total = document.querySelector('[data-cart-total]')?.textContent?.trim() || '';
+        gtag('event', 'begin_checkout', { value: total });
+      });
     </script>
+    {hasMetaPixel && (
+      <script is:inline>
+        function trackFbqAddToCart(e) {
+          const d = e.detail || {};
+          if (window.fbq) fbq('track', 'AddToCart', { content_ids: [d.perfumeId], content_type: 'product' });
+        }
+        document.addEventListener('cart:add', trackFbqAddToCart);
+        document.addEventListener('click', (e) => {
+          const t = e && e.target;
+          if (!t || typeof t.closest !== 'function') return;
+          if (!t.closest('[data-send-whatsapp],[data-send-instagram]')) return;
+          if (window.fbq) fbq('track', 'InitiateCheckout');
+        });
+      </script>
+    )}
+    {hasTiktokPixel && (
+      <script is:inline>
+        document.addEventListener('cart:add', (e) => {
+          const d = e.detail || {};
+          if (window.ttq) ttq.track('AddToCart', { content_id: d.perfumeId });
+        });
+        document.addEventListener('click', (e) => {
+          const t = e && e.target;
+          if (!t || typeof t.closest !== 'function') return;
+          if (!t.closest('[data-send-whatsapp],[data-send-instagram]')) return;
+          if (window.ttq) ttq.track('InitiateCheckout');
+        });
+      </script>
+    )}
     {hasMetaPixel && (
       <script is:inline define:vars={{ metaPixelId: site.metaPixelId }}>
         !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?

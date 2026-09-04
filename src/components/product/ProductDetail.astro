@@ -4,6 +4,7 @@ import SizeSelector from '@/components/product/SizeSelector.astro';
 import Button from '@/components/ui/Button.astro';
 import { isSizeAvailable } from '@/utils/stock';
 import { buildWhatsAppLink, formatPrice } from '@/utils/formatters';
+import { getFrascoPrecio } from '@/data/frascoPrecio';
 import { site } from '@/site.config';
 import type { Perfume } from '@/data/types';
 
@@ -20,6 +21,12 @@ const waMessage = buildWhatsAppLink(
   site.whatsappNumber,
   `Hola! Quiero consultar por ${perfume.brand} ${perfume.name} (5ml, ${formatPrice(selectedSize.price)}). ¿Me ayudás?`
 );
+const frascoPrecio = getFrascoPrecio(perfume.slug, perfume.brand);
+const frascoEtiqueta = frascoPrecio
+  ? frascoPrecio.max
+    ? `$${frascoPrecio.min.toLocaleString('es-AR')}–$${frascoPrecio.max.toLocaleString('es-AR')}`
+    : `desde $${frascoPrecio.min.toLocaleString('es-AR')}`
+  : null;
 ---
 
 <article class="product-detail" data-perfume-id={perfume.id}>
@@ -70,6 +77,18 @@ const waMessage = buildWhatsAppLink(
           selectedSize={selectedSize}
         />
       </div>
+
+      {frascoPrecio && (
+        <div class="price-anchor" role="note">
+          <p class="price-anchor-title">Probá antes de comprar el frasco completo</p>
+          <p class="price-anchor-text">
+            El frasco de 100&nbsp;ml de {perfume.name} ronda los{' '}
+            <strong>{frascoEtiqueta}</strong> en Argentina. Este decant de 5&nbsp;ml
+            sale {formatPrice(selectedSize.price)}: gastás poco, lo probás unos días
+            y recién ahí decidís si querés el frasco entero.
+          </p>
+        </div>
+      )}
 
       {selectedSize.stock > 0 && selectedSize.stock < 5 && (
         <div class="stock-countdown" data-stock-count={selectedSize.stock} role="status">
@@ -315,6 +334,38 @@ const waMessage = buildWhatsAppLink(
     padding: var(--spacing-stack-md) 0;
     border-top: var(--border-width) solid var(--color-outline-variant);
     border-bottom: var(--border-width) solid var(--color-outline-variant);
+  }
+
+  .price-anchor {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: var(--spacing-stack-sm) var(--spacing-stack-md);
+    background-color: rgba(197, 160, 89, 0.08);
+    border: var(--border-width) solid var(--color-primary);
+    border-radius: var(--border-radius);
+  }
+
+  .price-anchor-title {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-primary);
+    margin: 0;
+  }
+
+  .price-anchor-text {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    line-height: var(--font-body-md-line-height);
+    color: var(--color-on-surface-variant);
+    margin: 0;
+  }
+
+  .price-anchor-text strong {
+    color: var(--color-on-surface);
   }
 
   .product-detail-actions {

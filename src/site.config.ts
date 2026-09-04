@@ -26,8 +26,12 @@ export const site = {
   tiktokUrl: 'https://www.tiktok.com/@atomiza.cba',
   // Pixeles de publicidad. Dejarlos en '' no carga nada: poné el ID real
   // cuando quieras medir y hacer remarketing con Meta y TikTok.
-  metaPixelId: '',
-  tiktokPixelId: '',
+  metaPixelId: '1463779992251431',
+  tiktokPixelId: 'DADI89RC77UC8FLJM5H0',
+  // Link directo para dejar una reseña en Google Business. Dejalo en ''
+  // hasta tenerlo: el CTA "Dejá tu opinión" de la home solo aparece si
+  // está configurado.
+  googleReviewsUrl: 'https://g.page/r/CTDxPbtfWpKJEAE/review',
   whatsappNumber: '5493472559307',
   whatsappUrl: 'https://wa.me/5493472559307',
   whatsappMessage: 'Hola, quiero hacer un pedido',
