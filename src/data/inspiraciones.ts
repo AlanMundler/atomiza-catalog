@@ -273,6 +273,42 @@ export const inspiraciones: Inspiracion[] = [
     slug: 'hacivat-nishane',
     familia: 'Aromática Frutal',
   },
+  {
+    perfumeSlug: 'hawas-tropical',
+    perfumeBrand: 'Rasasi',
+    perfumeName: 'Hawas Tropical',
+    original: 'Le Beau Paradise Garden',
+    casa: 'Jean Paul Gaultier',
+    slug: 'le-beau-paradise-garden',
+    familia: 'Aromática Verde',
+  },
+  {
+    perfumeSlug: 'haya',
+    perfumeBrand: 'Lattafa Perfumes',
+    perfumeName: 'Haya',
+    original: 'Viva La Juicy',
+    casa: 'Juicy Couture',
+    slug: 'viva-la-juicy',
+    familia: 'Frutal Floral',
+  },
+  {
+    perfumeSlug: 'emaan',
+    perfumeBrand: 'Lattafa Perfumes',
+    perfumeName: 'Emaan',
+    original: 'My Way',
+    casa: 'Giorgio Armani',
+    slug: 'my-way-giorgio-armani',
+    familia: 'Chipre Floral',
+  },
+  {
+    perfumeSlug: 'l-intrude',
+    perfumeBrand: 'Maison Alhambra',
+    perfumeName: "L'Intrude",
+    original: "L'Interdit",
+    casa: 'Givenchy',
+    slug: 'l-interdit-givenchy',
+    familia: 'Floral',
+  },
 ];
 
 /** Devuelve la inspiración de un perfume por su slug, si existe. */
