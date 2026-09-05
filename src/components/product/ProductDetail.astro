@@ -21,11 +21,12 @@ const waMessage = buildWhatsAppLink(
   site.whatsappNumber,
   `Hola! Quiero consultar por ${perfume.brand} ${perfume.name} (5ml, ${formatPrice(selectedSize.price)}). ¿Me ayudás?`
 );
-const frascoPrecio = getFrascoPrecio(perfume.slug, perfume.brand);
+const frascoPrecio = getFrascoPrecio(perfume.slug);
+const frascoTieneRango = frascoPrecio ? frascoPrecio.min !== frascoPrecio.max : false;
 const frascoEtiqueta = frascoPrecio
-  ? frascoPrecio.max
-    ? `$${frascoPrecio.min.toLocaleString('es-AR')}–$${frascoPrecio.max.toLocaleString('es-AR')}`
-    : `desde $${frascoPrecio.min.toLocaleString('es-AR')}`
+  ? frascoTieneRango
+    ? `entre $${frascoPrecio.min.toLocaleString('es-AR')} y $${frascoPrecio.max.toLocaleString('es-AR')}`
+    : `$${frascoPrecio.min.toLocaleString('es-AR')}`
   : null;
 ---
 
@@ -82,8 +83,8 @@ const frascoEtiqueta = frascoPrecio
         <div class="price-anchor" role="note">
           <p class="price-anchor-title">Probá antes de comprar el frasco completo</p>
           <p class="price-anchor-text">
-            El frasco de 100&nbsp;ml de {perfume.name} ronda los{' '}
-            <strong>{frascoEtiqueta}</strong> en Argentina. Este decant de 5&nbsp;ml
+            El frasco de 100&nbsp;ml de {perfume.name} cuesta{' '}
+            <strong>{frascoEtiqueta}</strong> en tiendas oficiales. Este decant de 5&nbsp;ml
             sale {formatPrice(selectedSize.price)}: gastás poco, lo probás unos días
             y recién ahí decidís si querés el frasco entero.
           </p>

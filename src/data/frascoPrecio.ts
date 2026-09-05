@@ -1,49 +1,39 @@
 // =============================================================
 // PRECIO DE FRASCO COMPLETO (100ml) EN ARGENTINA
 // -------------------------------------------------------------
-// Datos reales de listados online (Mercado Libre + tiendas árabes
-// argentinas, sept 2026). Se usan para el anclaje de precio en la
-// ficha de producto: mostrar el valor del frasco entero para que el
-// decant se lea como "probar antes de comprar", no como "perfume caro".
+// Se usa para el anclaje de precio en la ficha de producto: mostrar
+// el valor del frasco entero para que el decant se lea como "probar
+// antes de comprar", no como "perfume caro".
 //
-// REGLA: actualizar los valores manualmente cuando cambie el mercado.
-// No inventar precios. Si un perfume no tiene dato verificado, se usa
-// el "desde" de su marca (mínimos reales observados) y si la marca
-// tampoco tiene, no se muestra anclaje.
+// REGLA: SOLO como fuente principal la tienda oficial elegida por el
+// usuario: Perfumia (https://www.perfumia.com.ar, asegura originales).
+// NO usar Mercado Libre ni listados de dudosa procedencia.
+// Si un perfume no está listado en Perfumia, NO se muestra anclaje
+// (getFrascoPrecio devuelve null). Precios reales del listado del
+// frasco de 100ml en Perfumia (sept 2026). Actualizar manualmente.
 // =============================================================
 
 export interface FrascoPrecio {
   /** Mínimo real observado (ARS). */
   min: number;
-  /** Máximo real observado (ARS). null = solo se muestra "desde". */
-  max: number | null;
+  /** Máximo real observado (ARS). Igual a min = precio único. */
+  max: number;
 }
 
-/** Perfumes con precio de frasco 100ml verificado (listados reales sept 2026). */
+/** Frascos 100ml listados en Perfumia (sept 2026). */
 const frascoVerificado: Record<string, FrascoPrecio> = {
-  // Maison Alhambra Luminous Sahara 100ml (Duty Store)
-  'luminous-sahara': { min: 55900, max: 60000 },
-  // Maison Alhambra Yeah! Man Parfum 100ml (Esencia de vida)
-  yeah: { min: 52000, max: 65000 },
-  // Lattafa Angham 100ml (MercadoLibre, ZetaShop, Perfumia, Cardales)
-  angham: { min: 57799, max: 108000 },
-  // Lattafa Mayar 100ml (Noor, Vemax, Fragancias de Oriente, La Parisienne)
-  mayar: { min: 51210, max: 90809 },
-  // Lattafa Qaed Al Fursan Untamed 100ml (Fragancias de Oriente)
-  'qaed-al-fursan-untamed': { min: 54450, max: 60500 },
-  // Lattafa Liam (Grey) 100ml (Ambrosia, Alkimias, Bagliore)
-  liam: { min: 48000, max: 98500 },
-  // Rasasi Hawas Ice 100ml (MercadoLibre, Brume, Alquimiah, Esencia de vida)
-  'hawas-ice': { min: 75490, max: 103600 },
+  // MAISON ALHAMBRA - Yeah! Parfum 100ml ($59.605, sin stock)
+  yeah: { min: 59605, max: 59605 },
+  // LATTAFA - Angham 100ml ($87.204, sin stock)
+  angham: { min: 87204, max: 87204 },
+  // LATTAFA - Mayar 100ml ($75.376, sin stock)
+  mayar: { min: 75376, max: 75376 },
+  // LATTAFA - Qaed Al Fursan Untamed 100ml ($47.776, con stock)
+  'qaed-al-fursan-untamed': { min: 47776, max: 47776 },
+  // RASASI - Hawas ice for Him 100ml ($92.470, sin stock)
+  'hawas-ice': { min: 92470, max: 92470 },
 };
 
-/** Piso real observado por marca (100ml). Variables no incluidas = sin dato, no anclar. */
-const marcaBase: Record<string, FrascoPrecio> = {
-  'Maison Alhambra': { min: 41600, max: null },
-  'Lattafa Perfumes': { min: 41184, max: null },
-  'Rasasi': { min: 67000, max: null },
-};
-
-export function getFrascoPrecio(slug: string, brand: string): FrascoPrecio | null {
-  return frascoVerificado[slug] ?? marcaBase[brand] ?? null;
+export function getFrascoPrecio(slug: string): FrascoPrecio | null {
+  return frascoVerificado[slug] ?? null;
 }
