@@ -328,8 +328,7 @@ const waMessage = buildWhatsAppLink(
     flex: 1;
   }
 
-  @media (max-width: 640px) {
-.stock-countdown {
+  .stock-countdown {
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -355,7 +354,8 @@ const waMessage = buildWhatsAppLink(
     margin: 0;
   }
 
-  .product-detail-actions {
+  @media (max-width: 640px) {
+    .product-detail-actions {
       flex-direction: column;
     }
   }

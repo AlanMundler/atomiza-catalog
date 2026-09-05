@@ -26,6 +26,10 @@ const faqs = [
     answer: 'Sí. Cada decant sale de un frasco original y sellado.',
   },
   {
+    question: '¿Qué es un decant?',
+    answer: 'Es una porción de perfume pasada de un frasco original a una botellita de 5ml. Alcanza para probar la fragancia unos días antes de decidir si querés el frasco completo.',
+  },
+  {
     question: '¿Cuánto dura un decant de 5ml?',
     answer: '5ml alcanza para usar la fragancia varios días seguidos y decidir con calma si querés el frasco completo.',
   },
@@ -159,13 +163,8 @@ const faqs = [
           <img src="images/testimonios/3.jpg" alt="Screenshot de chat con cliente satisfecho" loading="lazy" />
         </figure>
       </div>
-    </div>
-  </section>
 
-  {hasResenas && (
-  <section class="reviews" aria-labelledby="reviews-title">
-    <div class="container">
-      <h2 id="reviews-title" class="section-title">Reseñas de clientes de {site.addressLocality}</h2>
+      {hasResenas && (
       <div class="reviews-grid">
         {resenas.map((r) => (
           <article class="review-card">
@@ -175,36 +174,27 @@ const faqs = [
           </article>
         ))}
       </div>
+      )}
+
+      {hasResenas && (
       <p class="reviews-note">
         {resenasRating.ratingValue} de 5, según {resenasRating.reviewCount} reseñas de clientes reales.
       </p>
-    </div>
-  </section>
-  )}
+      )}
 
-  {site.googleReviewsUrl && !hasResenas && (
-    <section class="reviews-cta" aria-labelledby="reviews-cta-title">
-      <div class="container">
-        <h2 id="reviews-cta-title" class="section-title">¿Ya probaste un decant?</h2>
-        <p class="reviews-cta-text">Tu opinión ayuda a que más gente pruebe perfumes árabes sin miedo. Dejá tu reseña en Google, nos re ayuda.</p>
-        <a
-          href={site.googleReviewsUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="reviews-cta-btn"
-        >
-          Dejar mi reseña
-        </a>
-      </div>
-    </section>
-  )}
-
-  <section class="decant-info" aria-labelledby="decant-info-title">
-    <div class="container">
-      <h2 id="decant-info-title" class="section-title">¿Qué es un decant?</h2>
-      <div class="decant-info-body">
-        <p class="decant-info-text">Un decant es una porción de perfume pasada de un frasco original a una botellita más chica. Acá cada uno lleva 5ml y sale de un frasco original y sellado: alcanza para probar la fragancia unos días antes de decidir si querés el frasco completo.</p>
-      </div>
+      {site.googleReviewsUrl && !hasResenas && (
+        <div class="reviews-cta-inline">
+          <p class="reviews-cta-text">¿Ya probaste un decant? Tu opinión ayuda a que más gente pruebe perfumes árabes sin miedo. Dejá tu reseña en Google, nos re ayuda.</p>
+          <a
+            href={site.googleReviewsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="reviews-cta-btn"
+          >
+            Dejar mi reseña
+          </a>
+        </div>
+      )}
     </div>
   </section>
 
@@ -354,7 +344,7 @@ const faqs = [
     .hero-cta .btn {
       width: 100%;
       max-width: 320px;
-      font-size: 12px;
+      font-size: 13px;
       letter-spacing: normal;
       padding: 10px 14px;
       height: 44px;
@@ -559,8 +549,8 @@ const faqs = [
 
   .home-perfume-grid {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--spacing-stack-md);
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-stack-sm);
     margin-top: var(--spacing-stack-md);
   }
 
@@ -622,18 +612,13 @@ const faqs = [
     border-radius: 12px;
   }
 
-  /* Reviews */
-  .reviews {
-    padding: var(--spacing-stack-lg) 0;
-    border-top: var(--border-width) solid var(--color-outline-variant);
-  }
-
+  /* Reviews (inline en social-proof) */
   .reviews-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--spacing-stack-md);
+    gap: var(--spacing-stack-sm);
     max-width: 900px;
-    margin: 0 auto;
+    margin: var(--spacing-stack-md) auto 0;
   }
 
   @media (min-width: 768px) {
@@ -684,10 +669,10 @@ const faqs = [
     margin: var(--spacing-stack-md) 0 0;
   }
 
-  /* CTA de reseña (cuando aún no hay reviews cargadas) */
-  .reviews-cta {
-    padding: var(--spacing-stack-lg) 0;
-    border-top: var(--border-width) solid var(--color-outline-variant);
+  /* CTA de reseña (inline en social-proof, cuando aún no hay reviews cargadas) */
+  .reviews-cta-inline {
+    margin-top: var(--spacing-stack-md);
+    text-align: center;
   }
 
   .reviews-cta-text {
@@ -724,26 +709,6 @@ const faqs = [
   .reviews-cta-btn:focus-visible {
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
-  }
-
-  /* Decant info */
-  .decant-info {
-    padding: var(--spacing-stack-lg) 0;
-  }
-
-  .decant-info-body {
-    max-width: 680px;
-    margin: 0 auto;
-  }
-
-  .decant-info-text {
-    font-family: var(--font-family);
-    font-size: var(--font-body-lg-size);
-    line-height: var(--font-body-lg-line-height);
-    letter-spacing: var(--font-body-lg-tracking);
-    color: var(--color-on-surface-variant);
-    text-align: center;
-    margin: 0;
   }
 
   /* FAQ */
@@ -812,5 +777,20 @@ const faqs = [
     letter-spacing: var(--font-body-md-tracking);
     color: var(--color-on-surface-variant);
     margin: 0;
+  }
+
+  @media (max-width: 640px) {
+    .section-title {
+      margin-bottom: var(--spacing-stack-md);
+    }
+
+    .home-perfumes,
+    .aroma-band,
+    .value-prop,
+    .social-proof,
+    .how-to-buy,
+    .faq {
+      padding: 40px 0;
+    }
   }
 </style>

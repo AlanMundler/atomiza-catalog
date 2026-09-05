@@ -78,11 +78,22 @@ const filters: { value: GenderFilter; label: string }[] = [
 
   @media (max-width: 640px) {
     .filters {
+      flex-wrap: nowrap;
       gap: 6px;
+      justify-content: flex-start;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding: 2px 0;
+    }
+
+    .filters::-webkit-scrollbar {
+      display: none;
     }
 
     .filter-chip {
-      padding: 0 10px;
+      flex-shrink: 0;
+      padding: 0 12px;
       height: 36px;
       font-size: 10px;
       letter-spacing: 0.08em;
