@@ -475,9 +475,10 @@ function getSize(p: Perfume) {
     font-weight: var(--font-body-md-weight);
     line-height: 1.3;
     color: var(--color-on-surface);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
   .trident-card-price {
