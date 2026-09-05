@@ -55,7 +55,9 @@ const isVector = (perfume.images[0]?.src || '').toLowerCase().endsWith('.svg');
 
 <style>
   .product-card {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
     text-decoration: none;
     color: inherit;
     background-color: var(--color-surface-container);
@@ -127,6 +129,7 @@ const isVector = (perfume.images[0]?.src || '').toLowerCase().endsWith('.svg');
     display: flex;
     flex-direction: column;
     gap: 4px;
+    flex: 1;
   }
 
   .product-card-brand {
@@ -158,6 +161,6 @@ const isVector = (perfume.images[0]?.src || '').toLowerCase().endsWith('.svg');
     letter-spacing: var(--font-label-sm-tracking);
     text-transform: uppercase;
     color: var(--color-primary);
-    margin-top: 4px;
+    margin-top: auto;
   }
 </style>
