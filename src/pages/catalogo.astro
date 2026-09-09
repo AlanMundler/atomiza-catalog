@@ -8,22 +8,25 @@ import perfumesData from '@/data/perfumes.json';
 
 const perfumes = perfumesData.perfumes as Perfume[];
 
-const catalogDescription = `Catálogo de decants de 5ml de perfumes árabes originales en ${'Córdoba'}. Filtra por género y busca tu fragancia favorita.`;
+import { site } from '@/site.config';
+
+const BASE = site.basePath;
+const catalogDescription = `Catálogo de decants de 5ml de perfumes árabes originales en ${site.addressLocality}. Filtra por género y busca tu fragancia favorita.`;
 const catalogSchema = {
   '@context': 'https://schema.org',
   '@type': 'ItemList',
-  name: 'Catálogo de decants ATOMIZA',
+  name: `Catálogo de decants ${site.namePlain}`,
   numberOfItems: perfumes.length,
   itemListElement: perfumes.map((perfume, i) => ({
     '@type': 'ListItem',
     position: i + 1,
     name: `${perfume.brand} ${perfume.name}`,
-    url: new URL(`/producto/${perfume.slug}/`, Astro.site).href,
+    url: `${Astro.site?.origin}${BASE}producto/${perfume.slug}/`,
   })),
 };
 ---
 
-<Layout title="Catálogo de decants de perfumes árabes en Córdoba" description={catalogDescription}>
+<Layout title={`Catálogo de decants de perfumes árabes en ${site.addressLocality}`} description={catalogDescription}>
   <script is:inline type="application/ld+json" set:html={JSON.stringify(catalogSchema).replace(/</g, '\\u003c')} />
   <section class="catalog-hero" aria-labelledby="catalog-title">
     <div class="container">

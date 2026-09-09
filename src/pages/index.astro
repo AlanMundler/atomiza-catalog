@@ -4,7 +4,7 @@ import ProductCard from '@/components/catalog/ProductCard.astro';
 import perfumesData from '@/data/perfumes.json';
 import { isSizeAvailable } from '@/utils/stock';
 import { resenas, resenasRating, hasResenas } from '@/data/resenas';
-import { site } from '@/site.config';
+import { site, assetUrl } from '@/site.config';
 import type { Perfume } from '@/data/types';
 
 const BASE = site.basePath;
@@ -154,13 +154,13 @@ const faqs = [
       <h2 id="social-proof-title" class="section-title">Lo que dicen nuestros clientes</h2>
       <div class="testimonial-grid">
         <figure class="testimonial-img">
-          <img src="images/testimonios/1.jpg" alt="Screenshot de chat con cliente satisfecho" loading="lazy" />
+          <img src={assetUrl('images/testimonios/1.jpg')} alt="Screenshot de chat con cliente satisfecho" loading="lazy" />
         </figure>
         <figure class="testimonial-img">
-          <img src="images/testimonios/2.jpg" alt="Screenshot de chat con cliente satisfecho" loading="lazy" />
+          <img src={assetUrl('images/testimonios/2.jpg')} alt="Screenshot de chat con cliente satisfecho" loading="lazy" />
         </figure>
         <figure class="testimonial-img">
-          <img src="images/testimonios/3.jpg" alt="Screenshot de chat con cliente satisfecho" loading="lazy" />
+          <img src={assetUrl('images/testimonios/3.jpg')} alt="Screenshot de chat con cliente satisfecho" loading="lazy" />
         </figure>
       </div>
 
@@ -259,8 +259,12 @@ const faqs = [
 
       const items = Array.from(grid.querySelectorAll('.home-perfume-item')) as HTMLElement[];
       if (items.length > 4) {
-        const shuffled = items.sort(() => Math.random() - 0.5);
-        shuffled.forEach((item, i) => {
+        // Fisher–Yates shuffle (uniform distribution)
+        for (let i = items.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [items[i], items[j]] = [items[j], items[i]];
+        }
+        items.forEach((item, i) => {
           item.hidden = i >= 4;
         });
       }

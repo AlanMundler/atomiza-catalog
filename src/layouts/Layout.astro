@@ -99,17 +99,24 @@ const hasTiktokPixel = site.tiktokPixelId.length > 0;
       },
     })} />
     <ClientRouter />
-    <script is:inline defer src="https://app.secureprivacy.ai/script/6a8c5d62ff5be19c869a2e9d.js"></script>
-    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-H2H8WDPR0M"></script>
-    <script is:inline>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-H2H8WDPR0M');
-    </script>
+    {site.secureprivacyScriptId && (
+      <script is:inline defer src={`https://app.secureprivacy.ai/script/${site.secureprivacyScriptId}.js`}></script>
+    )}
+    {site.gaMeasurementId && (
+      <>
+        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${site.gaMeasurementId}`}></script>
+        <script is:inline define:vars={{ gaId: site.gaMeasurementId }}>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', gaId);
+        </script>
+      </>
+    )}
     <script is:inline>
       // Evento de conversión: click a WhatsApp, para medir de dónde viene el pedido.
       document.addEventListener('click', (e) => {
+        if (typeof gtag !== 'function') return;
         const t = e && e.target;
         if (!t || typeof t.closest !== 'function') return;
         const link = t.closest('a[href*="wa.me"]');
@@ -120,11 +127,13 @@ const hasTiktokPixel = site.tiktokPixelId.length > 0;
       });
       // Evento: agregar al pedido (solo cuando hay cookies/pixeles activos).
       document.addEventListener('cart:add', (e) => {
+        if (typeof gtag !== 'function') return;
         const detail = e.detail || {};
         gtag('event', 'add_to_cart', { perfume_id: detail.perfumeId, size_ml: detail.sizeMl });
       });
       // Evento: iniciar checkout (click en enviar pedido), con importe del carrito.
       document.addEventListener('click', (e) => {
+        if (typeof gtag !== 'function') return;
         const t = e && e.target;
         if (!t || typeof t.closest !== 'function') return;
         if (!t.closest('[data-send-whatsapp],[data-send-instagram]')) return;

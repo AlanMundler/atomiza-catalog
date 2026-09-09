@@ -35,7 +35,7 @@ const faq = [
   },
   {
     question: '¿Cuánto cuesta un decant de 5ml?',
-    answer: `Un decant de 5ml de ${insp.perfumeBrand} ${insp.perfumeName} cuesta ${primarySize ? formatPrice(primarySize.price) : '$6.000'}. Con 5ml alcanza para probarlo unos días sobre tu piel.`,
+    answer: `Un decant de 5ml de ${insp.perfumeBrand} ${insp.perfumeName} cuesta ${primarySize ? formatPrice(primarySize.price) : 'a confirmar'}. Con 5ml alcanza para probarlo unos días sobre tu piel.`,
   },
   {
     question: `¿Dónde puedo probar o comprar un decant de ${insp.original} en ${site.addressLocality}?`,
@@ -73,7 +73,7 @@ const whatsappHref = buildWhatsAppLink(
           días y recién ahí decidís si querés el frasco completo. Todo original y sellado.
         </p>
         <p class="insp-price">
-          {formatPrice(primarySize ? primarySize.price : 6000)} · {stockLabel}
+          {formatPrice(primarySize ? primarySize.price : 0)} · {stockLabel}
         </p>
         <div class="insp-cta">
           <a href={`${BASE}producto/${perfume.slug}/`} class="btn btn--primary btn--md">Ver {insp.perfumeName}</a>

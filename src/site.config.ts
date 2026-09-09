@@ -28,6 +28,10 @@ export const site = {
   // cuando quieras medir y hacer remarketing con Meta y TikTok.
   metaPixelId: '1463779992251431',
   tiktokPixelId: 'DADI89RC77UC8FLJM5H0',
+  // Google Analytics 4. Dejar en '' para no cargar el script.
+  gaMeasurementId: 'G-H2H8WDPR0M',
+  // Secureprivacy cookie consent. Dejar en '' para no cargar el script.
+  secureprivacyScriptId: '6a8c5d62ff5be19c869a2e9d',
   // Link directo para dejar una reseña en Google Business. Dejalo en ''
   // hasta tenerlo: el CTA "Dejá tu opinión" de la home solo aparece si
   // está configurado.

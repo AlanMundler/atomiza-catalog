@@ -54,8 +54,8 @@ const productSchema = {
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Inicio', item: new URL('/', Astro.site).href },
-        { '@type': 'ListItem', position: 2, name: 'Catálogo', item: new URL('/catalogo/', Astro.site).href },
+        { '@type': 'ListItem', position: 1, name: 'Inicio', item: `${Astro.site?.origin}${site.basePath}` },
+        { '@type': 'ListItem', position: 2, name: 'Catálogo', item: `${Astro.site?.origin}${site.basePath}catalogo/` },
         { '@type': 'ListItem', position: 3, name: `${perfume.brand} ${perfume.name}` },
       ],
     }).replace(/</g, '\\u003c')} />

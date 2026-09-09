@@ -11,7 +11,6 @@ const modalId = id || `modal-${Math.random().toString(36).slice(2, 9)}`;
 ---
 
 <div class="modal-root" id={modalId} data-modal-root>
-  <div class="modal-backdrop" data-modal-backdrop role="presentation" aria-hidden="true"></div>
   <dialog 
     class={`modal ${className}`}
     data-modal-dialog
@@ -34,6 +33,7 @@ const modalId = id || `modal-${Math.random().toString(36).slice(2, 9)}`;
       <slot>{children}</slot>
     </div>
   </dialog>
+  <div class="modal-backdrop" data-modal-backdrop role="presentation" aria-hidden="true"></div>
 </div>
 
 <script>

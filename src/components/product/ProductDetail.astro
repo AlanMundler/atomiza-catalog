@@ -111,7 +111,15 @@ const waMessage = buildWhatsAppLink(
 </article>
 
 <script>
-  import { bindOnce, onPageLoad } from '@/utils/view-transitions';
+  import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
+
+  // Limpiar timers huérfanos antes de que ClientRouter haga swap del DOM.
+  onWindowOnce('countdown-cleanup', 'astro:before-swap', () => {
+    document.querySelectorAll('[data-stock-countdown]').forEach((el) => {
+      const id = (el as any).__vtCountdownId;
+      if (id != null) clearInterval(id);
+    });
+  });
 
   onPageLoad('product-detail-countdown', () => {
     const el = document.querySelector('.stock-countdown');

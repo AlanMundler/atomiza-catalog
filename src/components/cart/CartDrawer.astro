@@ -79,7 +79,7 @@ import Drawer from '@/components/ui/Drawer.astro';
       <div class="order-summary" role="region" aria-label="Resumen del pedido">
         <div class="order-summary-line order-summary-line--total">
           <span class="order-summary-label">Total estimado</span>
-          <span class="order-summary-value">${formatPrice(subtotal)}</span>
+          <span class="order-summary-value" data-cart-total>${formatPrice(subtotal)}</span>
         </div>
         ${
           unavailableCount > 0
