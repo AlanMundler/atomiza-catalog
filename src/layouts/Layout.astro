@@ -180,24 +180,67 @@ const hasTracking = Boolean(site.gaMeasurementId || site.metaPixelId || site.tik
           applyState();
         }
 
+        function pluginCategory(name) {
+          const n = String(name || '').toLowerCase();
+          if (n.indexOf('google') !== -1 || n.indexOf('analytics') !== -1 || n.indexOf('gtag') !== -1) return 'analytics';
+          if (n.indexOf('meta') !== -1 || n.indexOf('facebook') !== -1 || n.indexOf('instagram') !== -1 || n.indexOf('tiktok') !== -1) return 'ads';
+          return null;
+        }
+
+        // Sincroniza con la fuente de verdad de SecurePrivacy (localStorage
+        // 'sp_consent'): el mapping es por palabras clave, así los nombres del
+        // Scan Report no tienen que coincidir exactamente con este código.
+        function syncFromSpConsent() {
+          let raw = null;
+          try { raw = JSON.parse(localStorage.getItem('sp_consent') || 'null'); } catch (err) { raw = null; }
+          if (!raw || !Array.isArray(raw)) return;
+          const next = {};
+          for (let i = 0; i < raw.length; i++) {
+            const entry = raw[i];
+            if (!entry || typeof entry !== 'object') continue;
+            const prefs = Array.isArray(entry.PluginPreferences) && entry.PluginPreferences.length > 0
+              ? entry.PluginPreferences
+              : [entry];
+            for (let j = 0; j < prefs.length; j++) {
+              const pref = prefs[j];
+              const cat = pluginCategory(pref && pref.ComplianceType);
+              if (cat && typeof pref.IsBlockEnabled === 'boolean') {
+                next[cat] = !pref.IsBlockEnabled;
+              }
+            }
+          }
+          if (Object.keys(next).length > 0) setState(next);
+        }
+
         window.addEventListener('sp_cookie_banner_save', (evt) => {
           const d = evt && evt.detail;
           if (d === 'accept') setState({ analytics: true, ads: true });
           else if (d === 'reject') setState({ analytics: false, ads: false });
+          syncFromSpConsent();
         });
         window.addEventListener('sp_cookie_banner_click', (evt) => {
           const d = evt && evt.detail;
           if (d === 'accept') setState({ analytics: true, ads: true });
           else if (d === 'reject') setState({ analytics: false, ads: false });
+          syncFromSpConsent();
         });
-        // Banner personalizado: SecurePrivacy emite sp_unblock_<Servicio> al
-        // desbloquear cada plugin. Ajustar los nombres al Scan Report.
+        // Desbloqueo granular: sp_spab_unblock trae el ComplianceType real
+        // (con espacios), no depende de los nombres del Scan Report.
+        window.addEventListener('sp_spab_unblock', (evt) => {
+          const cat = pluginCategory(evt && evt.detail && evt.detail.pluginName);
+          if (cat) setState({ [cat]: true });
+        });
+        // Secundario: sp_unblock_<Servicio> (nombre del Scan Report con
+        // espacios reemplazados por _). Solo aplica si SecurePrivacy tiene el
+        // plugin configurado en su panel de bloqueo.
         window.addEventListener('sp_unblock_Google_Analytics', () => setState({ analytics: true }));
         window.addEventListener('sp_unblock_Meta_Pixel', () => setState({ ads: true }));
         window.addEventListener('sp_unblock_Facebook_Pixel', () => setState({ ads: true }));
         window.addEventListener('sp_unblock_TikTok', () => setState({ ads: true }));
 
-        // Reaplicar la decisión guardada al recargar la página.
+        // Reaplicar la decisión guardada al recargar la página. Si el
+        // visitante ya consintió en otra sesión, sp_consent lo refleja.
+        syncFromSpConsent();
         applyState();
       </script>
     )}
