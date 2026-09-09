@@ -130,7 +130,7 @@
       ],
       "isBoutiqueExclusive": false,
       "featured": false,
-      "originalPrice": 70000
+      "originalPrice": 60000
     },
     {
       "id": "jorge-di-profumo",
@@ -219,7 +219,7 @@
       ],
       "isBoutiqueExclusive": false,
       "featured": false,
-      "originalPrice": 55000
+      "originalPrice": 60000
     },
     {
       "id": "glacier-ultra",
@@ -306,7 +306,7 @@
       ],
       "isBoutiqueExclusive": false,
       "featured": false,
-      "originalPrice": 80000
+      "originalPrice": 70000
     },
     {
       "id": "tonic-malt",
@@ -348,7 +348,7 @@
       ],
       "isBoutiqueExclusive": false,
       "featured": false,
-      "originalPrice": 60000
+      "originalPrice": 65000
     },
     {
       "id": "salvo-intense",
@@ -468,7 +468,7 @@
       ],
       "isBoutiqueExclusive": false,
       "featured": false,
-      "originalPrice": 55000
+      "originalPrice": 65000
     },
     {
       "id": "yeah",
@@ -554,7 +554,7 @@
       ],
       "isBoutiqueExclusive": false,
       "featured": true,
-      "originalPrice": 450000
+      "originalPrice": 65000
     },
     {
       "id": "glacier-bella",
@@ -676,7 +676,7 @@
       ],
       "isBoutiqueExclusive": true,
       "featured": true,
-      "originalPrice": 90000
+      "originalPrice": 55000
     },
     {
       "id": "ameer-al-oudh",
@@ -759,7 +759,8 @@
         }
       ],
       "isBoutiqueExclusive": true,
-      "featured": true
+      "featured": true,
+      "originalPrice": 55000
     },
     {
       "id": "rouat-ajial",
@@ -802,7 +803,8 @@
         }
       ],
       "isBoutiqueExclusive": false,
-      "featured": false
+      "featured": false,
+      "originalPrice": 55000
     },
     {
       "id": "now-rave",
@@ -847,7 +849,7 @@
       ],
       "isBoutiqueExclusive": false,
       "featured": false,
-      "originalPrice": 600000
+      "originalPrice": 70000
     },
     {
       "id": "qaed-al-fursan-untamed",
@@ -979,7 +981,7 @@
       ],
       "isBoutiqueExclusive": false,
       "featured": true,
-      "originalPrice": 65000
+      "originalPrice": 60000
     },
     {
       "id": "hayaati-black",
@@ -1018,7 +1020,7 @@
       ],
       "isBoutiqueExclusive": true,
       "featured": true,
-      "originalPrice": 45000
+      "originalPrice": 55000
     },
     {
       "id": "hayaati-al-maleky",
@@ -1062,7 +1064,7 @@
       ],
       "isBoutiqueExclusive": true,
       "featured": false,
-      "originalPrice": 50000
+      "originalPrice": 55000
     },
     {
       "id": "opulent-dubai",
@@ -1106,7 +1108,7 @@
       ],
       "isBoutiqueExclusive": true,
       "featured": true,
-      "originalPrice": 120000
+      "originalPrice": 65000
     },
     {
       "id": "mayar",
@@ -1147,7 +1149,7 @@
       ],
       "isBoutiqueExclusive": false,
       "featured": true,
-      "originalPrice": 55000
+      "originalPrice": 60000
     },
     {
       "id": "angham",
@@ -1190,7 +1192,7 @@
       ],
       "isBoutiqueExclusive": false,
       "featured": false,
-      "originalPrice": 68000
+      "originalPrice": 75000
     },
     {
       "id": "badee-al-oud-sublime",
@@ -1231,7 +1233,7 @@
       ],
       "isBoutiqueExclusive": false,
       "featured": true,
-      "originalPrice": 50000
+      "originalPrice": 55000
     },
     {
       "id": "hayaati-florence",
@@ -1269,7 +1271,7 @@
       ],
       "isBoutiqueExclusive": false,
       "featured": false,
-      "originalPrice": 55000
+      "originalPrice": 60000
     },
     {
       "id": "hawas-ice",
@@ -1313,7 +1315,7 @@
       ],
       "isBoutiqueExclusive": false,
       "featured": true,
-      "originalPrice": 60000
+      "originalPrice": 100000
     },
     {
       "id": "hawas-black",
@@ -1355,7 +1357,7 @@
       ],
       "isBoutiqueExclusive": false,
       "featured": false,
-      "originalPrice": 85000
+      "originalPrice": 95000
     },
     {
       "id": "hawas-fire",
@@ -1393,7 +1395,8 @@
         }
       ],
       "isBoutiqueExclusive": false,
-      "featured": false
+      "featured": false,
+      "originalPrice": 100000
     },
     {
       "id": "hawas-tropical",
@@ -1435,7 +1438,7 @@
       ],
       "isBoutiqueExclusive": false,
       "featured": false,
-      "originalPrice": 55000
+      "originalPrice": 95000
     },
     {
       "id": "haya",
@@ -1479,7 +1482,7 @@
       ],
       "isBoutiqueExclusive": false,
       "featured": false,
-      "originalPrice": 45000
+      "originalPrice": 70000
     },
     {
       "id": "emaan",
@@ -1522,7 +1525,7 @@
       ],
       "isBoutiqueExclusive": false,
       "featured": false,
-      "originalPrice": 60000
+      "originalPrice": 65000
     },
     {
       "id": "l-intrude",
@@ -1564,7 +1567,7 @@
       ],
       "isBoutiqueExclusive": false,
       "featured": false,
-      "originalPrice": 55000
+      "originalPrice": 65000
     }
   ]
 }
