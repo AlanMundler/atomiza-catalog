@@ -14,6 +14,8 @@ interface Props {
   ogImage?: string;
   ogType?: string;
   preloadImages?: string[];
+  /** true hace que la página sea noindex/noarchive en Google (404, envíos de prueba, etc.). */
+  noindex?: boolean;
   children: any;
 }
 
@@ -23,12 +25,16 @@ const {
   ogImage = '/og-image.jpg',
   ogType = 'website',
   preloadImages = [],
+  noindex = false,
   children,
 } = Astro.props;
 const ogImageUrl = new URL(assetUrl(ogImage), Astro.site).href;
 const pageUrl = new URL(Astro.url.pathname, Astro.site).href;
-const hasMetaPixel = site.metaPixelId.length > 0;
-const hasTiktokPixel = site.tiktokPixelId.length > 0;
+// Google muestra ~55-60 caracteres del <title>. Si el título con la marca
+// excede eso, se corta; mejor un title corto y completo que uno truncado.
+const fullTitle = `${title} | ${site.name}`.length <= 60 ? `${title} | ${site.name}` : title;
+const robots = noindex ? 'noindex, nofollow' : 'index, follow';
+const hasTracking = Boolean(site.gaMeasurementId || site.metaPixelId || site.tiktokPixelId);
 ---
 
 <!DOCTYPE html>
@@ -37,8 +43,9 @@ const hasTiktokPixel = site.tiktokPixelId.length > 0;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="generator" content={Astro.generator} />
-    <title>{title} | {site.name}</title>
+    <title>{fullTitle}</title>
     <meta name="description" content={description} />
+    <meta name="robots" content={robots} />
     <link rel="canonical" href={pageUrl} />
     <meta property="og:locale" content={site.locale} />
     <meta property="og:site_name" content={site.name} />
@@ -102,148 +109,102 @@ const hasTiktokPixel = site.tiktokPixelId.length > 0;
     {site.secureprivacyScriptId && (
       <script is:inline defer src={`https://app.secureprivacy.ai/script/${site.secureprivacyScriptId}.js`}></script>
     )}
-    {site.gaMeasurementId && (
-      <>
-        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${site.gaMeasurementId}`}></script>
-        <script is:inline define:vars={{ gaId: site.gaMeasurementId }}>
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
+    {hasTracking && (
+      <script is:inline
+        define:vars={{
+          gaId: site.gaMeasurementId,
+          metaPixelId: site.metaPixelId,
+          tiktokPixelId: site.tiktokPixelId,
+          consentKey: site.storage.consent,
+        }}>
+        // Consentimiento DENEGADO por defecto: Google, Meta y TikTok solo se
+        // cargan si el visitante acepta el banner de SecurePrivacy
+        // (sp_cookie_banner_save / sp_cookie_banner_click) o si desbloquea un
+        // servicio puntual (sp_unblock_<Servicio>). La decisión se persiste
+        // en localStorage y se reaplica en cada página.
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){ window.dataLayer.push(arguments); }
+
+        let state = {};
+        try {
+          state = JSON.parse(localStorage.getItem(consentKey) || '{}') || {};
+        } catch (err) { state = {}; }
+
+        function hasConsent(category) { return state[category] === true; }
+        window.__hasConsent = hasConsent;
+
+        let analyticsLoaded = false;
+        let adsLoaded = false;
+
+        function loadAnalytics() {
+          if (analyticsLoaded || !gaId) return;
+          analyticsLoaded = true;
+          const s = document.createElement('script');
+          s.async = true;
+          s.src = 'https://www.googletagmanager.com/gtag/js?id=' + gaId;
+          document.head.appendChild(s);
           gtag('js', new Date());
           gtag('config', gaId);
-        </script>
-      </>
-    )}
-    <script is:inline>
-      // Evento de conversión: click a WhatsApp, para medir de dónde viene el pedido.
-      document.addEventListener('click', (e) => {
-        if (typeof gtag !== 'function') return;
-        const t = e && e.target;
-        if (!t || typeof t.closest !== 'function') return;
-        const link = t.closest('a[href*="wa.me"]');
-        if (!link) return;
-        const href = link.getAttribute('href') || '';
-        const text = (/.*\?text=(.*)$/g.exec(href)?.[1] || '').substring(0, 120);
-        gtag('event', 'click_to_whatsapp', { page_path: location.pathname, text });
-      });
-      // Evento: agregar al pedido (solo cuando hay cookies/pixeles activos).
-      document.addEventListener('cart:add', (e) => {
-        if (typeof gtag !== 'function') return;
-        const detail = e.detail || {};
-        gtag('event', 'add_to_cart', { perfume_id: detail.perfumeId, size_ml: detail.sizeMl });
-      });
-      // Evento: iniciar checkout (click en enviar pedido), con importe del carrito.
-      document.addEventListener('click', (e) => {
-        if (typeof gtag !== 'function') return;
-        const t = e && e.target;
-        if (!t || typeof t.closest !== 'function') return;
-        if (!t.closest('[data-send-whatsapp],[data-send-instagram]')) return;
-        const total = document.querySelector('[data-cart-total]')?.textContent?.trim() || '';
-        gtag('event', 'begin_checkout', { value: total });
-      });
-
-      // Analytics events: catálogo, búsqueda, ficha, quiz.
-      document.addEventListener('analytics:view_item_list', (e) => {
-        if (typeof gtag !== 'function') return;
-        const d = e.detail || {};
-        gtag('event', 'view_item_list', { item_list_name: d.listName || 'catalogo', items: d.items || [] });
-      });
-      document.addEventListener('analytics:select_item', (e) => {
-        if (typeof gtag !== 'function') return;
-        const d = e.detail || {};
-        gtag('event', 'select_item', { item_list_name: d.listName || 'catalogo', items: d.items || [] });
-      });
-      document.addEventListener('analytics:view_item', (e) => {
-        if (typeof gtag !== 'function') return;
-        const d = e.detail || {};
-        gtag('event', 'view_item', { items: d.items || [] });
-      });
-      document.addEventListener('analytics:search', (e) => {
-        if (typeof gtag !== 'function') return;
-        const d = e.detail || {};
-        gtag('event', 'search', { search_term: d.query || '' });
-      });
-      document.addEventListener('analytics:quiz_start', () => {
-        if (typeof gtag !== 'function') return;
-        gtag('event', 'quiz_start');
-      });
-      document.addEventListener('analytics:quiz_step', (e) => {
-        if (typeof gtag !== 'function') return;
-        const d = e.detail || {};
-        gtag('event', 'quiz_step', { step: d.step || 0, total_steps: d.totalSteps || 0 });
-      });
-      document.addEventListener('analytics:quiz_complete', (e) => {
-        if (typeof gtag !== 'function') return;
-        const d = e.detail || {};
-        gtag('event', 'quiz_complete', { recommended_perfume: d.perfumeId || '' });
-      });
-
-      // select_item: se dispara al clickear cualquier product-card (delegación global).
-      document.addEventListener('click', (e) => {
-        if (typeof gtag !== 'function') return;
-        const t = e.target;
-        if (!t || typeof t.closest !== 'function') return;
-        const card = t.closest('.product-card');
-        if (!card) return;
-        gtag('event', 'select_item', {
-          items: [{ item_id: card.getAttribute('data-perfume-id') || '' }],
-        });
-      });
-    </script>
-    {hasMetaPixel && (
-      <script is:inline>
-        function trackFbqAddToCart(e) {
-          const d = e.detail || {};
-          if (window.fbq) fbq('track', 'AddToCart', { content_ids: [d.perfumeId], content_type: 'product' });
         }
-        document.addEventListener('cart:add', trackFbqAddToCart);
-        document.addEventListener('click', (e) => {
-          const t = e && e.target;
-          if (!t || typeof t.closest !== 'function') return;
-          if (!t.closest('[data-send-whatsapp],[data-send-instagram]')) return;
-          if (window.fbq) fbq('track', 'InitiateCheckout');
+
+        function loadAds() {
+          if (adsLoaded) return;
+          adsLoaded = true;
+          if (metaPixelId) {
+            !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+            n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+            n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+            t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+            document,'script','https://connect.facebook.net/en_US/fbevents.js');
+            fbq('init', metaPixelId);
+            fbq('track', 'PageView');
+          }
+          if (tiktokPixelId) {
+            !function (w, _d, t) {
+              w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};
+              for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.defer=!0,ttq.load=function(e,n){var i="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{},ttq._i[e]={},ttq._i[e].id=n,ttq._i[e].url=i,ttq._i[e].pixel_id=e,ttq._i[e].ss=null,ttq.load=function(){};var r=document.createElement("script");r.async=!0,ttq.defer=!0,r.src=i;var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(r,s)};
+              ttq.load(tiktokPixelId);
+              ttq.page();
+            }(window, document, 'ttq');
+          }
+        }
+
+        function applyState() {
+          if (hasConsent('analytics')) loadAnalytics();
+          if (hasConsent('ads')) loadAds();
+        }
+
+        function setState(next) {
+          state = Object.assign({}, state, next);
+          try { localStorage.setItem(consentKey, JSON.stringify(state)); } catch (err) {}
+          applyState();
+        }
+
+        window.addEventListener('sp_cookie_banner_save', (evt) => {
+          const d = evt && evt.detail;
+          if (d === 'accept') setState({ analytics: true, ads: true });
+          else if (d === 'reject') setState({ analytics: false, ads: false });
         });
+        window.addEventListener('sp_cookie_banner_click', (evt) => {
+          const d = evt && evt.detail;
+          if (d === 'accept') setState({ analytics: true, ads: true });
+          else if (d === 'reject') setState({ analytics: false, ads: false });
+        });
+        // Banner personalizado: SecurePrivacy emite sp_unblock_<Servicio> al
+        // desbloquear cada plugin. Ajustar los nombres al Scan Report.
+        window.addEventListener('sp_unblock_Google_Analytics', () => setState({ analytics: true }));
+        window.addEventListener('sp_unblock_Meta_Pixel', () => setState({ ads: true }));
+        window.addEventListener('sp_unblock_Facebook_Pixel', () => setState({ ads: true }));
+        window.addEventListener('sp_unblock_TikTok', () => setState({ ads: true }));
+
+        // Reaplicar la decisión guardada al recargar la página.
+        applyState();
       </script>
     )}
-    {hasTiktokPixel && (
-      <script is:inline>
-        document.addEventListener('cart:add', (e) => {
-          const d = e.detail || {};
-          if (window.ttq) ttq.track('AddToCart', { content_id: d.perfumeId });
-        });
-        document.addEventListener('click', (e) => {
-          const t = e && e.target;
-          if (!t || typeof t.closest !== 'function') return;
-          if (!t.closest('[data-send-whatsapp],[data-send-instagram]')) return;
-          if (window.ttq) ttq.track('InitiateCheckout');
-        });
-      </script>
-    )}
-    {hasMetaPixel && (
-      <script is:inline define:vars={{ metaPixelId: site.metaPixelId }}>
-        !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-        n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
-        n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
-        t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
-        document,'script','https://connect.facebook.net/en_US/fbevents.js');
-        fbq('init', metaPixelId);
-        fbq('track', 'PageView');
-      </script>
-    )}
-    {hasTiktokPixel && (
-      <script is:inline define:vars={{ tiktokPixelId: site.tiktokPixelId }}>
-        !function (w, _d, t) {
-          w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};
-          for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.defer=!0,ttq.load=function(e,n){var i="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{},ttq._i[e]={},ttq._i[e].id=n,ttq._i[e].url=i,ttq._i[e].pixel_id=e,ttq._i[e].ss=null,ttq.load=function(){};var r=document.createElement("script");r.async=!0,ttq.defer=!0,r.src=i;var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(r,s)};
-          ttq.load(tiktokPixelId);
-          ttq.page();
-        }(window, document, 'ttq');
-      </script>
-    )}
-    {hasMetaPixel && (
-      <script is:inline>
-        document.querySelectorAll('a[href*="wa.me"]').forEach((el) => {
-          el.addEventListener('click', () => fbq('track', 'Contact'));
-        });
+    {hasTracking && (
+      <script>
+        import { initAnalytics } from '@/utils/analytics-client';
+        initAnalytics();
       </script>
     )}
   </head>

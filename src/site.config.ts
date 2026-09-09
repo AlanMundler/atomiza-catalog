@@ -61,6 +61,7 @@ export const site = {
   storage: {
     cart: 'atomiza-cart',
     perfumes: 'perfumes-data',
+    consent: 'atomiza-consent',
   },
 } as const;
 
