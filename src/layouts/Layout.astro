@@ -59,6 +59,7 @@ const hasTracking = Boolean(site.gaMeasurementId || site.metaPixelId || site.tik
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
     <link rel="icon" type="image/svg+xml" href={assetUrl('/favicon.svg')} />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href={new URL('/fonts/Montserrat-Variable.woff2', Astro.site).href} />
     {preloadImages.map((src) => (
       <link rel="preload" as="image" href={new URL(assetUrl(src), Astro.site).href} />
     ))}
