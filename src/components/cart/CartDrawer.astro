@@ -209,7 +209,10 @@ import Drawer from '@/components/ui/Drawer.astro';
   onWindowOnce('cart-add', 'cart:add', async (e) => {
     const { perfumeId, sizeMl, quantity } = (e as CustomEvent).detail;
     try {
-      const perfume = (await getPerfumesMap()).get(perfumeId);
+      let perfume = (await getPerfumesMap()).get(perfumeId);
+      // Si el catálogo cacheado está desactualizado, forzar refetch.
+      if (!perfume) perfume = (await getPerfumesMap(true)).get(perfumeId);
+
       const size = perfume?.sizes?.find((s: any) => s.ml === sizeMl);
       if (!perfumeId || !size) {
         showToast('No se pudo agregar al carrito. Intentá de nuevo.', 'error');

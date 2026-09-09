@@ -9,42 +9,47 @@ interface CachedCatalog {
 }
 
 let cached: PerfumeMap | null = null;
-let inFlight: Promise<PerfumeMap> | null = null;
 
 function toMap(data: { perfumes: Perfume[] }): PerfumeMap {
   return new Map((data.perfumes || []).map((p) => [p.id, p]));
 }
 
-async function load(): Promise<PerfumeMap> {
+async function getCached(): Promise<PerfumeMap | null> {
   const stored = localStorage.getItem(site.storage.perfumes);
-  if (stored) {
-    try {
-      const parsed = JSON.parse(stored) as Partial<CachedCatalog>;
-      // La versión evita que un deploy con precios/stock nuevos quede
-      // oculto para visitantes que ya tienen el catálogo cacheado.
-      if (parsed?.version === site.dataVersion && Array.isArray(parsed.data?.perfumes)) {
-        cached = toMap(parsed.data);
-        return cached;
-      }
-    } catch {
-      // cache corrupto, se vuelve a buscar
+  if (!stored) return null;
+  try {
+    const parsed = JSON.parse(stored) as Partial<CachedCatalog>;
+    // La versión evita que un deploy con precios/stock nuevos quede
+    // oculto para visitantes que ya tienen el catálogo cacheado.
+    if (parsed?.version === site.dataVersion && Array.isArray(parsed.data?.perfumes)) {
+      return toMap(parsed.data);
     }
+  } catch {
+    // cache corrupto, se vuelve a buscar
   }
+  return null;
+}
+
+async function fetchFresh(): Promise<PerfumeMap> {
   const res = await fetch(site.basePath + 'data/perfumes.json');
   if (!res.ok) throw new Error(`No se pudo cargar el catálogo (${res.status})`);
   const data = await res.json();
   const payload: CachedCatalog = { version: site.dataVersion, data };
   localStorage.setItem(site.storage.perfumes, JSON.stringify(payload));
-  cached = toMap(data);
-  return cached;
+  return toMap(data);
 }
 
-export function getPerfumesMap(): Promise<PerfumeMap> {
-  if (cached) return Promise.resolve(cached);
-  if (!inFlight) {
-    inFlight = load().finally(() => {
-      inFlight = null;
-    });
+export async function getPerfumesMap(force = false): Promise<PerfumeMap> {
+  if (!force && cached) return cached;
+  if (force) {
+    cached = await fetchFresh();
+    return cached;
   }
-  return inFlight;
+  const fromCache = await getCached();
+  if (fromCache) {
+    cached = fromCache;
+    return cached;
+  }
+  cached = await fetchFresh();
+  return cached;
 }
