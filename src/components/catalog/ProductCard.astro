@@ -26,8 +26,9 @@ const isVector = (perfume.images[0]?.src || '').toLowerCase().endsWith('.svg');
   href={`${site.basePath}producto/${perfume.slug}/`}
   class="product-card"
   aria-label={`Ver ${perfume.brand} ${perfume.name}`}
+  data-perfume-id={perfume.id}
   data-gender={perfume.gender}
-  data-search={`${perfume.brand} ${perfume.name}`.toLowerCase()}
+  data-search={`${perfume.brand} ${perfume.name} ${perfume.olfactoryFamily}`.toLowerCase()}
 >
   <div class="product-card-image-wrapper">
     <img 
