@@ -54,7 +54,7 @@ const catalogSchema = {
   <section class="catalog-results" aria-label="Resultados del catálogo">
     <div class="container">
       <div class="results-header">
-        <p class="results-count" data-results-count>
+        <p class="results-count" data-results-count role="status" aria-live="polite">
           {perfumes.length} {perfumes.length === 1 ? 'perfume' : 'perfumes'} encontrado{perfumes.length !== 1 ? 's' : ''}
         </p>
       </div>

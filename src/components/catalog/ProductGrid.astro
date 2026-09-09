@@ -1,5 +1,6 @@
 ---
 import ProductCard from '@/components/catalog/ProductCard.astro';
+import { site } from '@/site.config';
 import type { Perfume } from '@/data/types';
 
 interface Props {
@@ -7,6 +8,7 @@ interface Props {
 }
 
 const { perfumes } = Astro.props;
+const BASE = site.basePath;
 ---
 
 {perfumes.length > 0 ? (
@@ -23,6 +25,7 @@ const { perfumes } = Astro.props;
   </svg>
   <h3 class="empty-title">No se encontraron perfumes</h3>
   <p class="empty-text">Intenta ajustar los filtros o la búsqueda</p>
+  <a href={`${BASE}catalogo/`} class="btn btn--secondary btn--md empty-cta">Ver todo el catálogo</a>
 </div>
 
 <style>
@@ -73,5 +76,10 @@ const { perfumes } = Astro.props;
     font-family: var(--font-family);
     font-size: var(--font-body-md-size);
     margin: 0;
+  }
+
+  .empty-cta {
+    margin-top: var(--spacing-stack-md);
+    min-height: 44px;
   }
 </style>

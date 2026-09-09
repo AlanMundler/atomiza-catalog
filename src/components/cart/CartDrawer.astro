@@ -34,7 +34,7 @@ import Drawer from '@/components/ui/Drawer.astro';
   import type { Perfume } from '@/data/types';
   import { getPerfumesMap } from '@/utils/perfumes-client';
   import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
-  import { assetUrl } from '@/site.config';
+  import { assetUrl, site } from '@/site.config';
 
   let drawerRoot: HTMLElement | null = null;
   let perfumesMap = new Map<string, any>();
@@ -55,6 +55,7 @@ import Drawer from '@/components/ui/Drawer.astro';
           </svg>
           <p class="cart-empty-text">Tu carrito está vacío</p>
           <p class="cart-empty-subtext">Agrega decants desde el catálogo</p>
+          <a href="${assetUrl('catalogo/')}" class="btn btn--primary btn--md empty-cta">Ver catálogo</a>
         </div>
       `;
       return;
@@ -359,6 +360,11 @@ import Drawer from '@/components/ui/Drawer.astro';
     margin: 0;
   }
 
+  .cart-empty .empty-cta {
+    margin-top: var(--spacing-stack-md);
+    min-height: 44px;
+  }
+
   .cart-items {
     flex: 1;
     min-height: 0;
@@ -509,8 +515,8 @@ import Drawer from '@/components/ui/Drawer.astro';
   }
 
   .quantity-btn {
-    width: 28px;
-    height: 28px;
+    width: 44px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -560,8 +566,8 @@ import Drawer from '@/components/ui/Drawer.astro';
   }
 
   .cart-item-remove {
-    width: 28px;
-    height: 28px;
+    width: 44px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;

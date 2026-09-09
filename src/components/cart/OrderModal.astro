@@ -10,6 +10,22 @@ import { assetUrl, site } from '@/site.config';
   class="order-modal"
 >
   <div class="order-modal-content">
+    <nav class="order-stepper" aria-label="Pasos del pedido">
+      <ol class="stepper-list">
+        <li class="stepper-item stepper-item--done">
+          <span class="stepper-circle" aria-hidden="true">1</span>
+          <span class="stepper-label">Carrito</span>
+        </li>
+        <li class="stepper-item stepper-item--current">
+          <span class="stepper-circle" aria-hidden="true">2</span>
+          <span class="stepper-label">Datos</span>
+        </li>
+        <li class="stepper-item">
+          <span class="stepper-circle" aria-hidden="true">3</span>
+          <span class="stepper-label">Envío</span>
+        </li>
+      </ol>
+    </nav>
     <p class="order-modal-text">Completa tus datos y elegí cómo enviar el pedido:</p>
 
     <div class="form-group">
@@ -106,6 +122,28 @@ import { assetUrl, site } from '@/site.config';
 
   const WHATSAPP_NUMBER = site.whatsappNumber;
   const INSTAGRAM_HANDLE = site.instagramHandle;
+  const ORDER_FORM_STORAGE_KEY = 'atomiza-order-form';
+
+  function loadSavedForm(): { name: string; contact: string } {
+    try {
+      const stored = localStorage.getItem(ORDER_FORM_STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        return { name: parsed.name || '', contact: parsed.contact || '' };
+      }
+    } catch {
+      // Ignore parse errors
+    }
+    return { name: '', contact: '' };
+  }
+
+  function saveForm(name: string, contact: string): void {
+    try {
+      localStorage.setItem(ORDER_FORM_STORAGE_KEY, JSON.stringify({ name, contact }));
+    } catch {
+      // Ignore quota errors
+    }
+  }
 
   let nameInput: HTMLInputElement | null = null;
   let contactInput: HTMLInputElement | null = null;
@@ -191,6 +229,14 @@ import { assetUrl, site } from '@/site.config';
   function openModal() {
     const modal = document.querySelector('#order-modal');
     if (!modal) return;
+
+    // Cargar datos guardados si los inputs están vacíos
+    if (nameInput && !nameInput.value.trim()) {
+      const saved = loadSavedForm();
+      if (saved.name) nameInput.value = saved.name;
+      if (contactInput && saved.contact) contactInput.value = saved.contact;
+    }
+
     modal.dispatchEvent(new CustomEvent('modal:open'));
     requestAnimationFrame(autoResizePreview);
   }
@@ -217,10 +263,10 @@ import { assetUrl, site } from '@/site.config';
     copyBtn = modal.querySelector('[data-copy-order]') as HTMLElement | null;
 
     if (nameInput) {
-      bindOnce(nameInput, (el) => el.addEventListener('input', () => { showFormError(null); refreshPreview(); }));
+      bindOnce(nameInput, (el) => el.addEventListener('input', () => { showFormError(null); refreshPreview(); saveForm(el.value, contactInput?.value || ''); }));
     }
     if (contactInput) {
-      bindOnce(contactInput, (el) => el.addEventListener('input', () => { showFormError(null); refreshPreview(); }));
+      bindOnce(contactInput, (el) => el.addEventListener('input', () => { showFormError(null); refreshPreview(); saveForm(nameInput?.value || '', el.value); }));
     }
     if (whatsappBtn) {
       bindOnce(whatsappBtn, (el) => el.addEventListener('click', async () => {
@@ -417,12 +463,12 @@ import { assetUrl, site } from '@/site.config';
     flex: none;
     width: 100%;
     min-width: 0;
-    height: 38px;
-    padding: 0 6px;
-    gap: 3px;
+    min-height: 44px;
+    padding: 0 12px;
+    gap: 8px;
     border-radius: var(--border-radius);
-    font-size: 10px;
-    letter-spacing: 0.04em;
+    font-size: var(--font-label-sm-size);
+    letter-spacing: var(--font-label-sm-tracking);
   }
 
   .order-modal-actions .order-modal-btn--copy {
@@ -456,7 +502,7 @@ import { assetUrl, site } from '@/site.config';
     }
 
     .order-modal-actions .order-modal-btn {
-      height: 48px;
+      min-height: 48px;
       font-size: var(--font-label-sm-size);
       justify-content: center;
     }
@@ -476,5 +522,101 @@ import { assetUrl, site } from '@/site.config';
 
   .order-modal-note strong {
     color: var(--color-primary);
+  }
+
+  /* Stepper visual */
+  .order-stepper {
+    margin-bottom: var(--spacing-stack-md);
+  }
+
+  .stepper-list {
+    display: flex;
+    justify-content: space-between;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+  }
+
+  .stepper-list::before {
+    content: '';
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    right: 16px;
+    height: 2px;
+    background-color: var(--color-outline-variant);
+    z-index: 0;
+  }
+
+  .stepper-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+    position: relative;
+    z-index: 1;
+  }
+
+  .stepper-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    background-color: var(--color-surface-container-high);
+    border: var(--border-width) solid var(--color-outline-variant);
+    color: var(--color-on-surface-variant);
+    transition: all var(--transition-duration) var(--transition-easing);
+  }
+
+  .stepper-label {
+    font-family: var(--font-family);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .stepper-item--done .stepper-circle {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--color-on-primary);
+  }
+
+  .stepper-item--done .stepper-label {
+    color: var(--color-primary);
+  }
+
+  .stepper-item--current .stepper-circle {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--color-on-primary);
+    box-shadow: 0 0 0 3px rgba(233, 193, 118, 0.3);
+  }
+
+  .stepper-item--current .stepper-label {
+    color: var(--color-primary);
+    font-weight: 600;
+  }
+
+  @media (max-width: 479px) {
+    .stepper-circle {
+      width: 28px;
+      height: 28px;
+      font-size: 10px;
+    }
+    .stepper-label {
+      font-size: 10px;
+    }
   }
 </style>

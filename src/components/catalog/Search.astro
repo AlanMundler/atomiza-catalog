@@ -2,11 +2,12 @@
 import Input from '@/components/ui/Input.astro';
 ---
 
-<div class="search" role="search" aria-label="Buscar perfumes">
+<div class="search" role="search">
+  <label for="catalog-search" class="visually-hidden">Buscar perfume o marca</label>
   <Input
     type="search"
+    id="catalog-search"
     placeholder="Buscar perfume o marca..."
-    aria-label="Buscar perfume o marca"
     data-search-input
     class="search-input"
     maxlength="80"
