@@ -21,7 +21,9 @@ const perfume: Perfume | undefined = (perfumesData.perfumes as Perfume[]).find(
   (p) => p.slug === insp.perfumeSlug
 );
 
-const pageTitle = `Decant que huele a ${insp.original} | Perfumes árabes en ${site.addressLocality}`;
+// Título corto (≤60 chars): con originales largos como "Baccarat Rouge 540"
+// el formato anterior superaba los ~73 caracteres y Google lo truncaba.
+const pageTitle = `Huele a ${insp.original} · Decant 5ml`;
 const pageDescription = `${insp.perfumeBrand} ${insp.perfumeName}, inspirado en ${insp.original} de ${insp.casa}, en decant de 5ml. Probalo sobre tu piel en ${site.addressLocality} antes de comprar el frasco completo.`;
 
 const primarySize = perfume?.sizes.find((s) => s.ml === 5) || perfume?.sizes[0];
@@ -73,7 +75,7 @@ const whatsappHref = buildWhatsAppLink(
           días y recién ahí decidís si querés el frasco completo. Todo original y sellado.
         </p>
         <p class="insp-price">
-          {formatPrice(primarySize ? primarySize.price : 0)} · {stockLabel}
+          {primarySize ? `${formatPrice(primarySize.price)} · ${stockLabel}` : 'Precio a confirmar'}
         </p>
         <div class="insp-cta">
           <a href={`${BASE}producto/${perfume.slug}/`} class="btn btn--primary btn--md">Ver {insp.perfumeName}</a>

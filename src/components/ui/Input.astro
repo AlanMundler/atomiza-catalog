@@ -7,17 +7,19 @@ interface Props {
   id?: string;
   name?: string;
   ariaLabel?: string;
+  maxlength?: string;
 }
 
-const { 
-  type = 'text', 
-  placeholder = '', 
-  value = '', 
-  class: className = '', 
-  id, 
+const {
+  type = 'text',
+  placeholder = '',
+  value = '',
+  class: className = '',
+  id,
   name,
   ariaLabel,
-  ...attrs 
+  maxlength,
+  ...attrs
 } = Astro.props;
 ---
 
@@ -29,6 +31,7 @@ const {
     id={id}
     name={name}
     aria-label={ariaLabel}
+    maxlength={maxlength}
     class={`input ${className}`}
     {...attrs}
   />

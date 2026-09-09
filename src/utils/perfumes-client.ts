@@ -15,7 +15,12 @@ function toMap(data: { perfumes: Perfume[] }): PerfumeMap {
 }
 
 async function getCached(): Promise<PerfumeMap | null> {
-  const stored = localStorage.getItem(site.storage.perfumes);
+  let stored: string | null = null;
+  try {
+    stored = localStorage.getItem(site.storage.perfumes);
+  } catch {
+    return null;
+  }
   if (!stored) return null;
   try {
     const parsed = JSON.parse(stored) as Partial<CachedCatalog>;
@@ -34,8 +39,15 @@ async function fetchFresh(): Promise<PerfumeMap> {
   const res = await fetch(site.basePath + 'data/perfumes.json');
   if (!res.ok) throw new Error(`No se pudo cargar el catálogo (${res.status})`);
   const data = await res.json();
+  if (!data || !Array.isArray((data as { perfumes?: unknown }).perfumes)) {
+    throw new Error('Catálogo con formato inesperado');
+  }
   const payload: CachedCatalog = { version: site.dataVersion, data };
-  localStorage.setItem(site.storage.perfumes, JSON.stringify(payload));
+  try {
+    localStorage.setItem(site.storage.perfumes, JSON.stringify(payload));
+  } catch {
+    // Cuota llena o modo privado: se sigue con el catálogo en memoria.
+  }
   return toMap(data);
 }
 

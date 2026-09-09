@@ -5,6 +5,8 @@ import perfumesData from '@/data/perfumes.json';
 import { isSizeAvailable } from '@/utils/stock';
 import { resenas, resenasRating, hasResenas } from '@/data/resenas';
 import { site, assetUrl } from '@/site.config';
+import { TRIDENT_DISCOUNT } from '@/utils/trident';
+import { formatPrice } from '@/utils/formatters';
 import type { Perfume } from '@/data/types';
 
 const BASE = site.basePath;
@@ -45,10 +47,10 @@ const faqs = [
     question: '¿Qué pasa si no me gusta la fragancia?',
     answer: 'Por eso existen los decants: probás la fragancia unos días antes de comprometerte con el frasco completo. Si necesitás asesoramiento, escribinos y te ayudamos a elegir.',
   },
-  {
-    question: '¿Puedo armar un tridente?',
-    answer: 'Sí. Elegí 3 decants y ahorrás $2.000. Visitá la página de tridentes para armar tu combinación.',
-  },
+    {
+      question: '¿Puedo armar un tridente?',
+      answer: `Sí. Elegí 3 decants y ahorrás ${formatPrice(TRIDENT_DISCOUNT)}. Visitá la página de tridentes para armar tu combinación.`,
+    },
   {
     question: '¿Cuánto tarda en llegar mi pedido?',
     answer: 'Depende de tu ubicación. Coordinamos los tiempos por mensaje después de que hacés tu pedido.',

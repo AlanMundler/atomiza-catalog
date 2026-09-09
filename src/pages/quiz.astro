@@ -290,9 +290,22 @@ const total = quizQuestions.length;
       const heading = resultSection!.querySelector('h2');
       heading?.focus();
 
-      const perfumes = Array.from((await getPerfumesMap()).values());
-      const results = recommendPerfumes(answers as QuizAnswers, perfumes);
+      let perfumes: Perfume[] = [];
+      try {
+        perfumes = Array.from((await getPerfumesMap()).values());
+      } catch {
+        perfumes = [];
+      }
+      const results = perfumes.length > 0 ? recommendPerfumes(answers as QuizAnswers, perfumes) : [];
       loading!.hidden = true;
+
+      if (!perfumes.length) {
+        const empty = document.createElement('p');
+        empty.className = 'quiz-result-empty';
+        empty.textContent = 'No pudimos cargar el catálogo. Revisá tu conexión e intentá de nuevo.';
+        resultList!.appendChild(empty);
+        return;
+      }
 
       if (!results.length) {
         const empty = document.createElement('p');

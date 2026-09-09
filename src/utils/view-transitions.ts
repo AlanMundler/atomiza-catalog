@@ -6,21 +6,46 @@ const onWindowOnceKey = (key: string) => `__vtw:${key}`;
  * transition navigation. Guards against double registration if the
  * module is re-executed by the client router.
  */
+/**
+ * Generación de navegación: se incrementa en cada `astro:before-swap`.
+ * Sirve para que `run` corra una sola vez por página vista aunque la carga
+ * inicial dispare tanto `DOMContentLoaded` como `astro:page-load`.
+ */
+function currentGeneration(): number {
+  return (window as any).__vtlGen ?? 0;
+}
+
+if (typeof window !== 'undefined' && !(window as any).__vtlGenInit) {
+  (window as any).__vtlGenInit = true;
+  (window as any).__vtlGen = 0;
+  document.addEventListener('astro:before-swap', () => {
+    (window as any).__vtlGen = currentGeneration() + 1;
+  });
+}
+
 export function onPageLoad(key: string, cb: () => void): void {
   if (typeof window === 'undefined') return;
   const registeredKey = onPageLoadKey(key);
   if ((window as any)[registeredKey]) return;
   (window as any)[registeredKey] = true;
 
-  const run = () => cb();
+  // Misma página vista = misma generación: el segundo disparo (carga inicial
+  // con ClientRouter dispara `astro:page-load` + `DOMContentLoaded`) se
+  // ignora para no duplicar analytics ni renders. Cada navegación sube la
+  // generación y el callback vuelve a correr una vez.
+  const runKey = `${registeredKey}:ran`;
+  const run = () => {
+    if ((window as any)[runKey] === currentGeneration()) return;
+    (window as any)[runKey] = currentGeneration();
+    cb();
+  };
 
   // Con ClientRouter, `astro:page-load` se dispara en la carga inicial
   // (evento `load`) y en cada navegación por vista de transición, y es lo
   // que permite re-inicializar los handlers tras el swap de la página nueva.
   // Se mantiene además el arranque en DOMContentLoaded como respaldo: si el
   // bundle del router no llega a ejecutarse (WebViews embebidos antiguos),
-  // el callback igual corre en la carga inicial. `cb` es idempotente vía
-  // bindOnce, por eso el doble disparo en la primera carga es inofensivo.
+  // el callback igual corre en la carga inicial.
   if (document.querySelector('meta[name="astro-view-transitions-enabled"]')) {
     document.addEventListener('astro:page-load', run);
   }

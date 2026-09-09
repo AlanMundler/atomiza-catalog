@@ -78,7 +78,10 @@ function initAnalytics(): void {
 
   // Agregar al carrito: add_to_cart (GA4 + Meta + TikTok) con items[]. Se usa
   // el precio del catálogo vivo, nunca un snapshot del evento.
-  document.addEventListener('cart:add', (e) => {
+  // OJO: `cart:add` se despacha en `window` (ProductDetail, quiz), y un evento
+  // disparado en `window` NO llega a listeners de `document`. Por eso se
+  // escucha en `window`.
+  win.addEventListener('cart:add', (e) => {
     const detail = (e as CustomEvent<{ perfumeId?: string; quantity?: number }>).detail || {};
     const perfumeId = detail.perfumeId || '';
     if (!perfumeId) return;
@@ -100,8 +103,9 @@ function initAnalytics(): void {
     })();
   });
 
-  // Abrir el carrito: view_cart.
-  document.addEventListener('cart:open', () => {
+  // Abrir el carrito: view_cart. Igual que `cart:add`, se despacha en
+  // `window`, así que se escucha en `window`.
+  win.addEventListener('cart:open', () => {
     if (!consent('analytics')) return;
     void (async () => {
       const { items, value } = await cartSummary();
@@ -137,15 +141,15 @@ function initAnalytics(): void {
     })();
   });
 
-  // Click a cualquier link de WhatsApp: medición de dónde viene el pedido.
+  // Click a cualquier link de WhatsApp: solo se mide la página de origen.
+  // NO se envía el `?text=` del link: contiene el nombre y contacto que el
+  // cliente escribió en el pedido (PII) y no debe llegar a GA4.
   document.addEventListener('click', (e) => {
     const target = e.target;
     if (!target || typeof (target as Element).closest !== 'function') return;
     const link = (target as Element).closest('a[href*="wa.me"]');
     if (!link) return;
-    const href = link.getAttribute('href') || '';
-    const text = (/.*\?text=(.*)$/g.exec(href)?.[1] || '').substring(0, 120);
-    if (consent('analytics')) send('click_to_whatsapp', { page_path: location.pathname, text });
+    if (consent('analytics')) send('click_to_whatsapp', { page_path: location.pathname });
     if (consent('ads') && typeof win.fbq === 'function') win.fbq('track', 'Contact');
   });
 

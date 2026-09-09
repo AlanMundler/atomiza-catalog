@@ -1,7 +1,7 @@
 import type { PerfumeSize, StockStatus } from '@/data/types';
 
 export function getStockStatus(size: PerfumeSize): StockStatus {
-  if (size.stock === 0) return 'out-of-stock';
+  if (size.stock <= 0) return 'out-of-stock';
   if (size.stock < 5) return 'low-stock';
   return 'in-stock';
 }

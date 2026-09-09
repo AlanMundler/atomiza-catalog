@@ -29,7 +29,7 @@ const catalogSchema = {
 ---
 
 <Layout title={`Catálogo de decants de perfumes árabes en ${site.addressLocality}`} description={catalogDescription}>
-  <script is:inline type="application/json" id="search-index" set:html={JSON.stringify(searchIndex)} />
+  <script is:inline type="application/json" id="search-index" set:html={JSON.stringify(searchIndex).replace(/</g, '\\u003c')} />
   <script is:inline type="application/ld+json" set:html={JSON.stringify(catalogSchema).replace(/</g, '\\u003c')} />
   <section class="catalog-hero" aria-labelledby="catalog-title">
     <div class="container">
@@ -128,6 +128,26 @@ const catalogSchema = {
     }
   }
 
+  // Recalcula el set de fuzzy matches para la búsqueda actual. Se usa al
+  // escribir (search:change) y al navegar con atrás/adelante (popstate),
+  // porque el Set viejo no sirve para el query nuevo.
+  async function refreshFuzzyMatches() {
+    if (!currentSearch) {
+      fuzzyMatches = null;
+      return;
+    }
+    try {
+      const Fuse = (await import('fuse.js')).default;
+      const indexEl = document.getElementById('search-index');
+      const indexData: { id: string; text: string }[] = indexEl ? JSON.parse(indexEl.textContent || '[]') : [];
+      const fuse = new Fuse(indexData, { keys: ['text'], threshold: 0.4, ignoreLocation: true });
+      const results = fuse.search(currentSearch);
+      fuzzyMatches = new Set(results.map((r) => r.item.id));
+    } catch {
+      fuzzyMatches = null;
+    }
+  }
+
   function applyUrlState() {
     readUrlState();
     syncSearchInput();
@@ -155,16 +175,7 @@ const catalogSchema = {
     window.history.pushState({}, '', url);
 
     // Búsqueda fuzzy con Fuse.js (lazy-loaded)
-    if (currentSearch) {
-      const Fuse = (await import('fuse.js')).default;
-      const indexEl = document.getElementById('search-index');
-      const indexData: { id: string; text: string }[] = indexEl ? JSON.parse(indexEl.textContent || '[]') : [];
-      const fuse = new Fuse(indexData, { keys: ['text'], threshold: 0.4, ignoreLocation: true });
-      const results = fuse.search(currentSearch);
-      fuzzyMatches = new Set(results.map((r) => r.item.id));
-    } else {
-      fuzzyMatches = null;
-    }
+    await refreshFuzzyMatches();
 
     applyFilters();
     if (currentSearch) {
@@ -172,9 +183,14 @@ const catalogSchema = {
     }
   });
 
-  // Back/forward del navegador re-aplica el estado de filtros y búsqueda
+  // Back/forward del navegador re-aplica el estado de filtros y búsqueda.
+  // Se recalculan los fuzzy matches porque el Set corresponde al query
+  // anterior y si no el filtrado queda incorrecto.
   onWindowOnce('catalogo-popstate', 'popstate', () => {
-    applyUrlState();
+    readUrlState();
+    syncSearchInput();
+    updateActiveChip();
+    void refreshFuzzyMatches().then(() => applyFilters());
   });
 
   onPageLoad('catalogo', () => {

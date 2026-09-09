@@ -4,6 +4,7 @@ import SizeSelector from '@/components/product/SizeSelector.astro';
 import Button from '@/components/ui/Button.astro';
 import { isSizeAvailable } from '@/utils/stock';
 import { buildWhatsAppLink, formatPrice } from '@/utils/formatters';
+import { TRIDENT_DISCOUNT } from '@/utils/trident';
 import { site } from '@/site.config';
 import type { Perfume } from '@/data/types';
 
@@ -12,8 +13,14 @@ interface Props {
 }
 
 const { perfume } = Astro.props;
-const selectedSize = perfume.sizes.find(s => s.ml === 5) || perfume.sizes[0];
-const available = isSizeAvailable(selectedSize);
+// Talla por defecto: 5ml si hay stock, si no la primera con stock. Así el
+// radio marcado nunca queda en una talla deshabilitada.
+const selectedSize =
+  perfume.sizes.find(s => s.ml === 5 && isSizeAvailable(s)) ||
+  perfume.sizes.find(s => isSizeAvailable(s)) ||
+  perfume.sizes.find(s => s.ml === 5) ||
+  perfume.sizes[0];
+const available = selectedSize ? isSizeAvailable(selectedSize) : false;
 // Las imágenes vectoriales (SVG) se muestran a mayor tamaño que las fotos
 const largeImage = (perfume.images[0]?.src || '').toLowerCase().endsWith('.svg');
 const waMessage = buildWhatsAppLink(
@@ -111,7 +118,7 @@ const waMessage = buildWhatsAppLink(
       )}
 
       <a href={`${site.basePath}tridentes/`} class="trident-cta">
-        <span class="trident-cta-text">Elegí 3 decants y ahorrá $2.000</span>
+        <span class="trident-cta-text">Elegí 3 decants y ahorrá {formatPrice(TRIDENT_DISCOUNT)}</span>
         <span class="trident-cta-link">Armar mi tridente →</span>
       </a>
     </div>
@@ -122,8 +129,11 @@ const waMessage = buildWhatsAppLink(
   import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
 
   // Limpiar timers huérfanos antes de que ClientRouter haga swap del DOM.
+  // OJO: el bloque usa la clase `.stock-countdown` (y `data-stock-count`),
+  // no `data-stock-countdown`: con el selector viejo el intervalo nunca se
+  // limpiaba y quedaba un timer huérfano por navegación.
   onWindowOnce('countdown-cleanup', 'astro:before-swap', () => {
-    document.querySelectorAll('[data-stock-countdown]').forEach((el) => {
+    document.querySelectorAll('.stock-countdown').forEach((el) => {
       const id = (el as any).__vtCountdownId;
       if (id != null) clearInterval(id);
     });

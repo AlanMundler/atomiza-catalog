@@ -38,6 +38,8 @@ import { assetUrl, site } from '@/site.config';
       />
     </div>
 
+    <p class="form-error" data-form-error hidden role="alert"></p>
+
     <div class="form-group">
       <label for="order-preview" class="form-label">Mensaje del pedido</label>
       <textarea 
@@ -125,6 +127,44 @@ import { assetUrl, site } from '@/site.config';
     }
   }
 
+  // El modal antes enviaba el pedido aunque nombre/contacto estuvieran
+  // vacíos (el texto usaba `[Tu nombre]` como placeholder). Ahora se valida
+  // y se bloquea el envío hasta completar los datos.
+  function validateOrder(): string | null {
+    if (getCart().items.length === 0) {
+      return 'Tu carrito está vacío. Agregá al menos un decant antes de enviar.';
+    }
+    if ((nameInput?.value.trim() || '').length < 2) {
+      return 'Escribí tu nombre para poder coordinar el pedido.';
+    }
+    if ((contactInput?.value.trim() || '').length < 3) {
+      return 'Escribí tu WhatsApp o tu Instagram para poder contactarte.';
+    }
+    return null;
+  }
+
+  function showFormError(message: string | null): boolean {
+    const modal = document.querySelector('#order-modal');
+    const errorEl = modal?.querySelector('[data-form-error]') as HTMLElement | null;
+    if (!errorEl) return message !== null;
+    if (!message) {
+      errorEl.hidden = true;
+      errorEl.textContent = '';
+      return false;
+    }
+    errorEl.textContent = message;
+    errorEl.hidden = false;
+    // Foco en el primer dato faltante para no hacer adivinar al usuario.
+    if (getCart().items.length === 0) {
+      (document.querySelector('[data-cart-trigger]') as HTMLElement | null)?.focus();
+    } else if ((nameInput?.value.trim() || '').length < 2) {
+      nameInput?.focus();
+    } else {
+      contactInput?.focus();
+    }
+    return true;
+  }
+
   function autoResizePreview() {
     if (!preview) return;
     preview.style.height = 'auto';
@@ -160,7 +200,8 @@ import { assetUrl, site } from '@/site.config';
     // la activación de usuario (un fetch pendiente haría que el popup
     // blocker bloquee el envío por WhatsApp).
     await getPerfumesMap().catch(() => null);
-    refreshPreview();
+    await refreshPreview();
+    showFormError(null);
     openModal();
   });
 
@@ -176,35 +217,41 @@ import { assetUrl, site } from '@/site.config';
     copyBtn = modal.querySelector('[data-copy-order]') as HTMLElement | null;
 
     if (nameInput) {
-      bindOnce(nameInput, (el) => el.addEventListener('input', refreshPreview));
+      bindOnce(nameInput, (el) => el.addEventListener('input', () => { showFormError(null); refreshPreview(); }));
     }
     if (contactInput) {
-      bindOnce(contactInput, (el) => el.addEventListener('input', refreshPreview));
+      bindOnce(contactInput, (el) => el.addEventListener('input', () => { showFormError(null); refreshPreview(); }));
     }
     if (whatsappBtn) {
       bindOnce(whatsappBtn, (el) => el.addEventListener('click', async () => {
+        if (showFormError(validateOrder())) return;
         const text = await buildOrderText();
         const url = buildWhatsAppLink(WHATSAPP_NUMBER, text);
         const win = window.open(url, '_blank', 'noopener');
         // Si el popup blocker lo intercepta, copiá el mensaje y abrí igual
-        // el link como ancla (navegación directa, no bloqueable).
+        // el link como ancla (navegación directa, no bloqueable). El ancla
+        // tiene que estar en el DOM para que Safari/Firefox la sigan.
         if (!win) {
           await copyTextToClipboard(text);
           const a = document.createElement('a');
           a.href = url;
           a.target = '_blank';
           a.rel = 'noopener';
+          a.style.display = 'none';
+          document.body.appendChild(a);
           a.click();
+          a.remove();
         }
       }));
     }
     if (instagramBtn) {
       bindOnce(instagramBtn, (el) => el.addEventListener('click', async () => {
+        if (showFormError(validateOrder())) return;
         const text = await buildOrderText('instagram');
         const label = el.querySelector('.order-modal-btn-label');
         const originalText = label?.textContent || '';
         const copied = await copyTextToClipboard(text);
-        window.open(`https://ig.me/m/${INSTAGRAM_HANDLE}`, '_blank');
+        window.open(`https://ig.me/m/${INSTAGRAM_HANDLE}`, '_blank', 'noopener');
         if (copied && label) {
           label.textContent = '¡Copiado!';
           setTimeout(() => {
@@ -312,6 +359,16 @@ import { assetUrl, site } from '@/site.config';
     outline: none;
     border-color: var(--color-primary);
     box-shadow: 0 0 0 3px rgba(233, 193, 118, 0.2);
+  }
+
+  .form-error {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    color: var(--color-error);
+    background-color: var(--color-error-container);
+    border-radius: var(--border-radius);
+    padding: 10px 14px;
+    margin: 0;
   }
 
   .form-textarea {
