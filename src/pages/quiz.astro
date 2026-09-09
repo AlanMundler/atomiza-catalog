@@ -77,13 +77,14 @@ const total = quizQuestions.length;
 </Layout>
 
 <script>
-  import { getPerfumesMap } from '@/utils/perfumes-client';
-  import { recommendPerfumes, recommendationReason, type QuizAnswers } from '@/utils/quiz';
-  import { formatPrice, buildWhatsAppLink } from '@/utils/formatters';
-  import { getStockStatus, getStockLabel } from '@/utils/stock';
-  import { assetUrl, site } from '@/site.config';
-  import { bindOnce, onPageLoad } from '@/utils/view-transitions';
-  import type { Perfume } from '@/data/types';
+import { getPerfumesMap } from '@/utils/perfumes-client';
+import { recommendPerfumes, recommendationReason, type QuizAnswers } from '@/utils/quiz';
+import { formatPrice, buildWhatsAppLink } from '@/utils/formatters';
+import { getStockStatus, getStockLabel } from '@/utils/stock';
+import { assetUrl, site } from '@/site.config';
+import { findInspiracion } from '@/data/inspiraciones';
+import { bindOnce, onPageLoad } from '@/utils/view-transitions';
+import type { Perfume } from '@/data/types';
 
   onPageLoad('quiz', () => {
     const steps = Array.from(document.querySelectorAll<HTMLElement>('[data-quiz-step]'));
@@ -270,6 +271,17 @@ const total = quizQuestions.length;
       waBtn.rel = 'noopener noreferrer';
       waBtn.textContent = 'Consultar por WhatsApp';
       body.appendChild(waBtn);
+
+      // Link a la landing de decants por inspiración (si existe)
+      const inspiracion = findInspiracion(perfume.id);
+      if (inspiracion) {
+        const inspiracionLink = document.createElement('a');
+        inspiracionLink.className = 'quiz-result-inspiracion';
+        inspiracionLink.href = `${site.basePath}decants/${inspiracion.slug}/`;
+        inspiracionLink.textContent = `Ver inspiración: ${inspiracion.original}`;
+        inspiracionLink.setAttribute('aria-label', `Decants inspirados en ${inspiracion.original} de ${inspiracion.casa}`);
+        body.appendChild(inspiracionLink);
+      }
 
       const detail = document.createElement('a');
       detail.className = 'quiz-result-detail';
@@ -753,6 +765,22 @@ const total = quizQuestions.length;
   }
 
   .quiz-result-detail:hover {
+    text-decoration: none;
+  }
+
+  .quiz-result-inspiracion {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-primary);
+    text-decoration: underline;
+    align-self: center;
+    margin-top: 4px;
+  }
+
+  .quiz-result-inspiracion:hover {
     text-decoration: none;
   }
 
