@@ -28,6 +28,8 @@ export interface Perfume {
   sizes: PerfumeSize[];
   isBoutiqueExclusive: boolean;
   featured: boolean;
+  /** Precio aproximado del frasco completo original (ARS). Opcional: si existe, se muestra como anclaje en la ficha. */
+  originalPrice?: number;
 }
 
 export interface PerfumeCatalog {

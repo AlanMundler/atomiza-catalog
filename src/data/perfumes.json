@@ -42,7 +42,8 @@
         }
       ],
       "isBoutiqueExclusive": false,
-      "featured": true
+      "featured": true,
+      "originalPrice": 65000
     },
     {
       "id": "hercules",
@@ -85,7 +86,8 @@
         }
       ],
       "isBoutiqueExclusive": false,
-      "featured": true
+      "featured": true,
+      "originalPrice": 55000
     },
     {
       "id": "dark-door-sport",
@@ -127,7 +129,8 @@
         }
       ],
       "isBoutiqueExclusive": false,
-      "featured": false
+      "featured": false,
+      "originalPrice": 70000
     },
     {
       "id": "jorge-di-profumo",
@@ -168,7 +171,8 @@
         }
       ],
       "isBoutiqueExclusive": false,
-      "featured": true
+      "featured": true,
+      "originalPrice": 60000
     },
     {
       "id": "your-touch",
@@ -214,7 +218,8 @@
         }
       ],
       "isBoutiqueExclusive": false,
-      "featured": false
+      "featured": false,
+      "originalPrice": 55000
     },
     {
       "id": "glacier-ultra",
@@ -255,7 +260,8 @@
         }
       ],
       "isBoutiqueExclusive": false,
-      "featured": true
+      "featured": true,
+      "originalPrice": 55000
     },
     {
       "id": "perseus-exclusif",
@@ -299,7 +305,8 @@
         }
       ],
       "isBoutiqueExclusive": false,
-      "featured": false
+      "featured": false,
+      "originalPrice": 80000
     },
     {
       "id": "tonic-malt",
@@ -340,7 +347,8 @@
         }
       ],
       "isBoutiqueExclusive": false,
-      "featured": false
+      "featured": false,
+      "originalPrice": 60000
     },
     {
       "id": "salvo-intense",
@@ -379,7 +387,8 @@
         }
       ],
       "isBoutiqueExclusive": false,
-      "featured": false
+      "featured": false,
+      "originalPrice": 70000
     },
     {
       "id": "glacier-bold",
@@ -414,7 +423,8 @@
         }
       ],
       "isBoutiqueExclusive": false,
-      "featured": false
+      "featured": false,
+      "originalPrice": 55000
     },
     {
       "id": "your-touch-intense",
@@ -457,7 +467,8 @@
         }
       ],
       "isBoutiqueExclusive": false,
-      "featured": false
+      "featured": false,
+      "originalPrice": 55000
     },
     {
       "id": "yeah",
@@ -500,7 +511,8 @@
         }
       ],
       "isBoutiqueExclusive": false,
-      "featured": true
+      "featured": true,
+      "originalPrice": 65000
     },
     {
       "id": "baroque-rouge-540",
@@ -541,7 +553,8 @@
         }
       ],
       "isBoutiqueExclusive": false,
-      "featured": true
+      "featured": true,
+      "originalPrice": 450000
     },
     {
       "id": "glacier-bella",
@@ -576,7 +589,8 @@
         }
       ],
       "isBoutiqueExclusive": false,
-      "featured": false
+      "featured": false,
+      "originalPrice": 55000
     },
     {
       "id": "delilah",
@@ -617,7 +631,8 @@
         }
       ],
       "isBoutiqueExclusive": false,
-      "featured": false
+      "featured": false,
+      "originalPrice": 75000
     },
     {
       "id": "confidential-private-gold",
@@ -660,7 +675,8 @@
         }
       ],
       "isBoutiqueExclusive": true,
-      "featured": true
+      "featured": true,
+      "originalPrice": 90000
     },
     {
       "id": "ameer-al-oudh",
@@ -699,7 +715,8 @@
         }
       ],
       "isBoutiqueExclusive": true,
-      "featured": false
+      "featured": false,
+      "originalPrice": 55000
     },
     {
       "id": "oud-lail-maleki",
@@ -829,7 +846,8 @@
         }
       ],
       "isBoutiqueExclusive": false,
-      "featured": false
+      "featured": false,
+      "originalPrice": 600000
     },
     {
       "id": "qaed-al-fursan-untamed",
@@ -861,21 +879,22 @@
           "Vetiver"
         ]
       },
-"images": [
+      "images": [
         {
           "src": "images/perfumes/qaed-al-fursan-untamed.avif",
           "alt": "Lattafa Qaed Al Fursan Untamed"
         }
       ],
-       "sizes": [
-         {
-           "ml": 5,
-           "price": 6000,
-           "stock": 3
-         }
-       ],
-       "isBoutiqueExclusive": false,
-       "featured": true
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 6000,
+          "stock": 3
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": true,
+      "originalPrice": 55000
     },
     {
       "id": "liam",
@@ -917,7 +936,8 @@
         }
       ],
       "isBoutiqueExclusive": false,
-      "featured": false
+      "featured": false,
+      "originalPrice": 80000
     },
     {
       "id": "24-carat-white-gold",
@@ -958,7 +978,8 @@
         }
       ],
       "isBoutiqueExclusive": false,
-      "featured": true
+      "featured": true,
+      "originalPrice": 65000
     },
     {
       "id": "hayaati-black",
@@ -996,7 +1017,8 @@
         }
       ],
       "isBoutiqueExclusive": true,
-      "featured": true
+      "featured": true,
+      "originalPrice": 45000
     },
     {
       "id": "hayaati-al-maleky",
@@ -1039,7 +1061,8 @@
         }
       ],
       "isBoutiqueExclusive": true,
-      "featured": false
+      "featured": false,
+      "originalPrice": 50000
     },
     {
       "id": "opulent-dubai",
@@ -1082,7 +1105,8 @@
         }
       ],
       "isBoutiqueExclusive": true,
-      "featured": true
+      "featured": true,
+      "originalPrice": 120000
     },
     {
       "id": "mayar",
@@ -1122,7 +1146,8 @@
         }
       ],
       "isBoutiqueExclusive": false,
-      "featured": true
+      "featured": true,
+      "originalPrice": 55000
     },
     {
       "id": "angham",
@@ -1164,7 +1189,8 @@
         }
       ],
       "isBoutiqueExclusive": false,
-      "featured": false
+      "featured": false,
+      "originalPrice": 68000
     },
     {
       "id": "badee-al-oud-sublime",
@@ -1204,7 +1230,8 @@
         }
       ],
       "isBoutiqueExclusive": false,
-      "featured": true
+      "featured": true,
+      "originalPrice": 50000
     },
     {
       "id": "hayaati-florence",
@@ -1241,7 +1268,8 @@
         }
       ],
       "isBoutiqueExclusive": false,
-      "featured": false
+      "featured": false,
+      "originalPrice": 55000
     },
     {
       "id": "hawas-ice",
@@ -1276,57 +1304,59 @@
           "alt": "Rasasi Hawas Ice"
         }
       ],
-"sizes": [
-          {
-            "ml": 5,
-            "price": 10000,
-            "stock": 10
-          }
-        ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 10000,
+          "stock": 10
+        }
+      ],
       "isBoutiqueExclusive": false,
-      "featured": true
+      "featured": true,
+      "originalPrice": 60000
     },
-{
-       "id": "hawas-black",
-       "slug": "hawas-black",
-       "brand": "Rasasi",
-       "name": "Hawas Black",
-       "gender": "masculino",
-       "olfactoryFamily": "Aromática Frutal",
-       "description": "Inspirado en Hacivat de Nishane. Bergamota, piña y toronja sobre pachulí, cedro y jazmín, con un fondo amaderado de musgo de roble y ámbar. Un fresco aromático y potente con gran proyección.",
-       "notes": {
-         "top": [
-           "Bergamota",
-           "Piña",
-           "Toronja (Pomelo)"
-         ],
-         "heart": [
-           "Pachulí",
-           "Cedro",
-           "Jazmín"
-         ],
-         "base": [
-           "Musgo de Roble",
-           "Notas Amaderadas",
-           "Ámbar"
-         ]
-       },
-       "images": [
-         {
-           "src": "images/perfumes/hawas-black.avif",
-           "alt": "Rasasi Hawas Black"
-         }
-],
-       "sizes": [
-         {
-           "ml": 5,
-           "price": 10000,
-           "stock": 0
-         }
-       ],
-      "isBoutiqueExclusive": false,
-        "featured": false
+    {
+      "id": "hawas-black",
+      "slug": "hawas-black",
+      "brand": "Rasasi",
+      "name": "Hawas Black",
+      "gender": "masculino",
+      "olfactoryFamily": "Aromática Frutal",
+      "description": "Inspirado en Hacivat de Nishane. Bergamota, piña y toronja sobre pachulí, cedro y jazmín, con un fondo amaderado de musgo de roble y ámbar. Un fresco aromático y potente con gran proyección.",
+      "notes": {
+        "top": [
+          "Bergamota",
+          "Piña",
+          "Toronja (Pomelo)"
+        ],
+        "heart": [
+          "Pachulí",
+          "Cedro",
+          "Jazmín"
+        ],
+        "base": [
+          "Musgo de Roble",
+          "Notas Amaderadas",
+          "Ámbar"
+        ]
       },
+      "images": [
+        {
+          "src": "images/perfumes/hawas-black.avif",
+          "alt": "Rasasi Hawas Black"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 10000,
+          "stock": 0
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false,
+      "originalPrice": 85000
+    },
     {
       "id": "hawas-fire",
       "slug": "hawas-fire",
@@ -1404,7 +1434,8 @@
         }
       ],
       "isBoutiqueExclusive": false,
-      "featured": false
+      "featured": false,
+      "originalPrice": 55000
     },
     {
       "id": "haya",
@@ -1447,7 +1478,8 @@
         }
       ],
       "isBoutiqueExclusive": false,
-      "featured": false
+      "featured": false,
+      "originalPrice": 45000
     },
     {
       "id": "emaan",
@@ -1489,7 +1521,8 @@
         }
       ],
       "isBoutiqueExclusive": false,
-      "featured": false
+      "featured": false,
+      "originalPrice": 60000
     },
     {
       "id": "l-intrude",
@@ -1530,7 +1563,8 @@
         }
       ],
       "isBoutiqueExclusive": false,
-      "featured": false
+      "featured": false,
+      "originalPrice": 55000
     }
   ]
 }

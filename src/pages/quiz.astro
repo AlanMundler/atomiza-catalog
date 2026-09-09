@@ -103,6 +103,9 @@ const total = quizQuestions.length;
     let current = 0;
     const answers: Partial<Record<keyof QuizAnswers, QuizAnswers[keyof QuizAnswers]>> = {};
 
+    // Analytics: quiz_start
+    document.dispatchEvent(new CustomEvent('analytics:quiz_start'));
+
     function selectedValue(step: HTMLElement): string | null {
       const checked = step.querySelector('[aria-pressed="true"]');
       return checked ? checked.getAttribute('data-quiz-value') : null;
@@ -143,6 +146,9 @@ const total = quizQuestions.length;
       el.addEventListener('click', () => {
         if (current < steps.length - 1) {
           showStep(current + 1);
+          document.dispatchEvent(new CustomEvent('analytics:quiz_step', {
+            detail: { step: current + 1, totalSteps: steps.length },
+          }));
         } else {
           finishQuiz();
         }
@@ -299,6 +305,11 @@ const total = quizQuestions.length;
       results.forEach((perfume) => {
         resultList!.appendChild(resultCard(perfume));
       });
+
+      // Analytics: quiz_complete con la primera recomendación
+      document.dispatchEvent(new CustomEvent('analytics:quiz_complete', {
+        detail: { perfumeId: results[0]?.id || '' },
+      }));
     }
   });
 </script>

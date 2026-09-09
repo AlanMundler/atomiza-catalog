@@ -74,7 +74,18 @@ const productSchema = {
       </div>
     </section>
   )}
-</Layout>
+  </Layout>
+
+  <script>
+    import { onPageLoad } from '@/utils/view-transitions';
+    onPageLoad('product-view-item', () => {
+      const el = document.querySelector('[data-perfume-id]');
+      if (!el) return;
+      document.dispatchEvent(new CustomEvent('analytics:view_item', {
+        detail: { items: [{ item_id: el.getAttribute('data-perfume-id') || '' }] },
+      }));
+    });
+  </script>
 
 <style>
   .related {

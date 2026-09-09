@@ -148,6 +148,9 @@ const catalogSchema = {
     }
     window.history.pushState({}, '', url);
     applyFilters();
+    if (currentSearch) {
+      document.dispatchEvent(new CustomEvent('analytics:search', { detail: { query: currentSearch } }));
+    }
   });
 
   // Back/forward del navegador re-aplica el estado de filtros y búsqueda
@@ -178,6 +181,24 @@ const catalogSchema = {
     });
 
     applyUrlState();
+
+    // Analytics: view_item_list con los perfumes visibles
+    requestAnimationFrame(() => {
+      const visibleCards = Array.from(document.querySelectorAll('.product-card')).filter(
+        (c) => (c as HTMLElement).style.display !== 'none'
+      );
+      if (visibleCards.length > 0) {
+        document.dispatchEvent(new CustomEvent('analytics:view_item_list', {
+          detail: {
+            listName: 'catalogo',
+            items: visibleCards.slice(0, 10).map((c) => ({
+              item_id: c.getAttribute('data-perfume-id') || '',
+              item_name: c.getAttribute('data-search') || '',
+            })),
+          },
+        }));
+      }
+    });
   });
 </script>
 

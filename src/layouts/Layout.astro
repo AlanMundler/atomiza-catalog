@@ -140,6 +140,54 @@ const hasTiktokPixel = site.tiktokPixelId.length > 0;
         const total = document.querySelector('[data-cart-total]')?.textContent?.trim() || '';
         gtag('event', 'begin_checkout', { value: total });
       });
+
+      // Analytics events: catálogo, búsqueda, ficha, quiz.
+      document.addEventListener('analytics:view_item_list', (e) => {
+        if (typeof gtag !== 'function') return;
+        const d = e.detail || {};
+        gtag('event', 'view_item_list', { item_list_name: d.listName || 'catalogo', items: d.items || [] });
+      });
+      document.addEventListener('analytics:select_item', (e) => {
+        if (typeof gtag !== 'function') return;
+        const d = e.detail || {};
+        gtag('event', 'select_item', { item_list_name: d.listName || 'catalogo', items: d.items || [] });
+      });
+      document.addEventListener('analytics:view_item', (e) => {
+        if (typeof gtag !== 'function') return;
+        const d = e.detail || {};
+        gtag('event', 'view_item', { items: d.items || [] });
+      });
+      document.addEventListener('analytics:search', (e) => {
+        if (typeof gtag !== 'function') return;
+        const d = e.detail || {};
+        gtag('event', 'search', { search_term: d.query || '' });
+      });
+      document.addEventListener('analytics:quiz_start', () => {
+        if (typeof gtag !== 'function') return;
+        gtag('event', 'quiz_start');
+      });
+      document.addEventListener('analytics:quiz_step', (e) => {
+        if (typeof gtag !== 'function') return;
+        const d = e.detail || {};
+        gtag('event', 'quiz_step', { step: d.step || 0, total_steps: d.totalSteps || 0 });
+      });
+      document.addEventListener('analytics:quiz_complete', (e) => {
+        if (typeof gtag !== 'function') return;
+        const d = e.detail || {};
+        gtag('event', 'quiz_complete', { recommended_perfume: d.perfumeId || '' });
+      });
+
+      // select_item: se dispara al clickear cualquier product-card (delegación global).
+      document.addEventListener('click', (e) => {
+        if (typeof gtag !== 'function') return;
+        const t = e.target;
+        if (!t || typeof t.closest !== 'function') return;
+        const card = t.closest('.product-card');
+        if (!card) return;
+        gtag('event', 'select_item', {
+          items: [{ item_id: card.getAttribute('data-perfume-id') || '' }],
+        });
+      });
     </script>
     {hasMetaPixel && (
       <script is:inline>

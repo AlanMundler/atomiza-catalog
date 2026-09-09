@@ -102,6 +102,14 @@ const waMessage = buildWhatsAppLink(
         </a>
       </div>
 
+      {perfume.originalPrice && (
+        <div class="price-anchor">
+          <p class="price-anchor-text">
+            Un frasco completo de {perfume.brand} {perfume.name} ronda los <strong>{formatPrice(perfume.originalPrice)}</strong>. Probalo primero por <strong>{formatPrice(selectedSize.price)}</strong> y decidí después.
+          </p>
+        </div>
+      )}
+
       <a href={`${site.basePath}tridentes/`} class="trident-cta">
         <span class="trident-cta-text">Elegí 3 decants y ahorrá $2.000</span>
         <span class="trident-cta-link">Armar mi tridente →</span>
@@ -334,6 +342,26 @@ const waMessage = buildWhatsAppLink(
   .product-detail-add-btn,
   .product-detail-wa-btn {
     flex: 1;
+  }
+
+  .price-anchor {
+    padding: var(--spacing-stack-sm) var(--spacing-stack-md);
+    background-color: var(--color-surface-container-high);
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: var(--border-radius);
+  }
+
+  .price-anchor-text {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    line-height: var(--font-body-md-line-height);
+    color: var(--color-on-surface-variant);
+    margin: 0;
+  }
+
+  .price-anchor-text strong {
+    color: var(--color-primary);
+    font-weight: 600;
   }
 
   .stock-countdown {
