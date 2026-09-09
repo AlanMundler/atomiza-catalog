@@ -9,6 +9,8 @@ export const test = base.extend({
   page: async ({ page, context }, use) => {
     await context.route('**secureprivacy.ai/**', (route) => route.abort());
     await context.route('**googletagmanager.com/**', (route) => route.abort());
+    await context.route('**connect.facebook.net/**', (route) => route.abort());
+    await context.route('**analytics.tiktok.com/**', (route) => route.abort());
     await use(page);
   },
 });

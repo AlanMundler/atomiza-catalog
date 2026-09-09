@@ -22,6 +22,7 @@
     "@tailwindcss/vite": "^4.3.3",
     "astro": "^7.2.1",
     "daisyui": "^5.7.18",
+    "fuse.js": "^7.5.0",
     "tailwindcss": "^4.3.3"
   },
   "devDependencies": {

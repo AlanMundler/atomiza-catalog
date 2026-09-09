@@ -34,7 +34,7 @@ export const guias: Guia[] = [
     date: '2026-09-01',
     mins: 4,
     intro:
-      'La pregunta que surje antes de comprar un decant es si rinde. La respuesta corta: entre 30 y 45 días de uso diario. El número exacto depende de un solo dato, cuántas pulverizaciones le sacás a cada mililitro.',
+      'La pregunta que surge antes de comprar un decant es si rinde. La respuesta corta: entre 30 y 45 días de uso diario. El número exacto depende de un solo dato, cuántas pulverizaciones le sacás a cada mililitro.',
     sections: [
       {
         heading: 'El cálculo: aplicaciones por mililitro',

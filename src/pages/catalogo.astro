@@ -8,6 +8,8 @@ import perfumesData from '@/data/perfumes.json';
 
 const perfumes = perfumesData.perfumes as Perfume[];
 
+const searchIndex = perfumes.map((p) => ({ id: p.id, text: `${p.brand} ${p.name} ${p.olfactoryFamily}`.toLowerCase() }));
+
 import { site } from '@/site.config';
 
 const BASE = site.basePath;
@@ -27,6 +29,7 @@ const catalogSchema = {
 ---
 
 <Layout title={`Catálogo de decants de perfumes árabes en ${site.addressLocality}`} description={catalogDescription}>
+  <script is:inline type="application/json" id="search-index" set:html={JSON.stringify(searchIndex)} />
   <script is:inline type="application/ld+json" set:html={JSON.stringify(catalogSchema).replace(/</g, '\\u003c')} />
   <section class="catalog-hero" aria-labelledby="catalog-title">
     <div class="container">
@@ -72,6 +75,7 @@ const catalogSchema = {
 
   let currentFilter = 'all';
   let currentSearch = '';
+  let fuzzyMatches: Set<string> | null = null;
 
   function readUrlState() {
     const params = new URL(window.location.href).searchParams;
@@ -102,7 +106,9 @@ const catalogSchema = {
         matches = allowed.includes(gender);
       }
       if (matches && currentSearch) {
-        matches = search.includes(currentSearch.toLowerCase());
+        // Fuse.js fuzzy match por ID; fallback a substring si no hay índice
+        matches = fuzzyMatches ? fuzzyMatches.has(card.getAttribute('data-perfume-id') || '') :
+          search.includes(currentSearch.toLowerCase());
       }
 
       card.style.display = matches ? '' : 'none';
@@ -138,7 +144,7 @@ const catalogSchema = {
     });
   }
 
-  onWindowOnce('catalogo-search', 'search:change', (e) => {
+  onWindowOnce('catalogo-search', 'search:change', async (e) => {
     currentSearch = (e as CustomEvent).detail?.query || '';
     const url = new URL(window.location.href);
     if (currentSearch) {
@@ -147,6 +153,19 @@ const catalogSchema = {
       url.searchParams.delete('search');
     }
     window.history.pushState({}, '', url);
+
+    // Búsqueda fuzzy con Fuse.js (lazy-loaded)
+    if (currentSearch) {
+      const Fuse = (await import('fuse.js')).default;
+      const indexEl = document.getElementById('search-index');
+      const indexData: { id: string; text: string }[] = indexEl ? JSON.parse(indexEl.textContent || '[]') : [];
+      const fuse = new Fuse(indexData, { keys: ['text'], threshold: 0.4, ignoreLocation: true });
+      const results = fuse.search(currentSearch);
+      fuzzyMatches = new Set(results.map((r) => r.item.id));
+    } else {
+      fuzzyMatches = null;
+    }
+
     applyFilters();
     if (currentSearch) {
       document.dispatchEvent(new CustomEvent('analytics:search', { detail: { query: currentSearch } }));
