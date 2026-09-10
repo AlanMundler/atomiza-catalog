@@ -113,6 +113,23 @@ const hasTracking = Boolean(site.gaMeasurementId || site.metaPixelId || site.tik
       // Igual que el resto de JSON-LD del sitio: se escapa `<` para que un
       // `</script>` en los datos no pueda romper el bloque.
     }).replace(/</g, '\\u003c')} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: site.namePlain,
+      alternateName: site.name,
+      url: Astro.site,
+      logo: new URL(assetUrl('/favicon.svg'), Astro.site).href,
+      description: site.description,
+      sameAs: [site.instagramUrl, site.tiktokUrl],
+      contactPoint: {
+        '@type': 'ContactPoint',
+        telephone: `+${site.phoneDisplay.replace(/[^0-9]/g, '')}`,
+        contactType: 'customer service',
+        areaServed: site.addressCountry,
+        availableLanguage: ['es'],
+      },
+    }).replace(/</g, '\\u003c')} />
     <ClientRouter />
     {site.secureprivacyScriptId && (
       <script is:inline defer src={`https://app.secureprivacy.ai/script/${site.secureprivacyScriptId}.js`}></script>

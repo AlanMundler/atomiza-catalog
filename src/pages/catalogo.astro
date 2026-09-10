@@ -59,9 +59,10 @@ const catalogSchema = {
     </div>
   </section>
 
-  <section class="catalog-results" aria-label="Resultados del catálogo">
+  <section class="catalog-results" aria-labelledby="catalog-results-title">
     <div class="container">
       <div class="results-header">
+        <h2 id="catalog-results-title" class="visually-hidden">Decants disponibles</h2>
         <p class="results-count" data-results-count role="status" aria-live="polite">
           {perfumes.length} {perfumes.length === 1 ? 'perfume' : 'perfumes'} encontrado{perfumes.length !== 1 ? 's' : ''}
         </p>

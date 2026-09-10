@@ -12,7 +12,8 @@ export function getStaticPaths() {
 
 const { guia } = Astro.props;
 const BASE = site.basePath;
-const pageTitle = `${guia.title} | ${site.addressLocality}`;
+// Título limpio: Layout agrega `| ΛTOMIZΛ` solo (evita el doble `|` con localidad).
+const pageTitle = guia.title;
 const pageDescription = `${guia.description} En ${site.name}, decants de 5ml para probar perfumes árabes originales.`;
 
 const faq = guia.faq.map((f) => ({

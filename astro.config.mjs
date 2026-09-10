@@ -1,6 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import sitemap from '@astrojs/sitemap';
+import sitemap, { ChangeFreqEnum } from '@astrojs/sitemap';
 import { fileURLToPath } from 'url';
 import { resolve } from 'path';
 
@@ -26,6 +26,32 @@ export default defineConfig({
     sitemap({
       // Fecha de baja de la página: usa la fecha del último commit o la de build.
       lastmod: new Date(),
+      // El 404 tiene noindex: no va al sitemap.
+      filter: (page) => !page.endsWith('/404/') && !page.endsWith('/404.html'),
+      serialize(item) {
+        // Prioridades CRO: lo que vende primero (home, catálogo, fichas).
+        // Se descuenta el base path para que funcione en subpath (Pages).
+        const base = BASE_PATH === '/' ? '' : BASE_PATH.replace(/\/$/, '');
+        let path = new URL(item.url).pathname;
+        if (base && path.startsWith(base)) path = path.slice(base.length) || '/';
+        if (path === '/' || path === '') {
+          item.changefreq = ChangeFreqEnum.WEEKLY;
+          item.priority = 1.0;
+        } else if (path.startsWith('/catalogo') || path.startsWith('/decants')) {
+          item.changefreq = ChangeFreqEnum.WEEKLY;
+          item.priority = 0.9;
+        } else if (path.startsWith('/producto')) {
+          item.changefreq = ChangeFreqEnum.MONTHLY;
+          item.priority = 0.8;
+        } else if (path.startsWith('/blog')) {
+          item.changefreq = ChangeFreqEnum.MONTHLY;
+          item.priority = 0.6;
+        } else {
+          item.changefreq = ChangeFreqEnum.YEARLY;
+          item.priority = 0.4;
+        }
+        return item;
+      },
     }),
   ],
   vite: {
