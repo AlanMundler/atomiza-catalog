@@ -6,7 +6,7 @@ import perfumesData from '@/data/perfumes.json';
 import { isSizeAvailable } from '@/utils/stock';
 import { resenas, resenasRating, hasResenas } from '@/data/resenas';
 import { site, assetUrl } from '@/site.config';
-import { TRIDENT_DISCOUNT } from '@/utils/trident';
+import { TRIDENT_DISCOUNT, TRIDENT_BULK_PER_DECANT } from '@/utils/trident';
 import { formatPrice } from '@/utils/formatters';
 import type { Perfume } from '@/data/types';
 
@@ -69,9 +69,13 @@ const faqs = [
       acceptedAnswer: { '@type': 'Answer', text: faq.answer },
     })),
   }).replace(/</g, '\\u003c')} />
-  <button type="button" class="promo-strip" data-open-tridente aria-haspopup="dialog">
+  <button type="button" class="promo-strip" data-open-tridente aria-haspopup="dialog" aria-label={`Ver promociones: 3 decants ${formatPrice(TRIDENT_DISCOUNT)} menos, 6 ${formatPrice(TRIDENT_BULK_PER_DECANT * 6)} menos, 9 ${formatPrice(TRIDENT_BULK_PER_DECANT * 9)} menos`}>
     <span aria-hidden="true">🎁</span>
-    <span class="promo-strip-text"><strong>Promociones:</strong> 3 decants = {formatPrice(TRIDENT_DISCOUNT)} menos</span>
+    <span class="promo-strip-items" aria-hidden="true">
+      <span class="promo-strip-item active" data-promo-item><strong>3</strong> → {formatPrice(TRIDENT_DISCOUNT)} menos</span>
+      <span class="promo-strip-item" data-promo-item><strong>6</strong> → {formatPrice(TRIDENT_BULK_PER_DECANT * 6)} menos</span>
+      <span class="promo-strip-item" data-promo-item><strong>9</strong> → {formatPrice(TRIDENT_BULK_PER_DECANT * 9)} menos</span>
+    </span>
     <span class="promo-strip-cta" aria-hidden="true">Ver →</span>
   </button>
   <section class="hero" aria-labelledby="hero-heading">
@@ -278,6 +282,27 @@ const faqs = [
       });
     });
 
+    // Rotación de promos en celu (en PC se ven las 3 fijas). Sin movimiento
+    // si el usuario prefiere movimiento reducido; se frena sola si el DOM
+    // cambia (navegación SPA) para no dejar intervalos huérfanos.
+    onPageLoad('tridente-strip-rotate', () => {
+      if ((window as any).__atzPromoRot) return;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const items = Array.from(document.querySelectorAll('[data-promo-item]'));
+      if (items.length < 2) return;
+      let i = 0;
+      (window as any).__atzPromoRot = window.setInterval(() => {
+        if (!items[0].isConnected) {
+          window.clearInterval((window as any).__atzPromoRot);
+          (window as any).__atzPromoRot = 0;
+          return;
+        }
+        items[i].classList.remove('active');
+        i = (i + 1) % items.length;
+        items[i].classList.add('active');
+      }, 4000);
+    });
+
     // Pick 4 random perfumes from stock on each visit
     onPageLoad('home', () => {
       const grid = document.querySelector('#home-perfume-grid') as HTMLElement | null;
@@ -404,13 +429,39 @@ const faqs = [
     color: var(--color-primary);
   }
 
-  .promo-strip-text {
+  /* Items apilados para fundido en celu; en PC fluyen en fila. */
+  .promo-strip-items {
+    display: grid;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .promo-strip-item {
+    grid-area: 1 / 1;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    text-align: center;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition:
+      opacity 0.45s var(--transition-easing),
+      transform 0.45s var(--transition-easing),
+      visibility 0.45s;
   }
 
-  /* Celu: todo en una línea (texto compacto, sin wrap). */
+  .promo-strip-item.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .promo-strip-item strong {
+    color: var(--color-primary);
+  }
+
+  /* Celu: una promo por vez, rotando con fundido. */
   @media (max-width: 767px) {
     .promo-strip {
       gap: 8px;
@@ -419,11 +470,27 @@ const faqs = [
     }
   }
 
-  /* PC: hay ancho de sobra, se esparce de borde a borde. */
+  /* PC: las 3 promos visibles y esparcidas de borde a borde. */
   @media (min-width: 768px) {
     .promo-strip {
       justify-content: space-between;
       padding: 10px 32px;
+    }
+
+    .promo-strip-items {
+      display: contents;
+    }
+
+    .promo-strip-item {
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .promo-strip-item {
+      transition: none;
     }
   }
 
