@@ -267,7 +267,10 @@ describe('formatters', () => {
       expect(result).toContain('🛍️ DETALLE:');
       expect(result).toContain('• Tom Ford - Tobacco Vanille (5ml) x2 — $64.000');
       expect(result).toContain('• Maison Francis Kurkdjian - Baccarat Rouge 540 (5ml) x1 — $42.000');
-      expect(result).toContain('💰 TOTAL: $106.000');
+      // 3 decants comprables = 1 tridente automático.
+      expect(result).toContain('💰 SUBTOTAL: $106.000');
+      expect(result).toContain('🎁 DESCUENTO TRIDENTE (1 tridente): -$2.000');
+      expect(result).toContain('💰 TOTAL: $104.000');
       expect(result).toContain('📍 Envío: [A coordinar]');
       expect(result).toContain('💳 Pago: [Transferencia / Efectivo / A coordinar]');
       expect(result).toContain('Enviar a @atomiza.cba por Instagram DM');
@@ -285,6 +288,54 @@ describe('formatters', () => {
       const result = generateOrderText(items, perfumesMap, 'Test', 'Test', 'instagram');
       expect(result).toContain('x2');
       expect(result).toContain('$64.000');
+    });
+  });
+
+  describe('generateOrderText (descuento tridente automático)', () => {
+    const sixPack: Perfume = {
+      id: 'six-pack',
+      slug: 'six-pack',
+      brand: 'Lattafa',
+      name: 'Six Pack',
+      gender: 'unisex',
+      olfactoryFamily: 'Oriental',
+      description: 'Seis decants.',
+      notes: { top: [], heart: [], base: [] },
+      images: [],
+      sizes: [{ ml: 5, price: 6000, stock: 10 }],
+      isBoutiqueExclusive: false,
+      featured: false
+    };
+    const map = new Map([['six-pack', sixPack]]);
+
+    it('descuenta 1 tridente con 3 decants', () => {
+      const items: CartItem[] = [
+        { perfumeId: 'six-pack', size: { ml: 5, price: 6000, stock: 10 }, quantity: 3 }
+      ];
+      const result = generateOrderText(items, map, 'Test', 'Test');
+      expect(result).toContain('💰 SUBTOTAL: $18.000');
+      expect(result).toContain('🎁 DESCUENTO TRIDENTE (1 tridente): -$2.000');
+      expect(result).toContain('💰 TOTAL: $16.000');
+    });
+
+    it('descuenta 2 tridentes con 6 decants', () => {
+      const items: CartItem[] = [
+        { perfumeId: 'six-pack', size: { ml: 5, price: 6000, stock: 10 }, quantity: 6 }
+      ];
+      const result = generateOrderText(items, map, 'Test', 'Test');
+      expect(result).toContain('💰 SUBTOTAL: $36.000');
+      expect(result).toContain('🎁 DESCUENTO TRIDENTE (2 tridentes): -$4.000');
+      expect(result).toContain('💰 TOTAL: $32.000');
+    });
+
+    it('no muestra descuento con 2 decants', () => {
+      const items: CartItem[] = [
+        { perfumeId: 'six-pack', size: { ml: 5, price: 6000, stock: 10 }, quantity: 2 }
+      ];
+      const result = generateOrderText(items, map, 'Test', 'Test');
+      expect(result).toContain('💰 TOTAL: $12.000');
+      expect(result).not.toContain('DESCUENTO TRIDENTE');
+      expect(result).not.toContain('SUBTOTAL');
     });
   });
 });

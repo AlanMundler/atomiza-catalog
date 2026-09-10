@@ -1,5 +1,8 @@
 import type { CartItem, Perfume, PerfumeSize } from '@/data/types';
 import { site } from '@/site.config';
+import { descuentoTridente, tridentesCompletos } from '@/utils/trident';
+// Nota de ciclo: trident.ts importa formatPrice de acá, pero solo lo usa en
+// tiempo de ejecución (nunca al evaluar el módulo), así que el ciclo es seguro.
 
 export function formatPrice(price: number): string {
   if (!Number.isFinite(price)) return '$—';
@@ -84,6 +87,10 @@ export function generateOrderText(
   const resolved = resolveCartItems(items, perfumesMap);
   const orderable = resolved.filter((r) => r.available);
   const excludedCount = resolved.length - orderable.length;
+  // Descuento automático por tridente sobre decants comprables.
+  const orderableCount = orderable.reduce((sum, r) => sum + r.quantity, 0);
+  const tridentes = tridentesCompletos(orderableCount);
+  const discount = descuentoTridente(orderableCount);
 
   const lines: string[] = [
     `📦 NUEVO PEDIDO - ${site.name}`,
@@ -112,9 +119,21 @@ export function generateOrderText(
     );
   }
 
+  if (discount > 0) {
+    lines.push(
+      '',
+      `💰 SUBTOTAL: ${formatPrice(total)}`,
+      `🎁 DESCUENTO TRIDENTE (${tridentes} ${tridentes === 1 ? 'tridente' : 'tridentes'}): -${formatPrice(discount)}`,
+      '',
+      `💰 TOTAL: ${formatPrice(total - discount)}`,
+    );
+  } else {
+    lines.push(
+      '',
+      `💰 TOTAL: ${formatPrice(total)}`,
+    );
+  }
   lines.push(
-    '',
-    `💰 TOTAL: ${formatPrice(total)}`,
     '',
     '📍 Envío: [A coordinar]',
     '💳 Pago: [Transferencia / Efectivo / A coordinar]',

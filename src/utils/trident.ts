@@ -12,6 +12,20 @@ export function computeTridentTotal(prices: number[]): number | null {
   return Math.max(0, prices.reduce((acc, p) => acc + p, 0) - TRIDENT_DISCOUNT);
 }
 
+/** Cuántos tridentes completos hay en N decants comprables (3→1, 6→2). */
+export function tridentesCompletos(count: number): number {
+  if (!Number.isInteger(count) || count < TRIDENT_COUNT) return 0;
+  return Math.floor(count / TRIDENT_COUNT);
+}
+
+/**
+ * Descuento AUTOMÁTICO del carrito: $2.000 por cada 3 decants comprables
+ * (3→$2.000, 6→$4.000, 9→$6.000). El cliente no arma nada: se aplica solo.
+ */
+export function descuentoTridente(count: number): number {
+  return tridentesCompletos(count) * TRIDENT_DISCOUNT;
+}
+
 export interface TridentLine {
   brand: string;
   name: string;

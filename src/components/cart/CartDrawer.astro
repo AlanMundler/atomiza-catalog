@@ -34,7 +34,7 @@ import Drawer from '@/components/ui/Drawer.astro';
   import type { Perfume } from '@/data/types';
   import { getPerfumesMap } from '@/utils/perfumes-client';
   import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
-  import { TRIDENT_COUNT, TRIDENT_DISCOUNT } from '@/utils/trident';
+  import { TRIDENT_COUNT, TRIDENT_DISCOUNT, descuentoTridente, tridentesCompletos } from '@/utils/trident';
   import { initQuickAdd } from '@/utils/quick-add';
   import { assetUrl } from '@/site.config';
 
@@ -79,16 +79,39 @@ import Drawer from '@/components/ui/Drawer.astro';
       (sum, r) => sum + (r.available ? r.size.price * r.quantity : 0),
       0
     );
-    // Nudge de tridente: con 1-2 decants conviene sumar uno más y ahorrar.
+    // Descuento automático: cada 3 decants comprables restan $2.000.
     const orderableCount = resolved
       .filter((r) => r.available)
       .reduce((sum, r) => sum + r.quantity, 0);
+    const tridentes = tridentesCompletos(orderableCount);
+    const discount = descuentoTridente(orderableCount);
+    const total = subtotal - discount;
+    // Con 1-2 decants conviene sumar: el nudge lleva al catálogo (acción),
+    // no a otra página intermedia.
     const missing = TRIDENT_COUNT - orderableCount;
     const tridentNudge = orderableCount > 0 && missing > 0
-      ? `<a class="trident-nudge" href="${assetUrl('tridentes/')}">Te falta${missing === 1 ? '' : 'n'} ${missing} para el tridente: 3 decants y ahorrás ${formatPrice(TRIDENT_DISCOUNT)} →</a>`
-      : orderableCount >= TRIDENT_COUNT
-        ? `<a class="trident-nudge trident-nudge--ready" href="${assetUrl('tridentes/')}">Ya tenés ${orderableCount}: pasalos a tridente y ahorrá ${formatPrice(TRIDENT_DISCOUNT)} →</a>`
+      ? `<a class="trident-nudge" href="${assetUrl('catalogo/')}">Te falta${missing === 1 ? '' : 'n'} ${missing}: sumá más decants y cada 3 ahorrás ${formatPrice(TRIDENT_DISCOUNT)} →</a>`
+      : tridentes > 0
+        ? `<p class="trident-nudge trident-nudge--ready">¡Tridente aplicado! Ahorrás ${formatPrice(discount)} en este pedido.</p>`
         : '';
+
+    const totalsHtml = discount > 0
+      ? `<div class="order-summary-line">
+          <span class="order-summary-label">Subtotal</span>
+          <span class="order-summary-value">${formatPrice(subtotal)}</span>
+        </div>
+        <div class="order-summary-line order-summary-line--discount">
+          <span class="order-summary-label">Descuento tridente (${tridentes} ${tridentes === 1 ? 'tridente' : 'tridentes'})</span>
+          <span class="order-summary-value">−${formatPrice(discount)}</span>
+        </div>
+        <div class="order-summary-line order-summary-line--total">
+          <span class="order-summary-label">Total</span>
+          <span class="order-summary-value" data-cart-total>${formatPrice(total)}</span>
+        </div>`
+      : `<div class="order-summary-line order-summary-line--total">
+          <span class="order-summary-label">Total estimado</span>
+          <span class="order-summary-value" data-cart-total>${formatPrice(total)}</span>
+        </div>`;
 
     content.innerHTML = `
       <ul class="cart-items" role="list" aria-label="Artículos en el carrito">
@@ -96,10 +119,7 @@ import Drawer from '@/components/ui/Drawer.astro';
       </ul>
       ${tridentNudge}
       <div class="order-summary" role="region" aria-label="Resumen del pedido">
-        <div class="order-summary-line order-summary-line--total">
-          <span class="order-summary-label">Total estimado</span>
-          <span class="order-summary-value" data-cart-total>${formatPrice(subtotal)}</span>
-        </div>
+        ${totalsHtml}
         ${
           unavailableCount > 0
             ? `<p class="order-summary-note">${unavailableCount === 1 ? 'Un perfume quedó sin stock y no se incluye en el total' : `${unavailableCount} perfumes quedaron sin stock y no se incluyen en el total`}</p>`
@@ -692,6 +712,11 @@ import Drawer from '@/components/ui/Drawer.astro';
     font-size: 16px;
     font-weight: 500;
     color: var(--color-primary);
+  }
+
+  .order-summary-line--discount .order-summary-value {
+    color: var(--color-status-in-stock);
+    font-weight: 600;
   }
 
   .order-summary-note {

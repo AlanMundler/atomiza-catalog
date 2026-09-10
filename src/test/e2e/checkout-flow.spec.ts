@@ -83,6 +83,41 @@ test.describe('Checkout Flow', () => {
     await expect(page.locator('[data-copy-order]')).toContainText('¡Copiado!');
   });
 
+  test('should apply the automatic tridente discount with 3 decants', async ({ page }) => {
+    // PRODUCT_1 x2 (via increase) + PRODUCT_2 x1 = 3 decants a $6.000:
+    // subtotal $18.000, descuento $2.000, total $16.000.
+    await page.goto(PRODUCT_1);
+    await page.waitForLoadState('networkidle');
+    await page.click('[data-add-to-cart]');
+    await page.waitForTimeout(300);
+    await page.click('.quantity-btn--increase');
+    await page.waitForTimeout(300);
+    await expect(page.locator('.quantity-value')).toContainText('2');
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(300);
+
+    await page.goto(PRODUCT_2);
+    await page.waitForLoadState('networkidle');
+    await page.click('[data-add-to-cart]');
+    await page.waitForTimeout(300);
+
+    // El drawer muestra subtotal, descuento y total neto.
+    await expect(page.locator('.order-summary')).toContainText('Subtotal');
+    await expect(page.locator('.order-summary')).toContainText('Descuento tridente');
+    await expect(page.locator('[data-cart-total]')).toContainText('$16.000');
+
+    await page.click('[data-finalize-order]');
+    await page.waitForTimeout(300);
+    await page.fill('#customer-name', 'Juan Pérez');
+    await page.fill('#customer-contact', '+54 9 11 1234-5678');
+    await page.waitForTimeout(200);
+
+    const preview = page.locator('#order-preview');
+    await expect(preview).toHaveValue(/SUBTOTAL: \$18\.000/);
+    await expect(preview).toHaveValue(/DESCUENTO TRIDENTE \(1 tridente\): -\$2\.000/);
+    await expect(preview).toHaveValue(/TOTAL: \$16\.000/);
+  });
+
   test('should update cart quantities', async ({ page }) => {
     await page.goto(PRODUCT_1);
     await page.waitForLoadState('networkidle');

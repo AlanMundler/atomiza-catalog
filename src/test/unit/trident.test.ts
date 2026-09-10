@@ -1,6 +1,36 @@
 import { describe, it, expect } from 'vitest';
-import { TRIDENT_DISCOUNT, computeTridentTotal, buildTridentOrderText } from '@/utils/trident';
+import { TRIDENT_DISCOUNT, computeTridentTotal, buildTridentOrderText, tridentesCompletos, descuentoTridente } from '@/utils/trident';
 import { formatPrice } from '@/utils/formatters';
+
+describe('descuento automático por cantidad', () => {
+  it('no descuenta con menos de 3 decants', () => {
+    expect(tridentesCompletos(0)).toBe(0);
+    expect(tridentesCompletos(1)).toBe(0);
+    expect(tridentesCompletos(2)).toBe(0);
+    expect(descuentoTridente(2)).toBe(0);
+  });
+
+  it('descuenta $2.000 con 3, 4 y 5 decants (1 tridente)', () => {
+    expect(tridentesCompletos(3)).toBe(1);
+    expect(tridentesCompletos(5)).toBe(1);
+    expect(descuentoTridente(3)).toBe(TRIDENT_DISCOUNT);
+    expect(descuentoTridente(5)).toBe(TRIDENT_DISCOUNT);
+  });
+
+  it('escala: 6 decants son 2 tridentes ($4.000)', () => {
+    expect(tridentesCompletos(6)).toBe(2);
+    expect(tridentesCompletos(7)).toBe(2);
+    expect(descuentoTridente(6)).toBe(TRIDENT_DISCOUNT * 2);
+    expect(descuentoTridente(9)).toBe(TRIDENT_DISCOUNT * 3);
+  });
+
+  it('ignora cantidades inválidas', () => {
+    expect(tridentesCompletos(-3)).toBe(0);
+    expect(tridentesCompletos(2.5)).toBe(0);
+    expect(tridentesCompletos(NaN)).toBe(0);
+    expect(descuentoTridente(-3)).toBe(0);
+  });
+});
 
 describe('computeTridentTotal', () => {
   it('aplica el descuento a un tridente de 3 precios iguales', () => {
