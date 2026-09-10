@@ -1,5 +1,5 @@
 ---
-import { site } from '@/site.config';
+import { site, assetUrl } from '@/site.config';
 const BASE = site.basePath;
 const currentYear = new Date().getFullYear();
 ---
@@ -9,30 +9,34 @@ const currentYear = new Date().getFullYear();
     <div class="footer-main">
       <div class="footer-brand">
         <a href={BASE} class="footer-logo" aria-label={`${site.name} - inicio`}>{site.name}</a>
-        <p class="footer-tagline">{site.tagline}</p>
-        <p class="footer-locality">{site.addressLocality}, {site.addressRegion}</p>
+        <p class="footer-tagline">{site.tagline} · {site.addressLocality}</p>
       </div>
       <nav class="footer-nav" aria-label="Secciones del sitio">
         <a href={`${BASE}catalogo/`} class="footer-nav-link">Catálogo</a>
         <a href={`${BASE}tridentes/`} class="footer-nav-link">Tridentes</a>
         <a href={`${BASE}quiz/`} class="footer-nav-link">Descubrí tu perfume</a>
         <a href={`${BASE}decants/`} class="footer-nav-link">Por aroma famoso</a>
-        <a href={`${BASE}envios/`} class="footer-nav-link">Envíos</a>
       </nav>
       <div class="footer-contact">
-        <a href={site.whatsappUrl} target="_blank" rel="noopener noreferrer" class="footer-nav-link">WhatsApp</a>
-        <a href={site.instagramUrl} target="_blank" rel="noopener noreferrer" class="footer-nav-link">Instagram @{site.instagramHandle}</a>
-        <a href={site.tiktokUrl} target="_blank" rel="noopener noreferrer" class="footer-nav-link">TikTok @{site.tiktokHandle}</a>
+        <a href={site.whatsappUrl} target="_blank" rel="noopener noreferrer" class="footer-social-btn" aria-label="WhatsApp">
+          <img src={assetUrl('images/icons/whatsapp.svg')} width="24" height="24" alt="" aria-hidden="true" />
+        </a>
+        <a href={site.instagramUrl} target="_blank" rel="noopener noreferrer" class="footer-social-btn" aria-label={`Instagram @${site.instagramHandle}`}>
+          <img src={assetUrl('images/icons/instagram.svg')} width="24" height="24" alt="" aria-hidden="true" />
+        </a>
+        <a href={site.tiktokUrl} target="_blank" rel="noopener noreferrer" class="footer-social-btn" aria-label={`TikTok @${site.tiktokHandle}`}>
+          <img src={assetUrl('images/icons/tiktok.svg')} width="24" height="24" alt="" aria-hidden="true" />
+        </a>
       </div>
     </div>
 
     <div class="footer-bottom">
-      <p class="footer-copyright">© {currentYear} {site.name}. Todos los derechos reservados.</p>
+      <p class="footer-copyright">© {currentYear} {site.name}</p>
       <nav class="footer-legal" aria-label="Enlaces legales">
         <a href={`${BASE}blog/`} class="footer-legal-link">Guías</a>
         <a href={`${BASE}envios/`} class="footer-legal-link">Envíos</a>
-        <a href={`${BASE}terminos/`} class="footer-legal-link">Términos y condiciones</a>
-        <a href={`${BASE}privacidad/`} class="footer-legal-link">Política de privacidad</a>
+        <a href={`${BASE}terminos/`} class="footer-legal-link">Términos</a>
+        <a href={`${BASE}privacidad/`} class="footer-legal-link">Privacidad</a>
       </nav>
     </div>
   </div>
@@ -42,34 +46,26 @@ const currentYear = new Date().getFullYear();
   .footer {
     background-color: var(--color-surface-container-lowest);
     border-top: var(--border-width) solid var(--color-outline-variant);
-    padding: var(--spacing-stack-lg) 0 var(--spacing-stack-md);
+    padding: 28px 0 18px;
   }
 
   .footer-inner {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-stack-md);
+    gap: 18px;
   }
 
   .footer-main {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--spacing-stack-sm);
+    gap: 14px;
     text-align: center;
-  }
-
-  @media (min-width: 768px) {
-    .footer-main {
-      flex-direction: row;
-      justify-content: space-between;
-      text-align: left;
-    }
   }
 
   .footer-logo {
     font-family: var(--font-family);
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 200;
     letter-spacing: 0.2em;
     text-transform: uppercase;
@@ -83,39 +79,27 @@ const currentYear = new Date().getFullYear();
 
   .footer-tagline {
     font-family: var(--font-family);
-    font-size: var(--font-body-md-size);
-    color: var(--color-on-surface-variant);
-    margin: 4px 0 0;
-  }
-
-  .footer-locality {
-    font-family: var(--font-family);
     font-size: var(--font-label-sm-size);
     color: var(--color-on-surface-variant);
-    margin: 4px 0 0;
+    margin: 2px 0 0;
   }
 
-  .footer-nav,
-  .footer-contact {
+  .footer-nav {
     display: flex;
-    flex-direction: column;
-    gap: 12px;
-    align-items: center;
-  }
-
-  @media (min-width: 768px) {
-    .footer-nav,
-    .footer-contact {
-      align-items: flex-start;
-    }
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2px 20px;
   }
 
   .footer-nav-link {
     font-family: var(--font-family);
-    font-size: var(--font-body-md-size);
-    color: var(--color-on-surface);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
     text-decoration: none;
-    padding: 6px 0;
+    padding: 8px 2px;
     transition: color var(--transition-duration) var(--transition-easing);
   }
 
@@ -123,25 +107,45 @@ const currentYear = new Date().getFullYear();
     color: var(--color-primary);
   }
 
+  .footer-contact {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .footer-social-btn {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-on-surface-variant);
+    border-radius: var(--border-radius);
+    transition: all var(--transition-duration) var(--transition-easing);
+  }
+
+  .footer-social-btn:hover {
+    color: var(--color-primary);
+    background-color: var(--color-surface-container-high);
+  }
+
+  .footer-social-btn:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
   .footer-bottom {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--spacing-stack-sm);
-    padding-top: var(--spacing-stack-sm);
+    gap: 8px;
+    padding-top: 14px;
     border-top: var(--border-width) solid var(--color-outline-variant);
-  }
-
-  @media (min-width: 768px) {
-    .footer-bottom {
-      flex-direction: row;
-      justify-content: space-between;
-    }
   }
 
   .footer-copyright {
     font-family: var(--font-family);
-    font-size: var(--font-label-sm-size);
+    font-size: 11px;
     color: var(--color-on-surface-variant);
     margin: 0;
   }
@@ -150,21 +154,45 @@ const currentYear = new Date().getFullYear();
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    align-items: center;
-    gap: 12px 24px;
+    gap: 4px 16px;
   }
 
   .footer-legal-link {
     font-family: var(--font-family);
-    font-size: var(--font-label-sm-size);
-    font-weight: var(--font-label-sm-weight);
-    letter-spacing: var(--font-label-sm-tracking);
+    font-size: 11px;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--color-on-surface-variant);
+    text-decoration: none;
+    padding: 6px 2px;
     transition: color var(--transition-duration) var(--transition-easing);
   }
 
   .footer-legal-link:hover {
     color: var(--color-primary);
+  }
+
+  @media (min-width: 768px) {
+    .footer-main {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+      text-align: left;
+    }
+
+    .footer-nav {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0;
+    }
+
+    .footer-nav-link {
+      padding: 5px 0;
+    }
+
+    .footer-bottom {
+      flex-direction: row;
+      justify-content: space-between;
+    }
   }
 </style>
