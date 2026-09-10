@@ -1,6 +1,7 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import ProductCard from '@/components/catalog/ProductCard.astro';
+import TridenteModal from '@/components/cart/TridenteModal.astro';
 import perfumesData from '@/data/perfumes.json';
 import { isSizeAvailable } from '@/utils/stock';
 import { resenas, resenasRating, hasResenas } from '@/data/resenas';
@@ -81,6 +82,16 @@ const faqs = [
       </p>
     </div>
   </section>
+
+  <div class="container">
+    <button type="button" class="promo-strip" data-open-tridente aria-haspopup="dialog">
+      <span aria-hidden="true">🎁</span>
+      <span><strong>Promociones:</strong> 3 decants = {formatPrice(TRIDENT_DISCOUNT)} menos</span>
+      <span class="promo-strip-cta" aria-hidden="true">Ver →</span>
+    </button>
+  </div>
+
+  <TridenteModal />
 
   <section class="home-perfumes" aria-labelledby="home-perfumes-title">
     <div class="container">
@@ -253,7 +264,22 @@ const faqs = [
   </section>
 
   <script>
-    import { onPageLoad } from '@/utils/view-transitions';
+    import { bindOnce, onPageLoad } from '@/utils/view-transitions';
+    import { tridenteProgressText } from '@/utils/tridente-live';
+
+    // Tira de promociones: abre el modal con la regla y tu progreso en vivo.
+    onPageLoad('tridente-strip', () => {
+      const strip = document.querySelector('[data-open-tridente]');
+      const modal = document.querySelector('#tridente-modal');
+      if (!strip || !modal) return;
+      bindOnce(strip, (el) => {
+        el.addEventListener('click', async () => {
+          const live = modal.querySelector('[data-tridente-live]');
+          if (live) live.textContent = await tridenteProgressText();
+          modal.dispatchEvent(new CustomEvent('modal:open'));
+        });
+      });
+    });
 
     // Pick 4 random perfumes from stock on each visit
     onPageLoad('home', () => {
@@ -343,6 +369,48 @@ const faqs = [
     color: var(--color-primary);
     text-decoration: underline;
     text-underline-offset: 2px;
+  }
+
+  /* Tira de promociones: abre el modal del tridente sin salir de la home. */
+  .promo-strip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    margin: var(--spacing-stack-sm) 0 0;
+    padding: 12px 16px;
+    min-height: 52px;
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    color: var(--color-on-surface);
+    background-color: rgba(197, 160, 89, 0.08);
+    border: var(--border-width) solid var(--color-primary);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: background-color var(--transition-duration) var(--transition-easing);
+  }
+
+  .promo-strip:hover {
+    background-color: rgba(197, 160, 89, 0.15);
+  }
+
+  .promo-strip:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .promo-strip strong {
+    color: var(--color-primary);
+  }
+
+  .promo-strip-cta {
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-primary);
+    white-space: nowrap;
   }
 
   @media (max-width: 1024px) {

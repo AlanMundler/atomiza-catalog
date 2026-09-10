@@ -1,0 +1,112 @@
+---
+import Modal from '@/components/ui/Modal.astro';
+import { TRIDENT_COUNT, TRIDENT_DISCOUNT, TRIDENT_BULK_PER_DECANT } from '@/utils/trident';
+import { formatPrice } from '@/utils/formatters';
+import { site } from '@/site.config';
+
+const BASE = site.basePath;
+---
+
+<Modal
+  id="tridente-modal"
+  title="Promo tridente"
+  class="tridente-modal"
+>
+  <div class="tridente-modal-content">
+    <p class="tridente-modal-rule">
+      Cada <strong>{TRIDENT_COUNT} decants</strong> se descuentan <strong>{formatPrice(TRIDENT_DISCOUNT)}</strong> solos.
+      Con {TRIDENT_COUNT * 2} o más, <strong>{formatPrice(TRIDENT_BULK_PER_DECANT)} por decant</strong>.
+    </p>
+    <ul class="tridente-modal-examples">
+      <li><strong>{TRIDENT_COUNT}</strong> → {formatPrice(TRIDENT_DISCOUNT)} menos</li>
+      <li><strong>{TRIDENT_COUNT * 2}</strong> → {formatPrice(TRIDENT_BULK_PER_DECANT * 6)} menos</li>
+      <li><strong>{TRIDENT_COUNT * 3}</strong> → {formatPrice(TRIDENT_BULK_PER_DECANT * 9)} menos</li>
+    </ul>
+    <p class="tridente-modal-live" data-tridente-live role="status">…</p>
+    <div class="tridente-modal-actions">
+      <a href={`${BASE}catalogo/`} class="btn btn--primary btn--md">Elegir decants</a>
+      <a href={`${BASE}tridentes/`} class="tridente-modal-more">Ver detalle</a>
+    </div>
+  </div>
+</Modal>
+
+<style>
+  .tridente-modal {
+    --modal-width: 440px;
+  }
+
+  .tridente-modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .tridente-modal-rule {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    line-height: var(--font-body-md-line-height);
+    color: var(--color-on-surface);
+    margin: 0;
+    text-align: center;
+  }
+
+  .tridente-modal-rule strong {
+    color: var(--color-primary);
+  }
+
+  .tridente-modal-examples {
+    display: flex;
+    justify-content: center;
+    gap: 8px 20px;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 12px;
+    list-style: none;
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    color: var(--color-on-surface-variant);
+    background-color: var(--color-surface-container-high);
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: var(--border-radius);
+  }
+
+  .tridente-modal-examples strong {
+    color: var(--color-on-surface);
+  }
+
+  .tridente-modal-live {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    color: var(--color-primary);
+    text-align: center;
+    margin: 0;
+    min-height: 24px;
+  }
+
+  .tridente-modal-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .tridente-modal-actions .btn {
+    width: 100%;
+    min-height: 48px;
+  }
+
+  .tridente-modal-more {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    padding: 8px;
+  }
+
+  .tridente-modal-more:hover {
+    color: var(--color-primary);
+  }
+</style>
