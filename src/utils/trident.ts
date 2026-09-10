@@ -19,11 +19,16 @@ export function tridentesCompletos(count: number): number {
 }
 
 /**
- * Descuento AUTOMÁTICO del carrito: $2.000 por cada 3 decants comprables
- * (3→$2.000, 6→$4.000, 9→$6.000). El cliente no arma nada: se aplica solo.
+ * Descuento AUTOMÁTICO del carrito sobre decants comprables:
+ * 3-5 decants → $2.000 fijos; 6 o más → $1.000 por decant
+ * (6→$6.000, 9→$9.000). El cliente no arma nada: se aplica solo.
  */
+export const TRIDENT_BULK_PER_DECANT = 1000;
+
 export function descuentoTridente(count: number): number {
-  return tridentesCompletos(count) * TRIDENT_DISCOUNT;
+  if (!Number.isInteger(count) || count < TRIDENT_COUNT) return 0;
+  if (count < TRIDENT_COUNT * 2) return TRIDENT_DISCOUNT;
+  return count * TRIDENT_BULK_PER_DECANT;
 }
 
 export interface TridentLine {

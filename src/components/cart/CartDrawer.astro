@@ -90,7 +90,7 @@ import Drawer from '@/components/ui/Drawer.astro';
     // no a otra página intermedia.
     const missing = TRIDENT_COUNT - orderableCount;
     const tridentNudge = orderableCount > 0 && missing > 0
-      ? `<a class="trident-nudge" href="${assetUrl('catalogo/')}">Te falta${missing === 1 ? '' : 'n'} ${missing}: sumá más decants y cada 3 ahorrás ${formatPrice(TRIDENT_DISCOUNT)} →</a>`
+      ? `<a class="trident-nudge" href="${assetUrl('catalogo/')}">Te falta${missing === 1 ? '' : 'n'} ${missing} para el descuento: 3 decants = ${formatPrice(TRIDENT_DISCOUNT)} menos →</a>`
       : tridentes > 0
         ? `<p class="trident-nudge trident-nudge--ready">¡Tridente aplicado! Ahorrás ${formatPrice(discount)} en este pedido.</p>`
         : '';

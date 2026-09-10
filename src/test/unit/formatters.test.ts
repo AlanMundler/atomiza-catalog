@@ -318,14 +318,14 @@ describe('formatters', () => {
       expect(result).toContain('💰 TOTAL: $16.000');
     });
 
-    it('descuenta 2 tridentes con 6 decants', () => {
+    it('descuenta $6.000 con 6 decants ($1.000 por decant)', () => {
       const items: CartItem[] = [
         { perfumeId: 'six-pack', size: { ml: 5, price: 6000, stock: 10 }, quantity: 6 }
       ];
       const result = generateOrderText(items, map, 'Test', 'Test');
       expect(result).toContain('💰 SUBTOTAL: $36.000');
-      expect(result).toContain('🎁 DESCUENTO TRIDENTE (2 tridentes): -$4.000');
-      expect(result).toContain('💰 TOTAL: $32.000');
+      expect(result).toContain('🎁 DESCUENTO TRIDENTE (2 tridentes): -$6.000');
+      expect(result).toContain('💰 TOTAL: $30.000');
     });
 
     it('no muestra descuento con 2 decants', () => {

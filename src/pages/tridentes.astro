@@ -9,7 +9,7 @@ const BASE = site.basePath;
 
 <Layout
   title={`Tridentes: cada ${TRIDENT_COUNT} decants, ${formatPrice(TRIDENT_DISCOUNT)} menos`}
-  description={`Cada ${TRIDENT_COUNT} decants de 5ml se descuentan ${formatPrice(TRIDENT_DISCOUNT)} automáticamente en tu pedido, sin armar nada. 6 decants = ${formatPrice(TRIDENT_DISCOUNT * 2)} menos.`}
+  description={`Cada ${TRIDENT_COUNT} decants de 5ml se descuentan ${formatPrice(TRIDENT_DISCOUNT)} automáticamente en tu pedido, sin armar nada. 6 decants o más: $1.000 menos por decant.`}
 >
   <section class="trident-hero" aria-labelledby="trident-title">
     <div class="container">
@@ -28,7 +28,7 @@ const BASE = site.basePath;
       </div>
       <div class="trident-step">
         <span class="trident-step-number">2</span>
-        <p class="trident-step-text">Cada {TRIDENT_COUNT} decants descuentan {formatPrice(TRIDENT_DISCOUNT)} solos</p>
+        <p class="trident-step-text">3 decants te descuentan {formatPrice(TRIDENT_DISCOUNT)}; 6 o más, $1.000 por decant</p>
       </div>
       <div class="trident-step">
         <span class="trident-step-number">3</span>
@@ -51,8 +51,8 @@ const BASE = site.basePath;
     <div class="container">
       <ul class="trident-examples-list">
         <li><strong>{TRIDENT_COUNT} decants</strong> → {formatPrice(TRIDENT_DISCOUNT)} menos</li>
-        <li><strong>{TRIDENT_COUNT * 2} decants</strong> → {formatPrice(TRIDENT_DISCOUNT * 2)} menos</li>
-        <li><strong>{TRIDENT_COUNT * 3} decants</strong> → {formatPrice(TRIDENT_DISCOUNT * 3)} menos</li>
+        <li><strong>{TRIDENT_COUNT * 2} decants</strong> → $6.000 menos</li>
+        <li><strong>{TRIDENT_COUNT * 3} decants</strong> → $9.000 menos</li>
       </ul>
     </div>
   </section>
