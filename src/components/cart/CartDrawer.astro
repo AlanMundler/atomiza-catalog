@@ -35,7 +35,13 @@ import Drawer from '@/components/ui/Drawer.astro';
   import { getPerfumesMap } from '@/utils/perfumes-client';
   import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
   import { TRIDENT_COUNT, TRIDENT_DISCOUNT } from '@/utils/trident';
+  import { initQuickAdd } from '@/utils/quick-add';
   import { assetUrl } from '@/site.config';
+
+  // El quick-add vive acá y no en Layout: Astro dropea el 2º <script> del
+  // layout y el init nunca llegaba al bundle. El drawer existe en todas las
+  // páginas, así que la delegación global queda cubierta igual.
+  initQuickAdd();
 
   let drawerRoot: HTMLElement | null = null;
   let perfumesMap = new Map<string, any>();

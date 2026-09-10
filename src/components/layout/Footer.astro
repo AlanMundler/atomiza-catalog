@@ -4,7 +4,9 @@ const BASE = site.basePath;
 const currentYear = new Date().getFullYear();
 ---
 
-<footer class="footer" role="contentinfo">
+{/* site-footer (no .footer): el componente .footer de DaisyUI stylea
+    `footer > *` con place-items:start y encogía todo el contenido. */}
+<footer class="site-footer" role="contentinfo">
   <div class="footer-inner container">
     <div class="footer-main">
       <div class="footer-brand">
@@ -43,7 +45,8 @@ const currentYear = new Date().getFullYear();
 </footer>
 
 <style>
-  .footer {
+  .site-footer {
+    display: block;
     background-color: var(--color-surface-container-lowest);
     border-top: var(--border-width) solid var(--color-outline-variant);
     padding: 28px 0 18px;
