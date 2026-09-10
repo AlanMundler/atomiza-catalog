@@ -71,6 +71,7 @@ const faqs = [
   }).replace(/</g, '\\u003c')} />
   <button type="button" class="promo-strip" data-open-tridente aria-haspopup="dialog" aria-label={`Ver promociones: 3 decants ${formatPrice(TRIDENT_DISCOUNT)} menos, 6 ${formatPrice(TRIDENT_BULK_PER_DECANT * 6)} menos, 9 ${formatPrice(TRIDENT_BULK_PER_DECANT * 9)} menos`}>
     <span aria-hidden="true">🎁</span>
+    <strong class="promo-strip-label" aria-hidden="true">Promociones:</strong>
     <span class="promo-strip-items" aria-hidden="true">
       <span class="promo-strip-item active" data-promo-item><strong>3</strong> → {formatPrice(TRIDENT_DISCOUNT)} menos</span>
       <span class="promo-strip-item" data-promo-item><strong>6</strong> → {formatPrice(TRIDENT_BULK_PER_DECANT * 6)} menos</span>
@@ -459,6 +460,11 @@ const faqs = [
 
   .promo-strip-item strong {
     color: var(--color-primary);
+  }
+
+  .promo-strip-label {
+    color: var(--color-primary);
+    white-space: nowrap;
   }
 
   /* Celu: una promo por vez, rotando con fundido. */
