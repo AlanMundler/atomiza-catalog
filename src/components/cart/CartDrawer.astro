@@ -34,7 +34,8 @@ import Drawer from '@/components/ui/Drawer.astro';
   import type { Perfume } from '@/data/types';
   import { getPerfumesMap } from '@/utils/perfumes-client';
   import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
-  import { assetUrl, site } from '@/site.config';
+  import { TRIDENT_COUNT, TRIDENT_DISCOUNT } from '@/utils/trident';
+  import { assetUrl } from '@/site.config';
 
   let drawerRoot: HTMLElement | null = null;
   let perfumesMap = new Map<string, any>();
@@ -72,11 +73,22 @@ import Drawer from '@/components/ui/Drawer.astro';
       (sum, r) => sum + (r.available ? r.size.price * r.quantity : 0),
       0
     );
+    // Nudge de tridente: con 1-2 decants conviene sumar uno más y ahorrar.
+    const orderableCount = resolved
+      .filter((r) => r.available)
+      .reduce((sum, r) => sum + r.quantity, 0);
+    const missing = TRIDENT_COUNT - orderableCount;
+    const tridentNudge = orderableCount > 0 && missing > 0
+      ? `<a class="trident-nudge" href="${assetUrl('tridentes/')}">Te falta${missing === 1 ? '' : 'n'} ${missing} para el tridente: 3 decants y ahorrás ${formatPrice(TRIDENT_DISCOUNT)} →</a>`
+      : orderableCount >= TRIDENT_COUNT
+        ? `<a class="trident-nudge trident-nudge--ready" href="${assetUrl('tridentes/')}">Ya tenés ${orderableCount}: pasalos a tridente y ahorrá ${formatPrice(TRIDENT_DISCOUNT)} →</a>`
+        : '';
 
     content.innerHTML = `
       <ul class="cart-items" role="list" aria-label="Artículos en el carrito">
         ${resolved.map(itemHtml).join('')}
       </ul>
+      ${tridentNudge}
       <div class="order-summary" role="region" aria-label="Resumen del pedido">
         <div class="order-summary-line order-summary-line--total">
           <span class="order-summary-label">Total estimado</span>
@@ -362,6 +374,31 @@ import Drawer from '@/components/ui/Drawer.astro';
   .cart-empty .empty-cta {
     margin-top: var(--spacing-stack-md);
     min-height: 44px;
+  }
+
+  /* Nudge de tridente: que el ahorro se vea antes de finalizar. */
+  .trident-nudge {
+    display: block;
+    margin-top: 12px;
+    padding: 12px 14px;
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    line-height: 1.4;
+    color: var(--color-primary);
+    text-decoration: none;
+    text-align: center;
+    background-color: rgba(197, 160, 89, 0.08);
+    border: var(--border-width) dashed var(--color-primary);
+    border-radius: var(--border-radius);
+  }
+
+  .trident-nudge:hover {
+    background-color: rgba(197, 160, 89, 0.15);
+  }
+
+  .trident-nudge--ready {
+    border-style: solid;
+    font-weight: 600;
   }
 
   .cart-items {

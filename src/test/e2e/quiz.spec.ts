@@ -27,7 +27,8 @@ test.describe('Perfume Quiz Flow', () => {
   });
 
   test('should access the quiz from the home CTA', async ({ page }) => {
-    const heroCta = page.locator('.hero-cta').getByRole('link', { name: 'Descubrí tu perfume' });
+    // El quiz vive como link secundario (.hero-alt) bajo el CTA primario.
+    const heroCta = page.locator('.hero-alt').getByRole('link', { name: 'Descubrí tu perfume' });
     const headerLink = page.locator('.header-quiz-btn');
     const link = (await heroCta.isVisible()) ? heroCta : headerLink;
 

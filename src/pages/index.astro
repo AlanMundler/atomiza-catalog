@@ -74,10 +74,11 @@ const faqs = [
       <p class="hero-subtitle">{site.hero.subtitle}</p>
       <p class="hero-price-note">{site.hero.priceNote}</p>
       <div class="hero-cta">
-        <a href={`${BASE}catalogo/`} class="btn btn--primary btn--md">{site.hero.ctaPrimary}</a>
-        <a href={`${BASE}quiz/`} class="btn btn--secondary btn--md">{site.hero.ctaSecondary}</a>
-        <a href={`${BASE}tridentes/`} class="btn btn--secondary btn--md">{site.hero.ctaTertiary}</a>
+        <a href={`${BASE}catalogo/`} class="btn btn--primary btn--lg">{site.hero.ctaPrimary}</a>
       </div>
+      <p class="hero-alt">
+        ¿No sabés por dónde empezar? <a href={`${BASE}quiz/`}>{site.hero.ctaSecondary}</a> o <a href={`${BASE}tridentes/`}>{site.hero.ctaTertiary}</a>
+      </p>
     </div>
   </section>
 
@@ -321,11 +322,27 @@ const faqs = [
 
   .hero-cta {
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
-    align-items: center;
-    gap: 12px;
     margin-top: var(--spacing-stack-md);
+  }
+
+  .hero-cta .btn {
+    min-height: 52px;
+    padding-inline: 36px;
+  }
+
+  .hero-alt {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    color: var(--color-on-surface-variant);
+    text-align: center;
+    margin: var(--spacing-stack-sm) 0 0;
+  }
+
+  .hero-alt a {
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
 
   @media (max-width: 1024px) {
@@ -342,19 +359,13 @@ const faqs = [
     }
 
     .hero-cta {
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
       width: 100%;
     }
 
     .hero-cta .btn {
       width: 100%;
       max-width: 320px;
-      font-size: 13px;
-      letter-spacing: normal;
-      padding: 10px 14px;
-      height: 44px;
+      min-height: 48px;
     }
   }
 

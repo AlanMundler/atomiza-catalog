@@ -43,6 +43,20 @@ const isVector = (perfume.images[0]?.src || '').toLowerCase().endsWith('.svg');
       width="400"
       height="400"
     />
+    {primarySize && !isOutOfStock && (
+      <button
+        type="button"
+        class="product-card-quick"
+        data-quick-add
+        data-size-ml={primarySize.ml}
+        aria-label={`Agregar ${perfume.brand} ${perfume.name} al pedido`}
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+      </button>
+    )}
     {isOutOfStock && <div class="product-card-overlay" aria-hidden="true"></div>}
     <Chip
       variant={stockStatus}
@@ -127,6 +141,36 @@ const isVector = (perfume.images[0]?.src || '').toLowerCase().endsWith('.svg');
     bottom: 12px;
     left: 12px;
     z-index: 1;
+  }
+
+  /* Quick-add: sumar al pedido sin entrar a la ficha. Siempre visible
+     (en touch no hay hover) y de 44px para el pulgar. */
+  .product-card-quick {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 2;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-on-primary);
+    background-color: var(--color-primary);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+    transition: transform var(--transition-duration) var(--transition-easing);
+  }
+
+  .product-card-quick:hover {
+    transform: scale(1.08);
+  }
+
+  .product-card-quick:focus-visible {
+    outline: 2px solid var(--color-on-surface);
+    outline-offset: 2px;
   }
 
   .product-card-info {

@@ -258,6 +258,10 @@ const hasTracking = Boolean(site.gaMeasurementId || site.metaPixelId || site.tik
         initAnalytics();
       </script>
     )}
+    <script>
+      import { initQuickAdd } from '@/utils/quick-add';
+      initQuickAdd();
+    </script>
   </head>
   <body>
     <a href="#main-content" class="skip-link">Saltar al contenido</a>

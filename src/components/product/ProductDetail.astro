@@ -83,9 +83,6 @@ const waMessage = buildWhatsAppLink(
           <p class="stock-countdown-title">
             Quedan solo {selectedSize.stock} {selectedSize.stock === 1 ? 'decant' : 'decants'} de este aroma
           </p>
-          <p class="stock-countdown-text">
-            La reposición de stock no está asegurada: este precio de probadita corre solo por hoy, quedan <strong data-countdown-target></strong>.
-          </p>
         </div>
       )}
 
@@ -125,66 +122,57 @@ const waMessage = buildWhatsAppLink(
   </div>
 </article>
 
+{available && selectedSize && (
+  <div class="sticky-buy" data-sticky-buy role="region" aria-label="Compra rápida">
+    <div class="sticky-buy-info">
+      <span class="sticky-buy-name">{perfume.brand} {perfume.name}</span>
+      <span class="sticky-buy-price">{formatPrice(selectedSize.price)} · 5ml</span>
+    </div>
+    <Button variant="primary" size="lg" class="sticky-buy-btn" data-add-to-cart>
+      Agregar
+    </Button>
+  </div>
+)}
+
 <script>
-  import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
-
-  // Limpiar timers huérfanos antes de que ClientRouter haga swap del DOM.
-  // OJO: el bloque usa la clase `.stock-countdown` (y `data-stock-count`),
-  // no `data-stock-countdown`: con el selector viejo el intervalo nunca se
-  // limpiaba y quedaba un timer huérfano por navegación.
-  onWindowOnce('countdown-cleanup', 'astro:before-swap', () => {
-    document.querySelectorAll('.stock-countdown').forEach((el) => {
-      const id = (el as any).__vtCountdownId;
-      if (id != null) clearInterval(id);
-    });
-  });
-
-  onPageLoad('product-detail-countdown', () => {
-    const el = document.querySelector('.stock-countdown');
-    if (!el) return;
-
-    bindOnce(el, (countdown) => {
-      const target = countdown.querySelector('[data-countdown-target]');
-      if (!target) return;
-
-      const fmt = (n: number) => String(n).padStart(2, '0');
-      const tick = () => {
-        const now = new Date();
-        const end = new Date(now);
-        end.setHours(23, 59, 59, 999);
-        const diff = Math.max(0, end.getTime() - now.getTime());
-        const h = Math.floor(diff / 3600000);
-        const m = Math.floor((diff % 3600000) / 60000);
-        const s = Math.floor((diff % 60000) / 1000);
-        target.textContent = `${fmt(h)}:${fmt(m)}:${fmt(s)}`;
-      };
-      tick();
-      const id = setInterval(tick, 1000);
-      (countdown as any).__vtCountdownId = id;
-    });
-  });
+  import { bindOnce, onPageLoad } from '@/utils/view-transitions';
 
   onPageLoad('product-detail', () => {
-    const addBtn = document.querySelector('[data-add-to-cart]');
-    if (!addBtn) return;
+    const addBtns = Array.from(document.querySelectorAll('[data-add-to-cart]'));
+    if (addBtns.length === 0) return;
 
-    bindOnce(addBtn, (el) => {
-      el.addEventListener('click', () => {
-        const perfumeId = document.querySelector('[data-perfume-id]')?.getAttribute('data-perfume-id');
-        const selectedSizeInput = document.querySelector('input[name="size"]:checked');
-        const sizeMl = selectedSizeInput ? parseInt((selectedSizeInput as HTMLInputElement).value) : 5;
+    addBtns.forEach((btn) => {
+      bindOnce(btn as HTMLElement, (el) => {
+        el.addEventListener('click', () => {
+          const perfumeId = document.querySelector('[data-perfume-id]')?.getAttribute('data-perfume-id');
+          const selectedSizeInput = document.querySelector('input[name="size"]:checked');
+          const sizeMl = selectedSizeInput ? parseInt((selectedSizeInput as HTMLInputElement).value) : 5;
 
-        const event = new CustomEvent('cart:add', {
-          detail: { perfumeId, sizeMl, quantity: 1 }
+          const event = new CustomEvent('cart:add', {
+            detail: { perfumeId, sizeMl, quantity: 1 }
+          });
+          window.dispatchEvent(event);
+
+          // Open cart drawer
+          window.dispatchEvent(new CustomEvent('cart:open'));
         });
-        window.dispatchEvent(event);
-
-        // Open cart drawer
-        window.dispatchEvent(new CustomEvent('cart:open'));
       });
     });
   });
 </script>
+
+<style is:global>
+  /* La barra de compra fija vive solo en la ficha; el FAB de WhatsApp se
+     corre arriba y el contenido no queda tapado (solo mobile). */
+  @media (max-width: 1023px) {
+    body:has([data-sticky-buy]) .whatsapp-fab {
+      bottom: 96px;
+    }
+    body:has([data-sticky-buy]) main {
+      padding-bottom: 88px;
+    }
+  }
+</style>
 
 <style>
   .product-detail {
@@ -403,6 +391,57 @@ const waMessage = buildWhatsAppLink(
   @media (max-width: 640px) {
     .product-detail-actions {
       flex-direction: column;
+    }
+  }
+
+  /* Barra de compra fija: solo mobile, solo cuando hay stock. */
+  .sticky-buy {
+    display: none;
+  }
+
+  @media (max-width: 1023px) {
+    .sticky-buy {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 95;
+      padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+      background-color: var(--color-surface-container);
+      border-top: var(--border-width) solid var(--color-outline-variant);
+    }
+
+    .sticky-buy-info {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .sticky-buy-name {
+      font-family: var(--font-family);
+      font-size: var(--font-body-md-size);
+      color: var(--color-on-surface);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .sticky-buy-price {
+      font-family: var(--font-family);
+      font-size: var(--font-label-sm-size);
+      font-weight: var(--font-label-sm-weight);
+      letter-spacing: var(--font-label-sm-tracking);
+      text-transform: uppercase;
+      color: var(--color-primary);
+    }
+
+    .sticky-buy-btn {
+      flex-shrink: 0;
+      min-height: 48px;
     }
   }
 
