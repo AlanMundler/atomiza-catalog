@@ -4,11 +4,12 @@ import { formatPrice } from './formatters';
 export const TRIDENT_COUNT = 3;
 export const TRIDENT_DISCOUNT = 2000;
 
-/** Total del tridente = suma de los 3 precios − $2.000. Devuelve null si no son exactamente 3. */
+/** Total del tridente = suma de los 3 precios − descuento. Devuelve null si
+ * no son exactamente 3. Nunca negativo aunque el DOM traiga precios raros. */
 export function computeTridentTotal(prices: number[]): number | null {
   if (prices.length !== TRIDENT_COUNT) return null;
   if (!prices.every((p) => Number.isFinite(p) && p >= 0)) return null;
-  return prices.reduce((acc, p) => acc + p, 0) - TRIDENT_DISCOUNT;
+  return Math.max(0, prices.reduce((acc, p) => acc + p, 0) - TRIDENT_DISCOUNT);
 }
 
 export interface TridentLine {

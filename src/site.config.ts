@@ -62,12 +62,15 @@ export const site = {
     cart: 'atomiza-cart',
     perfumes: 'perfumes-data',
     consent: 'atomiza-consent',
+    orderForm: 'atomiza-order-form',
   },
 } as const;
 
 /** Resuelve una ruta de asset (ej. "images/…" o "/images/…") contra el base path. */
 export function assetUrl(src: string | undefined): string {
   if (!src) return `${site.basePath}images/placeholder.svg`;
-  if (/^([a-z][a-z0-9+.-]*:)?\/\//i.test(src)) return src;
+  // Solo https:// externo: un `//evil/x` o `javascript:` en datos
+  // comprometidos no se trata como externo válido.
+  if (/^https?:\/\//i.test(src)) return src;
   return site.basePath + src.replace(/^\//, '');
 }

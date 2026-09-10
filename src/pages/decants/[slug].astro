@@ -51,7 +51,7 @@ const whatsappHref = buildWhatsAppLink(
 );
 ---
 
-<Layout title={pageTitle} description={pageDescription}>
+<Layout title={pageTitle} description={pageDescription} noindex={!perfume}>
   <script is:inline type="application/ld+json" set:html={JSON.stringify({
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -63,7 +63,7 @@ const whatsappHref = buildWhatsAppLink(
   }).replace(/</g, '\\u003c')} />
 
   {perfume ? (
-    <section class="insphero" aria-labelledby="insp-title">
+    <section class="insp-hero" aria-labelledby="insp-title">
       <div class="container">
         <p class="insp-breadcrumb">
           <a href={`${BASE}decants/`}>Decants por aroma</a> › {insp.original}
@@ -133,14 +133,12 @@ const whatsappHref = buildWhatsAppLink(
 </Layout>
 
 <style>
-  .insphero,
   .insp-hero {
     padding: var(--spacing-stack-lg) 0;
     text-align: center;
   }
 
   @media (max-width: 640px) {
-    .insphero,
     .insp-hero {
       padding: var(--spacing-stack-md) 0;
     }

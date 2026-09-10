@@ -3,16 +3,24 @@ import Layout from '@/layouts/Layout.astro';
 import Filters from '@/components/catalog/Filters.astro';
 import Search from '@/components/catalog/Search.astro';
 import ProductGrid from '@/components/catalog/ProductGrid.astro';
-import type { Perfume } from '@/data/types';
+import type { Perfume, GenderFilter } from '@/data/types';
 import perfumesData from '@/data/perfumes.json';
 
 const perfumes = perfumesData.perfumes as Perfume[];
 
-const searchIndex = perfumes.map((p) => ({ id: p.id, text: `${p.brand} ${p.name} ${p.olfactoryFamily}`.toLowerCase() }));
+const searchIndex = perfumes.map((p) => ({
+  id: p.id,
+  // Incluye notas: antes la búsqueda no encontraba por "vainilla", "oud", etc.
+  text: `${p.brand} ${p.name} ${p.olfactoryFamily} ${p.notes.top.join(' ')} ${p.notes.heart.join(' ')} ${p.notes.base.join(' ')}`.toLowerCase(),
+}));
 
 import { site } from '@/site.config';
 
 const BASE = site.basePath;
+// Filtro inicial desde la URL para el primer pintado (sin JS o antes de que
+// el JS corrija el chip activo, evitaba el flash de "TODOS").
+const urlFilter = Astro.url.searchParams.get('filter');
+const initialFilter: GenderFilter = urlFilter === 'masculino' || urlFilter === 'femenino' || urlFilter === 'unisex' ? urlFilter : 'all';
 const catalogDescription = `Catálogo de decants de 5ml de perfumes árabes originales en ${site.addressLocality}. Filtra por género y busca tu fragancia favorita.`;
 const catalogSchema = {
   '@context': 'https://schema.org',
@@ -42,7 +50,7 @@ const catalogSchema = {
     <div class="container">
       <div class="toolbar-content">
         <div class="toolbar-filters">
-          <Filters />
+          <Filters currentFilter={initialFilter} />
         </div>
         <div class="toolbar-search">
           <Search />
@@ -76,6 +84,9 @@ const catalogSchema = {
   let currentFilter = 'all';
   let currentSearch = '';
   let fuzzyMatches: Set<string> | null = null;
+  // Token anti-race: el tecleo rápido dispara varias búsquedas Fuse en
+  // paralelo; solo la última puede escribir el Set.
+  let searchSeq = 0;
 
   function readUrlState() {
     const params = new URL(window.location.href).searchParams;
@@ -130,10 +141,11 @@ const catalogSchema = {
 
   // Recalcula el set de fuzzy matches para la búsqueda actual. Se usa al
   // escribir (search:change) y al navegar con atrás/adelante (popstate),
-  // porque el Set viejo no sirve para el query nuevo.
-  async function refreshFuzzyMatches() {
-    if (!currentSearch) {
-      fuzzyMatches = null;
+  // porque el Set viejo no sirve para el query nuevo. Devuelve el Set (o
+  // null) y solo lo publica si sigue siendo la búsqueda vigente.
+  async function refreshFuzzyMatches(query: string, seq: number): Promise<void> {
+    if (!query) {
+      if (seq === searchSeq) fuzzyMatches = null;
       return;
     }
     try {
@@ -141,10 +153,10 @@ const catalogSchema = {
       const indexEl = document.getElementById('search-index');
       const indexData: { id: string; text: string }[] = indexEl ? JSON.parse(indexEl.textContent || '[]') : [];
       const fuse = new Fuse(indexData, { keys: ['text'], threshold: 0.4, ignoreLocation: true });
-      const results = fuse.search(currentSearch);
-      fuzzyMatches = new Set(results.map((r) => r.item.id));
+      const results = fuse.search(query);
+      if (seq === searchSeq) fuzzyMatches = new Set(results.map((r) => r.item.id));
     } catch {
-      fuzzyMatches = null;
+      if (seq === searchSeq) fuzzyMatches = null;
     }
   }
 
@@ -175,7 +187,7 @@ const catalogSchema = {
     window.history.pushState({}, '', url);
 
     // Búsqueda fuzzy con Fuse.js (lazy-loaded)
-    await refreshFuzzyMatches();
+    await refreshFuzzyMatches(currentSearch, ++searchSeq);
 
     applyFilters();
     if (currentSearch) {
@@ -190,7 +202,8 @@ const catalogSchema = {
     readUrlState();
     syncSearchInput();
     updateActiveChip();
-    void refreshFuzzyMatches().then(() => applyFilters());
+    const seq = ++searchSeq;
+    void refreshFuzzyMatches(currentSearch, seq).then(() => applyFilters());
   });
 
   onPageLoad('catalogo', () => {

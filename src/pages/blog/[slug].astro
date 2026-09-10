@@ -32,7 +32,12 @@ const faq = guia.faq.map((f) => ({
   <article class="guia">
     <div class="container">
       <header class="guia-hero">
-        <p class="guia-breadcrumb"><a href={`${BASE}blog/`}>Guías</a> › {guia.title}</p>
+        <nav class="guia-breadcrumb" aria-label="Migas de pan">
+          <ol>
+            <li><a href={`${BASE}blog/`}>Guías</a></li>
+            <li aria-current="page">{guia.title}</li>
+          </ol>
+        </nav>
         <h1 class="guia-title">{guia.title}</h1>
         <p class="guia-meta">{guia.category} · {guia.mins} min</p>
         <p class="guia-intro">{guia.intro}</p>
@@ -104,6 +109,22 @@ const faq = guia.faq.map((f) => ({
     font-size: var(--font-label-sm-size);
     color: var(--color-on-surface-variant);
     margin: 0 0 var(--spacing-stack-sm);
+  }
+
+  .guia-breadcrumb ol {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px 8px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .guia-breadcrumb li + li::before {
+    content: '›';
+    margin-right: 8px;
+    color: var(--color-on-surface-variant);
   }
 
   .guia-breadcrumb a {

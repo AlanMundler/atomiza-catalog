@@ -24,13 +24,16 @@ const related = allPerfumes
   .slice(0, 4);
 
 const primarySize = perfume.sizes.find((s) => s.ml === 5) || perfume.sizes[0];
+const productImage = perfume.images[0]?.src;
 const productSchema = {
   '@context': 'https://schema.org',
   '@type': 'Product',
   name: `${perfume.brand} ${perfume.name}`,
   description: `${perfume.brand} ${perfume.name} - ${perfume.olfactoryFamily}. Decant de 5ml.`,
   brand: { '@type': 'Brand', name: perfume.brand },
-  image: new URL(assetUrl(perfume.images[0]?.src), Astro.site).href,
+  // Sin imagen real no se declara `image`: el placeholder interno invalida
+  // el schema para Google Merchant.
+  ...(productImage ? { image: new URL(assetUrl(productImage), Astro.site).href } : {}),
   offers: {
     '@type': 'Offer',
     priceCurrency: site.currency,

@@ -194,9 +194,12 @@ function getSize(p: Perfume) {
 
     cards.forEach((card) => {
       const isSelected = selected.some((s) => s.slug === card.dataset.slug);
+      const isDisabled = !isSelected && ready;
       card.classList.toggle('trident-card--selected', isSelected);
       card.setAttribute('aria-pressed', String(isSelected));
-      card.classList.toggle('trident-card--full', !isSelected && ready);
+      card.classList.toggle('trident-card--full', isDisabled);
+      // pointer-events:none no frena el teclado: disabled sí.
+      card.disabled = isDisabled;
     });
   }
 
@@ -211,6 +214,9 @@ function getSize(p: Perfume) {
   }
 
   onPageLoad('tridentes', () => {
+    // El estado vivía en el módulo: al volver con el router se conservaba la
+    // selección anterior. Se resetea en cada vista de la página.
+    selected = [];
     const cards = Array.from(document.querySelectorAll('[data-trident-card]')) as HTMLButtonElement[];
     cards.forEach((card) => {
       bindOnce(card, () => {

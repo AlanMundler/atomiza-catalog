@@ -60,8 +60,9 @@ const {
   }
 
   .input::placeholder {
-    color: var(--color-outline-variant);
-    opacity: 0.6;
+    /* #4e4639 al 60% sobre fondo oscuro no llegaba a 2:1 (WCAG 1.4.3). */
+    color: var(--color-on-surface-variant);
+    opacity: 0.85;
   }
 
   .input:focus,

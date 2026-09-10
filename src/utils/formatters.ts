@@ -66,6 +66,12 @@ export function resolveCartItems(
   return resolved;
 }
 
+/** Una línea de texto plano: sin saltos (evita falsificar líneas del pedido
+ * con `\n`) y con largo acotado. */
+function oneLine(value: string, max: number): string {
+  return value.replace(/[\r\n]+/g, ' ').trim().slice(0, max);
+}
+
 export function generateOrderText(
   items: CartItem[],
   perfumesMap: Map<string, Perfume>,
@@ -73,6 +79,8 @@ export function generateOrderText(
   customerContact: string,
   channel: OrderChannel = 'whatsapp'
 ): string {
+  customerName = oneLine(customerName, 80);
+  customerContact = oneLine(customerContact, 120);
   const resolved = resolveCartItems(items, perfumesMap);
   const orderable = resolved.filter((r) => r.available);
   const excludedCount = resolved.length - orderable.length;

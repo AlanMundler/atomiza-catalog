@@ -53,13 +53,18 @@ const hasTracking = Boolean(site.gaMeasurementId || site.metaPixelId || site.tik
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={title} />
     <meta property="og:type" content={ogType} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
+    <meta name="twitter:image:alt" content={title} />
+    <meta name="theme-color" content="#121414" />
     <link rel="icon" type="image/svg+xml" href={assetUrl('/favicon.svg')} />
-    <link rel="preload" as="font" type="font/woff2" crossorigin href={new URL('/fonts/Montserrat-Variable.woff2', Astro.site).href} />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href={assetUrl('/fonts/Montserrat-Variable.woff2')} />
     {preloadImages.map((src) => (
       <link rel="preload" as="image" href={new URL(assetUrl(src), Astro.site).href} />
     ))}
@@ -257,7 +262,7 @@ const hasTracking = Boolean(site.gaMeasurementId || site.metaPixelId || site.tik
   <body>
     <a href="#main-content" class="skip-link">Saltar al contenido</a>
     <Header />
-    <main id="main-content" role="main" tabindex="-1">
+    <main id="main-content" tabindex="-1">
       <slot>{children}</slot>
     </main>
     <Footer />
@@ -268,7 +273,7 @@ const hasTracking = Boolean(site.gaMeasurementId || site.metaPixelId || site.tik
       target="_blank"
       rel="noopener noreferrer"
       class="whatsapp-fab"
-      aria-label="WhatsApp"
+      aria-label="Consultar por WhatsApp"
     >
       <img src={assetUrl('images/icons/whatsapp.svg')} width="28" height="28" alt="" aria-hidden="true" />
     </a>

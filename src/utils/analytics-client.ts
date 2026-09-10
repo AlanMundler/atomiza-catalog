@@ -199,11 +199,22 @@ function initAnalytics(): void {
     })();
   });
 
-  // Búsqueda.
+  // Búsqueda. El query lo escribe el usuario y podría contener PII
+  // (un nombre o teléfono): se acota a 40 chars y se descartan dígitos,
+  // @menciones y + para no mandar datos personales a GA4.
+  function sanitizeSearchTerm(query: string): string {
+    return query
+      .replace(/[\r\n]+/g, ' ')
+      .replace(/[@+]/g, '')
+      .replace(/\d{4,}/g, '')
+      .trim()
+      .slice(0, 40);
+  }
+
   document.addEventListener('analytics:search', (e) => {
     if (!consent('analytics')) return;
-    const query = (e as CustomEvent<{ query?: string }>).detail?.query || '';
-    send('search', { search_term: query });
+    const query = sanitizeSearchTerm((e as CustomEvent<{ query?: string }>).detail?.query || '');
+    if (query) send('search', { search_term: query });
   });
 
   // Quiz.

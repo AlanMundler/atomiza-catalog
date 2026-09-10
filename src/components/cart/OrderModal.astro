@@ -22,7 +22,8 @@ import { assetUrl, site } from '@/site.config';
         </li>
         <li class="stepper-item">
           <span class="stepper-circle" aria-hidden="true">3</span>
-          <span class="stepper-label">Envío</span>
+          {/* "Envío" mentía: el envío se coordina fuera, en WhatsApp/Instagram. */}
+          <span class="stepper-label">Enviar</span>
         </li>
       </ol>
     </nav>
@@ -30,31 +31,33 @@ import { assetUrl, site } from '@/site.config';
 
     <div class="form-group">
       <label for="customer-name" class="form-label">Nombre completo</label>
-      <input 
-        type="text" 
-        id="customer-name" 
+      <input
+        type="text"
+        id="customer-name"
         class="form-input"
         placeholder="Juan Pérez"
         required
         maxlength="80"
         autocomplete="name"
+        aria-describedby="order-form-error"
       />
     </div>
 
     <div class="form-group">
       <label for="customer-contact" class="form-label">Contacto (WhatsApp o Instagram)</label>
-      <input 
-        type="text" 
-        id="customer-contact" 
+      <input
+        type="text"
+        id="customer-contact"
         class="form-input"
         placeholder="+54 9 11 1234-5678 / @usuario"
         required
         maxlength="120"
         autocomplete="tel"
+        aria-describedby="order-form-error"
       />
     </div>
 
-    <p class="form-error" data-form-error hidden role="alert"></p>
+    <p class="form-error" id="order-form-error" data-form-error hidden role="alert"></p>
 
     <div class="form-group">
       <label for="order-preview" class="form-label">Mensaje del pedido</label>
@@ -114,7 +117,7 @@ import { assetUrl, site } from '@/site.config';
 
 <script>
   import { getCart } from '@/utils/cart';
-  import { generateOrderText, buildWhatsAppLink } from '@/utils/formatters';
+  import { generateOrderText, buildWhatsAppLink, resolveCartItems } from '@/utils/formatters';
   import type { OrderChannel } from '@/utils/formatters';
   import { getPerfumesMap } from '@/utils/perfumes-client';
   import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
@@ -122,7 +125,7 @@ import { assetUrl, site } from '@/site.config';
 
   const WHATSAPP_NUMBER = site.whatsappNumber;
   const INSTAGRAM_HANDLE = site.instagramHandle;
-  const ORDER_FORM_STORAGE_KEY = 'atomiza-order-form';
+  const ORDER_FORM_STORAGE_KEY = site.storage.orderForm;
 
   function loadSavedForm(): { name: string; contact: string } {
     try {
@@ -167,8 +170,10 @@ import { assetUrl, site } from '@/site.config';
 
   // El modal antes enviaba el pedido aunque nombre/contacto estuvieran
   // vacíos (el texto usaba `[Tu nombre]` como placeholder). Ahora se valida
-  // y se bloquea el envío hasta completar los datos.
-  function validateOrder(): string | null {
+  // y se bloquea el envío hasta completar los datos. Además se valida contra
+  // items COMPRABLES (con stock en el catálogo vivo): si todo quedó SIN
+  // STOCK después de agregar, el pedido saldría con TOTAL $0.
+  async function validateOrder(): Promise<string | null> {
     if (getCart().items.length === 0) {
       return 'Tu carrito está vacío. Agregá al menos un decant antes de enviar.';
     }
@@ -178,13 +183,26 @@ import { assetUrl, site } from '@/site.config';
     if ((contactInput?.value.trim() || '').length < 3) {
       return 'Escribí tu WhatsApp o tu Instagram para poder contactarte.';
     }
+    try {
+      const orderable = resolveCartItems(getCart().items, await getPerfumesMap())
+        .filter((r) => r.available);
+      if (orderable.length === 0) {
+        return 'Los perfumes de tu carrito quedaron sin stock. Sacalos y elegí otros del catálogo.';
+      }
+    } catch {
+      // Sin catálogo no se puede validar stock: se deja pasar, el texto del
+      // pedido igual se arma contra el catálogo vivo al enviar.
+    }
     return null;
   }
 
   function showFormError(message: string | null): boolean {
     const modal = document.querySelector('#order-modal');
     const errorEl = modal?.querySelector('[data-form-error]') as HTMLElement | null;
-    if (!errorEl) return message !== null;
+    const invalid = message !== null;
+    if (nameInput) nameInput.setAttribute('aria-invalid', String(invalid && (nameInput.value.trim().length < 2)));
+    if (contactInput) contactInput.setAttribute('aria-invalid', String(invalid && (contactInput.value.trim().length < 3)));
+    if (!errorEl) return invalid;
     if (!message) {
       errorEl.hidden = true;
       errorEl.textContent = '';
@@ -270,7 +288,7 @@ import { assetUrl, site } from '@/site.config';
     }
     if (whatsappBtn) {
       bindOnce(whatsappBtn, (el) => el.addEventListener('click', async () => {
-        if (showFormError(validateOrder())) return;
+        if (showFormError(await validateOrder())) return;
         const text = await buildOrderText();
         const url = buildWhatsAppLink(WHATSAPP_NUMBER, text);
         const win = window.open(url, '_blank', 'noopener');
@@ -292,12 +310,12 @@ import { assetUrl, site } from '@/site.config';
     }
     if (instagramBtn) {
       bindOnce(instagramBtn, (el) => el.addEventListener('click', async () => {
-        if (showFormError(validateOrder())) return;
+        if (showFormError(await validateOrder())) return;
         const text = await buildOrderText('instagram');
         const label = el.querySelector('.order-modal-btn-label');
         const originalText = label?.textContent || '';
         const copied = await copyTextToClipboard(text);
-        window.open(`https://ig.me/m/${INSTAGRAM_HANDLE}`, '_blank', 'noopener');
+        window.open(`https://ig.me/m/${INSTAGRAM_HANDLE}`, '_blank', 'noopener,noreferrer');
         if (copied && label) {
           label.textContent = '¡Copiado!';
           setTimeout(() => {
@@ -309,6 +327,9 @@ import { assetUrl, site } from '@/site.config';
     if (copyBtn) {
       bindOnce(copyBtn, (el) => el.addEventListener('click', async () => {
         if (!preview) return;
+        // Copiar también valida: antes se copiaba el mensaje con los
+        // placeholders `[Tu nombre]` sin avisar que era inválido.
+        if (showFormError(await validateOrder())) return;
         const label = el.querySelector('.order-modal-btn-label');
         const originalText = label?.textContent || '';
         const copied = await copyTextToClipboard(preview.value);
@@ -398,7 +419,7 @@ import { assetUrl, site } from '@/site.config';
 
   .form-input::placeholder {
     color: var(--color-on-surface-variant);
-    opacity: 0.5;
+    opacity: 0.85;
   }
 
   .form-input:focus {

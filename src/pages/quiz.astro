@@ -164,6 +164,9 @@ import type { Perfume } from '@/data/types';
 
     bindOnce(restartBtn!, (el) => {
       el.addEventListener('click', () => {
+        // Sin esto, la segunda pasada reutilizaba respuestas de la anterior
+        // en los pasos que el usuario no re-seleccionaba.
+        for (const k of Object.keys(answers)) delete answers[k as keyof QuizAnswers];
         steps.forEach((step) => {
           step.querySelectorAll('.quiz-option').forEach((option) => option.setAttribute('aria-pressed', 'false'));
         });
@@ -177,6 +180,12 @@ import type { Perfume } from '@/data/types';
 
     function resultCard(perfume: Perfume): HTMLElement {
       const size = perfume.sizes.find((s) => s.ml === 5) ?? perfume.sizes[0];
+      if (!size) {
+        const fallback = document.createElement('p');
+        fallback.className = 'quiz-result-empty';
+        fallback.textContent = `${perfume.brand} ${perfume.name} no tiene tallas configuradas por el momento.`;
+        return fallback;
+      }
       const image = perfume.images[0];
       const stockStatus = getStockStatus(size);
       const stockLabel = getStockLabel(stockStatus);

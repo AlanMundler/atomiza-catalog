@@ -89,7 +89,8 @@ const faqs = [
       <div class="home-perfume-grid" id="home-perfume-grid">
         {inStockPerfumes.map((perfume, index) => (
           <div class="home-perfume-item" hidden={index >= 4}>
-            <ProductCard perfume={perfume} />
+            {/* Las 4 visibles van eager: antes todas eran lazy y el LCP esperaba. */}
+            <ProductCard perfume={perfume} eager={index < 4} />
           </div>
         ))}
       </div>
@@ -156,13 +157,13 @@ const faqs = [
       <h2 id="social-proof-title" class="section-title">Lo que dicen nuestros clientes</h2>
       <div class="testimonial-grid">
         <figure class="testimonial-img">
-          <img src={assetUrl('images/testimonios/1.avif')} alt="WhatsApp de cliente: 'Me encantó el Qaed Al Fursan, huele increíble'" loading="lazy" width="884" height="1600" />
+          <img src={assetUrl('images/testimonios/1.avif')} alt="Captura de chat de un cliente satisfecho 1" loading="lazy" width="884" height="1600" />
         </figure>
         <figure class="testimonial-img">
-          <img src={assetUrl('images/testimonios/2.avif')} alt="WhatsApp de cliente: 'El tridente valió la pena, tres aromas por menos de lo que cuesta uno'" loading="lazy" width="882" height="1600" />
+          <img src={assetUrl('images/testimonios/2.avif')} alt="Captura de chat de un cliente satisfecho 2" loading="lazy" width="882" height="1600" />
         </figure>
         <figure class="testimonial-img">
-          <img src={assetUrl('images/testimonios/3.avif')} alt="WhatsApp de cliente: 'Llegó rápido a Córdoba, todo bien sellado y original'" loading="lazy" width="904" height="1600" />
+          <img src={assetUrl('images/testimonios/3.avif')} alt="Captura de chat de un cliente satisfecho 3" loading="lazy" width="904" height="1600" />
         </figure>
       </div>
 

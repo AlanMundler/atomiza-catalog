@@ -9,22 +9,23 @@ const { position = 'right', id, class: className = '' } = Astro.props;
 ---
 
 <div class={`drawer-root ${className}`} data-drawer-root {id}>
-  <aside 
+  <aside
     class={`drawer drawer--${position}`}
     role="dialog"
     aria-modal="true"
     aria-label={position === 'right' ? 'Carrito de compras' : 'Menú de navegación'}
     inert
     aria-hidden="true"
+    tabindex="-1"
   >
     <div class="drawer-header">
       <slot name="header">
         <h2 class="drawer-title">Carrito</h2>
       </slot>
-      <button 
-        class="drawer-close" 
+      <button
+        class="drawer-close"
         data-drawer-close
-        aria-label="Cerrar"
+        aria-label={position === 'right' ? 'Cerrar carrito' : 'Cerrar menú'}
       >
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="18" y1="6" x2="6" y2="18"></line>

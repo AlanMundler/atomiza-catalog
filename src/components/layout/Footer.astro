@@ -8,8 +8,21 @@ const currentYear = new Date().getFullYear();
   <div class="footer-inner container">
     <div class="footer-main">
       <div class="footer-brand">
-        <span class="footer-logo">{site.name}</span>
+        <a href={BASE} class="footer-logo" aria-label={`${site.name} - inicio`}>{site.name}</a>
         <p class="footer-tagline">{site.tagline}</p>
+        <p class="footer-locality">{site.addressLocality}, {site.addressRegion}</p>
+      </div>
+      <nav class="footer-nav" aria-label="Secciones del sitio">
+        <a href={`${BASE}catalogo/`} class="footer-nav-link">Catálogo</a>
+        <a href={`${BASE}tridentes/`} class="footer-nav-link">Tridentes</a>
+        <a href={`${BASE}quiz/`} class="footer-nav-link">Descubrí tu perfume</a>
+        <a href={`${BASE}decants/`} class="footer-nav-link">Por aroma famoso</a>
+        <a href={`${BASE}envios/`} class="footer-nav-link">Envíos</a>
+      </nav>
+      <div class="footer-contact">
+        <a href={site.whatsappUrl} target="_blank" rel="noopener noreferrer" class="footer-nav-link">WhatsApp</a>
+        <a href={site.instagramUrl} target="_blank" rel="noopener noreferrer" class="footer-nav-link">Instagram @{site.instagramHandle}</a>
+        <a href={site.tiktokUrl} target="_blank" rel="noopener noreferrer" class="footer-nav-link">TikTok @{site.tiktokHandle}</a>
       </div>
     </div>
 
@@ -61,6 +74,11 @@ const currentYear = new Date().getFullYear();
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--color-on-surface);
+    text-decoration: none;
+  }
+
+  .footer-logo:hover {
+    color: var(--color-primary);
   }
 
   .footer-tagline {
@@ -68,6 +86,41 @@ const currentYear = new Date().getFullYear();
     font-size: var(--font-body-md-size);
     color: var(--color-on-surface-variant);
     margin: 4px 0 0;
+  }
+
+  .footer-locality {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    color: var(--color-on-surface-variant);
+    margin: 4px 0 0;
+  }
+
+  .footer-nav,
+  .footer-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+  }
+
+  @media (min-width: 768px) {
+    .footer-nav,
+    .footer-contact {
+      align-items: flex-start;
+    }
+  }
+
+  .footer-nav-link {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    color: var(--color-on-surface);
+    text-decoration: none;
+    padding: 6px 0;
+    transition: color var(--transition-duration) var(--transition-easing);
+  }
+
+  .footer-nav-link:hover {
+    color: var(--color-primary);
   }
 
   .footer-bottom {
@@ -95,8 +148,10 @@ const currentYear = new Date().getFullYear();
 
   .footer-legal {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     align-items: center;
-    gap: 24px;
+    gap: 12px 24px;
   }
 
   .footer-legal-link {

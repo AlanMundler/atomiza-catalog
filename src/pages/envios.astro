@@ -1,6 +1,8 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import { site } from '@/site.config';
+import { TRIDENT_DISCOUNT } from '@/utils/trident';
+import { formatPrice } from '@/utils/formatters';
 
 const shippingDescription = `Envío y entrega en mano de decants de perfumes árabes en ${site.addressLocality}, ${site.addressRegion}. Coordinamos fecha y punto de entrega por mensaje.`;
 const schema = {
@@ -48,7 +50,7 @@ const schema = {
       <article class="shipping-card">
         <h2 class="shipping-card-title">El tridente viaja junto</h2>
         <p class="shipping-card-text">
-          Armá tu tridente (3 decants, ahorrás $2.000) y te llega todo junto. Menos envíos, más fragancias para probar.
+          Armá tu tridente (3 decants, ahorrás {formatPrice(TRIDENT_DISCOUNT)}) y te llega todo junto. Menos envíos, más fragancias para probar.
         </p>
       </article>
     </div>

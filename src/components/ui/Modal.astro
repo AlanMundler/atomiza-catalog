@@ -7,7 +7,10 @@ interface Props {
 }
 
 const { id = '', title, class: className = '', children } = Astro.props;
-const modalId = id || `modal-${Math.random().toString(36).slice(2, 9)}`;
+// Contador determinista por build (Math.random rompía SSR/hidratación).
+let __modalSeq = (globalThis as any).__atzModalSeq ?? 0;
+(globalThis as any).__atzModalSeq = __modalSeq + 1;
+const modalId = id || `modal-${__modalSeq}`;
 ---
 
 <div class="modal-root" id={modalId} data-modal-root>
@@ -19,10 +22,10 @@ const modalId = id || `modal-${Math.random().toString(36).slice(2, 9)}`;
     aria-labelledby={title ? `${modalId}-title` : undefined}
   >
     {title && <h2 id={`${modalId}-title`} class="modal-title">{title}</h2>}
-    <button 
-      class="modal-close" 
+    <button
+      class="modal-close"
       data-modal-close
-      aria-label="Cerrar modal"
+      aria-label="Cerrar ventana"
     >
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <line x1="18" y1="6" x2="6" y2="18"></line>

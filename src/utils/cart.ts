@@ -52,7 +52,11 @@ function getStoredCart(): CartState {
 }
 
 function saveCart(cart: CartState): void {
-  localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+  try {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+  } catch {
+    // Cuota llena o modo privado: el carrito vive solo en memoria.
+  }
 }
 
 function findItemIndex(items: CartItem[], perfumeId: string, size: PerfumeSize): number {
@@ -75,7 +79,13 @@ export function addToCart(item: CartItem): CartState {
       cart.items[existingIndex].quantity + incoming,
       item.size.stock
     );
-    cart.items[existingIndex].quantity = newQuantity;
+    // stock 0 (o cantidad resultante 0) elimina el item: nunca se guarda
+    // un fantasma con quantity 0 que el drawer trataría como no-vacío.
+    if (newQuantity <= 0) {
+      cart.items.splice(existingIndex, 1);
+    } else {
+      cart.items[existingIndex].quantity = newQuantity;
+    }
   } else {
     const quantity = Math.min(incoming, item.size.stock);
     if (quantity > 0) {
@@ -111,15 +121,40 @@ export function updateCartItemQuantity(
   const qty = Number.isInteger(quantity) ? quantity : 1;
 
   if (index >= 0) {
-    if (qty <= 0) {
+    const capped = Math.min(qty, size.stock);
+    if (qty <= 0 || capped <= 0) {
       cart.items.splice(index, 1);
     } else {
-      cart.items[index].quantity = Math.min(qty, size.stock);
+      cart.items[index].quantity = capped;
     }
     cart.updatedAt = Date.now();
     saveCart(cart);
   }
 
+  return cart;
+}
+
+/**
+ * Cambia la cantidad en `delta` (+1/-1) leyendo el carrito fresco dentro de
+ * la misma operación. Evita el lost-update de leer-modificar-escribir con
+ * dos clicks rápidos (cada handler leía la misma cantidad vieja).
+ */
+export function changeCartItemQuantity(
+  perfumeId: string,
+  size: PerfumeSize,
+  delta: number
+): CartState {
+  const cart = getStoredCart();
+  const index = findItemIndex(cart.items, perfumeId, size);
+  if (index < 0) return cart;
+  const next = Math.min(cart.items[index].quantity + delta, size.stock);
+  if (next <= 0) {
+    cart.items.splice(index, 1);
+  } else {
+    cart.items[index].quantity = next;
+  }
+  cart.updatedAt = Date.now();
+  saveCart(cart);
   return cart;
 }
 

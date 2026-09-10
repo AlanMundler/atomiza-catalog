@@ -7,9 +7,11 @@ import type { Perfume } from '@/data/types';
 
 interface Props {
   perfume: Perfume;
+  /** true en las cards above-the-fold (home): eager + prioridad alta (LCP). */
+  eager?: boolean;
 }
 
-const { perfume } = Astro.props;
+const { perfume, eager = false } = Astro.props;
 const mainImage = assetUrl(perfume.images[0]?.src);
 const mainAlt = perfume.images[0]?.alt || `${perfume.brand} ${perfume.name}`;
 
@@ -32,11 +34,12 @@ const isVector = (perfume.images[0]?.src || '').toLowerCase().endsWith('.svg');
   data-search={`${perfume.brand} ${perfume.name} ${perfume.olfactoryFamily}`.toLowerCase()}
 >
   <div class="product-card-image-wrapper">
-    <img 
-      src={mainImage} 
-      alt={mainAlt} 
+    <img
+      src={mainImage}
+      alt={mainAlt}
       class={`product-card-image${isVector ? ' product-card-image--large' : ''}`}
-      loading="lazy"
+      loading={eager ? 'eager' : 'lazy'}
+      fetchpriority={eager ? 'high' : undefined}
       width="400"
       height="400"
     />
@@ -153,6 +156,7 @@ const isVector = (perfume.images[0]?.src || '').toLowerCase().endsWith('.svg');
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     overflow: hidden;
   }
 
