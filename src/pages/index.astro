@@ -71,7 +71,7 @@ const faqs = [
   }).replace(/</g, '\\u003c')} />
   <button type="button" class="promo-strip" data-open-tridente aria-haspopup="dialog">
     <span aria-hidden="true">🎁</span>
-    <span><strong>Promociones:</strong> 3 decants = {formatPrice(TRIDENT_DISCOUNT)} menos</span>
+    <span class="promo-strip-text"><strong>Promociones:</strong> 3 decants = {formatPrice(TRIDENT_DISCOUNT)} menos</span>
     <span class="promo-strip-cta" aria-hidden="true">Ver →</span>
   </button>
   <section class="hero" aria-labelledby="hero-heading">
@@ -402,6 +402,29 @@ const faqs = [
 
   .promo-strip strong {
     color: var(--color-primary);
+  }
+
+  .promo-strip-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Celu: todo en una línea (texto compacto, sin wrap). */
+  @media (max-width: 767px) {
+    .promo-strip {
+      gap: 8px;
+      padding: 10px 12px;
+      font-size: 13px;
+    }
+  }
+
+  /* PC: hay ancho de sobra, se esparce de borde a borde. */
+  @media (min-width: 768px) {
+    .promo-strip {
+      justify-content: space-between;
+      padding: 10px 32px;
+    }
   }
 
   .promo-strip-cta {
