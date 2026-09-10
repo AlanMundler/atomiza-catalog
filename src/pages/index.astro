@@ -69,6 +69,11 @@ const faqs = [
       acceptedAnswer: { '@type': 'Answer', text: faq.answer },
     })),
   }).replace(/</g, '\\u003c')} />
+  <button type="button" class="promo-strip" data-open-tridente aria-haspopup="dialog">
+    <span aria-hidden="true">🎁</span>
+    <span><strong>Promociones:</strong> 3 decants = {formatPrice(TRIDENT_DISCOUNT)} menos</span>
+    <span class="promo-strip-cta" aria-hidden="true">Ver →</span>
+  </button>
   <section class="hero" aria-labelledby="hero-heading">
     <div class="container">
       <h1 id="hero-heading" class="hero-title">{site.hero.title} <strong>{site.hero.titleHighlight}</strong></h1>
@@ -82,14 +87,6 @@ const faqs = [
       </p>
     </div>
   </section>
-
-  <div class="container">
-    <button type="button" class="promo-strip" data-open-tridente aria-haspopup="dialog">
-      <span aria-hidden="true">🎁</span>
-      <span><strong>Promociones:</strong> 3 decants = {formatPrice(TRIDENT_DISCOUNT)} menos</span>
-      <span class="promo-strip-cta" aria-hidden="true">Ver →</span>
-    </button>
-  </div>
 
   <TridenteModal />
 
@@ -371,22 +368,25 @@ const faqs = [
     text-underline-offset: 2px;
   }
 
-  /* Tira de promociones: abre el modal del tridente sin salir de la home. */
+  /* Tira de promociones a todo el ancho, pegada al header: abre el modal
+     del tridente sin salir de la home. */
   .promo-strip {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
     width: 100%;
-    margin: var(--spacing-stack-sm) 0 0;
-    padding: 12px 16px;
-    min-height: 52px;
+    margin: 0;
+    padding: 10px 16px;
+    min-height: 48px;
     font-family: var(--font-family);
     font-size: var(--font-body-md-size);
     color: var(--color-on-surface);
-    background-color: rgba(197, 160, 89, 0.08);
-    border: var(--border-width) solid var(--color-primary);
-    border-radius: var(--border-radius);
+    text-align: center;
+    background-color: rgba(197, 160, 89, 0.1);
+    border: none;
+    border-bottom: var(--border-width) solid var(--color-primary);
+    border-radius: 0;
     cursor: pointer;
     transition: background-color var(--transition-duration) var(--transition-easing);
   }
