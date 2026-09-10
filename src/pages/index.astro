@@ -467,12 +467,17 @@ const faqs = [
     white-space: nowrap;
   }
 
-  /* Celu: una promo por vez, rotando con fundido. */
+  /* Celu: una promo por vez, rotando con fundido; todo junto y centrado
+     (sin el flex:1 que separaba regalo y CTA a los bordes). */
   @media (max-width: 767px) {
     .promo-strip {
       gap: 8px;
       padding: 10px 12px;
       font-size: 13px;
+    }
+
+    .promo-strip-items {
+      flex: 0 1 auto;
     }
   }
 
