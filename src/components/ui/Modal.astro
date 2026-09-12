@@ -41,12 +41,7 @@ const modalId = id || `modal-${__modalSeq}`;
 
 <script>
   import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
-
-  function resetBodyOverflowIfClosed() {
-    if (!document.querySelector('.drawer--open') && !document.querySelector('dialog[open]')) {
-      document.body.style.overflow = '';
-    }
-  }
+  import { resetBodyOverflowIfClosed } from '@/utils/body-scroll';
 
   onWindowOnce('modal-escape', 'keydown', (e) => {
     if ((e as KeyboardEvent).key === 'Escape') {

@@ -1,8 +1,6 @@
 import type { CartItem, Perfume, PerfumeSize } from '@/data/types';
 import { site } from '@/site.config';
 import { descuentoTridente, tridentesCompletos } from '@/utils/trident';
-// Nota de ciclo: trident.ts importa formatPrice de acá, pero solo lo usa en
-// tiempo de ejecución (nunca al evaluar el módulo), así que el ciclo es seguro.
 
 export function formatPrice(price: number): string {
   if (!Number.isFinite(price)) return '$—';

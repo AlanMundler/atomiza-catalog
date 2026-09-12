@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { 
-  getCart, 
-  addToCart, 
-  removeFromCart, 
-  updateCartItemQuantity, 
+import {
+  getCart,
+  addToCart,
+  removeFromCart,
+  changeCartItemQuantity,
   clearCart,
   getCartItemCount
 } from '@/utils/cart';
@@ -161,35 +161,35 @@ describe('cart utilities', () => {
     });
   });
 
-  describe('updateCartItemQuantity', () => {
-    it('updates quantity for existing item', () => {
+  describe('changeCartItemQuantity', () => {
+    it('aplica el delta sobre la cantidad guardada (atómico)', () => {
       const sizeWithStock: PerfumeSize = { ml: 5, price: 32000, stock: 10 };
       localStorage.setItem('atomiza-cart', JSON.stringify({
         items: [{ perfumeId: 'tobacco-vanille', size: sizeWithStock, quantity: 1 }],
         updatedAt: Date.now()
       }));
-      
-      const cart = updateCartItemQuantity('tobacco-vanille', sizeWithStock, 3);
+
+      const cart = changeCartItemQuantity('tobacco-vanille', sizeWithStock, 2);
       expect(cart.items[0].quantity).toBe(3);
     });
 
-    it('removes item when quantity is set to 0', () => {
+    it('elimina el item cuando el delta lo deja en 0', () => {
       localStorage.setItem('atomiza-cart', JSON.stringify({
         items: [mockCartItem1],
         updatedAt: Date.now()
       }));
-      
-      const cart = updateCartItemQuantity('tobacco-vanille', mockPerfumeSize, 0);
+
+      const cart = changeCartItemQuantity('tobacco-vanille', mockPerfumeSize, -1);
       expect(cart.items).toHaveLength(0);
     });
 
-    it('caps quantity at available stock', () => {
+    it('recorta contra el stock disponible', () => {
       localStorage.setItem('atomiza-cart', JSON.stringify({
         items: [mockCartItem1],
         updatedAt: Date.now()
       }));
-      
-      const cart = updateCartItemQuantity('tobacco-vanille', mockPerfumeSize, 10);
+
+      const cart = changeCartItemQuantity('tobacco-vanille', mockPerfumeSize, 10);
       expect(cart.items[0].quantity).toBe(2); // Stock limit
     });
   });

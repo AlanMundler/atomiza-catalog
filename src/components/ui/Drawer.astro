@@ -46,12 +46,7 @@ const { position = 'right', id, class: className = '' } = Astro.props;
 
 <script>
   import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
-
-  function resetBodyOverflowIfClosed() {
-    if (!document.querySelector('.drawer--open') && !document.querySelector('dialog[open]')) {
-      document.body.style.overflow = '';
-    }
-  }
+  import { resetBodyOverflowIfClosed } from '@/utils/body-scroll';
 
   function getFocusable(drawer: Element): HTMLElement[] {
     return Array.from(

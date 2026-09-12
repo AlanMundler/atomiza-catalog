@@ -111,29 +111,6 @@ export function removeFromCart(perfumeId: string, size: PerfumeSize): CartState 
   return cart;
 }
 
-export function updateCartItemQuantity(
-  perfumeId: string,
-  size: PerfumeSize,
-  quantity: number
-): CartState {
-  const cart = getStoredCart();
-  const index = findItemIndex(cart.items, perfumeId, size);
-  const qty = Number.isInteger(quantity) ? quantity : 1;
-
-  if (index >= 0) {
-    const capped = Math.min(qty, size.stock);
-    if (qty <= 0 || capped <= 0) {
-      cart.items.splice(index, 1);
-    } else {
-      cart.items[index].quantity = capped;
-    }
-    cart.updatedAt = Date.now();
-    saveCart(cart);
-  }
-
-  return cart;
-}
-
 /**
  * Cambia la cantidad en `delta` (+1/-1) leyendo el carrito fresco dentro de
  * la misma operación. Evita el lost-update de leer-modificar-escribir con
