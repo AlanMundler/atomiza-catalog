@@ -1,15 +1,12 @@
 ---
 interface Props {
-  id?: string;
-  title?: string;
+  id: string;
+  title: string;
   class?: string;
 }
 
-const { id = '', title, class: className = '' } = Astro.props;
-// Contador determinista por build (Math.random rompía SSR/hidratación).
-let __modalSeq = globalThis.__atzModalSeq ?? 0;
-globalThis.__atzModalSeq = __modalSeq + 1;
-const modalId = id || `modal-${__modalSeq}`;
+const { id, title, class: className = '' } = Astro.props;
+const modalId = id;
 ---
 
 <div class="modal-root" id={modalId} data-modal-root>
@@ -18,9 +15,9 @@ const modalId = id || `modal-${__modalSeq}`;
     data-modal-dialog
     role="dialog"
     aria-modal="true"
-    aria-labelledby={title ? `${modalId}-title` : undefined}
+    aria-labelledby={`${modalId}-title`}
   >
-    {title && <h2 id={`${modalId}-title`} class="modal-title">{title}</h2>}
+    <h2 id={`${modalId}-title`} class="modal-title">{title}</h2>
     <button
       class="modal-close"
       data-modal-close
@@ -82,10 +79,6 @@ const modalId = id || `modal-${__modalSeq}`;
 
         el.addEventListener('modal:open', () => open());
         el.addEventListener('modal:close', () => close());
-
-        // Store open/close helpers so other scripts can trigger them
-        el._modalOpen = open;
-        el._modalClose = close;
       });
     });
 

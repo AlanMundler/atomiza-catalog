@@ -19,9 +19,6 @@ export function resultEmpty(message: string): HTMLElement {
  */
 export function resultCard(perfume: Perfume, reason: string): HTMLElement {
   const size = perfume.sizes.find((s) => s.ml === 5) ?? perfume.sizes[0];
-  if (!size) {
-    return resultEmpty(`${perfume.brand} ${perfume.name} no tiene tallas configuradas por el momento.`);
-  }
   const image = perfume.images[0];
   const stockStatus = getStockStatus(size);
   const stockLabel = getStockLabel(stockStatus);

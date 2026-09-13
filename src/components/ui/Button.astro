@@ -1,10 +1,8 @@
 ---
 interface Props {
-  variant?: 'primary' | 'secondary' | 'ghost';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: 'primary' | 'secondary';
+  size?: 'md' | 'lg';
   disabled?: boolean;
-  type?: 'button' | 'submit' | 'reset';
-  title?: string;
   class?: string;
 }
 
@@ -12,14 +10,13 @@ const {
   variant = 'primary',
   size = 'md',
   disabled = false,
-  type = 'button',
   class: className = '',
   ...attrs
 } = Astro.props;
 ---
 
 <button
-  type={type}
+  type="button"
   disabled={disabled}
   class={`btn btn--${variant} btn--${size} ${className} ${disabled ? 'btn--disabled' : ''}`}
   {...attrs}

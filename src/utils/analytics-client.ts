@@ -168,17 +168,6 @@ function initAnalytics(): void {
     })();
   });
 
-  // Despacho explícito de select_item (por ahora no se usa en la app).
-  document.addEventListener('analytics:select_item', (e) => {
-    if (!consent('analytics')) return;
-    const detail = (e as CustomEvent<{ listName?: string; items?: { item_id?: string }[] }>).detail || {};
-    const ids = (detail.items || []).map((i) => i.item_id || '').filter(Boolean);
-    void (async () => {
-      const items = await buildItems(ids);
-      if (items.length > 0) send('select_item', { item_list_name: detail.listName || 'catalogo', items });
-    })();
-  });
-
   // select_item por delegación global al hacer click en cualquier product-card.
   document.addEventListener('click', (e) => {
     if (!consent('analytics')) return;

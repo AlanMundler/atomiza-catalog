@@ -75,7 +75,6 @@ import { assetUrl, site } from '@/site.config';
         class="order-modal-btn"
         data-send-whatsapp
         aria-label="Enviar por WhatsApp"
-        title="Enviar por WhatsApp"
       >
         <span class="order-modal-btn-icon">
           <img src={assetUrl('images/icons/whatsapp.svg')} width="24" height="24" alt="" aria-hidden="true" />
@@ -87,7 +86,6 @@ import { assetUrl, site } from '@/site.config';
         class="order-modal-btn"
         data-send-instagram
         aria-label="Enviar por Instagram"
-        title="Enviar por Instagram"
       >
         <span class="order-modal-btn-icon">
           <img src={assetUrl('images/icons/instagram.svg')} width="26" height="26" alt="" aria-hidden="true" />
@@ -95,11 +93,10 @@ import { assetUrl, site } from '@/site.config';
         <span class="order-modal-btn-label">Enviar por Instagram</span>
       </Button>
       <Button 
-        variant="ghost" 
+        variant="secondary" 
         class="order-modal-btn order-modal-btn--copy"
         data-copy-order
         aria-label="Copiar mensaje"
-        title="Copiar mensaje"
       >
         <span class="order-modal-btn-icon">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">

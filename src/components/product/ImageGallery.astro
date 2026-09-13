@@ -5,10 +5,9 @@ import type { PerfumeImage } from '@/data/types';
 interface Props {
   images: PerfumeImage[];
   alt: string;
-  large?: boolean;
 }
 
-const { images, alt, large = false } = Astro.props;
+const { images, alt } = Astro.props;
 const mainImage = assetUrl(images[0]?.src);
 const mainAlt = images[0]?.alt || alt;
 ---
@@ -18,7 +17,7 @@ const mainAlt = images[0]?.alt || alt;
     <img 
       src={mainImage} 
       alt={mainAlt} 
-      class={`image-gallery-main-image${large ? ' image-gallery-main-image--large' : ''}`}
+      class="image-gallery-main-image"
       loading="eager"
       fetchpriority="high"
       width="600"
@@ -108,17 +107,8 @@ const mainAlt = images[0]?.alt || alt;
     transition: transform var(--transition-duration) var(--transition-easing);
   }
 
-  .image-gallery-main-image--large {
-    padding: 2%;
-    transform: scale(1.1);
-  }
-
   .image-gallery-main-image:hover {
     transform: scale(1.08);
-  }
-
-  .image-gallery-main-image--large:hover {
-    transform: scale(1.122);
   }
 
   .image-gallery-thumbs {

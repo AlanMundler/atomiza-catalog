@@ -283,7 +283,7 @@ const faqs = [
     <div class="container">
       <h2 id="how-to-buy-title" class="section-title">Cómo comprar</h2>
       <div data-slider>
-      <div class="grid grid-cols-1 gap-[var(--spacing-stack-md)] sm:grid-cols-2 lg:grid-cols-4" data-slider-track>
+      <div class="how-grid" data-slider-track>
         <article class="step">
           <div class="step-number">01</div>
           <div class="step-content">
@@ -842,10 +842,27 @@ const faqs = [
     display: none;
   }
 
-  /* Celu: pasos en carrusel con swipe. El CSS propio (sin layer) pisa las
-     utilidades grid de Tailwind solo bajo 768px; en PC queda el grid. */
+  /* Grid de pasos en PC (1 → 2 → 4 columnas); carrusel con swipe en celu. */
+  .how-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-stack-md);
+  }
+
+  @media (min-width: 640px) {
+    .how-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .how-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
   @media (max-width: 767px) {
-    .how-to-buy .grid {
+    .how-to-buy .how-grid {
       display: flex;
       gap: 12px;
       overflow-x: auto;
@@ -854,7 +871,7 @@ const faqs = [
       padding-bottom: 4px;
     }
 
-    .how-to-buy .grid::-webkit-scrollbar {
+    .how-to-buy .how-grid::-webkit-scrollbar {
       display: none;
     }
 

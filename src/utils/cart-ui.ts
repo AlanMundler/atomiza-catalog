@@ -111,12 +111,11 @@ export function itemHtml(item: ResolvedCartItem): string {
   const available = item.available;
   const displayQuantity = available ? item.quantity : item.requestedQuantity;
   const lineTotal = available ? size.price * item.quantity : 0;
-  const isVector = (perfume.images?.[0]?.src || '').toLowerCase().endsWith('.svg');
   const es = escapeHtml;
 
   return `
     <li class="cart-item${available ? '' : ' cart-item--unavailable'}" data-perfume-id="${es(item.perfumeId)}" data-size-ml="${es(size.ml)}">
-      <div class="cart-item-image${isVector ? ' cart-item-image--square' : ''}">
+      <div class="cart-item-image">
         <img src="${es(image)}" alt="${es(brand)} ${es(name)}" loading="lazy" width="64" height="64" />
       </div>
       <div class="cart-item-info">

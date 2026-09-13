@@ -63,11 +63,6 @@ describe('resultCard', () => {
     expect(card.querySelector('.quiz-result-name')?.textContent).toBe('<b>boom</b>');
   });
 
-  it('devuelve estado vacío si el perfume no tiene tallas', () => {
-    const card = resultCard(makePerfume({ sizes: [] }), 'x');
-    expect(card.className).toBe('quiz-result-empty');
-  });
-
   it('el botón Agregar despacha cart:add y abre el carrito', () => {
     const card = resultCard(makePerfume(), 'x');
     const seen: { type: string; detail?: unknown }[] = [];

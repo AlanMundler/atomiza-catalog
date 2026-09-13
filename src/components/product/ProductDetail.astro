@@ -21,8 +21,6 @@ const selectedSize =
   perfume.sizes.find(s => s.ml === 5) ||
   perfume.sizes[0];
 const available = selectedSize ? isSizeAvailable(selectedSize) : false;
-// Las imágenes vectoriales (SVG) se muestran a mayor tamaño que las fotos
-const largeImage = (perfume.images[0]?.src || '').toLowerCase().endsWith('.svg');
 const waMessage = buildWhatsAppLink(
   site.whatsappNumber,
   `Hola! Quiero consultar por ${perfume.brand} ${perfume.name} (5ml, ${formatPrice(selectedSize.price)}). ¿Me ayudás?`
@@ -32,7 +30,7 @@ const waMessage = buildWhatsAppLink(
 <article class="product-detail" data-perfume-id={perfume.id}>
   <div class="product-detail-grid">
     <div class="product-detail-gallery">
-      <ImageGallery images={perfume.images} alt={`${perfume.brand} ${perfume.name}`} large={largeImage} />
+      <ImageGallery images={perfume.images} alt={`${perfume.brand} ${perfume.name}`} />
     </div>
 
     <div class="product-detail-info">
@@ -385,13 +383,6 @@ const waMessage = buildWhatsAppLink(
     font-size: var(--font-body-md-size);
     font-weight: 600;
     color: var(--color-error);
-    margin: 0;
-  }
-
-  .stock-countdown-text {
-    font-family: var(--font-family);
-    font-size: var(--font-label-sm-size);
-    color: var(--color-on-surface-variant);
     margin: 0;
   }
 

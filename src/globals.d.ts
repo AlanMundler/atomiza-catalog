@@ -20,14 +20,7 @@ declare global {
   interface Element {
     /** El elemento ya tiene su listener (bindOnce). */
     __vtBound?: boolean;
-    /** Helpers del modal guardados para dispararlos desde afuera. */
-    _modalOpen?: () => void;
-    _modalClose?: () => void;
   }
-
-  /** Contador de ids de modales sin `id` explícito (determinista por build). */
-  // eslint-disable-next-line no-var
-  var __atzModalSeq: number | undefined;
 }
 
 export {};

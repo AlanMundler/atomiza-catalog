@@ -1,16 +1,15 @@
 ---
 interface Props {
-  variant?: 'in-stock' | 'low-stock' | 'out-of-stock' | 'default';
+  variant: 'in-stock' | 'low-stock' | 'out-of-stock';
   class?: string;
 }
 
-const { variant = 'default', class: className = '', ...attrs } = Astro.props;
+const { variant, class: className = '', ...attrs } = Astro.props;
 
 const variantClasses = {
   'in-stock': 'chip--in-stock',
   'low-stock': 'chip--low-stock',
   'out-of-stock': 'chip--out-of-stock',
-  'default': 'chip--default'
 };
 ---
 
@@ -48,10 +47,5 @@ const variantClasses = {
   .chip--out-of-stock {
     color: var(--color-status-out-of-stock);
     border-color: var(--color-status-out-of-stock);
-  }
-
-  .chip--default {
-    color: var(--color-on-surface-variant);
-    border-color: var(--color-outline-variant);
   }
 </style>

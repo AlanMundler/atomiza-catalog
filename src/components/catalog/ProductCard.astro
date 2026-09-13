@@ -21,8 +21,6 @@ const primarySize = perfume.sizes.find(s => s.ml === 5) || perfume.sizes[0];
 const stockStatus = primarySize ? getStockStatus(primarySize) : 'out-of-stock';
 const stockLabel = getStockLabel(stockStatus);
 const isOutOfStock = stockStatus === 'out-of-stock';
-// Las imágenes vectoriales (SVG) se muestran a mayor tamaño que las fotos
-const isVector = (perfume.images[0]?.src || '').toLowerCase().endsWith('.svg');
 ---
 
 <a
@@ -37,7 +35,7 @@ const isVector = (perfume.images[0]?.src || '').toLowerCase().endsWith('.svg');
     <img
       src={mainImage}
       alt={mainAlt}
-      class={`product-card-image${isVector ? ' product-card-image--large' : ''}`}
+      class="product-card-image"
       loading={eager ? 'eager' : 'lazy'}
       fetchpriority={eager ? 'high' : undefined}
       width="400"
@@ -116,17 +114,8 @@ const isVector = (perfume.images[0]?.src || '').toLowerCase().endsWith('.svg');
     transition: transform 400ms var(--transition-easing);
   }
 
-  .product-card-image--large {
-    padding: 2%;
-    transform: scale(1.1);
-  }
-
   .product-card:hover .product-card-image {
     transform: scale(1.04);
-  }
-
-  .product-card:hover .product-card-image--large {
-    transform: scale(1.144);
   }
 
   .product-card-overlay {

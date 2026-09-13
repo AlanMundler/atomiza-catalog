@@ -48,14 +48,22 @@ export function buildResultsText(visible: number, filter: string, search: string
 }
 
 /**
- * Búsqueda difusa con Fuse.js (import dinámico: no va al bundle inicial).
- * Devuelve los IDs que matchean.
+ * Búsqueda difusa simple (sin deps) para <100 items.
+ * Devuelve los IDs que matchean por subsequencia ordenada (fuzzy match ligero).
  */
-export async function fuzzySearchIds(
+export function fuzzySearchIds(
   index: { id: string; text: string }[],
   query: string
-): Promise<Set<string>> {
-  const Fuse = (await import('fuse.js')).default;
-  const fuse = new Fuse(index, { keys: ['text'], threshold: 0.4, ignoreLocation: true });
-  return new Set(fuse.search(query).map((r) => r.item.id));
+): Set<string> {
+  const q = query.toLowerCase();
+  const ids = new Set<string>();
+  for (const item of index) {
+    const t = item.text.toLowerCase();
+    let qi = 0;
+    for (let ti = 0; ti < t.length && qi < q.length; ti++) {
+      if (t[ti] === q[qi]) qi++;
+    }
+    if (qi === q.length) ids.add(item.id);
+  }
+  return ids;
 }

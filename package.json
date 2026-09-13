@@ -20,11 +20,7 @@
     "size": "node scripts/size-check.mjs"
   },
   "dependencies": {
-    "@tailwindcss/vite": "^4.3.3",
-    "astro": "^7.2.1",
-    "daisyui": "^5.7.18",
-    "fuse.js": "^7.5.0",
-    "tailwindcss": "^4.3.3"
+    "astro": "^7.2.1"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
@@ -32,7 +28,6 @@
     "@playwright/test": "^1.62.1",
     "@vitest/coverage-v8": "^4.1.11",
     "jsdom": "^30.0.1",
-    "playwright": "^1.62.1",
     "sharp": "^0.35.3",
     "typescript": "^6.0.3",
     "vitest": "^4.1.11"
