@@ -22,6 +22,31 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
   const primary = perfume.sizes.find((s) => s.ml === 5) || perfume.sizes[0];
   return primary ? isSizeAvailable(primary) : false;
 });
+
+/**
+ * Mezcla determinista por día de build (mulberry32): el SSR pinta los 4
+ * finales directo, sin `hidden` ni shuffle en cliente. Antes se renderizaba
+ * todo el catálogo oculto y se reordenaba tras el primer paint (CLS + HTML
+ * desperdiciado + preload que no coincidía). Rota solo con cada deploy.
+ */
+function pickDaily<T>(items: T[], n: number, seed: number): T[] {
+  const pool = [...items];
+  let s = seed >>> 0 || 1;
+  const rand = () => {
+    s |= 0;
+    s = (s + 0x6d2b79f5) | 0;
+    let t = Math.imul(s ^ (s >>> 15), 1 | s);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  return pool.slice(0, n);
+}
+
+const homePerfumes = pickDaily(inStockPerfumes, 4, Math.floor(Date.now() / 86400000));
 // FAQ real de la home: el JSON-LD FAQPage refleja exactamente el contenido visible
 const faqs = [
   {
@@ -59,7 +84,7 @@ const faqs = [
 ] as const;
 ---
 
-<Layout title={homeTitle} description={homeDescription} preloadImages={inStockPerfumes[0] ? [inStockPerfumes[0].images[0]?.src] : []}>
+<Layout title={homeTitle} description={homeDescription} preloadImages={homePerfumes[0] ? [homePerfumes[0].images[0]?.src] : []}>
   <script is:inline type="application/ld+json" set:html={JSON.stringify({
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -101,10 +126,9 @@ const faqs = [
         <h2 id="home-perfumes-title" class="section-title">Decants en stock</h2>
       </div>
       <div class="home-perfume-grid" id="home-perfume-grid">
-        {inStockPerfumes.map((perfume, index) => (
-          <div class="home-perfume-item" hidden={index >= 4}>
-            {/* Las 4 visibles van eager: antes todas eran lazy y el LCP esperaba. */}
-            <ProductCard perfume={perfume} eager={index < 4} />
+        {homePerfumes.map((perfume) => (
+          <div class="home-perfume-item">
+            <ProductCard perfume={perfume} eager />
           </div>
         ))}
       </div>
@@ -304,24 +328,6 @@ const faqs = [
       }, 4000);
     });
 
-    // Pick 4 random perfumes from stock on each visit
-    onPageLoad('home', () => {
-      const grid = document.querySelector('#home-perfume-grid') as HTMLElement | null;
-      if (!grid || grid.__vtShuffled) return;
-      grid.__vtShuffled = true;
-
-      const items = Array.from(grid.querySelectorAll('.home-perfume-item')) as HTMLElement[];
-      if (items.length > 4) {
-        // Fisher–Yates shuffle (uniform distribution)
-        for (let i = items.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [items[i], items[j]] = [items[j], items[i]];
-        }
-        items.forEach((item, i) => {
-          item.hidden = i >= 4;
-        });
-      }
-    });
   </script>
 </Layout>
 

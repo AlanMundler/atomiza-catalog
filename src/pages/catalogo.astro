@@ -36,7 +36,7 @@ const catalogSchema = {
 };
 ---
 
-<Layout title={`Catálogo de decants de perfumes árabes en ${site.addressLocality}`} description={catalogDescription}>
+<Layout title={`Catálogo de decants de perfumes árabes en ${site.addressLocality}`} description={catalogDescription} ogImage="og-catalogo.jpg">
   <script is:inline type="application/json" id="search-index" set:html={JSON.stringify(searchIndex).replace(/</g, '\\u003c')} />
   <script is:inline type="application/ld+json" set:html={JSON.stringify(catalogSchema).replace(/</g, '\\u003c')} />
   <section class="catalog-hero" aria-labelledby="catalog-title">

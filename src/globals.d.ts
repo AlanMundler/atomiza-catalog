@@ -20,8 +20,6 @@ declare global {
   interface Element {
     /** El elemento ya tiene su listener (bindOnce). */
     __vtBound?: boolean;
-    /** El grid del home ya se mezcló en esta vista. */
-    __vtShuffled?: boolean;
     /** Helpers del modal guardados para dispararlos desde afuera. */
     _modalOpen?: () => void;
     _modalClose?: () => void;
