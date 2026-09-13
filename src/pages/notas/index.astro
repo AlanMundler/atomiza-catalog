@@ -1,15 +1,16 @@
 ---
 import Layout from '@/layouts/Layout.astro';
-import { getFamilias } from '@/data/familias';
+import { NOTAS, perfumesConNota } from '@/data/notas';
 import { formatPrice } from '@/utils/formatters';
+import perfumesData from '@/data/perfumes.json';
 import { site } from '@/site.config';
 import type { Perfume } from '@/data/types';
 
 const BASE = site.basePath;
-const familias = getFamilias();
+const perfumes = perfumesData.perfumes as Perfume[];
 
-const pageTitle = `Familias olfativas · ${site.addressLocality}`;
-const pageDescription = `Explorá decants de 5ml por familia olfativa: orientales, frescos, amaderados, dulces y más, en ${site.addressLocality}.`;
+const pageTitle = `Decants por nota olfativa · ${site.addressLocality}`;
+const pageDescription = `¿Te gustan los perfumes dulces, frescos o amaderados? Explorá decants de 5ml por nota: vainilla, bergamota, oud, rosa y más, en ${site.addressLocality}.`;
 
 function desdePrecio(items: Perfume[]): string {
   const precios = items.flatMap((p) => p.sizes.map((s) => s.price)).filter((n) => Number.isFinite(n));
@@ -18,43 +19,47 @@ function desdePrecio(items: Perfume[]): string {
 ---
 
 <Layout title={pageTitle} description={pageDescription}>
-  <section class="famhub-hero" aria-labelledby="famhub-title">
+  <section class="notahub-hero" aria-labelledby="notahub-title">
     <div class="container">
-      <h1 id="famhub-title" class="famhub-title">Buscá por familia olfativa</h1>
-      <p class="famhub-subtitle">
-        ¿Dulce, fresco, amaderado? Elegí la familia que va con vos y descubrí
-        sus decants de 5ml.
+      <h1 id="notahub-title" class="notahub-title">Buscá por nota</h1>
+      <p class="notahub-subtitle">
+        Vainilla, oud, rosa, bergamota: si hay una nota que te encanta,
+        acá están sus decants de 5ml.
       </p>
     </div>
   </section>
 
-  <section class="famhub-list" aria-label="Familias olfativas">
+  <section class="notahub-list" aria-label="Notas olfativas famosas">
     <div class="container">
-      <div class="famhub-grid">
-        {familias.map((f) => (
-          <a href={`${BASE}familias/${f.slug}/`} class="famhub-card">
-            <div class="famhub-card-body">
-              <h2 class="famhub-card-title">{f.name}</h2>
-              <p class="famhub-card-sub">{f.items.length} {f.items.length === 1 ? 'decant' : 'decants'}</p>
-            </div>
-            <span class="famhub-card-price">desde {desdePrecio(f.items)}</span>
-          </a>
-        ))}
+      <div class="notahub-grid">
+        {NOTAS.map((nota) => {
+          const items = perfumesConNota(perfumes, nota);
+          return (
+            <a href={`${BASE}notas/${nota.slug}/`} class="notahub-card">
+              <div class="notahub-card-body">
+                <h2 class="notahub-card-title">{nota.name}</h2>
+                <p class="notahub-card-sub">{nota.blurb}</p>
+                <p class="notahub-card-count">{items.length} {items.length === 1 ? 'decant' : 'decants'}</p>
+              </div>
+              <span class="notahub-card-price">desde {desdePrecio(items)}</span>
+            </a>
+          );
+        })}
       </div>
-      <div class="famhub-cta">
-        <a href={`${BASE}decants/`} class="famhub-alt-link">¿Buscás un aroma famoso puntual? →</a>
+      <div class="notahub-cta">
+        <a href={`${BASE}decants/`} class="notahub-alt-link">¿Buscás un aroma famoso puntual? →</a>
       </div>
     </div>
   </section>
 </Layout>
 
 <style>
-  .famhub-hero {
+  .notahub-hero {
     padding: var(--spacing-stack-md) 0 var(--spacing-stack-sm);
     text-align: center;
   }
 
-  .famhub-title {
+  .notahub-title {
     font-family: var(--font-family);
     font-size: var(--font-display-lg-size);
     font-weight: var(--font-display-lg-weight);
@@ -66,13 +71,13 @@ function desdePrecio(items: Perfume[]): string {
   }
 
   @media (max-width: 640px) {
-    .famhub-title {
+    .notahub-title {
       font-size: var(--font-headline-md-size);
       letter-spacing: var(--font-headline-md-tracking);
     }
   }
 
-  .famhub-subtitle {
+  .notahub-subtitle {
     font-family: var(--font-family);
     font-size: var(--font-body-lg-size);
     line-height: var(--font-body-lg-line-height);
@@ -82,28 +87,28 @@ function desdePrecio(items: Perfume[]): string {
   }
 
   @media (max-width: 640px) {
-    .famhub-subtitle {
+    .notahub-subtitle {
       font-size: var(--font-body-md-size);
     }
   }
 
-  .famhub-list {
+  .notahub-list {
     padding: var(--spacing-stack-lg) 0;
   }
 
-  .famhub-grid {
+  .notahub-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--spacing-stack-sm);
   }
 
   @media (min-width: 768px) {
-    .famhub-grid {
+    .notahub-grid {
       grid-template-columns: repeat(2, 1fr);
     }
   }
 
-  .famhub-card {
+  .notahub-card {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -116,11 +121,11 @@ function desdePrecio(items: Perfume[]): string {
     transition: border-color var(--transition-duration) var(--transition-easing);
   }
 
-  .famhub-card:hover {
+  .notahub-card:hover {
     border-color: var(--color-primary);
   }
 
-  .famhub-card-title {
+  .notahub-card-title {
     font-family: var(--font-family);
     font-size: var(--font-headline-md-size);
     font-weight: var(--font-headline-md-weight);
@@ -128,14 +133,23 @@ function desdePrecio(items: Perfume[]): string {
     margin: 0;
   }
 
-  .famhub-card-sub {
+  .notahub-card-sub {
     font-family: var(--font-family);
-    font-size: var(--font-label-sm-size);
+    font-size: var(--font-body-md-size);
     color: var(--color-on-surface-variant);
-    margin: 4px 0 0;
+    margin: 4px 0;
   }
 
-  .famhub-card-price {
+  .notahub-card-count {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+    margin: 0;
+  }
+
+  .notahub-card-price {
     font-family: var(--font-family);
     font-size: var(--font-label-sm-size);
     font-weight: var(--font-label-sm-weight);
@@ -145,12 +159,12 @@ function desdePrecio(items: Perfume[]): string {
     white-space: nowrap;
   }
 
-  .famhub-cta {
+  .notahub-cta {
     text-align: center;
     margin-top: var(--spacing-stack-md);
   }
 
-  .famhub-alt-link {
+  .notahub-alt-link {
     font-family: var(--font-family);
     font-size: var(--font-body-md-size);
     color: var(--color-primary);

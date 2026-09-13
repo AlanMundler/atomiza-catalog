@@ -1,0 +1,189 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import ProductCard from '@/components/catalog/ProductCard.astro';
+import { NOTAS, perfumesConNota } from '@/data/notas';
+import perfumesData from '@/data/perfumes.json';
+import { site } from '@/site.config';
+import type { Perfume } from '@/data/types';
+
+export function getStaticPaths() {
+  return NOTAS.map((nota) => ({
+    params: { nota: nota.slug },
+    props: { nota },
+  }));
+}
+
+const { nota } = Astro.props;
+const BASE = site.basePath;
+const perfumes = perfumesData.perfumes as Perfume[];
+const items = perfumesConNota(perfumes, nota);
+
+const pageTitle = `Decants con ${nota.name} · ${site.addressLocality}`;
+const pageDescription = `Decants de 5ml con nota de ${nota.name.toLowerCase()}: ${nota.blurb} Probalos sobre tu piel en ${site.addressLocality}.`;
+---
+
+<Layout title={pageTitle} description={pageDescription}>
+  <section class="notahero" aria-labelledby="nota-title">
+    <div class="container">
+      <p class="nota-breadcrumb">
+        <a href={`${BASE}notas/`}>Notas</a> › {nota.name}
+      </p>
+      <h1 id="nota-title" class="nota-title">Decants con {nota.name}</h1>
+      <p class="nota-subtitle">
+        {nota.blurb} {items.length} {items.length === 1 ? 'decant disponible' : 'decants disponibles'}.
+      </p>
+      <div class="nota-cta">
+        <a href={`${BASE}catalogo/`} class="btn btn--primary btn--md">Ver catálogo</a>
+      </div>
+    </div>
+  </section>
+
+  {items.length > 0 && (
+    <section class="nota-list" aria-label={`Decants con ${nota.name}`}>
+      <div class="container">
+        <div class="nota-grid">
+          {items.map((p) => (
+            <ProductCard perfume={p} />
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <section class="nota-other" aria-labelledby="nota-other-title">
+    <div class="container">
+      <h2 id="nota-other-title" class="nota-other-title">Otras notas</h2>
+      <div class="nota-other-list">
+        {NOTAS.filter((n) => n.slug !== nota.slug).map((n) => (
+          <a href={`${BASE}notas/${n.slug}/`} class="nota-other-link">{n.name}</a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .notahero {
+    padding: var(--spacing-stack-lg) 0;
+    text-align: center;
+  }
+
+  @media (max-width: 640px) {
+    .notahero {
+      padding: var(--spacing-stack-md) 0;
+    }
+  }
+
+  .nota-breadcrumb {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    color: var(--color-on-surface-variant);
+    margin: 0 0 var(--spacing-stack-sm);
+  }
+
+  .nota-breadcrumb a {
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .nota-title {
+    font-family: var(--font-family);
+    font-size: var(--font-display-lg-size);
+    font-weight: var(--font-display-lg-weight);
+    letter-spacing: var(--font-display-lg-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    margin: 0 auto var(--spacing-stack-sm);
+    max-width: 720px;
+  }
+
+  @media (max-width: 640px) {
+    .nota-title {
+      font-size: var(--font-headline-md-size);
+      letter-spacing: var(--font-headline-md-tracking);
+    }
+  }
+
+  .nota-subtitle {
+    font-family: var(--font-family);
+    font-size: var(--font-body-lg-size);
+    line-height: var(--font-body-lg-line-height);
+    color: var(--color-on-surface-variant);
+    margin: 0 auto var(--spacing-stack-md);
+    max-width: 640px;
+  }
+
+  @media (max-width: 640px) {
+    .nota-subtitle {
+      font-size: var(--font-body-md-size);
+    }
+  }
+
+  .nota-cta {
+    display: flex;
+    justify-content: center;
+  }
+
+  .nota-list {
+    padding: 0 0 var(--spacing-stack-lg);
+  }
+
+  .nota-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-stack-md);
+  }
+
+  @media (min-width: 768px) {
+    .nota-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .nota-other {
+    padding: var(--spacing-stack-lg) 0;
+    border-top: var(--border-width) solid var(--color-outline-variant);
+  }
+
+  .nota-other-title {
+    font-family: var(--font-family);
+    font-size: var(--font-headline-lg-size);
+    font-weight: var(--font-headline-lg-weight);
+    text-align: center;
+    margin: 0 0 var(--spacing-stack-md);
+  }
+
+  @media (max-width: 640px) {
+    .nota-other-title {
+      font-size: var(--font-headline-lg-mobile-size);
+    }
+  }
+
+  .nota-other-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .nota-other-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 14px;
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: 999px;
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    color: var(--color-on-surface);
+    text-decoration: none;
+    transition: border-color var(--transition-duration) var(--transition-easing), color var(--transition-duration) var(--transition-easing);
+  }
+
+  .nota-other-link:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+</style>
