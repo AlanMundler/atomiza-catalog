@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { initSliders } from '@/utils/slider';
 
 function mount(slides = 3): HTMLElement {
@@ -22,6 +22,10 @@ describe('initSliders', () => {
     document.body.innerHTML = '';
     window.HTMLElement.prototype.scrollTo = vi.fn() as unknown as typeof window.HTMLElement.prototype.scrollTo;
     window.matchMedia = vi.fn().mockReturnValue({ matches: false }) as unknown as typeof window.matchMedia;
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it('crea un dot por slide y avanza con siguiente', () => {
@@ -64,6 +68,48 @@ describe('initSliders', () => {
     initSliders();
     initSliders();
     expect(document.querySelectorAll('.slider-dot')).toHaveLength(0);
+  });
+
+  it('avanza solo cada 3 segundos', () => {
+    vi.useFakeTimers();
+    mount(3);
+    initSliders();
+    const dots = document.querySelectorAll('.slider-dot');
+
+    vi.advanceTimersByTime(3000);
+    expect(dots[1].classList.contains('active')).toBe(true);
+    vi.advanceTimersByTime(3000);
+    expect(dots[2].classList.contains('active')).toBe(true);
+    vi.advanceTimersByTime(3000);
+    expect(dots[0].classList.contains('active')).toBe(true);
+  });
+
+  it('no autoplayea con movimiento reducido', () => {
+    vi.useFakeTimers();
+    window.matchMedia = vi.fn().mockReturnValue({ matches: true }) as unknown as typeof window.matchMedia;
+    mount(3);
+    initSliders();
+    const dots = document.querySelectorAll('.slider-dot');
+
+    vi.advanceTimersByTime(9000);
+    expect(dots[0].classList.contains('active')).toBe(true);
+    expect(dots[1].classList.contains('active')).toBe(false);
+  });
+
+  it('pausa al interactuar y retoma a los 6 segundos', () => {
+    vi.useFakeTimers();
+    const root = mount(3);
+    initSliders();
+    const dots = document.querySelectorAll('.slider-dot');
+
+    root.dispatchEvent(new Event('pointerenter'));
+    vi.advanceTimersByTime(9000);
+    expect(dots[0].classList.contains('active')).toBe(true);
+
+    root.dispatchEvent(new Event('pointerleave'));
+    vi.advanceTimersByTime(6000);
+    vi.advanceTimersByTime(3000);
+    expect(dots[1].classList.contains('active')).toBe(true);
   });
 
   it('reutiliza los dots del markup sin duplicar (tienen scope de Astro)', () => {

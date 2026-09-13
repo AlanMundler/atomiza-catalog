@@ -86,5 +86,46 @@ export function initSliders(scope: ParentNode = document): void {
 
     prev?.addEventListener('click', () => go(index - 1));
     next?.addEventListener('click', () => go(index + 1));
+
+    // Autoplay cada 3s, fluido (scroll suave). Se pausa mientras el usuario
+    // interactúa o la pestaña está oculta; no corre con movimiento reducido.
+    // Si el slider sale del DOM (navegación SPA), el intervalo se limpia solo.
+    if (!reduceMotion) {
+      const AUTOPLAY_MS = 3000;
+      const RESUME_MS = 6000;
+      let timer = 0;
+      let resumeTimer = 0;
+      const stop = () => {
+        if (timer) {
+          window.clearInterval(timer);
+          timer = 0;
+        }
+      };
+      const start = () => {
+        if (timer) return;
+        timer = window.setInterval(() => {
+          if (!root.isConnected) {
+            stop();
+            return;
+          }
+          if (document.visibilityState === 'hidden') return;
+          go(index + 1);
+        }, AUTOPLAY_MS);
+      };
+      const pauseAndResume = () => {
+        stop();
+        window.clearTimeout(resumeTimer);
+        resumeTimer = window.setTimeout(start, RESUME_MS);
+      };
+      root.addEventListener('pointerenter', stop);
+      root.addEventListener('pointerleave', pauseAndResume);
+      root.addEventListener('focusin', stop);
+      root.addEventListener('focusout', pauseAndResume);
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') stop();
+        else start();
+      });
+      start();
+    }
   });
 }
