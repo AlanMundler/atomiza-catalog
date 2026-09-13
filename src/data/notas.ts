@@ -9,12 +9,6 @@ export interface Nota {
   keywords: string[];
   /** Subcadenas que descartan el match (ej. pimienta rosa no es rosa). */
   exclude?: string[];
-  /**
-   * Excepción: matchea también en el fondo. Solo para notas que viven ahí
-   * por naturaleza (almizcle, ámbar, sándalo): lo que se huele al principio
-   * es salida + corazón.
-   */
-  matchBase?: boolean;
   /** Una línea que vende la nota. */
   blurb: string;
 }
@@ -37,14 +31,12 @@ export const NOTAS: Nota[] = [
     name: 'Almizcle',
     slug: 'almizcle',
     keywords: ['almizcle'],
-    matchBase: true,
     blurb: 'Limpio y magnético: lo que hace que todo dure en la piel.',
   },
   {
     name: 'Ámbar',
     slug: 'ambar',
     keywords: ['ambar'],
-    matchBase: true,
     blurb: 'Cálido y envolvente: dulzor con presencia oriental.',
   },
   {
@@ -57,7 +49,6 @@ export const NOTAS: Nota[] = [
     name: 'Sándalo',
     slug: 'sandalo',
     keywords: ['sandalo'],
-    matchBase: true,
     blurb: 'Cremoso y elegante: la madera suave que nunca falla.',
   },
   {
@@ -83,20 +74,28 @@ function normalizar(input: string): string {
 }
 
 /**
- * Perfumes que llevan la nota donde se huele: salida + corazón. Solo las
- * notas marcadas con `matchBase` (las que viven en el fondo) miran también
- * las notas base.
+ * Perfumes que llevan la nota en cualquier tier, ordenados por dónde se
+ * huele primero: salida, después corazón, después fondo. Así no falta
+ * ninguno (ej. Angham lleva vainilla en el fondo) y los más
+ * representativos quedan arriba.
  */
 export function perfumesConNota(perfumes: Perfume[], nota: Nota): Perfume[] {
   const keys = nota.keywords.map(normalizar);
   const excl = (nota.exclude ?? []).map(normalizar);
-  return perfumes.filter((p) => {
-    const audible = [...p.notes.top, ...p.notes.heart];
-    if (nota.matchBase) audible.push(...p.notes.base);
-    const haystack = normalizar(audible.join(' '));
-    if (excl.some((x) => haystack.includes(x))) return false;
-    return keys.some((k) => haystack.includes(k));
-  });
+  const tierDe = (p: Perfume): number => {
+    const tiers = [p.notes.top, p.notes.heart, p.notes.base];
+    for (let tier = 0; tier < tiers.length; tier++) {
+      const haystack = normalizar(tiers[tier].join(' '));
+      if (excl.some((x) => haystack.includes(x))) return -1;
+      if (keys.some((k) => haystack.includes(k))) return tier;
+    }
+    return -1;
+  };
+  return perfumes
+    .map((p) => ({ p, tier: tierDe(p) }))
+    .filter((r) => r.tier >= 0)
+    .sort((a, b) => a.tier - b.tier)
+    .map((r) => r.p);
 }
 
 export function getNota(slug: string): Nota | undefined {

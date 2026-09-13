@@ -23,14 +23,19 @@ describe('NOTAS', () => {
     for (const slug of slugs) expect(slug).toMatch(/^[a-z0-9-]+$/);
   });
 
-  it('cada nota matchea decants reales (oud: 1, resto 2+)', () => {
+  it('cada nota matchea al menos 2 decants reales', () => {
     for (const nota of NOTAS) {
-      const min = nota.slug === 'oud' ? 1 : 2;
-      expect(perfumesConNota(perfumes, nota).length).toBeGreaterThanOrEqual(min);
+      expect(perfumesConNota(perfumes, nota).length).toBeGreaterThanOrEqual(2);
     }
   });
 
-  it('solo mira salida y corazón, salvo excepción con matchBase', () => {
+  it('no falta ninguno: también cuenta el fondo (ej. Angham y su vainilla)', () => {
+    const vainilla = getNota('vainilla')!;
+    const ids = perfumesConNota(perfumes, vainilla).map((p) => p.id);
+    expect(ids).toContain('angham');
+  });
+
+  it('ordena por dónde se huele: salida antes que corazón antes que fondo', () => {
     const base: Perfume = {
       id: 'x',
       slug: 'x',
@@ -45,16 +50,12 @@ describe('NOTAS', () => {
       isBoutiqueExclusive: false,
       featured: false,
     };
-    const soloFondo = {
-      ...base,
-      notes: { top: ['Bergamota'], heart: ['Limón'], base: ['Vainilla'] },
-    };
+    const fondo = { ...base, id: 'fondo', notes: { top: [], heart: [], base: ['Vainilla'] } };
+    const corazon = { ...base, id: 'corazon', notes: { top: [], heart: ['Vainilla'], base: [] } };
+    const salida = { ...base, id: 'salida', notes: { top: ['Vainilla'], heart: [], base: [] } };
     const vainilla = getNota('vainilla')!;
-    const almizcle = getNota('almizcle')!;
-    expect(perfumesConNota([soloFondo], vainilla)).toHaveLength(0);
-    expect(
-      perfumesConNota([{ ...soloFondo, notes: { top: [], heart: [], base: ['Almizcle'] } }], almizcle)
-    ).toHaveLength(1);
+    const ids = perfumesConNota([fondo, salida, corazon], vainilla).map((p) => p.id);
+    expect(ids).toEqual(['salida', 'corazon', 'fondo']);
   });
 
   it('rosa no trae pimienta rosa', () => {
