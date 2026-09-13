@@ -216,6 +216,9 @@ ol {
   gap: 8px;
   white-space: nowrap;
   text-decoration: none;
+  padding: 14px 24px;
+  height: 44px;
+  font-size: var(--font-label-sm-size);
 }
 
 .btn:focus-visible {
@@ -283,6 +286,12 @@ ol {
   font-size: var(--font-body-md-size);
   padding: 18px 32px;
   height: 52px;
+}
+
+.btn--md {
+  font-size: var(--font-label-sm-size);
+  padding: 14px 24px;
+  height: 44px;
 }
 
 .skip-link {
