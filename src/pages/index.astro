@@ -153,7 +153,8 @@ const faqs = [
   <section class="value-prop" aria-labelledby="value-prop-title">
     <div class="container">
       <h2 id="value-prop-title" class="section-title">Por qué elegir {site.name}</h2>
-      <div class="value-prop-grid">
+      <div data-slider>
+      <div class="value-prop-grid" data-slider-track>
         <article class="value-prop-card">
           <div class="value-prop-icon">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
@@ -184,17 +185,32 @@ const faqs = [
             </svg>
           </div>
           <h3 class="value-prop-card-title">Atención por mensaje</h3>
-          <p class="value-prop-card-text">Te asesoramos para elegir, y el envío y el pago los coordinamos por mensaje.</p>
-        </article>
+            <p class="value-prop-card-text">Te asesoramos para elegir, y el envío y el pago los coordinamos por mensaje.</p>
+          </article>
+        </div>
+      <div class="slider-nav" role="group" aria-label="Cambiar tarjeta">
+        <button type="button" class="slider-btn" data-slider-prev aria-label="Tarjeta anterior">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </button>
+        <div class="slider-dots" data-slider-dots>
+          <button type="button" class="slider-dot" aria-label="Ir a Autenticidad"></button>
+          <button type="button" class="slider-dot" aria-label="Ir a Variedad árabe"></button>
+          <button type="button" class="slider-dot" aria-label="Ir a Atención por mensaje"></button>
+        </div>
+        <button type="button" class="slider-btn" data-slider-next aria-label="Tarjeta siguiente">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
       </div>
-    </div>
-  </section>
+      </div>
+      </div>
+    </section>
 
   <section class="social-proof" aria-labelledby="social-proof-title">
     <div class="container">
       <h2 id="social-proof-title" class="section-title">Lo que dicen nuestros clientes</h2>
       {hasResenas && (
-      <div class="reviews-grid">
+      <div data-slider>
+      <div class="reviews-grid" data-slider-track>
         {resenas.map((r) => (
           <article class="review-card">
             <div class="review-stars" aria-label={`${r.rating} de 5 estrellas`} role="img">
@@ -204,6 +220,20 @@ const faqs = [
             <p class="review-name">{r.name} · {r.locality}{r.perfume ? ` · ${r.perfume}` : ''}</p>
           </article>
         ))}
+      </div>
+      <div class="slider-nav" role="group" aria-label="Cambiar reseña">
+        <button type="button" class="slider-btn" data-slider-prev aria-label="Reseña anterior">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </button>
+        <div class="slider-dots" data-slider-dots>
+          {resenas.map((r) => (
+            <button type="button" class="slider-dot" aria-label={`Ir a la reseña de ${r.name}`}></button>
+          ))}
+        </div>
+        <button type="button" class="slider-btn" data-slider-next aria-label="Reseña siguiente">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      </div>
       </div>
       )}
 
@@ -232,7 +262,8 @@ const faqs = [
   <section class="how-to-buy" aria-labelledby="how-to-buy-title">
     <div class="container">
       <h2 id="how-to-buy-title" class="section-title">Cómo comprar</h2>
-      <div class="grid grid-cols-1 gap-[var(--spacing-stack-md)] sm:grid-cols-2 lg:grid-cols-4">
+      <div data-slider>
+      <div class="grid grid-cols-1 gap-[var(--spacing-stack-md)] sm:grid-cols-2 lg:grid-cols-4" data-slider-track>
         <article class="step">
           <div class="step-number">01</div>
           <div class="step-content">
@@ -262,6 +293,21 @@ const faqs = [
           </div>
         </article>
       </div>
+      <div class="slider-nav" role="group" aria-label="Cambiar paso">
+        <button type="button" class="slider-btn" data-slider-prev aria-label="Paso anterior">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </button>
+        <div class="slider-dots" data-slider-dots>
+          <button type="button" class="slider-dot" aria-label="Ir al paso 1: Buscá"></button>
+          <button type="button" class="slider-dot" aria-label="Ir al paso 2: Sumala"></button>
+          <button type="button" class="slider-dot" aria-label="Ir al paso 3: Finalizá"></button>
+          <button type="button" class="slider-dot" aria-label="Ir al paso 4: Coordiná"></button>
+        </div>
+        <button type="button" class="slider-btn" data-slider-next aria-label="Paso siguiente">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      </div>
+      </div>
     </div>
   </section>
 
@@ -282,6 +328,11 @@ const faqs = [
   <script>
     import { bindOnce, onPageLoad } from '@/utils/view-transitions';
     import { tridenteProgressText } from '@/utils/tridente-live';
+    import { initSliders } from '@/utils/slider';
+
+    // Sliders por click (reseñas, propuesta, pasos): una tarjeta centrada
+    // por vez en mobile. La guarda interna evita duplicar listeners.
+    onPageLoad('sliders', () => initSliders());
 
     // Tira de promociones: abre el modal con la regla y tu progreso en vivo.
     onPageLoad('tridente-strip', () => {
@@ -637,7 +688,7 @@ const faqs = [
     }
 
     .value-prop-grid .value-prop-card {
-      flex: 0 0 85%;
+      flex: 0 0 100%;
       scroll-snap-align: center;
     }
   }
@@ -682,6 +733,11 @@ const faqs = [
     padding: var(--spacing-stack-lg) 0;
   }
 
+  /* Controles del slider: ocultos en PC (las grids están completas). */
+  .slider-nav {
+    display: none;
+  }
+
   /* Celu: pasos en carrusel con swipe. El CSS propio (sin layer) pisa las
      utilidades grid de Tailwind solo bajo 768px; en PC queda el grid. */
   @media (max-width: 767px) {
@@ -699,9 +755,65 @@ const faqs = [
     }
 
     .how-to-buy .step {
-      flex: 0 0 85%;
+      flex: 0 0 100%;
       scroll-snap-align: center;
     }
+
+  @media (max-width: 767px) {
+    .slider-nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    .slider-btn {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-on-surface);
+      background: transparent;
+      border: var(--border-width) solid var(--color-outline-variant);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all var(--transition-duration) var(--transition-easing);
+    }
+
+    .slider-btn:hover {
+      color: var(--color-primary);
+      border-color: var(--color-primary);
+    }
+
+    .slider-btn:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+
+    .slider-dots {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .slider-dot {
+      width: 8px;
+      height: 8px;
+      padding: 0;
+      border: none;
+      border-radius: 999px;
+      background-color: var(--color-outline-variant);
+      cursor: pointer;
+      transition: all var(--transition-duration) var(--transition-easing);
+    }
+
+    .slider-dot.active {
+      width: 24px;
+      background-color: var(--color-primary);
+    }
+  }
   }
 
   .step {
@@ -854,7 +966,7 @@ const faqs = [
     }
 
     .reviews-grid .review-card {
-      flex: 0 0 85%;
+      flex: 0 0 100%;
       scroll-snap-align: center;
     }
   }
