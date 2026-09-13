@@ -3,7 +3,7 @@ import Layout from '@/layouts/Layout.astro';
 import ProductCard from '@/components/catalog/ProductCard.astro';
 import { NOTAS, perfumesConNota } from '@/data/notas';
 import perfumesData from '@/data/perfumes.json';
-import { site } from '@/site.config';
+import { site, assetUrl } from '@/site.config';
 import type { Perfume } from '@/data/types';
 
 export function getStaticPaths() {
@@ -28,6 +28,13 @@ const pageDescription = `Decants de 5ml con nota de ${nota.name.toLowerCase()}: 
       <p class="nota-breadcrumb">
         <a href={`${BASE}notas/`}>Notas</a> › {nota.name}
       </p>
+      <img
+        class="nota-hero-img"
+        src={assetUrl(nota.image)}
+        alt={`Nota olfativa de ${nota.name}`}
+        width="240"
+        height="240"
+      />
       <h1 id="nota-title" class="nota-title">Decants con {nota.name}</h1>
       <p class="nota-subtitle">
         {nota.blurb} {items.length} {items.length === 1 ? 'decant disponible' : 'decants disponibles'}.
@@ -85,6 +92,16 @@ const pageDescription = `Decants de 5ml con nota de ${nota.name.toLowerCase()}: 
     color: var(--color-primary);
     text-decoration: underline;
     text-underline-offset: 2px;
+  }
+
+  .nota-hero-img {
+    display: block;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto var(--spacing-stack-sm);
+    object-fit: cover;
+    border-radius: 50%;
+    border: var(--border-width) solid var(--color-outline-variant);
   }
 
   .nota-title {

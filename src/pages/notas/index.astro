@@ -3,7 +3,7 @@ import Layout from '@/layouts/Layout.astro';
 import { NOTAS, perfumesConNota } from '@/data/notas';
 import { formatPrice } from '@/utils/formatters';
 import perfumesData from '@/data/perfumes.json';
-import { site } from '@/site.config';
+import { site, assetUrl } from '@/site.config';
 import type { Perfume } from '@/data/types';
 
 const BASE = site.basePath;
@@ -36,6 +36,14 @@ function desdePrecio(items: Perfume[]): string {
           const items = perfumesConNota(perfumes, nota);
           return (
             <a href={`${BASE}notas/${nota.slug}/`} class="notahub-card">
+              <img
+                class="notahub-card-img"
+                src={assetUrl(nota.image)}
+                alt={`Nota olfativa de ${nota.name}`}
+                width="144"
+                height="144"
+                loading="lazy"
+              />
               <div class="notahub-card-body">
                 <h2 class="notahub-card-title">{nota.name}</h2>
                 <p class="notahub-card-sub">{nota.blurb}</p>
@@ -123,6 +131,14 @@ function desdePrecio(items: Perfume[]): string {
 
   .notahub-card:hover {
     border-color: var(--color-primary);
+  }
+
+  .notahub-card-img {
+    width: 72px;
+    height: 72px;
+    flex-shrink: 0;
+    object-fit: cover;
+    border-radius: 12px;
   }
 
   .notahub-card-title {

@@ -5,6 +5,8 @@ export interface Nota {
   name: string;
   /** Slug de URL (/notas/vainilla/). */
   slug: string;
+  /** Foto local (public/images/notas/<slug>.avif, de Fragrantica). */
+  image: string;
   /** Subcadenas a buscar en las notas (ya en minúsculas, sin tildes). */
   keywords: string[];
   /** Subcadenas que descartan el match (ej. pimienta rosa no es rosa). */
@@ -18,42 +20,49 @@ export const NOTAS: Nota[] = [
   {
     name: 'Vainilla',
     slug: 'vainilla',
+    image: 'images/notas/vainilla.avif',
     keywords: ['vainilla'],
     blurb: 'Dulce, cremosa y adictiva: la nota más amada del mundo.',
   },
   {
     name: 'Bergamota',
     slug: 'bergamota',
+    image: 'images/notas/bergamota.avif',
     keywords: ['bergamota'],
     blurb: 'Cítrica y luminosa: la frescura que levanta cualquier perfume.',
   },
   {
     name: 'Almizcle',
     slug: 'almizcle',
+    image: 'images/notas/almizcle.avif',
     keywords: ['almizcle'],
     blurb: 'Limpio y magnético: lo que hace que todo dure en la piel.',
   },
   {
     name: 'Ámbar',
     slug: 'ambar',
+    image: 'images/notas/ambar.avif',
     keywords: ['ambar'],
     blurb: 'Cálido y envolvente: dulzor con presencia oriental.',
   },
   {
     name: 'Jazmín',
     slug: 'jazmin',
+    image: 'images/notas/jazmin.avif',
     keywords: ['jazmin'],
     blurb: 'Blanco y radiante: la flor más icónica de la perfumería.',
   },
   {
     name: 'Sándalo',
     slug: 'sandalo',
+    image: 'images/notas/sandalo.avif',
     keywords: ['sandalo'],
     blurb: 'Cremoso y elegante: la madera suave que nunca falla.',
   },
   {
     name: 'Rosa',
     slug: 'rosa',
+    image: 'images/notas/rosa.avif',
     keywords: ['rosa'],
     exclude: ['pimienta'],
     blurb: 'La reina de las flores: fresca o intensa, siempre dice presente.',
@@ -61,6 +70,7 @@ export const NOTAS: Nota[] = [
   {
     name: 'Oud',
     slug: 'oud',
+    image: 'images/notas/oud.avif',
     keywords: ['oud', 'agar'],
     blurb: 'Legendario y profundo: la madera más preciada de Arabia.',
   },

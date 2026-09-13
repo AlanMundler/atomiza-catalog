@@ -71,4 +71,13 @@ describe('NOTAS', () => {
     expect(getNota('oud')?.name).toBe('Oud');
     expect(getNota('inexistente')).toBeUndefined();
   });
+
+  it('cada nota tiene foto local en public/images/notas/', async () => {
+    const fs = await import('node:fs');
+    const path = await import('node:path');
+    for (const nota of NOTAS) {
+      expect(nota.image).toMatch(/^images\/notas\/[a-z-]+\.avif$/);
+      expect(fs.existsSync(path.join(process.cwd(), 'public', nota.image))).toBe(true);
+    }
+  });
 });
