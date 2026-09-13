@@ -209,7 +209,9 @@ const faqs = [
       <div class="reviews-grid">
         {resenas.map((r) => (
           <article class="review-card">
-            <div class="review-stars" aria-label="5 de 5 estrellas" role="img">★★★★★</div>
+            <div class="review-stars" aria-label={`${r.rating} de 5 estrellas`} role="img">
+              {'★'.repeat(r.rating)}{'☆'.repeat(Math.max(0, 5 - r.rating))}
+            </div>
             <p class="review-text">"{r.text}"</p>
             <p class="review-name">{r.name} · {r.locality}{r.perfume ? ` · ${r.perfume}` : ''}</p>
           </article>
