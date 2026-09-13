@@ -75,12 +75,12 @@ const catalogSchema = {
 <script>
   // Client-side filtering without page reload (static output has no query params at build time)
   import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
-
-  const GENDERS: Record<string, string[]> = {
-    'masculino': ['masculino', 'unisex'],
-    'femenino': ['femenino', 'unisex'],
-    'unisex': ['unisex'],
-  };
+  import {
+    buildResultsText,
+    cardMatches,
+    fuzzySearchIds,
+    normalizeFilter,
+  } from '@/utils/catalogo';
 
   let currentFilter = 'all';
   let currentSearch = '';
@@ -91,8 +91,7 @@ const catalogSchema = {
 
   function readUrlState() {
     const params = new URL(window.location.href).searchParams;
-    const rawFilter = params.get('filter') || 'all';
-    currentFilter = Object.hasOwn(GENDERS, rawFilter) ? rawFilter : 'all';
+    currentFilter = normalizeFilter(params.get('filter'));
     currentSearch = params.get('search') || '';
   }
 
@@ -109,29 +108,21 @@ const catalogSchema = {
 
     let visible = 0;
     cards.forEach((card) => {
-      const gender = card.getAttribute('data-gender') || '';
-      const search = card.getAttribute('data-search') || '';
-
-      let matches = true;
-      if (currentFilter !== 'all') {
-        const allowed = GENDERS[currentFilter] || [];
-        matches = allowed.includes(gender);
-      }
-      if (matches && currentSearch) {
-        // Fuse.js fuzzy match por ID; fallback a substring si no hay índice
-        matches = fuzzyMatches ? fuzzyMatches.has(card.getAttribute('data-perfume-id') || '') :
-          search.includes(currentSearch.toLowerCase());
-      }
+      const matches = cardMatches({
+        gender: card.getAttribute('data-gender') || '',
+        searchText: card.getAttribute('data-search') || '',
+        perfumeId: card.getAttribute('data-perfume-id') || '',
+        filter: currentFilter,
+        query: currentSearch,
+        fuzzyIds: fuzzyMatches,
+      });
 
       card.style.display = matches ? '' : 'none';
       if (matches) visible++;
     });
 
     if (countEl) {
-      let text = `${visible} ${visible === 1 ? 'perfume' : 'perfumes'} encontrado${visible !== 1 ? 's' : ''}`;
-      if (currentFilter !== 'all') text += ` en ${currentFilter}`;
-      if (currentSearch) text += ` para "${currentSearch}"`;
-      countEl.textContent = text;
+      countEl.textContent = buildResultsText(visible, currentFilter, currentSearch);
     }
 
     if (emptyEl && gridEl) {
@@ -150,12 +141,10 @@ const catalogSchema = {
       return;
     }
     try {
-      const Fuse = (await import('fuse.js')).default;
       const indexEl = document.getElementById('search-index');
       const indexData: { id: string; text: string }[] = indexEl ? JSON.parse(indexEl.textContent || '[]') : [];
-      const fuse = new Fuse(indexData, { keys: ['text'], threshold: 0.4, ignoreLocation: true });
-      const results = fuse.search(query);
-      if (seq === searchSeq) fuzzyMatches = new Set(results.map((r) => r.item.id));
+      const ids = await fuzzySearchIds(indexData, query);
+      if (seq === searchSeq) fuzzyMatches = ids;
     } catch {
       if (seq === searchSeq) fuzzyMatches = null;
     }
