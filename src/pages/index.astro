@@ -145,7 +145,10 @@ const faqs = [
             ¿Te gusta cómo huele Baccarat Rouge, Sauvage o Delina? Tenemos el decant inspirado en cada uno.
           </p>
         </div>
-        <a href={`${BASE}decants/`} class="btn btn--primary btn--md">Ver aromas famosos</a>
+        <div class="aroma-band-cta">
+          <a href={`${BASE}decants/`} class="btn btn--primary btn--md">Ver aromas famosos</a>
+          <a href={`${BASE}familias/`} class="aroma-band-alt">o explorá por familia olfativa →</a>
+        </div>
       </div>
     </div>
   </section>
@@ -651,6 +654,26 @@ const faqs = [
     line-height: var(--font-body-md-line-height);
     color: var(--color-on-surface-variant);
     margin: 0;
+  }
+
+  .aroma-band-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .aroma-band-alt {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    color: var(--color-on-surface-variant);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .aroma-band-alt:hover {
+    color: var(--color-primary);
   }
 
   /* Value Prop */

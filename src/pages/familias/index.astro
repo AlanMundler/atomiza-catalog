@@ -1,72 +1,60 @@
 ---
 import Layout from '@/layouts/Layout.astro';
-import { inspiraciones } from '@/data/inspiraciones';
-import perfumesData from '@/data/perfumes.json';
-import { site } from '@/site.config';
+import { getFamilias } from '@/data/familias';
 import { formatPrice } from '@/utils/formatters';
+import { site } from '@/site.config';
 import type { Perfume } from '@/data/types';
 
 const BASE = site.basePath;
-const perfumes = perfumesData.perfumes as Perfume[];
+const familias = getFamilias();
 
-const pageTitle = `Decants inspirados en perfumes famosos · ${site.addressLocality}`;
-const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: decants de 5ml inspirados en Baccarat Rouge, Sauvage, Delina y más, en ${site.addressLocality}.`;
+const pageTitle = `Familias olfativas · ${site.addressLocality}`;
+const pageDescription = `Explorá decants de 5ml por familia olfativa: orientales, frescos, amaderados, dulces y más, en ${site.addressLocality}.`;
+
+function desdePrecio(items: Perfume[]): string {
+  const precios = items.flatMap((p) => p.sizes.map((s) => s.price)).filter((n) => Number.isFinite(n));
+  return precios.length > 0 ? formatPrice(Math.min(...precios)) : 'a confirmar';
+}
 ---
 
-<Layout title={pageTitle} description={pageDescription} ogImage="og-decants.jpg">
-  <section class="hub-hero" aria-labelledby="hub-title">
+<Layout title={pageTitle} description={pageDescription}>
+  <section class="famhub-hero" aria-labelledby="famhub-title">
     <div class="container">
-      <h1 id="hub-title" class="hub-title">Buscá tu perfume por el aroma famoso</h1>
-      <p class="hub-subtitle">
-        Todos nuestros decants tienen una fragancia famosa detrás. Elegí la que más te gusta y
-        probala sobre tu piel en decant de 5ml antes de comprar el frasco completo.
+      <h1 id="famhub-title" class="famhub-title">Buscá por familia olfativa</h1>
+      <p class="famhub-subtitle">
+        ¿Dulce, fresco, amaderado? Elegí la familia que va con vos y descubrí
+        sus decants de 5ml.
       </p>
     </div>
   </section>
 
-  <section class="hub-list" aria-label="Aromas famosos en decant">
+  <section class="famhub-list" aria-label="Familias olfativas">
     <div class="container">
-      <div class="hub-grid">
-        {inspiraciones.map((insp) => {
-          const perfume = perfumes.find((p) => p.slug === insp.perfumeSlug);
-          const price = perfume?.sizes.find((s) => s.ml === 5) || perfume?.sizes[0];
-          return (
-            <a href={`${BASE}decants/${insp.slug}/`} class="hub-card">
-              <div class="hub-card-body">
-                <h2 class="hub-card-title">{insp.original}</h2>
-                <p class="hub-card-sub">{insp.perfumeName} · {insp.casa}</p>
-              </div>
-              <span class="hub-card-price">{price ? formatPrice(price.price) : ''}</span>
-            </a>
-          );
-        })}
+      <div class="famhub-grid">
+        {familias.map((f) => (
+          <a href={`${BASE}familias/${f.slug}/`} class="famhub-card">
+            <div class="famhub-card-body">
+              <h2 class="famhub-card-title">{f.name}</h2>
+              <p class="famhub-card-sub">{f.items.length} {f.items.length === 1 ? 'decant' : 'decants'}</p>
+            </div>
+            <span class="famhub-card-price">desde {desdePrecio(f.items)}</span>
+          </a>
+        ))}
       </div>
-    </div>
-  </section>
-
-  <section class="hub-more" aria-label="Seguir explorando">
-    <div class="container">
-      <p class="hub-more-text">¿Preferís explorar por estilo? <a href={`${BASE}familias/`}>Ver familias olfativas →</a></p>
-      <div class="hub-cta">
-        <a href={`${BASE}catalogo/`} class="btn btn--primary btn--md">Ver el catálogo completo</a>
+      <div class="famhub-cta">
+        <a href={`${BASE}decants/`} class="famhub-alt-link">¿Buscás un aroma famoso puntual? →</a>
       </div>
     </div>
   </section>
 </Layout>
 
 <style>
-  .hub-hero {
+  .famhub-hero {
     padding: var(--spacing-stack-md) 0 var(--spacing-stack-sm);
     text-align: center;
   }
 
-  @media (max-width: 640px) {
-    .hub-hero {
-      padding: var(--spacing-stack-md) 0;
-    }
-  }
-
-  .hub-title {
+  .famhub-title {
     font-family: var(--font-family);
     font-size: var(--font-display-lg-size);
     font-weight: var(--font-display-lg-weight);
@@ -78,19 +66,13 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
   }
 
   @media (max-width: 640px) {
-    .hub-title {
+    .famhub-title {
       font-size: var(--font-headline-md-size);
       letter-spacing: var(--font-headline-md-tracking);
     }
   }
 
-  @media (min-width: 641px) {
-    .hub-title {
-      margin-bottom: 12px;
-    }
-  }
-
-  .hub-subtitle {
+  .famhub-subtitle {
     font-family: var(--font-family);
     font-size: var(--font-body-lg-size);
     line-height: var(--font-body-lg-line-height);
@@ -100,28 +82,28 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
   }
 
   @media (max-width: 640px) {
-    .hub-subtitle {
+    .famhub-subtitle {
       font-size: var(--font-body-md-size);
     }
   }
 
-  .hub-list {
+  .famhub-list {
     padding: var(--spacing-stack-lg) 0;
   }
 
-  .hub-grid {
+  .famhub-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--spacing-stack-sm);
   }
 
   @media (min-width: 768px) {
-    .hub-grid {
+    .famhub-grid {
       grid-template-columns: repeat(2, 1fr);
     }
   }
 
-  .hub-card {
+  .famhub-card {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -134,11 +116,11 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
     transition: border-color var(--transition-duration) var(--transition-easing);
   }
 
-  .hub-card:hover {
+  .famhub-card:hover {
     border-color: var(--color-primary);
   }
 
-  .hub-card-title {
+  .famhub-card-title {
     font-family: var(--font-family);
     font-size: var(--font-headline-md-size);
     font-weight: var(--font-headline-md-weight);
@@ -146,14 +128,14 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
     margin: 0;
   }
 
-  .hub-card-sub {
+  .famhub-card-sub {
     font-family: var(--font-family);
     font-size: var(--font-label-sm-size);
     color: var(--color-on-surface-variant);
     margin: 4px 0 0;
   }
 
-  .hub-card-price {
+  .famhub-card-price {
     font-family: var(--font-family);
     font-size: var(--font-label-sm-size);
     font-weight: var(--font-label-sm-weight);
@@ -163,26 +145,16 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
     white-space: nowrap;
   }
 
-  .hub-more {
-    padding: var(--spacing-stack-lg) 0;
-    border-top: var(--border-width) solid var(--color-outline-variant);
+  .famhub-cta {
     text-align: center;
+    margin-top: var(--spacing-stack-md);
   }
 
-  .hub-more-text {
+  .famhub-alt-link {
     font-family: var(--font-family);
     font-size: var(--font-body-md-size);
-    color: var(--color-on-surface-variant);
-    margin: 0 0 var(--spacing-stack-md);
-  }
-
-  .hub-more-text a {
     color: var(--color-primary);
     text-decoration: underline;
     text-underline-offset: 2px;
-  }
-
-  .hub-cta {
-    text-align: center;
   }
 </style>
