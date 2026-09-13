@@ -5,7 +5,6 @@ const checks = [
   { pattern: 'dist/_astro/*.css', limit: 100 * 1024, name: 'CSS global' },
   { pattern: 'dist/_astro/*.js', limit: 50 * 1024, name: 'JS chunks' },
   { pattern: 'dist/fonts/*.woff2', limit: 40 * 1024, name: 'Font' },
-  { pattern: 'dist/images/testimonios/*.avif', limit: 50 * 1024, name: 'Testimonial images' },
 ];
 
 function glob(dir, pattern) {

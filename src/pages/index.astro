@@ -5,7 +5,7 @@ import TridenteModal from '@/components/cart/TridenteModal.astro';
 import perfumesData from '@/data/perfumes.json';
 import { isSizeAvailable } from '@/utils/stock';
 import { resenas, resenasRating, hasResenas } from '@/data/resenas';
-import { site, assetUrl } from '@/site.config';
+import { site } from '@/site.config';
 import { TRIDENT_DISCOUNT, TRIDENT_BULK_PER_DECANT } from '@/utils/trident';
 import { formatPrice } from '@/utils/formatters';
 import type { Perfume } from '@/data/types';
@@ -193,18 +193,6 @@ const faqs = [
   <section class="social-proof" aria-labelledby="social-proof-title">
     <div class="container">
       <h2 id="social-proof-title" class="section-title">Lo que dicen nuestros clientes</h2>
-      <div class="testimonial-grid">
-        <figure class="testimonial-img">
-          <img src={assetUrl('images/testimonios/1.avif')} alt="Captura de chat de un cliente satisfecho 1" loading="lazy" width="884" height="1600" />
-        </figure>
-        <figure class="testimonial-img">
-          <img src={assetUrl('images/testimonios/2.avif')} alt="Captura de chat de un cliente satisfecho 2" loading="lazy" width="882" height="1600" />
-        </figure>
-        <figure class="testimonial-img">
-          <img src={assetUrl('images/testimonios/3.avif')} alt="Captura de chat de un cliente satisfecho 3" loading="lazy" width="904" height="1600" />
-        </figure>
-      </div>
-
       {hasResenas && (
       <div class="reviews-grid">
         {resenas.map((r) => (
@@ -787,54 +775,39 @@ const faqs = [
     border-top: var(--border-width) solid var(--color-outline-variant);
   }
 
-  .testimonial-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--spacing-stack-md);
-    max-width: 800px;
-    margin: 0 auto;
-  }
-
-  @media (min-width: 768px) {
-    .testimonial-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  .testimonial-img {
-    margin: 0;
-    overflow: hidden;
-    border-radius: 12px;
-    aspect-ratio: 884 / 1600;
-  }
-
-  .testimonial-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    border-radius: 12px;
-  }
-
-  .testimonial-img img {
-    width: 100%;
-    height: auto;
-    display: block;
-    border-radius: 12px;
-  }
-
-  /* Reviews (inline en social-proof) */
+  /* Reviews de Google: 4 en fila en PC; en celu carrusel de a una con
+     swipe (scroll-snap nativo, sin JS; la card siguiente asoma e invita). */
   .reviews-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--spacing-stack-sm);
-    max-width: 900px;
+    max-width: 1080px;
     margin: var(--spacing-stack-md) auto 0;
   }
 
   @media (min-width: 768px) {
     .reviews-grid {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  @media (max-width: 767px) {
+    .reviews-grid {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      padding-bottom: 4px;
+    }
+
+    .reviews-grid::-webkit-scrollbar {
+      display: none;
+    }
+
+    .reviews-grid .review-card {
+      flex: 0 0 85%;
+      scroll-snap-align: center;
     }
   }
 
