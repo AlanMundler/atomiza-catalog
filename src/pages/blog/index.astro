@@ -55,31 +55,32 @@ const pageDescription = `Aprendé cómo elegir tu perfume, cuánto dura un decan
 
 <style>
   .blog-hero {
-    padding: var(--spacing-stack-lg) 0;
+    padding: var(--spacing-stack-md) 0 var(--spacing-stack-sm);
     text-align: center;
   }
 
   @media (max-width: 640px) {
     .blog-hero {
-      padding: var(--spacing-stack-md) 0;
+      padding: var(--spacing-stack-sm) 0;
     }
   }
 
   .blog-title {
     font-family: var(--font-family);
-    font-size: var(--font-display-lg-size);
-    font-weight: var(--font-display-lg-weight);
-    letter-spacing: var(--font-display-lg-tracking);
+    font-size: var(--font-headline-lg-size);
+    font-weight: var(--font-headline-lg-weight);
+    line-height: var(--font-headline-lg-line-height);
+    letter-spacing: var(--font-headline-lg-tracking);
     text-transform: uppercase;
     color: var(--color-on-surface);
-    margin: 0 auto var(--spacing-stack-sm);
+    margin: 0 auto 12px;
     max-width: 720px;
+    text-wrap: balance;
   }
 
   @media (max-width: 640px) {
     .blog-title {
-      font-size: var(--font-headline-md-size);
-      letter-spacing: var(--font-headline-md-tracking);
+      font-size: var(--font-headline-lg-mobile-size);
     }
   }
 
@@ -99,7 +100,7 @@ const pageDescription = `Aprendé cómo elegir tu perfume, cuánto dura un decan
   }
 
   .blog-list {
-    padding: var(--spacing-stack-lg) 0;
+    padding: var(--spacing-stack-sm) 0 var(--spacing-stack-lg);
   }
 
   .blog-grid {

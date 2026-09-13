@@ -190,6 +190,13 @@ const waMessage = buildWhatsAppLink(
       grid-template-columns: 1fr 1fr;
       align-items: start;
     }
+
+    /* La galería acompaña el scroll de la columna de info: elimina el
+       hueco vacío que quedaba debajo de la imagen en desktop. */
+    .product-detail-gallery {
+      position: sticky;
+      top: calc(72px + 24px);
+    }
   }
 
   .product-detail-info {

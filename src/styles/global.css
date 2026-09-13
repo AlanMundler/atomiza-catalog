@@ -246,6 +246,36 @@ ol {
   border-color: var(--color-primary-container);
 }
 
+/* Lift sutil solo donde hay hover real: en touch no existe el hover
+   y el translateY pegaría el botón al dedo. */
+@media (hover: hover) and (pointer: fine) {
+  .btn--primary:hover:not(.btn--disabled),
+  .btn--secondary:hover:not(.btn--disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(233, 193, 118, 0.25);
+  }
+
+  .btn--primary:active:not(.btn--disabled),
+  .btn--secondary:active:not(.btn--disabled) {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+}
+
+/* Subrayado animado para links de texto (hero, bandas, footer). */
+.link-animated {
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 3px;
+  transition:
+    color var(--transition-duration) var(--transition-easing),
+    text-decoration-color var(--transition-duration) var(--transition-easing);
+}
+
+.link-animated:hover {
+  text-decoration-color: currentColor;
+}
+
 .btn--primary:active:not(.btn--disabled) {
   transform: scale(0.98);
 }

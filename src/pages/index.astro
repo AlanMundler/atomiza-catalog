@@ -118,6 +118,23 @@ const faqs = [
     </div>
   </section>
 
+  <div class="brand-marquee" aria-hidden="true">
+    <div class="brand-marquee-track">
+      {[0, 1].map(() => (
+        <div class="brand-marquee-half">
+          <span class="brand-marquee-brand">Maison Alhambra</span><span class="brand-marquee-dot">·</span>
+          <span>Decants de 5ml</span><span class="brand-marquee-dot">·</span>
+          <span class="brand-marquee-brand">Lattafa Perfumes</span><span class="brand-marquee-dot">·</span>
+          <span>100% originales</span><span class="brand-marquee-dot">·</span>
+          <span class="brand-marquee-brand">Rasasi</span><span class="brand-marquee-dot">·</span>
+          <span>Córdoba Capital</span><span class="brand-marquee-dot">·</span>
+          <span class="brand-marquee-brand">Rave</span><span class="brand-marquee-dot">·</span>
+          <span>Probalos antes del frasco</span><span class="brand-marquee-dot">·</span>
+        </div>
+      ))}
+    </div>
+  </div>
+
   <TridenteModal />
 
   <section class="home-perfumes" aria-labelledby="home-perfumes-title">
@@ -441,7 +458,13 @@ const faqs = [
   .hero-alt a {
     color: var(--color-primary);
     text-decoration: underline;
-    text-underline-offset: 2px;
+    text-decoration-color: transparent;
+    text-underline-offset: 3px;
+    transition: text-decoration-color var(--transition-duration) var(--transition-easing);
+  }
+
+  .hero-alt a:hover {
+    text-decoration-color: currentColor;
   }
 
   /* Tira de promociones a todo el ancho, pegada al header: abre el modal
@@ -565,6 +588,59 @@ const faqs = [
     white-space: nowrap;
   }
 
+  /* Tira de marcas bajo el hero: movimiento continuo, decorativa
+     (aria-hidden), se pausa al pasar el mouse y se apaga con
+     reduced-motion. Las dos mitades idénticas permiten el loop. */
+  .brand-marquee {
+    overflow: clip;
+    border-top: var(--border-width) solid var(--color-outline-variant);
+    border-bottom: var(--border-width) solid var(--color-outline-variant);
+    padding: 12px 0;
+  }
+
+  .brand-marquee-track {
+    display: flex;
+    width: max-content;
+    animation: brand-marquee-scroll 36s linear infinite;
+  }
+
+  .brand-marquee:hover .brand-marquee-track {
+    animation-play-state: paused;
+  }
+
+  .brand-marquee-half {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    padding-right: 28px;
+    white-space: nowrap;
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+  }
+
+  .brand-marquee-brand {
+    color: var(--color-primary);
+  }
+
+  .brand-marquee-dot {
+    color: var(--color-outline-variant);
+  }
+
+  @keyframes brand-marquee-scroll {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .brand-marquee-track {
+      animation: none;
+    }
+  }
+
   @media (max-width: 1024px) {
     .hero {
       padding: 20px 0 12px;
@@ -669,11 +745,16 @@ const faqs = [
     font-size: var(--font-label-sm-size);
     color: var(--color-on-surface-variant);
     text-decoration: underline;
-    text-underline-offset: 2px;
+    text-decoration-color: transparent;
+    text-underline-offset: 3px;
+    transition:
+      color var(--transition-duration) var(--transition-easing),
+      text-decoration-color var(--transition-duration) var(--transition-easing);
   }
 
   .aroma-band-alt:hover {
     color: var(--color-primary);
+    text-decoration-color: currentColor;
   }
 
   /* Value Prop */
