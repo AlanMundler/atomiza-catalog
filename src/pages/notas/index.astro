@@ -116,19 +116,19 @@ function desdePrecio(items: Perfume[]): string {
     }
   }
 
-  /* En mobile la card es columna con foto panorámica: en fila horizontal
-     la imagen + el texto + el precio no entran a 390px y el layout se
-     apretaba. En desktop vuelve a la fila compacta. */
+  /* En mobile la card es columna con foto centrada (no a todo ancho):
+     la imagen 120x120 no se estira y no pixelia; el fondo blanco
+     sigue expandido horizontalmente. En desktop vuelve a la fila compacta. */
   .notahub-card {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 12px;
-    padding: 0 0 var(--spacing-stack-md);
+    padding: var(--spacing-stack-md) 0;
     border: var(--border-width) solid var(--color-outline-variant);
     border-radius: var(--border-radius);
     background-color: var(--color-surface-container);
     text-decoration: none;
-    overflow: hidden;
     transition: border-color var(--transition-duration) var(--transition-easing);
   }
 
@@ -137,15 +137,16 @@ function desdePrecio(items: Perfume[]): string {
   }
 
   .notahub-card-img {
-    width: 100%;
-    height: 140px;
+    width: 100px;
+    height: 100px;
     flex-shrink: 0;
     object-fit: cover;
-    border-radius: 0;
+    border-radius: 12px;
   }
 
   .notahub-card-body {
     padding: 0 var(--spacing-stack-md);
+    text-align: center;
   }
 
   .notahub-card-price {
