@@ -1,5 +1,5 @@
-const onPageLoadKey = (key: string) => `__vtl:${key}`;
-const onWindowOnceKey = (key: string) => `__vtw:${key}`;
+const onPageLoadKey = (key: string): `__vtl:${string}` => `__vtl:${key}`;
+const onWindowOnceKey = (key: string): `__vtw:${string}` => `__vtw:${key}`;
 
 /**
  * Run `cb` after the current page renders and after every Astro view
@@ -12,31 +12,31 @@ const onWindowOnceKey = (key: string) => `__vtw:${key}`;
  * inicial dispare tanto `DOMContentLoaded` como `astro:page-load`.
  */
 function currentGeneration(): number {
-  return (window as any).__vtlGen ?? 0;
+  return window.__vtlGen ?? 0;
 }
 
-if (typeof window !== 'undefined' && !(window as any).__vtlGenInit) {
-  (window as any).__vtlGenInit = true;
-  (window as any).__vtlGen = 0;
+if (typeof window !== 'undefined' && !window.__vtlGenInit) {
+  window.__vtlGenInit = true;
+  window.__vtlGen = 0;
   document.addEventListener('astro:before-swap', () => {
-    (window as any).__vtlGen = currentGeneration() + 1;
+    window.__vtlGen = currentGeneration() + 1;
   });
 }
 
 export function onPageLoad(key: string, cb: () => void): void {
   if (typeof window === 'undefined') return;
   const registeredKey = onPageLoadKey(key);
-  if ((window as any)[registeredKey]) return;
-  (window as any)[registeredKey] = true;
+  if (window[registeredKey]) return;
+  window[registeredKey] = true;
 
   // Misma página vista = misma generación: el segundo disparo (carga inicial
   // con ClientRouter dispara `astro:page-load` + `DOMContentLoaded`) se
   // ignora para no duplicar analytics ni renders. Cada navegación sube la
   // generación y el callback vuelve a correr una vez.
-  const runKey = `${registeredKey}:ran`;
+  const runKey: `__vtl:${string}` = `${registeredKey}:ran`;
   const run = () => {
-    if ((window as any)[runKey] === currentGeneration()) return;
-    (window as any)[runKey] = currentGeneration();
+    if (window[runKey] === currentGeneration()) return;
+    window[runKey] = currentGeneration();
     cb();
   };
 
@@ -69,8 +69,8 @@ export function onWindowOnce(
 ): void {
   if (typeof window === 'undefined') return;
   const registeredKey = onWindowOnceKey(key);
-  if ((window as any)[registeredKey]) return;
-  (window as any)[registeredKey] = true;
+  if (window[registeredKey]) return;
+  window[registeredKey] = true;
 
   window.addEventListener(type, cb, options);
 }
@@ -80,7 +80,7 @@ export function onWindowOnce(
  * been bound yet. Idempotent across duplicate page-load callbacks.
  */
 export function bindOnce<T extends Element>(el: T, cb: (el: T) => void): void {
-  if ((el as any).__vtBound) return;
-  (el as any).__vtBound = true;
+  if (el.__vtBound) return;
+  el.__vtBound = true;
   cb(el);
 }

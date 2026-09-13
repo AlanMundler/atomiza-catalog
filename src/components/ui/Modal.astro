@@ -3,13 +3,12 @@ interface Props {
   id?: string;
   title?: string;
   class?: string;
-  children: any;
 }
 
-const { id = '', title, class: className = '', children } = Astro.props;
+const { id = '', title, class: className = '' } = Astro.props;
 // Contador determinista por build (Math.random rompía SSR/hidratación).
-let __modalSeq = (globalThis as any).__atzModalSeq ?? 0;
-(globalThis as any).__atzModalSeq = __modalSeq + 1;
+let __modalSeq = globalThis.__atzModalSeq ?? 0;
+globalThis.__atzModalSeq = __modalSeq + 1;
 const modalId = id || `modal-${__modalSeq}`;
 ---
 
@@ -33,7 +32,7 @@ const modalId = id || `modal-${__modalSeq}`;
       </svg>
     </button>
     <div class="modal-content">
-      <slot>{children}</slot>
+      <slot />
     </div>
   </dialog>
   <div class="modal-backdrop" data-modal-backdrop role="presentation" aria-hidden="true"></div>
@@ -85,8 +84,8 @@ const modalId = id || `modal-${__modalSeq}`;
         el.addEventListener('modal:close', () => close());
 
         // Store open/close helpers so other scripts can trigger them
-        (el as any)._modalOpen = open;
-        (el as any)._modalClose = close;
+        el._modalOpen = open;
+        el._modalClose = close;
       });
     });
 

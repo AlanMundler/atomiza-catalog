@@ -16,7 +16,6 @@ interface Props {
   preloadImages?: string[];
   /** true hace que la página sea noindex/noarchive en Google (404, envíos de prueba, etc.). */
   noindex?: boolean;
-  children: any;
 }
 
 const {
@@ -26,7 +25,6 @@ const {
   ogType = 'website',
   preloadImages = [],
   noindex = false,
-  children,
 } = Astro.props;
 const ogImageUrl = new URL(assetUrl(ogImage), Astro.site).href;
 const pageUrl = new URL(Astro.url.pathname, Astro.site).href;
@@ -280,7 +278,7 @@ const hasTracking = Boolean(site.gaMeasurementId || site.metaPixelId || site.tik
     <a href="#main-content" class="skip-link">Saltar al contenido</a>
     <Header />
     <main id="main-content" tabindex="-1">
-      <slot>{children}</slot>
+      <slot />
     </main>
     <Footer />
     <CartDrawer />

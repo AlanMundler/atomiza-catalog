@@ -235,7 +235,7 @@ import { assetUrl, site } from '@/site.config';
       if (preview) {
         preview.select();
         try {
-          return (document as any).execCommand('copy');
+          return document.execCommand('copy');
         } catch {
           return false;
         }

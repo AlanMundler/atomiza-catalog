@@ -287,15 +287,15 @@ const faqs = [
     // si el usuario prefiere movimiento reducido; se frena sola si el DOM
     // cambia (navegación SPA) para no dejar intervalos huérfanos.
     onPageLoad('tridente-strip-rotate', () => {
-      if ((window as any).__atzPromoRot) return;
+      if (window.__atzPromoRot) return;
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       const items = Array.from(document.querySelectorAll('[data-promo-item]'));
       if (items.length < 2) return;
       let i = 0;
-      (window as any).__atzPromoRot = window.setInterval(() => {
+      window.__atzPromoRot = window.setInterval(() => {
         if (!items[0].isConnected) {
-          window.clearInterval((window as any).__atzPromoRot);
-          (window as any).__atzPromoRot = 0;
+          window.clearInterval(window.__atzPromoRot);
+          window.__atzPromoRot = 0;
           return;
         }
         items[i].classList.remove('active');
@@ -307,8 +307,8 @@ const faqs = [
     // Pick 4 random perfumes from stock on each visit
     onPageLoad('home', () => {
       const grid = document.querySelector('#home-perfume-grid') as HTMLElement | null;
-      if (!grid || (grid as any).__vtShuffled) return;
-      (grid as any).__vtShuffled = true;
+      if (!grid || grid.__vtShuffled) return;
+      grid.__vtShuffled = true;
 
       const items = Array.from(grid.querySelectorAll('.home-perfume-item')) as HTMLElement[];
       if (items.length > 4) {

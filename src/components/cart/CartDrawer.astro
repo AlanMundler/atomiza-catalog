@@ -69,7 +69,7 @@ import Drawer from '@/components/ui/Drawer.astro';
     const perfumeId = itemEl.getAttribute('data-perfume-id');
     const sizeMl = parseInt(itemEl.getAttribute('data-size-ml') || '', 10);
     const perfume = (await getPerfumesMap()).get(perfumeId || '');
-    const size = perfume?.sizes?.find((s: any) => s.ml === sizeMl);
+    const size = perfume?.sizes?.find((s) => s.ml === sizeMl);
     if (!perfumeId || !size) return;
 
     // +1/-1 como delta atómico (lee el carrito fresco adentro): dos clicks
@@ -100,7 +100,7 @@ import Drawer from '@/components/ui/Drawer.astro';
       // Si el catálogo cacheado está desactualizado, forzar refetch.
       if (!perfume) perfume = (await getPerfumesMap(true)).get(perfumeId);
 
-      const size = perfume?.sizes?.find((s: any) => s.ml === sizeMl);
+      const size = perfume?.sizes?.find((s) => s.ml === sizeMl);
       if (!perfumeId || !size) {
         showToast('No se pudo agregar al carrito. Intentá de nuevo.', 'error');
         return;

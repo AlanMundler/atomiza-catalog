@@ -17,8 +17,8 @@ declare global {
   interface Window {
     __hasConsent?: (category: 'analytics' | 'ads') => boolean;
     __ATZ_ANALYTICS_INIT?: boolean;
-    gtag?: (...args: any[]) => void;
-    fbq?: (...args: any[]) => void;
+    gtag?: (...args: unknown[]) => void;
+    fbq?: (...args: unknown[]) => void;
     ttq?: { track: (event: string, params?: Record<string, unknown>) => void };
   }
 }

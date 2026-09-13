@@ -2,10 +2,9 @@
 interface Props {
   variant?: 'in-stock' | 'low-stock' | 'out-of-stock' | 'default';
   class?: string;
-  children: any;
 }
 
-const { variant = 'default', class: className = '', children, ...attrs } = Astro.props;
+const { variant = 'default', class: className = '', ...attrs } = Astro.props;
 
 const variantClasses = {
   'in-stock': 'chip--in-stock',
@@ -16,7 +15,7 @@ const variantClasses = {
 ---
 
 <span class={`chip ${variantClasses[variant]} ${className}`} {...attrs}>
-  <slot>{children}</slot>
+  <slot />
 </span>
 
 <style>
