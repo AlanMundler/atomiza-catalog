@@ -23,10 +23,38 @@ describe('NOTAS', () => {
     for (const slug of slugs) expect(slug).toMatch(/^[a-z0-9-]+$/);
   });
 
-  it('cada nota matchea al menos 2 decants reales', () => {
+  it('cada nota matchea decants reales (oud: 1, resto 2+)', () => {
     for (const nota of NOTAS) {
-      expect(perfumesConNota(perfumes, nota).length).toBeGreaterThanOrEqual(2);
+      const min = nota.slug === 'oud' ? 1 : 2;
+      expect(perfumesConNota(perfumes, nota).length).toBeGreaterThanOrEqual(min);
     }
+  });
+
+  it('solo mira salida y corazón, salvo excepción con matchBase', () => {
+    const base: Perfume = {
+      id: 'x',
+      slug: 'x',
+      brand: 'Test',
+      name: 'X',
+      gender: 'unisex',
+      olfactoryFamily: 'Oriental',
+      description: 'x',
+      notes: { top: [], heart: [], base: [] },
+      images: [],
+      sizes: [{ ml: 5, price: 6000, stock: 10 }],
+      isBoutiqueExclusive: false,
+      featured: false,
+    };
+    const soloFondo = {
+      ...base,
+      notes: { top: ['Bergamota'], heart: ['Limón'], base: ['Vainilla'] },
+    };
+    const vainilla = getNota('vainilla')!;
+    const almizcle = getNota('almizcle')!;
+    expect(perfumesConNota([soloFondo], vainilla)).toHaveLength(0);
+    expect(
+      perfumesConNota([{ ...soloFondo, notes: { top: [], heart: [], base: ['Almizcle'] } }], almizcle)
+    ).toHaveLength(1);
   });
 
   it('rosa no trae pimienta rosa', () => {
