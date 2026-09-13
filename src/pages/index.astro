@@ -621,6 +621,27 @@ const faqs = [
     }
   }
 
+  /* Celu: carrusel de a una con swipe, igual que las reseñas. */
+  @media (max-width: 767px) {
+    .value-prop-grid {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      padding-bottom: 4px;
+    }
+
+    .value-prop-grid::-webkit-scrollbar {
+      display: none;
+    }
+
+    .value-prop-grid .value-prop-card {
+      flex: 0 0 85%;
+      scroll-snap-align: center;
+    }
+  }
+
   .value-prop-card {
     text-align: center;
     padding: var(--spacing-stack-md);
@@ -659,6 +680,28 @@ const faqs = [
   /* How to Buy */
   .how-to-buy {
     padding: var(--spacing-stack-lg) 0;
+  }
+
+  /* Celu: pasos en carrusel con swipe. El CSS propio (sin layer) pisa las
+     utilidades grid de Tailwind solo bajo 768px; en PC queda el grid. */
+  @media (max-width: 767px) {
+    .how-to-buy .grid {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      padding-bottom: 4px;
+    }
+
+    .how-to-buy .grid::-webkit-scrollbar {
+      display: none;
+    }
+
+    .how-to-buy .step {
+      flex: 0 0 85%;
+      scroll-snap-align: center;
+    }
   }
 
   .step {
