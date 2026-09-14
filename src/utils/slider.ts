@@ -9,6 +9,33 @@
  *   <button data-slider-prev> / <div data-slider-dots> / <button data-slider-next>
  * </div>
  */
+
+interface AutoplayControl {
+  root: HTMLElement;
+  stop: () => void;
+  start: () => void;
+}
+
+// Un solo listener de `visibilitychange` para todos los sliders: antes cada
+// instancia sumaba el suyo a `document` y sobrevivía a las navegaciones SPA.
+// Las entradas de sliders ya desmontados se podan en cada disparo.
+const autoplayControls = new Set<AutoplayControl>();
+let visibilityHookInstalled = false;
+
+function installVisibilityHook(): void {
+  if (visibilityHookInstalled) return;
+  visibilityHookInstalled = true;
+  document.addEventListener('visibilitychange', () => {
+    for (const control of Array.from(autoplayControls)) {
+      if (!control.root.isConnected) {
+        autoplayControls.delete(control);
+        continue;
+      }
+      if (document.visibilityState === 'hidden') control.stop();
+      else control.start();
+    }
+  });
+}
 export function initSliders(scope: ParentNode = document): void {
   if (typeof window === 'undefined') return;
   const roots = scope.querySelectorAll('[data-slider]:not([data-slider-ready])');
@@ -121,10 +148,8 @@ export function initSliders(scope: ParentNode = document): void {
       root.addEventListener('pointerleave', pauseAndResume);
       root.addEventListener('focusin', stop);
       root.addEventListener('focusout', pauseAndResume);
-      document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'hidden') stop();
-        else start();
-      });
+      installVisibilityHook();
+      autoplayControls.add({ root, stop, start });
       start();
     }
   });

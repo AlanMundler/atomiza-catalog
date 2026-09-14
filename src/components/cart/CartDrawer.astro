@@ -68,9 +68,20 @@ import Drawer from '@/components/ui/Drawer.astro';
 
     const perfumeId = itemEl.getAttribute('data-perfume-id');
     const sizeMl = parseInt(itemEl.getAttribute('data-size-ml') || '', 10);
+    if (!perfumeId || !Number.isFinite(sizeMl)) return;
+
+    // Eliminar funciona aunque el perfume ya no exista en el catálogo
+    // (o haya cambiado de talle): solo compara id+ml.
+    // Antes el `return` de abajo dejaba ítems fantasma ineliminables.
+    if (action === 'remove') {
+      removeFromCart(perfumeId, sizeMl);
+      updateAndRerender();
+      return;
+    }
+
     const perfume = (await getPerfumesMap()).get(perfumeId || '');
     const size = perfume?.sizes?.find((s) => s.ml === sizeMl);
-    if (!perfumeId || !size) return;
+    if (!size) return;
 
     // +1/-1 como delta atómico (lee el carrito fresco adentro): dos clicks
     // rápidos ya no pierden una unidad por leer la misma cantidad vieja.
@@ -78,8 +89,6 @@ import Drawer from '@/components/ui/Drawer.astro';
       changeCartItemQuantity(perfumeId, size, -1);
     } else if (action === 'increase') {
       changeCartItemQuantity(perfumeId, size, 1);
-    } else if (action === 'remove') {
-      removeFromCart(perfumeId, size);
     }
     updateAndRerender();
   }

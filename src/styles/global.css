@@ -325,3 +325,87 @@ ol {
     transform: translateY(0);
   }
 }
+
+/* Sliders por click (una tarjeta por vez en celu). El markup sale del
+   componente SliderNav.astro; ocultos en PC donde la grid va completa. */
+.slider-nav {
+  display: none;
+}
+
+/* Carrusel con swipe en celu (scroll-snap nativo, sin JS): se activa con
+   `carousel-track` en el contenedor y `carousel-slide` en cada tarjeta.
+   En PC cada sección define su propia grid y estas reglas no aplican.
+   OJO cascada: el CSS de cada página carga DESPUÉS que este global, así
+   que `display` y `gap` se fuerzan en la página (un solo `@media` con
+   todos sus tracks); acá va solo lo que ninguna página pisa. */
+@media (max-width: 767px) {
+  .slider-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 12px;
+  }
+
+  .slider-btn {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-on-surface);
+    background: transparent;
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all var(--transition-duration) var(--transition-easing);
+  }
+
+  .slider-btn:hover {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+  }
+
+  .slider-btn:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .slider-dots {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .slider-dot {
+    width: 8px;
+    height: 8px;
+    padding: 0;
+    border: none;
+    border-radius: 999px;
+    background-color: var(--color-outline-variant);
+    cursor: pointer;
+    transition: all var(--transition-duration) var(--transition-easing);
+  }
+
+  .slider-dot.active {
+    width: 24px;
+    background-color: var(--color-primary);
+  }
+
+  .carousel-track {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+  }
+
+  .carousel-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .carousel-track > .carousel-slide {
+    flex: 0 0 100%;
+    scroll-snap-align: center;
+  }
+}

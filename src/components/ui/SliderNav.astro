@@ -1,0 +1,30 @@
+---
+// Controles de un slider mobile (flechas + dots). El JS de `utils/slider.ts`
+// los descubre por los `data-slider-*` y los dots ya vienen del SSR.
+// Los estilos viven en `styles/global.css` (sección Sliders) para que valgan
+// en cualquier página sin duplicar CSS.
+interface Props {
+  /** Etiqueta del grupo, ej. "Cambiar tarjeta". */
+  groupLabel: string;
+  /** Una etiqueta por dot, ej. ["Ir a Autenticidad", ...]. */
+  labels: string[];
+  prevLabel?: string;
+  nextLabel?: string;
+}
+
+const { groupLabel, labels, prevLabel = 'Anterior', nextLabel = 'Siguiente' } = Astro.props;
+---
+
+<div class="slider-nav" role="group" aria-label={groupLabel}>
+  <button type="button" class="slider-btn" data-slider-prev aria-label={prevLabel}>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
+  </button>
+  <div class="slider-dots" data-slider-dots>
+    {labels.map((label) => (
+      <button type="button" class="slider-dot" aria-label={label}></button>
+    ))}
+  </div>
+  <button type="button" class="slider-btn" data-slider-next aria-label={nextLabel}>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+  </button>
+</div>

@@ -1,4 +1,5 @@
 import type { Perfume } from '@/data/types';
+import { primarySize } from '@/utils/stock';
 
 export type Gender = 'para-el' | 'para-ella' | 'indistinto';
 export type Style =
@@ -195,10 +196,6 @@ function notesText(perfume: Perfume): string {
   return normalize([...perfume.notes.top, ...perfume.notes.heart, ...perfume.notes.base].join(' '));
 }
 
-function primarySize(perfume: Perfume) {
-  return perfume.sizes.find((size) => size.ml === 5) ?? perfume.sizes[0];
-}
-
 function genderMatches(perfume: Perfume, choice: Gender): boolean {
   if (choice === 'indistinto') return true;
   const target = choice === 'para-el' ? 'masculino' : 'femenino';
@@ -256,7 +253,10 @@ export function recommendPerfumes(answers: QuizAnswers, perfumes: Perfume[]): Pe
       const diff = score(b, answers) - score(a, answers);
       if (diff !== 0) return diff;
       if (Number(b.featured) !== Number(a.featured)) return Number(b.featured) - Number(a.featured);
-      const priceDiff = primarySize(a)!.price - primarySize(b)!.price;
+      // Los que llegan al sort pasaron el filtro de stock de arriba, así
+      // que tienen talle; el `?? 0` es solo red de seguridad (nunca
+      // debería correr) en vez de una non-null assertion que crashea.
+      const priceDiff = (primarySize(a)?.price ?? 0) - (primarySize(b)?.price ?? 0);
       if (priceDiff !== 0) return priceDiff;
       return a.name.localeCompare(b.name, 'es');
     })

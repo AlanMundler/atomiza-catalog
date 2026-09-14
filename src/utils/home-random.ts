@@ -1,6 +1,6 @@
 import { site, assetUrl } from '@/site.config';
 import type { Perfume } from '@/data/types';
-import { getStockLabel, getStockStatus, isSizeAvailable } from '@/utils/stock';
+import { getStockLabel, getStockStatus, isSizeAvailable, primarySize } from '@/utils/stock';
 import { escapeHtml, formatPrice } from '@/utils/formatters';
 import { getPerfumesMap } from '@/utils/perfumes-client';
 
@@ -34,15 +34,17 @@ export function cryptoRand(): number {
 }
 
 /**
- * Marca de una card igual a `ProductCard.astro` (clases 1:1). Los estilos de
- * ProductCard/Chip son globales (`is:global`) justamente para que estas cards
- * inyectadas por JS se vean igual que las del SSR.
+ * Marca de una card igual a `ProductCard.astro` (clases 1:1): wrapper
+ * `div.product-card` + link estirado + botón quick-add hermano (nunca
+ * un botón dentro del link). Los estilos de ProductCard/Chip son
+ * globales (`is:global`) justamente para que estas cards inyectadas por
+ * JS se vean igual que las del SSR.
  */
 export function homeCardHtml(perfume: Perfume, eager = false): string {
   const mainImage = assetUrl(perfume.images[0]?.src);
   const mainAlt = perfume.images[0]?.alt || `${perfume.brand} ${perfume.name}`;
-  const primarySize = perfume.sizes.find((s) => s.ml === 5) || perfume.sizes[0];
-  const stockStatus = primarySize ? getStockStatus(primarySize) : 'out-of-stock';
+  const primary = primarySize(perfume);
+  const stockStatus = primary ? getStockStatus(primary) : 'out-of-stock';
   const stockLabel = getStockLabel(stockStatus);
   const isOutOfStock = stockStatus === 'out-of-stock';
   const variantClass =
@@ -50,23 +52,25 @@ export function homeCardHtml(perfume: Perfume, eager = false): string {
   const search = `${perfume.brand} ${perfume.name} ${perfume.olfactoryFamily}`.toLowerCase();
 
   return (
-    `<a href="${escapeHtml(site.basePath)}producto/${escapeHtml(perfume.slug)}/" class="product-card"` +
-    ` aria-label="Ver ${escapeHtml(perfume.brand)} ${escapeHtml(perfume.name)}"` +
+    `<div class="product-card"` +
     ` data-perfume-id="${escapeHtml(perfume.id)}" data-gender="${escapeHtml(perfume.gender)}" data-search="${escapeHtml(search)}">` +
+    `<a href="${escapeHtml(site.basePath)}producto/${escapeHtml(perfume.slug)}/" class="product-card-link"` +
+    ` aria-label="Ver ${escapeHtml(perfume.brand)} ${escapeHtml(perfume.name)}">` +
     `<div class="product-card-image-wrapper">` +
     `<img src="${escapeHtml(mainImage)}" alt="${escapeHtml(mainAlt)}" class="product-card-image"` +
     ` loading="${eager ? 'eager' : 'lazy'}"${eager ? ' fetchpriority="high"' : ''} width="400" height="400">` +
-    (primarySize && !isOutOfStock
-      ? `<button type="button" class="product-card-quick" data-quick-add data-size-ml="${primarySize.ml}"` +
-        ` aria-label="Agregar ${escapeHtml(perfume.brand)} ${escapeHtml(perfume.name)} al pedido">` +
-        `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">` +
-        `<line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>`
-      : '') +
     (isOutOfStock ? `<div class="product-card-overlay" aria-hidden="true"></div>` : '') +
     `<span class="chip ${variantClass} product-card-stock">${escapeHtml(stockLabel)}</span></div>` +
     `<div class="product-card-info"><span class="product-card-brand">${escapeHtml(perfume.brand)}</span>` +
     `<h3 class="product-card-name" title="${escapeHtml(perfume.name)}">${escapeHtml(perfume.name)}</h3>` +
-    `<span class="product-card-price">${primarySize ? escapeHtml(formatPrice(primarySize.price)) : '—'}</span></div></a>`
+    `<span class="product-card-price">${primary ? escapeHtml(formatPrice(primary.price)) : '—'}</span></div></a>` +
+    (primary && !isOutOfStock
+      ? `<button type="button" class="product-card-quick" data-quick-add data-size-ml="${primary.ml}"` +
+        ` aria-label="Agregar ${escapeHtml(perfume.brand)} ${escapeHtml(perfume.name)} al pedido">` +
+        `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">` +
+        `<line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>`
+      : '') +
+    `</div>`
   );
 }
 
@@ -99,8 +103,8 @@ export async function initHomeRandom(
   try {
     const map = await getPerfumesMap();
     pool = [...map.values()].filter((p) => {
-      const primary = p.sizes.find((s) => s.ml === 5) || p.sizes[0];
-      return primary ? isSizeAvailable(primary) : false;
+      const size = primarySize(p);
+      return size ? isSizeAvailable(size) : false;
     });
   } catch {
     return;

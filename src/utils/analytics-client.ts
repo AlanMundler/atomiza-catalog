@@ -3,6 +3,7 @@ import { getPerfumesMap } from '@/utils/perfumes-client';
 import { getCart } from '@/utils/cart';
 import { resolveCartItems } from '@/utils/formatters';
 import { descuentoTridente } from '@/utils/trident';
+import { primarySize } from '@/utils/stock';
 import type { Perfume } from '@/data/types';
 
 /** Item en el formato estándar de GA4 (enhanced ecommerce). */
@@ -24,7 +25,7 @@ declare global {
 }
 
 export function ga4ItemFromPerfume(perfume: Perfume, quantity?: number): Ga4Item {
-  const size = perfume.sizes.find((s) => s.ml === 5) || perfume.sizes[0];
+  const size = primarySize(perfume);
   return {
     item_id: perfume.id,
     item_name: `${perfume.brand} ${perfume.name}`,

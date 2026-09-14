@@ -2,12 +2,15 @@ import { describe, it, expect, beforeAll } from 'vitest';
 import { initQuickAdd } from '@/utils/quick-add';
 
 function mountCard(attrs = 'data-perfume-id="p1"'): { btn: HTMLElement; root: HTMLElement } {
+  // Markup real de ProductCard: wrapper + link estirado + botón hermano
+  // (nunca botón dentro del link: es HTML inválido y rompe teclado).
   document.body.innerHTML = `
-    <a class="product-card" ${attrs} href="/producto/p1/">
+    <div class="product-card" ${attrs}>
+      <a class="product-card-link" href="/producto/p1/">Detalle</a>
       <button type="button" data-quick-add data-size-ml="5" aria-label="Agregar">
         <span>+</span>
       </button>
-    </a>
+    </div>
   `;
   return {
     btn: document.querySelector('[data-quick-add]') as HTMLElement,
@@ -54,5 +57,11 @@ describe('initQuickAdd', () => {
     expect(count).toBe(0);
 
     window.removeEventListener('cart:add', onAdd);
+  });
+
+  it('el botón quick-add no vive dentro del link (HTML válido)', () => {
+    const { btn } = mountCard();
+    expect(btn.closest('a')).toBeNull();
+    expect(btn.closest('.product-card')?.getAttribute('data-perfume-id')).toBe('p1');
   });
 });

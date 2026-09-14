@@ -1,6 +1,6 @@
 import { assetUrl, site } from '@/site.config';
 import { buildWhatsAppLink, formatPrice } from '@/utils/formatters';
-import { getStockLabel, getStockStatus } from '@/utils/stock';
+import { getStockLabel, getStockStatus, primarySize } from '@/utils/stock';
 import { findInspiracion } from '@/data/inspiraciones';
 import { bindOnce } from '@/utils/view-transitions';
 import type { Perfume } from '@/data/types';
@@ -18,7 +18,10 @@ export function resultEmpty(message: string): HTMLElement {
  * llama (es el mismo para todos los resultados de una jugada).
  */
 export function resultCard(perfume: Perfume, reason: string): HTMLElement {
-  const size = perfume.sizes.find((s) => s.ml === 5) ?? perfume.sizes[0];
+  const size = primarySize(perfume);
+  // Sin talles cargados no hay precio ni stock que mostrar: tarjeta vacía
+  // con mensaje en vez de crashear en `size.price`.
+  if (!size) return resultEmpty('Este perfume no tiene precio cargado todavía. Escribinos y te lo cotizamos.');
   const image = perfume.images[0];
   const stockStatus = getStockStatus(size);
   const stockLabel = getStockLabel(stockStatus);

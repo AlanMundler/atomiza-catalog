@@ -22,8 +22,8 @@ export default defineConfig({
   devToolbar: { enabled: false },
   integrations: [
     sitemap({
-      // Fecha de baja de la página: usa la fecha del último commit o la de build.
-      lastmod: new Date(),
+      // Sin lastmod: con `new Date()` todas las URLs cambiaban en cada
+      // deploy aunque el contenido no cambiara (los buscadores lo ignoran).
       // El 404 tiene noindex: no va al sitemap.
       filter: (page) => !page.endsWith('/404/') && !page.endsWith('/404.html'),
       serialize(item) {
@@ -38,8 +38,14 @@ export default defineConfig({
         } else if (path.startsWith('/catalogo') || path.startsWith('/decants')) {
           item.changefreq = ChangeFreqEnum.WEEKLY;
           item.priority = 0.9;
-        } else if (path.startsWith('/producto')) {
-          item.changefreq = ChangeFreqEnum.MONTHLY;
+        } else if (
+          path.startsWith('/tridentes') ||
+          path.startsWith('/quiz') ||
+          path.startsWith('/producto')
+        ) {
+          // Tridentes y quiz son las páginas que convierten: misma
+          // prioridad que las fichas de producto.
+          item.changefreq = ChangeFreqEnum.WEEKLY;
           item.priority = 0.8;
         } else if (path.startsWith('/blog')) {
           item.changefreq = ChangeFreqEnum.MONTHLY;

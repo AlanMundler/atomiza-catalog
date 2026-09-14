@@ -45,10 +45,23 @@ export function resolveCartItems(
     const perfume = perfumesMap.get(item.perfumeId) || null;
     let size: PerfumeSize | undefined;
     if (perfume) {
-      size =
-        perfume.sizes.find((s) => s.ml === item.size.ml) ||
-        perfume.sizes.find((s) => s.ml === 5) ||
-        perfume.sizes[0];
+      size = perfume.sizes.find((s) => s.ml === item.size.ml);
+      // Talle pedido que ya no existe en el catálogo (dato viejo o storage
+      // tocado): NO se remapea a otro talle en silencio — facturar el precio
+      // de 5ml por algo que no se pidió está mal. Queda no disponible (se
+      // excluye del pedido y el drawer lo muestra eliminable).
+      if (!size) {
+        const requestedQuantity = Number.isInteger(item.quantity) && item.quantity > 0 ? item.quantity : 1;
+        resolved.push({
+          perfumeId: item.perfumeId,
+          perfume,
+          size: item.size,
+          requestedQuantity,
+          quantity: 0,
+          available: false,
+        });
+        continue;
+      }
     } else {
       size = item.size;
     }

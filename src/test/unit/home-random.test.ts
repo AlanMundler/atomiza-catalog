@@ -59,6 +59,13 @@ describe('homeCardHtml', () => {
     expect(html).toContain('chip--out-of-stock');
   });
 
+  it('no anida el botón dentro del link (HTML válido)', () => {
+    document.body.innerHTML = homeCardHtml(makePerfume('x1'));
+    const btn = document.querySelector('[data-quick-add]') as HTMLElement;
+    expect(btn.closest('a')).toBeNull();
+    expect(document.querySelector('.product-card > a.product-card-link')).not.toBeNull();
+  });
+
   it('escapa HTML inyectado en marca y nombre', () => {
     const p = makePerfume('evil');
     p.brand = '<script>alert(1)</script>';

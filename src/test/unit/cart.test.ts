@@ -71,6 +71,24 @@ describe('cart utilities', () => {
       expect(cart.items[0].perfumeId).toBe('ok');
     });
 
+    it('drops degenerate sizes (ml 0/fraction, negative price/stock)', () => {
+      localStorage.setItem('atomiza-cart', JSON.stringify({
+        items: [
+          { perfumeId: 'ok', size: { ml: 5, price: 32000, stock: 2 }, quantity: 1 },
+          { perfumeId: 'ml-zero', size: { ml: 0, price: 32000, stock: 2 }, quantity: 1 },
+          { perfumeId: 'ml-frac', size: { ml: 2.5, price: 32000, stock: 2 }, quantity: 1 },
+          { perfumeId: 'neg-price', size: { ml: 5, price: -100, stock: 2 }, quantity: 1 },
+          { perfumeId: 'neg-stock', size: { ml: 5, price: 32000, stock: -3 }, quantity: 1 },
+        ],
+        updatedAt: Date.now()
+      }));
+
+      const cart = getCart();
+      // ok + neg-stock (recortado a 0, visible como no disponible y eliminable)
+      expect(cart.items.map((i) => i.perfumeId).sort()).toEqual(['neg-stock', 'ok']);
+      expect(cart.items.find((i) => i.perfumeId === 'neg-stock')?.size.stock).toBe(0);
+    });
+
     it('normalizes invalid quantities (non-integer, string, over stock)', () => {
       localStorage.setItem('atomiza-cart', JSON.stringify({
         items: [
@@ -145,7 +163,7 @@ describe('cart utilities', () => {
         updatedAt: Date.now()
       }));
       
-      const cart = removeFromCart('tobacco-vanille', mockPerfumeSize);
+      const cart = removeFromCart('tobacco-vanille', mockPerfumeSize.ml);
       expect(cart.items).toHaveLength(1);
       expect(cart.items[0].perfumeId).toBe('baccarat-rouge-540');
     });
@@ -156,8 +174,18 @@ describe('cart utilities', () => {
         updatedAt: Date.now()
       }));
       
-      const cart = removeFromCart('non-existent', mockPerfumeSize);
+      const cart = removeFromCart('non-existent', mockPerfumeSize.ml);
       expect(cart.items).toHaveLength(1);
+    });
+
+    it('removes by id+ml even without the catalog size (ghost item)', () => {
+      localStorage.setItem('atomiza-cart', JSON.stringify({
+        items: [{ perfumeId: 'borrado', size: { ml: 5, price: 6000, stock: 0 }, quantity: 1 }],
+        updatedAt: Date.now()
+      }));
+
+      const cart = removeFromCart('borrado', 5);
+      expect(cart.items).toHaveLength(0);
     });
   });
 
@@ -191,6 +219,18 @@ describe('cart utilities', () => {
 
       const cart = changeCartItemQuantity('tobacco-vanille', mockPerfumeSize, 10);
       expect(cart.items[0].quantity).toBe(2); // Stock limit
+    });
+
+    it('ignora deltas no finitos en vez de guardar quantity NaN', () => {
+      localStorage.setItem('atomiza-cart', JSON.stringify({
+        items: [mockCartItem1],
+        updatedAt: Date.now()
+      }));
+
+      const cart = changeCartItemQuantity('tobacco-vanille', mockPerfumeSize, NaN);
+      expect(cart.items).toHaveLength(1);
+      expect(cart.items[0].quantity).toBe(1);
+      expect(Number.isFinite(getCartItemCount())).toBe(true);
     });
   });
 

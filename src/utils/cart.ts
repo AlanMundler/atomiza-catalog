@@ -21,11 +21,16 @@ function normalizeCart(value: unknown): CartState {
     const size = item.size as { ml?: unknown; price?: unknown; stock?: unknown } | null | undefined;
     const ml = Number(size?.ml);
     const price = Number(size?.price);
-    const stock = Number(size?.stock);
+    let stock = Number(size?.stock);
     const perfumeId = typeof item.perfumeId === 'string' ? item.perfumeId.trim() : '';
-    if (!perfumeId || !Number.isFinite(ml) || !Number.isFinite(price) || !Number.isFinite(stock)) {
+    // Talles degenerados (ml 0/negativo/fracción, precio negativo) se
+    // descartan: nunca existieron en el catálogo (todos son de 5ml).
+    // Stock negativo se recorta a 0 (el item queda visible como no
+    // disponible y eliminable, en vez de romper sumas).
+    if (!perfumeId || !Number.isInteger(ml) || ml <= 0 || !Number.isFinite(price) || price < 0 || !Number.isFinite(stock)) {
       continue;
     }
+    if (stock < 0) stock = 0;
     let quantity = Number.isInteger(item.quantity) ? (item.quantity as number) : 1;
     if (quantity < 1) quantity = 1;
     if (stock > 0) quantity = Math.min(quantity, stock);
@@ -59,9 +64,9 @@ function saveCart(cart: CartState): void {
   }
 }
 
-function findItemIndex(items: CartItem[], perfumeId: string, size: PerfumeSize): number {
+function findItemIndex(items: CartItem[], perfumeId: string, sizeMl: number): number {
   return items.findIndex(
-    (item) => item.perfumeId === perfumeId && item.size.ml === size.ml
+    (item) => item.perfumeId === perfumeId && item.size.ml === sizeMl
   );
 }
 
@@ -71,7 +76,7 @@ export function getCart(): CartState {
 
 export function addToCart(item: CartItem): CartState {
   const cart = getStoredCart();
-  const existingIndex = findItemIndex(cart.items, item.perfumeId, item.size);
+  const existingIndex = findItemIndex(cart.items, item.perfumeId, item.size.ml);
   const incoming = Number.isInteger(item.quantity) && item.quantity > 0 ? item.quantity : 1;
 
   if (existingIndex >= 0) {
@@ -98,9 +103,11 @@ export function addToCart(item: CartItem): CartState {
   return cart;
 }
 
-export function removeFromCart(perfumeId: string, size: PerfumeSize): CartState {
+/** Eliminar por id + ml: funciona aunque el perfume ya no esté en el
+ * catálogo (ítem fantasma), porque no necesita el objeto size completo. */
+export function removeFromCart(perfumeId: string, sizeMl: number): CartState {
   const cart = getStoredCart();
-  const index = findItemIndex(cart.items, perfumeId, size);
+  const index = findItemIndex(cart.items, perfumeId, sizeMl);
 
   if (index >= 0) {
     cart.items.splice(index, 1);
@@ -122,8 +129,11 @@ export function changeCartItemQuantity(
   delta: number
 ): CartState {
   const cart = getStoredCart();
-  const index = findItemIndex(cart.items, perfumeId, size);
+  const index = findItemIndex(cart.items, perfumeId, size.ml);
   if (index < 0) return cart;
+  // Delta no finito (evento malformado): no tocar nada en vez de guardar
+  // quantity NaN que rompería las sumas del badge y los totales.
+  if (!Number.isFinite(delta)) return cart;
   const next = Math.min(cart.items[index].quantity + delta, size.stock);
   if (next <= 0) {
     cart.items.splice(index, 1);

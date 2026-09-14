@@ -236,9 +236,3 @@ export const guias: Guia[] = [
     ],
   },
 ];
-
-/** Prefiero una fecha legible para la guía. */
-export function formatGuiaDate(date: string): string {
-  const [y, m, d] = date.split('-');
-  return `${d}/${m}/${y}`;
-}

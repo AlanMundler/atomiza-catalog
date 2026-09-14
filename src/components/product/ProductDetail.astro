@@ -21,10 +21,14 @@ const selectedSize =
   perfume.sizes.find(s => s.ml === 5) ||
   perfume.sizes[0];
 const available = selectedSize ? isSizeAvailable(selectedSize) : false;
-const waMessage = buildWhatsAppLink(
-  site.whatsappNumber,
-  `Hola! Quiero consultar por ${perfume.brand} ${perfume.name} (5ml, ${formatPrice(selectedSize.price)}). ¿Me ayudás?`
-);
+// Sin talles cargados no se puede consultar precio: link genérico en vez
+// de crashear el build en `selectedSize.price`.
+const waMessage = selectedSize
+  ? buildWhatsAppLink(
+      site.whatsappNumber,
+      `Hola! Quiero consultar por ${perfume.brand} ${perfume.name} (5ml, ${formatPrice(selectedSize.price)}). ¿Me ayudás?`
+    )
+  : site.whatsappUrl;
 ---
 
 <article class="product-detail" data-perfume-id={perfume.id}>

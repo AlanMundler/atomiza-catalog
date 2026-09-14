@@ -132,14 +132,15 @@ describe('formatters', () => {
       expect(resolved.size.ml).toBe(5);
     });
 
-    it('falls back to the catalog size when the requested ml does not match', () => {
+    it('marks the item unavailable when the requested ml no longer exists (no silent remap)', () => {
       const items = [
         { perfumeId: 'tobacco-vanille', size: { ml: 99, price: 1, stock: 1 }, quantity: 1 }
       ] as unknown as CartItem[];
       const [resolved] = resolveCartItems(items, perfumesMap);
-      expect(resolved.available).toBe(true);
-      expect(resolved.size.ml).toBe(5);
-      expect(resolved.size.price).toBe(32000);
+      expect(resolved.available).toBe(false);
+      expect(resolved.quantity).toBe(0);
+      // Se conserva el talle pedido para mostrarlo, no se factura otro.
+      expect(resolved.size.ml).toBe(99);
     });
 
     it('normalizes invalid quantities to 1', () => {

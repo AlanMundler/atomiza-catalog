@@ -10,7 +10,7 @@ declare global {
     __vtlGen?: number;
     __vtlGenInit?: boolean;
     /** Intervalo de rotación de la tira de promociones (home). */
-    __atzPromoRot?: number;
+    __promoStripInterval?: number;
     /** Llaves `__vtl:<nombre>` de onPageLoad ya registrados. */
     [key: `__vtl:${string}`]: boolean | number | undefined;
     /** Llaves `__vtw:<nombre>` de onWindowOnce ya registrados. */

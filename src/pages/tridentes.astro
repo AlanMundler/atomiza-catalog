@@ -1,7 +1,7 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import { formatPrice } from '@/utils/formatters';
-import { TRIDENT_COUNT, TRIDENT_DISCOUNT } from '@/utils/trident';
+import { TRIDENT_COUNT, TRIDENT_DISCOUNT, TRIDENT_BULK_PER_DECANT } from '@/utils/trident';
 import { site } from '@/site.config';
 
 const BASE = site.basePath;
@@ -9,7 +9,7 @@ const BASE = site.basePath;
 
 <Layout
   title={`Tridentes: cada ${TRIDENT_COUNT} decants, ${formatPrice(TRIDENT_DISCOUNT)} menos`}
-  description={`Cada ${TRIDENT_COUNT} decants de 5ml se descuentan ${formatPrice(TRIDENT_DISCOUNT)} automáticamente en tu pedido, sin armar nada. 6 decants o más: $1.000 menos por decant.`}
+  description={`Cada ${TRIDENT_COUNT} decants de 5ml se descuentan ${formatPrice(TRIDENT_DISCOUNT)} automáticamente en tu pedido, sin armar nada. 6 decants o más: ${formatPrice(TRIDENT_BULK_PER_DECANT)} menos por decant.`}
   ogImage="og-tridentes.jpg"
 >
   <section class="trident-hero" aria-labelledby="trident-title">
@@ -29,7 +29,7 @@ const BASE = site.basePath;
       </div>
       <div class="trident-step">
         <span class="trident-step-number">2</span>
-        <p class="trident-step-text">3 decants te descuentan {formatPrice(TRIDENT_DISCOUNT)}; 6 o más, $1.000 por decant</p>
+          <p class="trident-step-text">3 decants te descuentan {formatPrice(TRIDENT_DISCOUNT)}; 6 o más, {formatPrice(TRIDENT_BULK_PER_DECANT)} por decant</p>
       </div>
       <div class="trident-step">
         <span class="trident-step-number">3</span>
@@ -52,8 +52,8 @@ const BASE = site.basePath;
     <div class="container">
       <ul class="trident-examples-list">
         <li><strong>{TRIDENT_COUNT} decants</strong> → {formatPrice(TRIDENT_DISCOUNT)} menos</li>
-        <li><strong>{TRIDENT_COUNT * 2} decants</strong> → $6.000 menos</li>
-        <li><strong>{TRIDENT_COUNT * 3} decants</strong> → $9.000 menos</li>
+        <li><strong>{TRIDENT_COUNT * 2} decants</strong> → {formatPrice(TRIDENT_BULK_PER_DECANT * TRIDENT_COUNT * 2)} menos</li>
+        <li><strong>{TRIDENT_COUNT * 3} decants</strong> → {formatPrice(TRIDENT_BULK_PER_DECANT * TRIDENT_COUNT * 3)} menos</li>
       </ul>
     </div>
   </section>

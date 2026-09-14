@@ -11,6 +11,9 @@ export interface Inspiracion {
 // Cada decant del catálogo tiene una fragancia famosa detrás: lo que la
 // gente busca en Google es el olor ("decant Baccarat Rouge", "perfume que
 // huele a Sauvage"). Estas páginas programáticas aprovechan esa demanda.
+// OJO: los perfumes originales sin inspiración (ej. hawas-fire,
+// oud-lail-maleki, rouat-ajial) NO llevan entrada a propósito — no hay
+// página /decants/ para ellos y el quiz simplemente omite ese link.
 export const inspiraciones: Inspiracion[] = [
   {
     perfumeSlug: 'luminous-sahara',
