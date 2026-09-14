@@ -350,7 +350,9 @@ import Drawer from '@/components/ui/Drawer.astro';
   }
 
   /* Thumb con fondo blanco parejo + 2px de aire: los frascos oscuros
-     ya no se leen como un cuadrado negro al lado de los claros. */
+     ya no se leen como un cuadrado negro al lado de los claros.
+     Caja fija idéntica en todos los items (nunca stretch: si no, cada
+     thumb queda de distinta altura según el largo del nombre). */
   .cart-item-image {
     width: 48px;
     aspect-ratio: 3 / 4;
