@@ -153,6 +153,7 @@ const waMessage = selectedSize
     import { bindOnce, onPageLoad } from '@/utils/view-transitions';
     import { buildWhatsAppLink, formatPrice } from '@/utils/formatters';
     import { sizeStockMessage } from '@/utils/stock';
+    import { syncSelectedSizeClass } from '@/utils/size-selector';
 
     onPageLoad('product-detail', () => {
       const addBtns = Array.from(document.querySelectorAll('[data-add-to-cart]'));
@@ -198,6 +199,9 @@ const waMessage = selectedSize
         sizeInputs.forEach((input) => {
           bindOnce(input as HTMLElement, (el) => {
             el.addEventListener('change', () => {
+              // La marca visual vive en el label (el radio está oculto):
+              // moverla al talle recién elegido.
+              syncSelectedSizeClass(sizeInputs as HTMLInputElement[]);
               const size = sizes.find((s) => s.ml === parseInt((el as HTMLInputElement).value, 10));
               if (!size) return;
               const message = sizeStockMessage(size);
