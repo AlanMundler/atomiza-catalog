@@ -24,7 +24,8 @@ function normalizeCart(value: unknown): CartState {
     let stock = Number(size?.stock);
     const perfumeId = typeof item.perfumeId === 'string' ? item.perfumeId.trim() : '';
     // Talles degenerados (ml 0/negativo/fracción, precio negativo) se
-    // descartan: nunca existieron en el catálogo (todos son de 5ml).
+    // descartan: nunca existieron en el catálogo (decants de 5ml y
+    // frascos originales de 90/100ml).
     // Stock negativo se recorta a 0 (el item queda visible como no
     // disponible y eliminable, en vez de romper sumas).
     if (!perfumeId || !Number.isInteger(ml) || ml <= 0 || !Number.isFinite(price) || price < 0 || !Number.isFinite(stock)) {

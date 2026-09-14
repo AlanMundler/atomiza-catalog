@@ -1,6 +1,7 @@
 import type { CartItem, Perfume, PerfumeSize } from '@/data/types';
 import { site } from '@/site.config';
 import { descuentoTridente, tridentesCompletos } from '@/utils/trident';
+import { isDecantSize } from '@/utils/stock';
 
 export function formatPrice(price: number): string {
   if (!Number.isFinite(price)) return '$—';
@@ -48,7 +49,9 @@ export function cartTotals(resolved: ResolvedCartItem[]): CartTotals {
   let subtotal = 0;
   for (const r of resolved) {
     if (!r.available) continue;
-    orderableCount += r.quantity;
+    // El tridente cuenta decants (5ml); los frascos suman al subtotal
+    // pero no completan tridentes.
+    if (isDecantSize(r.size)) orderableCount += r.quantity;
     subtotal += r.size.price * r.quantity;
   }
   const discount = descuentoTridente(orderableCount);

@@ -1,5 +1,6 @@
 export interface PerfumeSize {
-  ml: 5;
+  /** ml del talle: 5 = decant, 90/100 = frasco original. */
+  ml: number;
   price: number;
   stock: number;
 }

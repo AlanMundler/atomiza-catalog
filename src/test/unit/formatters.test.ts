@@ -370,5 +370,16 @@ describe('formatters', () => {
         orderableCount: 3, subtotal: 18000, discount: 2000, total: 16000, tridentes: 1,
       });
     });
+
+    it('el frasco suma al subtotal pero no completa tridentes', () => {
+      const bottle: ResolvedCartItem = {
+        perfumeId: 'z', perfume: null,
+        size: { ml: 100, price: 100000, stock: 1 },
+        requestedQuantity: 1, quantity: 1, available: true,
+      };
+      expect(cartTotals([ok(1), ok(1), bottle])).toEqual({
+        orderableCount: 2, subtotal: 112000, discount: 0, total: 112000, tridentes: 0,
+      });
+    });
   });
 });

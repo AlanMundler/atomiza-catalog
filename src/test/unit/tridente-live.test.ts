@@ -63,4 +63,26 @@ describe('tridenteProgressText', () => {
     seedCart(['a', 'b']);
     await expect(tridenteProgressText()).resolves.toContain('te falta 1');
   });
+
+  it('el frasco no cuenta como decant para el tridente', async () => {
+    const withBottle = makePerfume('c');
+    withBottle.sizes.push({ ml: 100, price: 100000, stock: 1 });
+    const payload = {
+      version: site.dataVersion,
+      data: { perfumes: [makePerfume('a'), makePerfume('b'), withBottle] },
+    };
+    localStorage.setItem(site.storage.perfumes, JSON.stringify(payload));
+    localStorage.setItem(
+      site.storage.cart,
+      JSON.stringify({
+        items: [
+          { perfumeId: 'a', size: { ml: 5, price: 6000, stock: 10 }, quantity: 1 },
+          { perfumeId: 'b', size: { ml: 5, price: 6000, stock: 10 }, quantity: 1 },
+          { perfumeId: 'c', size: { ml: 100, price: 100000, stock: 1 }, quantity: 1 },
+        ],
+        updatedAt: Date.now(),
+      })
+    );
+    await expect(tridenteProgressText()).resolves.toContain('te falta 1');
+  });
 });

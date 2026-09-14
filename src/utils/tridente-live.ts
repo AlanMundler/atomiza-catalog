@@ -1,6 +1,7 @@
 import { getCart } from '@/utils/cart';
 import { getPerfumesMap } from '@/utils/perfumes-client';
 import { resolveCartItems, formatPrice } from '@/utils/formatters';
+import { isDecantSize } from '@/utils/stock';
 import { TRIDENT_COUNT, tridentesCompletos, descuentoTridente } from '@/utils/trident';
 
 /**
@@ -14,7 +15,10 @@ export async function tridenteProgressText(): Promise<string> {
       return 'Tu pedido está vacío. Sumá decants y el descuento aparece solo.';
     }
     const resolved = resolveCartItems(cart.items, await getPerfumesMap());
-    const count = resolved.filter((r) => r.available).reduce((s, r) => s + r.quantity, 0);
+    // Solo decants (5ml): los frascos no completan tridentes.
+    const count = resolved
+      .filter((r) => r.available && isDecantSize(r.size))
+      .reduce((s, r) => s + r.quantity, 0);
     if (count <= 0) {
       return 'Los decants de tu pedido quedaron sin stock. Elegí otros y listo.';
     }

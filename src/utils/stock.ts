@@ -29,3 +29,12 @@ export function isSizeAvailable(size: PerfumeSize): boolean {
 export function primarySize(perfume: Pick<Perfume, 'sizes'>): PerfumeSize | undefined {
   return perfume.sizes.find((s) => s.ml === 5) || perfume.sizes[0];
 }
+
+/**
+ * Si el talle es un decant (5ml) o un frasco original (90/100ml).
+ * El descuento tridente ("cada 3 decants") cuenta SOLO decants:
+ * un frasco suma al subtotal pero no completa tridentes.
+ */
+export function isDecantSize(size: Pick<PerfumeSize, 'ml'>): boolean {
+  return size.ml === 5;
+}
