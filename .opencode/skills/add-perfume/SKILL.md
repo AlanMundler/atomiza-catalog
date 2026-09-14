@@ -39,9 +39,12 @@ Si el usuario ya pasó género y precio en el mensaje, no preguntar nada.
    `https://fimgs.net/mdimg/perfume-thumbs/375x500.<id>.avif`
    → guardar como `public/images/perfumes/<slug>.avif` con `Invoke-WebRequest`
    (fimgs.net NO tiene Cloudflare). Verificar que el archivo arranque con el
-   header `ftypavif` (bytes 4..11). La presentación en el sitio (fondo blanco,
-   imagen chica y centrada) la maneja el CSS de `ProductCard.astro` y
-   `ImageGallery.astro`; no hace falta tocarla.
+   header `ftypavif` (bytes 4..11). Después **recortar los bordes blancos**
+   (las fotos de Fragrantica traen márgenes dispares y el frasco se ve chico
+   al lado de los otros):
+   `node -e "require('sharp')('public/images/perfumes/<slug>.avif').trim({threshold:15}).avif({quality:70,effort:4}).toFile('public/images/perfumes/<slug>.avif')"`
+   La presentación en el sitio (fondo blanco, imagen centrada) la maneja el
+   CSS de `ProductCard.astro` y `ImageGallery.astro`; no hace falta tocarlo.
 
 4. **Agregar la entrada en `src/data/perfumes.json`.** Editar con la tool `edit`
    (NUNCA con PowerShell, para no romper acentos/UTF-8; el archivo es UTF-8 sin
