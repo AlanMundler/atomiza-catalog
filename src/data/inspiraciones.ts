@@ -321,6 +321,24 @@ export const inspiraciones: Inspiracion[] = [
     slug: 'light-blue-dolce-gabbana',
     familia: 'Aromática Cítrica',
   },
+  {
+    perfumeSlug: 'turathi-blue',
+    perfumeBrand: 'Afnan',
+    perfumeName: 'Turathi Blue',
+    original: 'Tygar',
+    casa: 'Bvlgari',
+    slug: 'tygar-bvlgari',
+    familia: 'Aromática Acuática',
+  },
+  {
+    perfumeSlug: 'mayar-natural-intense',
+    perfumeBrand: 'Lattafa Perfumes',
+    perfumeName: 'Mayar Natural Intense',
+    original: 'Acqua di Gioia',
+    casa: 'Giorgio Armani',
+    slug: 'acqua-di-gioia',
+    familia: 'Floral Acuática',
+  },
 ];
 
 /** Devuelve la inspiración de un perfume por su slug, si existe. */
