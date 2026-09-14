@@ -24,10 +24,10 @@ const inStockPerfumes = allPerfumes.filter((perfume) => {
 });
 
 /**
- * Mezcla determinista por día de build (mulberry32): el SSR pinta los 4
- * finales directo, sin `hidden` ni shuffle en cliente. Antes se renderizaba
- * todo el catálogo oculto y se reordenaba tras el primer paint (CLS + HTML
- * desperdiciado + preload que no coincidía). Rota solo con cada deploy.
+ * Mezcla determinista por día de build (mulberry32): el SSR pinta 4 fijos
+ * directo (SEO/LCP, sin `hidden` ni shuffle en cliente que cause CLS). El
+ * sorteo real por visita lo hace `initHomeRandom` en el browser (el build
+ * estático congelaba esta seed hasta el próximo deploy).
  */
 function pickDaily<T>(items: T[], n: number, seed: number): T[] {
   const pool = [...items];
@@ -349,10 +349,16 @@ const faqs = [
     import { bindOnce, onPageLoad } from '@/utils/view-transitions';
     import { tridenteProgressText } from '@/utils/tridente-live';
     import { initSliders } from '@/utils/slider';
+    import { initHomeRandom } from '@/utils/home-random';
 
     // Sliders por click (reseñas, propuesta, pasos): una tarjeta centrada
     // por vez en mobile. La guarda interna evita duplicar listeners.
     onPageLoad('sliders', () => initSliders());
+
+    // Sorteo de la home: el SSR pinta 4 fijos (SEO/LCP) y acá se reemplazan
+    // por 4 al azar en cada visita (el build estático congelaba el sorteo
+    // diario: siempre salían los mismos hasta el próximo deploy).
+    onPageLoad('home-random', () => initHomeRandom());
 
     // Tira de promociones: abre el modal con la regla y tu progreso en vivo.
     onPageLoad('tridente-strip', () => {

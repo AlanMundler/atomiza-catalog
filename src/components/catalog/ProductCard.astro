@@ -70,7 +70,10 @@ const isOutOfStock = stockStatus === 'out-of-stock';
   </div>
 </a>
 
-<style>
+<!-- is:global: la home inyecta estas mismas cards por JS (sorteo
+  client-side en home-random.ts) y el CSS scopeado de Astro no aplicaría
+  a los nodos creados dinámicamente. Las clases son propias del componente. -->
+<style is:global>
   .product-card {
     display: flex;
     flex-direction: column;

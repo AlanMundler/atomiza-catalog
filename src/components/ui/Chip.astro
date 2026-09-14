@@ -17,7 +17,9 @@ const variantClasses = {
   <slot />
 </span>
 
-<style>
+<!-- is:global por el mismo motivo que ProductCard: el chip se renderiza
+  también dentro de cards inyectadas por JS en la home. -->
+<style is:global>
   .chip {
     display: inline-flex;
     align-items: center;
