@@ -349,12 +349,14 @@ import Drawer from '@/components/ui/Drawer.astro';
     align-items: center;
   }
 
+  /* Thumb con fondo blanco parejo + 2px de aire: los frascos oscuros
+     ya no se leen como un cuadrado negro al lado de los claros. */
   .cart-item-image {
     width: 48px;
     aspect-ratio: 3 / 4;
-    border-radius: calc(var(--border-radius) - 4px);
+    padding: 2px;
     overflow: hidden;
-    background-color: var(--color-surface-container-highest);
+    background-color: #ffffff;
     flex-shrink: 0;
   }
 
