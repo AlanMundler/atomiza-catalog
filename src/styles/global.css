@@ -73,6 +73,11 @@
   --border-radius: 0;
   --transition-duration: 200ms;
   --transition-easing: ease-out;
+
+  /* Alto del header fijo (Header.astro). Lo usan Layout (padding-top del
+     main) y los stickys de catálogo y ficha: si cambia acá, cambia en
+     los 3 lados sin tener que cazar literales. */
+  --header-height: 72px;
 }
 
 *,

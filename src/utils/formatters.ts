@@ -29,6 +29,38 @@ export interface ResolvedCartItem {
   available: boolean;
 }
 
+export interface CartTotals {
+  orderableCount: number;
+  subtotal: number;
+  discount: number;
+  total: number;
+  tridentes: number;
+}
+
+/**
+ * Totales del carrito contra items ya resueltos: subtotal a precio de
+ * catálogo vivo, descuento tridente automático y total neto. Una sola
+ * cuenta para el drawer (cart-ui), el pedido (generateOrderText) y
+ * analytics: antes cada uno la reimplementaba y podían divergir.
+ */
+export function cartTotals(resolved: ResolvedCartItem[]): CartTotals {
+  let orderableCount = 0;
+  let subtotal = 0;
+  for (const r of resolved) {
+    if (!r.available) continue;
+    orderableCount += r.quantity;
+    subtotal += r.size.price * r.quantity;
+  }
+  const discount = descuentoTridente(orderableCount);
+  return {
+    orderableCount,
+    subtotal,
+    discount,
+    total: subtotal - discount,
+    tridentes: tridentesCompletos(orderableCount),
+  };
+}
+
 /**
  * Resuelve cada item del carrito contra el catálogo vivo: precio y stock
  * SIEMPRE salen del catálogo, no del snapshot del carrito (que puede estar
@@ -99,9 +131,7 @@ export function generateOrderText(
   const orderable = resolved.filter((r) => r.available);
   const excludedCount = resolved.length - orderable.length;
   // Descuento automático por tridente sobre decants comprables.
-  const orderableCount = orderable.reduce((sum, r) => sum + r.quantity, 0);
-  const tridentes = tridentesCompletos(orderableCount);
-  const discount = descuentoTridente(orderableCount);
+  const { discount, subtotal, total, tridentes } = cartTotals(resolved);
 
   const lines: string[] = [
     `📦 NUEVO PEDIDO - ${site.name}`,
@@ -112,12 +142,8 @@ export function generateOrderText(
     '🛍️ DETALLE:'
   ];
 
-  let total = 0;
-
   for (const item of orderable) {
     const lineTotal = item.size.price * item.quantity;
-    total += lineTotal;
-
     lines.push(
       `• ${item.perfume!.brand} - ${item.perfume!.name} (${item.size.ml}ml) x${item.quantity} — ${formatPrice(lineTotal)}`
     );
@@ -133,10 +159,10 @@ export function generateOrderText(
   if (discount > 0) {
     lines.push(
       '',
-      `💰 SUBTOTAL: ${formatPrice(total)}`,
+      `💰 SUBTOTAL: ${formatPrice(subtotal)}`,
       `🎁 DESCUENTO TRIDENTE (${tridentes} ${tridentes === 1 ? 'tridente' : 'tridentes'}): -${formatPrice(discount)}`,
       '',
-      `💰 TOTAL: ${formatPrice(total - discount)}`,
+      `💰 TOTAL: ${formatPrice(total)}`,
     );
   } else {
     lines.push(

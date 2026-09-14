@@ -1,6 +1,7 @@
 ﻿import { describe, it, expect } from 'vitest';
-import { formatPrice, generateOrderText, escapeHtml, resolveCartItems } from '@/utils/formatters';
+import { formatPrice, generateOrderText, escapeHtml, resolveCartItems, cartTotals } from '@/utils/formatters';
 import type { CartItem, Perfume } from '@/data/types';
+import type { ResolvedCartItem } from '@/utils/formatters';
 
 describe('formatters', () => {
   describe('formatPrice', () => {
@@ -337,6 +338,37 @@ describe('formatters', () => {
       expect(result).toContain('💰 TOTAL: $12.000');
       expect(result).not.toContain('DESCUENTO TRIDENTE');
       expect(result).not.toContain('SUBTOTAL');
+    });
+  });
+
+  describe('cartTotals', () => {
+    const ok = (quantity: number, price = 6000): ResolvedCartItem => ({
+      perfumeId: 'x', perfume: null,
+      size: { ml: 5, price, stock: 10 },
+      requestedQuantity: quantity, quantity, available: true,
+    });
+    const out = (): ResolvedCartItem => ({
+      perfumeId: 'y', perfume: null,
+      size: { ml: 5, price: 6000, stock: 0 },
+      requestedQuantity: 1, quantity: 0, available: false,
+    });
+
+    it('suma subtotal y descuenta el tridente con 3', () => {
+      expect(cartTotals([ok(1), ok(1), ok(1)])).toEqual({
+        orderableCount: 3, subtotal: 18000, discount: 2000, total: 16000, tridentes: 1,
+      });
+    });
+
+    it('sin tridente no descuenta', () => {
+      expect(cartTotals([ok(2)])).toEqual({
+        orderableCount: 2, subtotal: 12000, discount: 0, total: 12000, tridentes: 0,
+      });
+    });
+
+    it('ignora los no disponibles en subtotal y cuenta', () => {
+      expect(cartTotals([ok(3), out()])).toEqual({
+        orderableCount: 3, subtotal: 18000, discount: 2000, total: 16000, tridentes: 1,
+      });
     });
   });
 });

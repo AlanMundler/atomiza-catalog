@@ -2,14 +2,13 @@ import { assetUrl } from '@/site.config';
 import {
   escapeHtml,
   formatPrice,
+  cartTotals,
   resolveCartItems,
   type ResolvedCartItem,
 } from '@/utils/formatters';
 import {
   TRIDENT_COUNT,
   TRIDENT_DISCOUNT,
-  descuentoTridente,
-  tridentesCompletos,
 } from '@/utils/trident';
 import type { CartItem, Perfume } from '@/data/types';
 
@@ -38,17 +37,7 @@ export function cartContentHtml(items: CartItem[], perfumesMap: Map<string, Perf
   const unavailableCount = resolved.filter((r) => !r.available).length;
   // El subtotal SIEMPRE se calcula contra el catálogo vivo (igual que el
   // mensaje de pedido), nunca con el precio snapshot del carrito.
-  const subtotal = resolved.reduce(
-    (sum, r) => sum + (r.available ? r.size.price * r.quantity : 0),
-    0
-  );
-  // Descuento automático: cada 3 decants comprables restan $2.000.
-  const orderableCount = resolved
-    .filter((r) => r.available)
-    .reduce((sum, r) => sum + r.quantity, 0);
-  const tridentes = tridentesCompletos(orderableCount);
-  const discount = descuentoTridente(orderableCount);
-  const total = subtotal - discount;
+  const { subtotal, orderableCount, tridentes, discount, total } = cartTotals(resolved);
   // Con 1-2 decants conviene sumar: el nudge lleva al catálogo (acción),
   // no a otra página intermedia.
   const missing = TRIDENT_COUNT - orderableCount;

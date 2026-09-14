@@ -1,8 +1,7 @@
 import { site } from '@/site.config';
 import { getPerfumesMap } from '@/utils/perfumes-client';
 import { getCart } from '@/utils/cart';
-import { resolveCartItems } from '@/utils/formatters';
-import { descuentoTridente } from '@/utils/trident';
+import { resolveCartItems, cartTotals } from '@/utils/formatters';
 import { primarySize } from '@/utils/stock';
 import type { Perfume } from '@/data/types';
 
@@ -51,8 +50,6 @@ async function buildItems(ids: string[]): Promise<Ga4Item[]> {
 
 async function cartSummary(): Promise<{ items: Ga4Item[]; value: number }> {
   const resolved = resolveCartItems(getCart().items, await getPerfumesMap());
-  let value = 0;
-  let orderableCount = 0;
   const items: Ga4Item[] = [];
   for (const resolvedItem of resolved) {
     if (!resolvedItem.available) continue;
@@ -62,11 +59,9 @@ async function cartSummary(): Promise<{ items: Ga4Item[]; value: number }> {
       price: resolvedItem.size.price,
       quantity: resolvedItem.quantity,
     });
-    value += resolvedItem.size.price * resolvedItem.quantity;
-    orderableCount += resolvedItem.quantity;
   }
   // El value es lo que paga el cliente: neto del descuento automático.
-  return { items, value: value - descuentoTridente(orderableCount) };
+  return { items, value: cartTotals(resolved).total };
 }
 
 function initAnalytics(): void {

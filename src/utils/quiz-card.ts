@@ -5,6 +5,18 @@ import { findInspiracion } from '@/data/inspiraciones';
 import { bindOnce } from '@/utils/view-transitions';
 import type { Perfume } from '@/data/types';
 
+/**
+ * TEXTOS de la tarjeta de resultado: si hay que cambiar una palabra,
+ * se cambia ACÁ (no hace falta leer el código de abajo).
+ */
+const QUIZ_COPY = {
+  badge: 'Tu match ideal',
+  addButton: 'Agregar al carrito',
+  whatsappButton: 'Consultar por WhatsApp',
+  detailLink: 'Ver detalle',
+  noPrice: 'Este perfume no tiene precio cargado todavía. Escribinos y te lo cotizamos.',
+} as const;
+
 /** Párrafo de estado vacío del resultado (error de red o sin matches). */
 export function resultEmpty(message: string): HTMLElement {
   const empty = document.createElement('p');
@@ -21,7 +33,7 @@ export function resultCard(perfume: Perfume, reason: string): HTMLElement {
   const size = primarySize(perfume);
   // Sin talles cargados no hay precio ni stock que mostrar: tarjeta vacía
   // con mensaje en vez de crashear en `size.price`.
-  if (!size) return resultEmpty('Este perfume no tiene precio cargado todavía. Escribinos y te lo cotizamos.');
+  if (!size) return resultEmpty(QUIZ_COPY.noPrice);
   const image = perfume.images[0];
   const stockStatus = getStockStatus(size);
   const stockLabel = getStockLabel(stockStatus);
@@ -53,7 +65,7 @@ export function resultCard(perfume: Perfume, reason: string): HTMLElement {
   eyebrow.appendChild(rule);
   const badge = document.createElement('span');
   badge.className = 'quiz-result-badge';
-  badge.textContent = 'Tu match ideal';
+  badge.textContent = QUIZ_COPY.badge;
   eyebrow.appendChild(badge);
   body.appendChild(eyebrow);
 
@@ -92,7 +104,7 @@ export function resultCard(perfume: Perfume, reason: string): HTMLElement {
   const addBtn = document.createElement('button');
   addBtn.type = 'button';
   addBtn.className = 'btn btn--primary btn--lg quiz-result-add';
-  addBtn.textContent = 'Agregar al carrito';
+  addBtn.textContent = QUIZ_COPY.addButton;
   addBtn.dataset.addPerfumeId = perfume.id;
   bindOnce(addBtn, (el) => {
     el.addEventListener('click', () => {
@@ -114,7 +126,7 @@ export function resultCard(perfume: Perfume, reason: string): HTMLElement {
   waBtn.href = waMessage;
   waBtn.target = '_blank';
   waBtn.rel = 'noopener noreferrer';
-  waBtn.textContent = 'Consultar por WhatsApp';
+  waBtn.textContent = QUIZ_COPY.whatsappButton;
   body.appendChild(waBtn);
 
   // Link a la landing de decants por inspiración (si existe)
@@ -131,7 +143,7 @@ export function resultCard(perfume: Perfume, reason: string): HTMLElement {
   const detail = document.createElement('a');
   detail.className = 'quiz-result-detail';
   detail.href = `${site.basePath}producto/${perfume.slug}/`;
-  detail.textContent = 'Ver detalle';
+  detail.textContent = QUIZ_COPY.detailLink;
   body.appendChild(detail);
 
   card.appendChild(media);
