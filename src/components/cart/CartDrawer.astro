@@ -109,7 +109,13 @@ import Drawer from '@/components/ui/Drawer.astro';
       // Si el catálogo cacheado está desactualizado, forzar refetch.
       if (!perfume) perfume = (await getPerfumesMap(true)).get(perfumeId);
 
-      const size = perfume?.sizes?.find((s) => s.ml === sizeMl);
+      let size = perfume?.sizes?.find((s) => s.ml === sizeMl);
+      // El perfume existe pero el talle no: caché vieja de antes de que
+      // ese talle existiera (ej. frascos agregados en un deploy nuevo).
+      if (perfume && !size) {
+        perfume = (await getPerfumesMap(true)).get(perfumeId);
+        size = perfume?.sizes?.find((s) => s.ml === sizeMl);
+      }
       if (!perfumeId || !size) {
         showToast('No se pudo agregar al carrito. Intentá de nuevo.', 'error');
         return;

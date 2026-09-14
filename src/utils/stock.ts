@@ -38,3 +38,28 @@ export function primarySize(perfume: Pick<Perfume, 'sizes'>): PerfumeSize | unde
 export function isDecantSize(size: Pick<PerfumeSize, 'ml'>): boolean {
   return size.ml === 5;
 }
+
+/**
+ * Texto del chip de stock del selector de talles. Los decants usan
+ * las etiquetas de siempre; los frascos dicen las unidades exactas.
+ */
+export function sizeStockLabel(size: PerfumeSize): string {
+  if (!isDecantSize(size) && size.stock > 0) {
+    return size.stock === 1 ? 'QUEDA 1 UNIDAD' : `QUEDAN ${size.stock} UNIDADES`;
+  }
+  return getStockLabel(getStockStatus(size));
+}
+
+/**
+ * Aviso de poco stock de la ficha ("Quedan solo..."). Solo aparece
+ * con 1-4 unidades; con 0 o 5+ no hay nada que avisar.
+ */
+export function sizeStockMessage(size: PerfumeSize): string | null {
+  if (size.stock <= 0 || size.stock >= 5) return null;
+  if (!isDecantSize(size)) {
+    return size.stock === 1
+      ? '¡Última unidad! Queda 1 frasco de este perfume'
+      : `Quedan solo ${size.stock} frascos de este perfume`;
+  }
+  return `Quedan solo ${size.stock} ${size.stock === 1 ? 'decant' : 'decants'} de este aroma`;
+}

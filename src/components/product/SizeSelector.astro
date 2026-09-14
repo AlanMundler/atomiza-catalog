@@ -1,7 +1,7 @@
 ---
 import Chip from '@/components/ui/Chip.astro';
 import { formatPrice } from '@/utils/formatters';
-import { getStockStatus, getStockLabel, isSizeAvailable } from '@/utils/stock';
+import { getStockStatus, isSizeAvailable, sizeStockLabel } from '@/utils/stock';
 import type { PerfumeSize } from '@/data/types';
 
 interface Props {
@@ -18,7 +18,7 @@ const { sizes, selectedSize } = Astro.props;
     {sizes.map((size) => {
       const available = isSizeAvailable(size);
       const stockStatus = getStockStatus(size);
-      const stockLabel = getStockLabel(stockStatus);
+      const stockLabel = sizeStockLabel(size);
       const isSelected = selectedSize.ml === size.ml;
       
       return (

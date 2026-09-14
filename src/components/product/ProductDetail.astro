@@ -2,7 +2,7 @@
 import ImageGallery from '@/components/product/ImageGallery.astro';
 import SizeSelector from '@/components/product/SizeSelector.astro';
 import Button from '@/components/ui/Button.astro';
-import { isSizeAvailable } from '@/utils/stock';
+import { isSizeAvailable, sizeStockMessage } from '@/utils/stock';
 import { buildWhatsAppLink, formatPrice } from '@/utils/formatters';
 import { TRIDENT_DISCOUNT } from '@/utils/trident';
 import { site } from '@/site.config';
@@ -21,17 +21,24 @@ const selectedSize =
   perfume.sizes.find(s => s.ml === 5) ||
   perfume.sizes[0];
 const available = selectedSize ? isSizeAvailable(selectedSize) : false;
+const countdownMessage = selectedSize ? sizeStockMessage(selectedSize) : null;
 // Sin talles cargados no se puede consultar precio: link genérico en vez
 // de crashear el build en `selectedSize.price`.
 const waMessage = selectedSize
   ? buildWhatsAppLink(
       site.whatsappNumber,
-      `Hola! Quiero consultar por ${perfume.brand} ${perfume.name} (5ml, ${formatPrice(selectedSize.price)}). ¿Me ayudás?`
+      `Hola! Quiero consultar por ${perfume.brand} ${perfume.name} (${selectedSize.ml}ml, ${formatPrice(selectedSize.price)}). ¿Me ayudás?`
     )
   : site.whatsappUrl;
 ---
 
-<article class="product-detail" data-perfume-id={perfume.id}>
+<article
+  class="product-detail"
+  data-perfume-id={perfume.id}
+  data-perfume-label={`${perfume.brand} ${perfume.name}`}
+  data-wa-number={site.whatsappNumber}
+  data-sizes={JSON.stringify(perfume.sizes.map((s) => ({ ml: s.ml, price: s.price, stock: s.stock })))}
+>
   <div class="product-detail-grid">
     <div class="product-detail-gallery">
       <ImageGallery images={perfume.images} alt={`${perfume.brand} ${perfume.name}`} />
@@ -80,13 +87,18 @@ const waMessage = selectedSize
         />
       </div>
 
-      {selectedSize.stock > 0 && selectedSize.stock < 5 && (
-        <div class="stock-countdown" data-stock-count={selectedSize.stock} role="status">
-          <p class="stock-countdown-title">
-            Quedan solo {selectedSize.stock} {selectedSize.stock === 1 ? 'decant' : 'decants'} de este aroma
-          </p>
-        </div>
-      )}
+      {/* Siempre renderizado (oculto si no aplica) para que el script
+          lo pueda mostrar al cambiar de talle sin re-render. */}
+      <div
+        class="stock-countdown"
+        data-stock-countdown
+        role="status"
+        style={countdownMessage ? undefined : 'display:none'}
+      >
+        <p class="stock-countdown-title" data-stock-countdown-title>
+          {countdownMessage ?? ''}
+        </p>
+      </div>
 
       <div class="product-detail-actions">
         <Button 
@@ -103,6 +115,7 @@ const waMessage = selectedSize
           target="_blank"
           rel="noopener noreferrer"
           class="btn btn--secondary btn--lg product-detail-wa-btn"
+          data-wa-btn
         >
           Consultar por WhatsApp
         </a>
@@ -128,7 +141,7 @@ const waMessage = selectedSize
   <div class="sticky-buy" data-sticky-buy role="region" aria-label="Compra rápida">
     <div class="sticky-buy-info">
       <span class="sticky-buy-name">{perfume.brand} {perfume.name}</span>
-      <span class="sticky-buy-price">{formatPrice(selectedSize.price)} · 5ml</span>
+      <span class="sticky-buy-price" data-sticky-price>{formatPrice(selectedSize.price)} · {selectedSize.ml}ml</span>
     </div>
     <Button variant="primary" size="lg" class="sticky-buy-btn" data-add-to-cart>
       Agregar
@@ -136,32 +149,80 @@ const waMessage = selectedSize
   </div>
 )}
 
-<script>
-  import { bindOnce, onPageLoad } from '@/utils/view-transitions';
+  <script>
+    import { bindOnce, onPageLoad } from '@/utils/view-transitions';
+    import { buildWhatsAppLink, formatPrice } from '@/utils/formatters';
+    import { sizeStockMessage } from '@/utils/stock';
 
-  onPageLoad('product-detail', () => {
-    const addBtns = Array.from(document.querySelectorAll('[data-add-to-cart]'));
-    if (addBtns.length === 0) return;
+    onPageLoad('product-detail', () => {
+      const addBtns = Array.from(document.querySelectorAll('[data-add-to-cart]'));
+      const article = document.querySelector('[data-perfume-id]');
+      const sizeInputs = Array.from(document.querySelectorAll('input[name="size"]'));
 
-    addBtns.forEach((btn) => {
-      bindOnce(btn as HTMLElement, (el) => {
-        el.addEventListener('click', () => {
-          const perfumeId = document.querySelector('[data-perfume-id]')?.getAttribute('data-perfume-id');
-          const selectedSizeInput = document.querySelector('input[name="size"]:checked');
-          const sizeMl = selectedSizeInput ? parseInt((selectedSizeInput as HTMLInputElement).value) : 5;
+      if (addBtns.length > 0) {
+        addBtns.forEach((btn) => {
+          bindOnce(btn as HTMLElement, (el) => {
+            el.addEventListener('click', () => {
+              const perfumeId = document.querySelector('[data-perfume-id]')?.getAttribute('data-perfume-id');
+              const selectedSizeInput = document.querySelector('input[name="size"]:checked');
+              const sizeMl = selectedSizeInput ? parseInt((selectedSizeInput as HTMLInputElement).value) : 5;
 
-          const event = new CustomEvent('cart:add', {
-            detail: { perfumeId, sizeMl, quantity: 1 }
+              const event = new CustomEvent('cart:add', {
+                detail: { perfumeId, sizeMl, quantity: 1 }
+              });
+              window.dispatchEvent(event);
+
+              // Open cart drawer
+              window.dispatchEvent(new CustomEvent('cart:open'));
+            });
           });
-          window.dispatchEvent(event);
-
-          // Open cart drawer
-          window.dispatchEvent(new CustomEvent('cart:open'));
         });
-      });
+      }
+
+      // Al cambiar de talle (decant ↔ frasco) se actualizan el aviso de
+      // stock, la barra fija y el link de WhatsApp sin re-render.
+      if (article && sizeInputs.length > 0) {
+        let sizes: { ml: number; price: number; stock: number }[] = [];
+        try {
+          sizes = JSON.parse(article.getAttribute('data-sizes') || '[]');
+        } catch {
+          sizes = [];
+        }
+        const label = article.getAttribute('data-perfume-label') || '';
+        const waNumber = article.getAttribute('data-wa-number') || '';
+        const countdown = article.querySelector('[data-stock-countdown]') as HTMLElement | null;
+        const countdownTitle = article.querySelector('[data-stock-countdown-title]');
+        const stickyPrice = document.querySelector('[data-sticky-price]');
+        const waBtn = article.querySelector('[data-wa-btn]');
+
+        sizeInputs.forEach((input) => {
+          bindOnce(input as HTMLElement, (el) => {
+            el.addEventListener('change', () => {
+              const size = sizes.find((s) => s.ml === parseInt((el as HTMLInputElement).value, 10));
+              if (!size) return;
+              const message = sizeStockMessage(size);
+              if (countdown && countdownTitle) {
+                countdownTitle.textContent = message ?? '';
+                countdown.style.display = message ? '' : 'none';
+              }
+              if (stickyPrice) {
+                stickyPrice.textContent = `${formatPrice(size.price)} · ${size.ml}ml`;
+              }
+              if (waBtn && waNumber) {
+                waBtn.setAttribute(
+                  'href',
+                  buildWhatsAppLink(
+                    waNumber,
+                    `Hola! Quiero consultar por ${label} (${size.ml}ml, ${formatPrice(size.price)}). ¿Me ayudás?`
+                  )
+                );
+              }
+            });
+          });
+        });
+      }
     });
-  });
-</script>
+  </script>
 
 <style is:global>
   /* La barra de compra fija vive solo en la ficha; el FAB de WhatsApp se
