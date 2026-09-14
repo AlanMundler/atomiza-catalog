@@ -480,8 +480,11 @@ import type { Perfume } from '@/data/types';
 
   @media (min-width: 768px) {
     .quiz-result-media {
-      flex: 0 0 300px;
-      aspect-ratio: auto;
+      /* Foto acotada y centrada: la columna ya no estira la tarjeta y
+        el fondo llega hasta donde terminan los botones. */
+      flex: 0 0 240px;
+      align-self: center;
+      aspect-ratio: 1 / 1;
       border-bottom: none;
       border-right: var(--border-width) solid var(--color-outline-variant);
     }
