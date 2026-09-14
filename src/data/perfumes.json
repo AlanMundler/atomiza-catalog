@@ -1568,6 +1568,87 @@
       "isBoutiqueExclusive": false,
       "featured": false,
       "originalPrice": 65000
+    },
+    {
+      "id": "turathi-blue",
+      "slug": "turathi-blue",
+      "brand": "Afnan",
+      "name": "Turathi Blue",
+      "gender": "masculino",
+      "olfactoryFamily": "Aromática Acuática",
+      "description": "Inspirado en Tygar de Bvlgari. Cítricos chispeantes con corazón amaderado y ámbar sobre almizcle, especias y pachulí. Limpio, fresco y pulido, ideal para el día y el calor, sobre todo en primavera y verano.",
+      "notes": {
+        "top": [
+          "Cítricos"
+        ],
+        "heart": [
+          "Notas Amaderadas",
+          "Ámbar"
+        ],
+        "base": [
+          "Almizcle",
+          "Especias",
+          "Pachulí"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/turathi-blue.avif",
+          "alt": "Afnan Turathi Blue"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 9000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    },
+    {
+      "id": "mayar-natural-intense",
+      "slug": "mayar-natural-intense",
+      "brand": "Lattafa Perfumes",
+      "name": "Mayar Natural Intense",
+      "gender": "femenino",
+      "olfactoryFamily": "Floral Acuática",
+      "description": "Evoca a Acqua di Gioia de Giorgio Armani. Mandarina verde, higo, agua de coco y melón con corazón de loto, nenúfar y jazmín sobre almizcle, ambroxan, sándalo y vainilla. Fresco, verde y luminoso, perfecto para el día en primavera y verano.",
+      "notes": {
+        "top": [
+          "Mandarina Verde",
+          "Higo",
+          "Agua de Coco",
+          "Melón"
+        ],
+        "heart": [
+          "Flor de Loto",
+          "Nenúfar",
+          "Jazmín"
+        ],
+        "base": [
+          "Almizcle",
+          "Ambroxan",
+          "Sándalo",
+          "Vainilla"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/mayar-natural-intense.avif",
+          "alt": "Lattafa Perfumes Mayar Natural Intense"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 6000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
     }
   ]
 }
