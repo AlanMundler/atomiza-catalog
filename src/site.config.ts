@@ -19,8 +19,9 @@ export const site = {
   basePath: import.meta.env.BASE_URL,
   // Incrementar cuando cambie el catálogo publicado para invalidar la
   // caché local `perfumes-data` en los navegadores de los visitantes.
-  // (v8: imagen rouat-ajial svg→avif; sin bump, la caché vieja muestra 404)
-  dataVersion: '8',
+  // (v8: imagen rouat-ajial svg→avif; v9: misma foto recompuesta con ?v=2
+  // para forzar descarga fresca — los navegadores cacheaban la anterior)
+  dataVersion: '9',
   instagramHandle: 'atomiza.cba',
   instagramUrl: 'https://instagram.com/atomiza.cba',
   tiktokHandle: 'atomiza.cba',
