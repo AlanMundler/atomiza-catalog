@@ -1605,7 +1605,8 @@
         }
       ],
       "isBoutiqueExclusive": false,
-      "featured": false
+      "featured": false,
+      "originalPrice": 100000
     },
     {
       "id": "mayar-natural-intense",
@@ -1648,7 +1649,8 @@
         }
       ],
       "isBoutiqueExclusive": false,
-      "featured": false
+      "featured": false,
+      "originalPrice": 60000
     }
   ]
 }
