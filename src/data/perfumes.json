@@ -1159,7 +1159,7 @@
       ],
       "isBoutiqueExclusive": false,
       "featured": true,
-      "originalPrice": 60000
+      "originalPrice": 70000
     },
     {
       "id": "angham",
@@ -1248,7 +1248,7 @@
       ],
       "isBoutiqueExclusive": false,
       "featured": true,
-      "originalPrice": 55000
+      "originalPrice": 75000
     },
     {
       "id": "hayaati-florence",
@@ -1416,7 +1416,7 @@
       ],
       "isBoutiqueExclusive": false,
       "featured": false,
-      "originalPrice": 100000
+      "originalPrice": 105000
     },
     {
       "id": "hawas-tropical",

@@ -22,8 +22,9 @@ export const site = {
   // (v8: imagen rouat-ajial svg→avif; v9: misma foto recompuesta con ?v=2
   // para forzar descarga fresca — los navegadores cacheaban la anterior;
   // v10: reencuadre más grande con ?v=3; v11: foto nueva del dueño con ?v=4;
-  // v12: talles frasco original 90/100ml en 4 perfumes)
-  dataVersion: '12',
+  // v12: talles frasco original 90/100ml en 4 perfumes;
+  // v13: anclaje = precio frasco nuestro + $5.000 en esos 4)
+  dataVersion: '13',
   instagramHandle: 'atomiza.cba',
   instagramUrl: 'https://instagram.com/atomiza.cba',
   tiktokHandle: 'atomiza.cba',
