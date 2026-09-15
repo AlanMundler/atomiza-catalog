@@ -1,6 +1,7 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import ProductCard from '@/components/catalog/ProductCard.astro';
+import Faq from '@/components/ui/Faq.astro';
 import perfumesData from '@/data/perfumes.json';
 import { inspiraciones } from '@/data/inspiraciones';
 import { getStockStatus, getStockLabel } from '@/utils/stock';
@@ -106,14 +107,11 @@ const whatsappHref = buildWhatsAppLink(
   <section class="insp-faq" aria-labelledby="insp-faq-title">
     <div class="container">
       <h2 id="insp-faq-title" class="insp-faq-title">Preguntas frecuentes sobre {insp.original} en decant</h2>
-      <div class="insp-faq-list">
-        {faq.map((f) => (
-          <details class="insp-faq-item">
-            <summary>{f.question}</summary>
-            <p class="insp-faq-answer">{f.answer}</p>
-          </details>
-        ))}
-      </div>
+      <Faq
+        items={faq}
+        ctaHref={perfume ? `${BASE}producto/${perfume.slug}/` : undefined}
+        ctaLabel={perfume ? `Ver ${insp.perfumeBrand} ${insp.perfumeName}` : undefined}
+      />
     </div>
   </section>
 
@@ -236,44 +234,6 @@ const whatsappHref = buildWhatsAppLink(
     .insp-more-title {
       font-size: var(--font-headline-lg-mobile-size);
     }
-  }
-
-  .insp-faq-list {
-    max-width: 720px;
-    margin: 0 auto;
-  }
-
-  .insp-faq-item {
-    border: var(--border-width) solid var(--color-outline-variant);
-    border-radius: var(--border-radius);
-    margin-bottom: var(--spacing-stack-sm);
-  }
-
-  .insp-faq-item summary {
-    cursor: pointer;
-    list-style: none;
-    padding: var(--spacing-stack-sm) var(--spacing-stack-md);
-    font-family: var(--font-family);
-    font-size: var(--font-body-lg-size);
-    font-weight: 500;
-    color: var(--color-on-surface);
-  }
-
-  .insp-faq-item summary::-webkit-details-marker {
-    display: none;
-  }
-
-  .insp-faq-item[open] summary {
-    color: var(--color-primary);
-  }
-
-  .insp-faq-answer {
-    padding: 0 var(--spacing-stack-md) var(--spacing-stack-sm);
-    font-family: var(--font-family);
-    font-size: var(--font-body-md-size);
-    line-height: var(--font-body-md-line-height);
-    color: var(--color-on-surface-variant);
-    margin: 0;
   }
 
   .insp-more {

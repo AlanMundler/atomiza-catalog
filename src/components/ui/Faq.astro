@@ -1,0 +1,124 @@
+---
+/**
+ * Bloque de preguntas frecuentes compartido (home, decants, blog, ficha).
+ * Acordeón nativo (`details`/`summary`): sin JS, accesible por defecto.
+ * La primera pregunta viene abierta para enseñar el patrón de un vistazo.
+ */
+export interface FaqItem {
+  question: string;
+  answer: string;
+}
+
+interface Props {
+  items: readonly FaqItem[];
+  /** Abrir la primera pregunta por defecto. En la ficha viene cerrado. */
+  firstOpen?: boolean;
+  ctaHref?: string;
+  ctaLabel?: string;
+  /** Botón primario o link discreto (para la mini-FAQ de la ficha). */
+  ctaVariant?: 'button' | 'link';
+}
+
+const { items, firstOpen = true, ctaHref, ctaLabel, ctaVariant = 'button' } = Astro.props;
+const showCta = Boolean(ctaHref && ctaLabel);
+---
+<div class="faq-list">
+  {items.map((item, i) => (
+    <details class="faq-item" open={firstOpen && i === 0}>
+      <summary>{item.question}</summary>
+      <p class="faq-answer">{item.answer}</p>
+    </details>
+  ))}
+</div>
+{showCta &&
+  (ctaVariant === 'button' ? (
+    <div class="faq-cta">
+      <a href={ctaHref} class="btn btn--primary btn--md">{ctaLabel}</a>
+    </div>
+  ) : (
+    <div class="faq-cta">
+      <a href={ctaHref} class="faq-cta-link">{ctaLabel}</a>
+    </div>
+  ))}
+<style>
+  .faq-list {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .faq-item {
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: var(--border-radius);
+    margin-bottom: var(--spacing-stack-sm);
+  }
+
+  .faq-item summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--spacing-stack-sm);
+    cursor: pointer;
+    list-style: none;
+    padding: var(--spacing-stack-sm) var(--spacing-stack-md);
+    font-family: var(--font-family);
+    font-size: var(--font-body-lg-size);
+    font-weight: 500;
+    color: var(--color-on-surface);
+    transition: color var(--transition-duration) var(--transition-easing);
+  }
+
+  .faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-item summary:hover {
+    color: var(--color-primary);
+  }
+
+  .faq-item summary:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
+    border-radius: var(--border-radius);
+  }
+
+  .faq-item summary::after {
+    content: '+';
+    font-size: 20px;
+    line-height: 1;
+    color: var(--color-primary);
+    flex-shrink: 0;
+  }
+
+  .faq-item[open] summary {
+    color: var(--color-primary);
+  }
+
+  .faq-item[open] summary::after {
+    content: '−';
+  }
+
+  .faq-answer {
+    padding: 0 var(--spacing-stack-md) var(--spacing-stack-sm);
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    line-height: var(--font-body-md-line-height);
+    letter-spacing: var(--font-body-md-tracking);
+    color: var(--color-on-surface-variant);
+    margin: 0;
+  }
+
+  .faq-cta {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--spacing-stack-md);
+  }
+
+  .faq-cta-link {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-primary);
+  }
+</style>

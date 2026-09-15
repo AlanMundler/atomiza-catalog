@@ -2,6 +2,7 @@
 import ImageGallery from '@/components/product/ImageGallery.astro';
 import SizeSelector from '@/components/product/SizeSelector.astro';
 import Button from '@/components/ui/Button.astro';
+import Faq from '@/components/ui/Faq.astro';
 import { isSizeAvailable, sizeStockMessage } from '@/utils/stock';
 import { buildWhatsAppLink, formatPrice } from '@/utils/formatters';
 import { TRIDENT_DISCOUNT } from '@/utils/trident';
@@ -133,6 +134,21 @@ const waMessage = selectedSize
         <span class="trident-cta-text">3 decants = {formatPrice(TRIDENT_DISCOUNT)} menos, automático</span>
         <span class="trident-cta-link">Ver cómo funciona →</span>
       </a>
+
+      <div class="product-faq">
+        <p class="product-faq-title">¿Dudas comunes?</p>
+        <Faq
+          items={[
+            { question: '¿Los decants son originales?', answer: 'Sí: cada decant se extrae de un frasco original sellado.' },
+            { question: '¿Cómo me llega el pedido?', answer: 'Entrega en mano o envío en Córdoba: lo coordinamos por WhatsApp cuando hacés el pedido.' },
+            { question: '¿Cómo pago?', answer: 'Transferencia o efectivo, también se coordina por mensaje.' },
+          ]}
+          firstOpen={false}
+          ctaHref={`${site.basePath}#preguntas-frecuentes`}
+          ctaLabel="Ver todas las preguntas frecuentes"
+          ctaVariant="link"
+        />
+      </div>
     </div>
   </div>
 </article>
@@ -544,5 +560,20 @@ const waMessage = selectedSize
     letter-spacing: var(--font-label-sm-tracking);
     text-transform: uppercase;
     color: var(--color-primary);
+  }
+
+  .product-faq {
+    padding-top: var(--spacing-stack-sm);
+    border-top: var(--border-width) solid var(--color-outline-variant);
+  }
+
+  .product-faq-title {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+    margin: 0 0 12px;
   }
 </style>

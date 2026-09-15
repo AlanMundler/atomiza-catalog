@@ -3,6 +3,7 @@ import Layout from '@/layouts/Layout.astro';
 import ProductCard from '@/components/catalog/ProductCard.astro';
 import SliderNav from '@/components/ui/SliderNav.astro';
 import TridenteModal from '@/components/cart/TridenteModal.astro';
+import Faq from '@/components/ui/Faq.astro';
 import perfumesData from '@/data/perfumes.json';
 import { isSizeAvailable, primarySize } from '@/utils/stock';
 import { resenas, resenasRating, hasResenas } from '@/data/resenas';
@@ -290,17 +291,10 @@ const faqs = [
     </div>
   </section>
 
-  <section class="faq" aria-labelledby="faq-title">
+  <section class="faq" id="preguntas-frecuentes" aria-labelledby="faq-title">
     <div class="container">
       <h2 id="faq-title" class="section-title">Preguntas frecuentes</h2>
-      <div class="faq-list">
-        {faqs.map((faq) => (
-          <details class="faq-item">
-            <summary>{faq.question}</summary>
-            <p class="faq-answer">{faq.answer}</p>
-          </details>
-        ))}
-      </div>
+      <Faq items={faqs} ctaHref={`${BASE}quiz/`} ctaLabel="Descubrí tu perfume ideal" />
     </div>
   </section>
 
@@ -1025,68 +1019,6 @@ const faqs = [
   .faq {
     padding: var(--spacing-stack-lg) 0;
     border-top: var(--border-width) solid var(--color-outline-variant);
-  }
-
-  .faq-list {
-    max-width: 720px;
-    margin: 0 auto;
-  }
-
-  .faq-item {
-    border: var(--border-width) solid var(--color-outline-variant);
-    border-radius: var(--border-radius);
-    margin-bottom: var(--spacing-stack-sm);
-  }
-
-  .faq-item summary {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: var(--spacing-stack-sm);
-    cursor: pointer;
-    list-style: none;
-    padding: var(--spacing-stack-sm) var(--spacing-stack-md);
-    font-family: var(--font-family);
-    font-size: var(--font-body-lg-size);
-    font-weight: 500;
-    color: var(--color-on-surface);
-    transition: color var(--transition-duration) var(--transition-easing);
-  }
-
-  .faq-item summary::-webkit-details-marker {
-    display: none;
-  }
-
-  .faq-item summary:focus-visible {
-    outline: 2px solid var(--color-primary);
-    outline-offset: -2px;
-    border-radius: var(--border-radius);
-  }
-
-  .faq-item summary::after {
-    content: '+';
-    font-size: 20px;
-    line-height: 1;
-    color: var(--color-primary);
-    flex-shrink: 0;
-  }
-
-  .faq-item[open] summary {
-    color: var(--color-primary);
-  }
-
-  .faq-item[open] summary::after {
-    content: '−';
-  }
-
-  .faq-answer {
-    padding: 0 var(--spacing-stack-md) var(--spacing-stack-sm);
-    font-family: var(--font-family);
-    font-size: var(--font-body-md-size);
-    line-height: var(--font-body-md-line-height);
-    letter-spacing: var(--font-body-md-tracking);
-    color: var(--color-on-surface-variant);
-    margin: 0;
   }
 
   @media (max-width: 640px) {

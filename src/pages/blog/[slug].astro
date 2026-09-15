@@ -1,5 +1,6 @@
 ---
 import Layout from '@/layouts/Layout.astro';
+import Faq from '@/components/ui/Faq.astro';
 import { guias } from '@/data/guias';
 import { site } from '@/site.config';
 
@@ -68,12 +69,7 @@ const faq = guia.faq.map((f) => ({
 
       <section class="guia-faq" aria-labelledby="guia-faq-title">
         <h2 id="guia-faq-title" class="guia-faq-title">Preguntas frecuentes</h2>
-        {guia.faq.map((f) => (
-          <details class="guia-faq-item">
-            <summary>{f.question}</summary>
-            <p class="guia-faq-answer">{f.answer}</p>
-          </details>
-        ))}
+        <Faq items={guia.faq} />
       </section>
 
       <section class="guia-cta">
@@ -265,39 +261,6 @@ const faq = guia.faq.map((f) => ({
   .guia-faq {
     max-width: 720px;
     margin: 0 auto var(--spacing-stack-lg);
-  }
-
-  .guia-faq-item {
-    border: var(--border-width) solid var(--color-outline-variant);
-    border-radius: var(--border-radius);
-    margin-bottom: var(--spacing-stack-sm);
-  }
-
-  .guia-faq-item summary {
-    cursor: pointer;
-    list-style: none;
-    padding: var(--spacing-stack-sm) var(--spacing-stack-md);
-    font-family: var(--font-family);
-    font-size: var(--font-body-lg-size);
-    font-weight: 500;
-    color: var(--color-on-surface);
-  }
-
-  .guia-faq-item summary::-webkit-details-marker {
-    display: none;
-  }
-
-  .guia-faq-item[open] summary {
-    color: var(--color-primary);
-  }
-
-  .guia-faq-answer {
-    padding: 0 var(--spacing-stack-md) var(--spacing-stack-sm);
-    font-family: var(--font-family);
-    font-size: var(--font-body-md-size);
-    line-height: var(--font-body-md-line-height);
-    color: var(--color-on-surface-variant);
-    margin: 0;
   }
 
   .guia-cta {
