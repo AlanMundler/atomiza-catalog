@@ -480,13 +480,20 @@ import type { Perfume } from '@/data/types';
 
   @media (min-width: 768px) {
     .quiz-result-media {
-      /* Foto acotada y centrada: la columna ya no estira la tarjeta y
-        el fondo llega hasta donde terminan los botones. */
-      flex: 0 0 240px;
-      align-self: center;
-      aspect-ratio: 1 / 1;
+      /* Columna blanca de borde a borde (fondo hasta arriba y abajo),
+        con el frasco chico y centrado adentro. */
+      flex: 0 0 300px;
+      align-self: stretch;
+      aspect-ratio: auto;
       border-bottom: none;
       border-right: var(--border-width) solid var(--color-outline-variant);
+    }
+
+    .quiz-result-media img {
+      width: auto;
+      height: auto;
+      max-width: calc(100% - 48px);
+      max-height: 280px;
     }
   }
 
