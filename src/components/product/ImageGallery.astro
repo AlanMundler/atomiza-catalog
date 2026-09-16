@@ -102,12 +102,14 @@ const mainAlt = images[0]?.alt || alt;
   /* En PC la caja 3/4 a ancho completo de columna superaba el viewport y,
      como la galería es sticky, la base quedaba inalcanzable. En vez de
      recortar el alto (dejaba el frasco chico), se angosta la galería para
-     que conserve la proporción y el conjunto imagen + miniaturas entre
-     entero en pantalla. Reserva: header + offset sticky + miniaturas. */
+     que conserve la proporción y la imagen principal entre entera en
+     pantalla. Factor 0.9 = 20% más grande que el 3/4 estricto; con varias
+     fotos las miniaturas pueden pedir un poco de scroll. Reserva: header
+     + offset sticky + miniaturas. */
   @media (min-width: 1024px) {
     .image-gallery {
-      max-width: min(100%, calc((100vh - 230px) * 0.75));
-      max-width: min(100%, calc((100svh - 230px) * 0.75));
+      max-width: min(100%, calc((100vh - 230px) * 0.9));
+      max-width: min(100%, calc((100svh - 230px) * 0.9));
       margin-inline: auto;
     }
   }

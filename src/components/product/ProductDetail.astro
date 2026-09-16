@@ -269,6 +269,12 @@ const waMessage = selectedSize
   }
 
   @media (min-width: 1024px) {
+    /* Padding superior compacto: con la galería agrandada (+20%), los 80px
+       originales dejaban la base 36px bajo el pliegue en la vista inicial. */
+    .product-detail {
+      padding-top: var(--spacing-stack-md);
+    }
+
     .product-detail-grid {
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       align-items: start;
