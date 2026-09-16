@@ -27,7 +27,8 @@ const mainAlt = images[0]?.alt || alt;
   </div>
 
   {images.length > 1 && (
-    <div class="image-gallery-thumbs" role="list" aria-label="Miniaturas">
+    /* group y no list: los hijos son botones, no listitems. */
+    <div class="image-gallery-thumbs" role="group" aria-label="Miniaturas">
       {images.map((image, index) => (
         <button
           class={`image-gallery-thumb ${index === 0 ? 'image-gallery-thumb--active' : ''}`}
@@ -95,7 +96,7 @@ const mainAlt = images[0]?.alt || alt;
     aspect-ratio: 3 / 4;
     border-radius: var(--border-radius);
     overflow: hidden;
-    background-color: #ffffff;
+    background-color: var(--color-image-bg);
   }
 
   .image-gallery-main-image {
@@ -127,7 +128,7 @@ const mainAlt = images[0]?.alt || alt;
     border: 2px solid transparent;
     border-radius: var(--border-radius);
     overflow: hidden;
-    background: #ffffff;
+    background: var(--color-image-bg);
     cursor: pointer;
     padding: 0;
     transition: all var(--transition-duration) var(--transition-easing);

@@ -1,0 +1,118 @@
+---
+import { site } from '@/site.config';
+
+// Banner de consentimiento PROPIO (español, compacto, con tokens de marca).
+// Reemplaza al widget de SecurePrivacy (inglés, tapaba media pantalla en
+// celu). Habla con Consent.astro mediante el evento `sp_cookie_banner_save`
+// ('accept' | 'reject'), que ya aplica y persiste el estado en
+// `site.storage.consent`. Sin decisión guardada no se carga ningún tracker.
+const consentKey = site.storage.consent;
+---
+
+<!-- data-consent-key evita define:vars (que forzaría script inline sin imports). -->
+<section class="cookie-banner" data-cookie-banner data-consent-key={consentKey} hidden aria-label="Consentimiento de cookies">
+  <p class="cookie-banner-text">
+    Usamos cookies para medir visitas y mostrarte ofertas. Sin tu OK no cargamos nada.
+    <a href={`${site.basePath}privacidad/`} class="cookie-banner-link">Ver privacidad</a>
+  </p>
+  <div class="cookie-banner-actions">
+    <button type="button" class="btn btn--primary btn--md" data-cookie-accept>Aceptar</button>
+    <button type="button" class="btn btn--ghost" data-cookie-reject>Rechazar</button>
+  </div>
+</section>
+
+<script>
+  import { onPageLoad } from '@/utils/view-transitions';
+
+  onPageLoad('cookie-banner', () => {
+    const banner = document.querySelector<HTMLElement>('[data-cookie-banner]');
+    if (!banner) return;
+    const consentKey = banner.dataset.consentKey || 'atomiza-consent';
+    let decided = true;
+    try {
+      decided = localStorage.getItem(consentKey) !== null;
+    } catch {
+      decided = true;
+    }
+    if (decided) return;
+    banner.removeAttribute('hidden');
+    const decide = (detail: 'accept' | 'reject') => {
+      window.dispatchEvent(new CustomEvent('sp_cookie_banner_save', { detail }));
+      banner.setAttribute('hidden', '');
+    };
+    banner.querySelector('[data-cookie-accept]')?.addEventListener('click', () => decide('accept'));
+    banner.querySelector('[data-cookie-reject]')?.addEventListener('click', () => decide('reject'));
+  });
+</script>
+
+<style>
+  /* Barra compacta abajo: nunca tapa el contenido como el widget anterior.
+     z-index 80 queda debajo del FAB (90), sticky-buy (95), drawers y modales;
+     en mobile se reserva padding-right para que el FAB no pise los botones. */
+  .cookie-banner {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 80;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 12px 24px;
+    background-color: var(--color-surface-container);
+    border-top: var(--border-width) solid var(--color-primary-container);
+  }
+
+  .cookie-banner[hidden] {
+    display: none;
+  }
+
+  .cookie-banner-text {
+    font-family: var(--font-family);
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--color-on-surface-variant);
+    margin: 0;
+    max-width: 640px;
+  }
+
+  .cookie-banner-link {
+    color: var(--color-primary);
+    text-decoration: underline;
+    white-space: nowrap;
+  }
+
+  .cookie-banner-link:hover {
+    text-decoration: none;
+  }
+
+  .cookie-banner-link:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .cookie-banner-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 640px) {
+    .cookie-banner {
+      gap: 12px;
+      padding: 12px 88px 12px 16px;
+      align-items: flex-start;
+    }
+
+    .cookie-banner-text {
+      font-size: 12px;
+    }
+
+    .cookie-banner-actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+</style>

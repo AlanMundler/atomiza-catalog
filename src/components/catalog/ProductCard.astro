@@ -26,8 +26,10 @@ const isOutOfStock = stockStatus === 'out-of-stock';
 <!-- article y no link: el botón quick-add es un interactivo separado
   (un <button> dentro de un <a> es HTML inválido y rompe teclado/lectores).
   El link interno usa stretched-link y cubre toda la card igual que antes. -->
+{/* role=listitem: el padre ProductGrid expone role=list. */}
 <div
   class="product-card"
+  role="listitem"
   data-perfume-id={perfume.id}
   data-gender={perfume.gender}
   data-search={`${perfume.brand} ${perfume.name} ${perfume.olfactoryFamily}`.toLowerCase()}
@@ -96,7 +98,7 @@ const isOutOfStock = stockStatus === 'out-of-stock';
 
   .product-card:hover {
     border-color: var(--color-primary);
-    box-shadow: 0 0 20px rgba(233, 193, 118, 0.15);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--color-primary) 15%, transparent);
     transform: translateY(-4px);
   }
 
@@ -126,7 +128,7 @@ const isOutOfStock = stockStatus === 'out-of-stock';
     position: relative;
     aspect-ratio: 3 / 4;
     overflow: hidden;
-    background-color: #ffffff;
+    background-color: var(--color-image-bg);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -148,7 +150,7 @@ const isOutOfStock = stockStatus === 'out-of-stock';
   .product-card-overlay {
     position: absolute;
     inset: 0;
-    background-color: rgba(18, 20, 20, 0.6);
+    background-color: rgba(18, 20, 20, 0.75);
     pointer-events: none;
   }
 
@@ -182,6 +184,15 @@ const isOutOfStock = stockStatus === 'out-of-stock';
 
   .product-card-quick:hover {
     transform: scale(1.08);
+  }
+
+  .product-card-quick:active {
+    transform: scale(0.95);
+  }
+
+  .product-card-quick:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
   }
 
   .product-card-quick:focus-visible {

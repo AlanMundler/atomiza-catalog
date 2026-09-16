@@ -120,5 +120,15 @@ const showCta = Boolean(ctaHref && ctaLabel);
     letter-spacing: var(--font-label-sm-tracking);
     text-transform: uppercase;
     color: var(--color-primary);
+    text-decoration: underline;
+  }
+
+  .faq-cta-link:hover {
+    text-decoration: none;
+  }
+
+  .faq-cta-link:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
   }
 </style>

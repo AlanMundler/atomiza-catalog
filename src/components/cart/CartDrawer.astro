@@ -1,5 +1,6 @@
 ---
 import Drawer from '@/components/ui/Drawer.astro';
+import Modal from '@/components/ui/Modal.astro';
 ---
 
 <Drawer 
@@ -9,7 +10,7 @@ import Drawer from '@/components/ui/Drawer.astro';
 >
   <div class="cart-header" slot="header">
     <h2 class="cart-title">Tu pedido</h2>
-    <button class="cart-clear" data-clear-cart>
+    <button type="button" class="cart-clear" data-clear-cart aria-label="Vaciar pedido">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
         <polyline points="3 6 5 6 21 6"></polyline>
         <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -20,6 +21,14 @@ import Drawer from '@/components/ui/Drawer.astro';
 
   <div class="cart-content" id="cart-content"></div>
 </Drawer>
+
+<Modal id="clear-cart-modal" title="Vaciar pedido" class="clear-cart-modal">
+  <p class="clear-cart-text">¿Vaciar todo tu pedido? Esta acción no se puede deshacer.</p>
+  <div class="clear-cart-actions">
+    <button type="button" class="btn btn--secondary btn--md" data-clear-cancel>Cancelar</button>
+    <button type="button" class="btn btn--primary btn--md" data-clear-confirm>Vaciar</button>
+  </div>
+</Modal>
 
 <script>
   import {
@@ -160,13 +169,31 @@ import Drawer from '@/components/ui/Drawer.astro';
       });
     }
 
+    // Confirmación accesible con el Modal del sitio (nada de confirm()
+    // nativo: bloquea el foco y rompe la estética).
+    const clearModal = () => document.getElementById('clear-cart-modal');
     if (clearBtn) {
       bindOnce(clearBtn, (el) => {
         el.addEventListener('click', () => {
-          if (confirm('¿Estás seguro de que quieres vaciar el carrito?')) {
-            clearCart();
-            updateAndRerender();
-          }
+          clearModal()?.dispatchEvent(new CustomEvent('modal:open'));
+        });
+      });
+    }
+    const confirmBtn = document.querySelector('[data-clear-confirm]');
+    if (confirmBtn) {
+      bindOnce(confirmBtn, (el) => {
+        el.addEventListener('click', () => {
+          clearCart();
+          updateAndRerender();
+          clearModal()?.dispatchEvent(new CustomEvent('modal:close'));
+        });
+      });
+    }
+    const cancelBtn = document.querySelector('[data-clear-cancel]');
+    if (cancelBtn) {
+      bindOnce(cancelBtn, (el) => {
+        el.addEventListener('click', () => {
+          clearModal()?.dispatchEvent(new CustomEvent('modal:close'));
         });
       });
     }
@@ -197,6 +224,20 @@ import Drawer from '@/components/ui/Drawer.astro';
     text-transform: uppercase;
     color: var(--color-on-surface);
     margin: 0;
+  }
+
+  .clear-cart-text {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    line-height: var(--font-body-md-line-height);
+    color: var(--color-on-surface-variant);
+    margin: 0 0 var(--spacing-stack-sm);
+  }
+
+  .clear-cart-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
   }
 
   .cart-clear {
@@ -280,14 +321,14 @@ import Drawer from '@/components/ui/Drawer.astro';
     color: var(--color-primary);
     text-decoration: none;
     text-align: center;
-    background-color: rgba(197, 160, 89, 0.07);
+    background-color: color-mix(in srgb, var(--color-primary-container) 7%, transparent);
     border: var(--border-width) solid var(--color-outline-variant);
     border-radius: var(--border-radius);
   }
 
   a.trident-nudge:hover {
     border-color: var(--color-primary);
-    background-color: rgba(197, 160, 89, 0.12);
+    background-color: color-mix(in srgb, var(--color-primary-container) 12%, transparent);
   }
 
   .trident-nudge--ready {
@@ -364,7 +405,7 @@ import Drawer from '@/components/ui/Drawer.astro';
     aspect-ratio: 3 / 4;
     padding: 2px;
     overflow: hidden;
-    background-color: #ffffff;
+    background-color: var(--color-image-bg);
     flex-shrink: 0;
   }
 

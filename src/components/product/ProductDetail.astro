@@ -115,7 +115,7 @@ const waMessage = selectedSize
           href={waMessage}
           target="_blank"
           rel="noopener noreferrer"
-          class="btn btn--secondary btn--lg product-detail-wa-btn"
+          class="btn btn--secondary btn--lg btn--wrap product-detail-wa-btn"
           data-wa-btn
         >
           Consultar por WhatsApp
@@ -270,7 +270,7 @@ const waMessage = selectedSize
 
   @media (min-width: 1024px) {
     .product-detail-grid {
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       align-items: start;
     }
 

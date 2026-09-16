@@ -48,7 +48,7 @@ export function resultCard(perfume: Perfume, reason: string): HTMLElement {
   media.className = 'quiz-result-media';
   const img = document.createElement('img');
   img.src = assetUrl(image?.src);
-  img.alt = image?.alt ?? perfume.name;
+  img.alt = image?.alt ?? `${perfume.brand} ${perfume.name}`;
   img.loading = 'lazy';
   img.width = 400;
   img.height = 400;

@@ -57,7 +57,11 @@ export function initSliders(scope: ParentNode = document): void {
     let index = 0;
 
     const paint = () => {
-      dots.forEach((d, k) => d.classList.toggle('active', k === index));
+      dots.forEach((d, k) => {
+        d.classList.toggle('active', k === index);
+        if (k === index) d.setAttribute('aria-current', 'true');
+        else d.removeAttribute('aria-current');
+      });
     };
 
     const step = () => {

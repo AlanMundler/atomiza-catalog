@@ -52,7 +52,7 @@ export function homeCardHtml(perfume: Perfume, eager = false): string {
   const search = `${perfume.brand} ${perfume.name} ${perfume.olfactoryFamily}`.toLowerCase();
 
   return (
-    `<div class="product-card"` +
+    `<div class="product-card" role="listitem"` +
     ` data-perfume-id="${escapeHtml(perfume.id)}" data-gender="${escapeHtml(perfume.gender)}" data-search="${escapeHtml(search)}">` +
     `<a href="${escapeHtml(site.basePath)}producto/${escapeHtml(perfume.slug)}/" class="product-card-link"` +
     ` aria-label="Ver ${escapeHtml(perfume.brand)} ${escapeHtml(perfume.name)}">` +

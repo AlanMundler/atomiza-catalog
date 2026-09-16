@@ -118,13 +118,13 @@ export function itemHtml(item: ResolvedCartItem): string {
       </div>
       <div class="cart-item-controls">
         <div class="cart-item-quantity">
-          <button type="button" class="quantity-btn quantity-btn--decrease" data-action="decrease" aria-label="Disminuir cantidad" ${!available || displayQuantity <= 1 ? 'disabled' : ''}>
+          <button type="button" class="quantity-btn quantity-btn--decrease" data-action="decrease" aria-label="Disminuir cantidad de ${es(name)} ${es(size.ml)}ml" ${!available || displayQuantity <= 1 ? 'disabled' : ''}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
               <line x1="5" y1="12" x2="19" y2="12"></line>
             </svg>
           </button>
           <span class="quantity-value" aria-live="polite">${es(displayQuantity)}</span>
-          <button type="button" class="quantity-btn quantity-btn--increase" data-action="increase" aria-label="Aumentar cantidad" ${!available || displayQuantity >= size.stock ? 'disabled' : ''}>
+          <button type="button" class="quantity-btn quantity-btn--increase" data-action="increase" aria-label="Aumentar cantidad de ${es(name)} ${es(size.ml)}ml" ${!available || displayQuantity >= size.stock ? 'disabled' : ''}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
               <line x1="12" y1="5" x2="12" y2="19"></line>
               <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -133,7 +133,7 @@ export function itemHtml(item: ResolvedCartItem): string {
         </div>
         <div class="cart-item-total">
           <span class="cart-item-line-total">${available ? formatPrice(lineTotal) : '—'}</span>
-          <button type="button" class="cart-item-remove" data-action="remove" aria-label="Eliminar del carrito">
+          <button type="button" class="cart-item-remove" data-action="remove" aria-label="Eliminar ${es(name)} ${es(size.ml)}ml del pedido">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -154,9 +154,10 @@ export function showToast(message: string, type: 'error' | 'success' = 'error'):
   toast.textContent = message;
   toast.style.cssText = `
     position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
-    padding:10px 20px;border-radius:8px;font-size:14px;z-index:2147483647;
-    color:#fff;font-family:var(--font-family);
-    background:${type === 'error' ? '#c62828' : '#2e7d32'};
+    padding:10px 20px;border-radius:var(--border-radius);font-size:14px;z-index:2147483647;
+    font-family:var(--font-family);
+    color:${type === 'error' ? 'var(--color-error)' : 'var(--color-surface)'};
+    background:${type === 'error' ? 'var(--color-error-container)' : 'var(--color-status-in-stock)'};
     box-shadow:0 4px 12px rgba(0,0,0,.3);
     animation:toast-in .3s ease;
   `;

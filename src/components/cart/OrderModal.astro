@@ -16,7 +16,7 @@ import { assetUrl, site } from '@/site.config';
           <span class="stepper-circle" aria-hidden="true">1</span>
           <span class="stepper-label">Carrito</span>
         </li>
-        <li class="stepper-item stepper-item--current">
+        <li class="stepper-item stepper-item--current" aria-current="step">
           <span class="stepper-circle" aria-hidden="true">2</span>
           <span class="stepper-label">Datos</span>
         </li>
@@ -61,11 +61,10 @@ import { assetUrl, site } from '@/site.config';
 
     <div class="form-group">
       <label for="order-preview" class="form-label">Mensaje del pedido</label>
-      <textarea 
-        id="order-preview" 
+      <textarea
+        id="order-preview"
         class="form-textarea order-preview"
         readonly
-        aria-label="Vista previa del mensaje del pedido"
       ></textarea>
     </div>
 
@@ -422,7 +421,7 @@ import { assetUrl, site } from '@/site.config';
   .form-input:focus {
     outline: none;
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(233, 193, 118, 0.2);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 20%, transparent);
   }
 
   .form-error {
@@ -472,7 +471,7 @@ import { assetUrl, site } from '@/site.config';
 
   .order-modal-actions {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 4px;
     margin-top: 4px;
   }
@@ -514,9 +513,11 @@ import { assetUrl, site } from '@/site.config';
     white-space: nowrap;
   }
 
-  @media (max-width: 479px) {
+  /* 1 columna desde 640px: en la franja 480-640 los 2 botones quedaban
+     angostos y el ellipsis truncaba "Enviar por WhatsApp / Instagram". */
+  @media (max-width: 640px) {
     .order-modal-actions {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
 
     .order-modal-actions .order-modal-btn {
@@ -619,7 +620,7 @@ import { assetUrl, site } from '@/site.config';
     background-color: var(--color-primary);
     border-color: var(--color-primary);
     color: var(--color-on-primary);
-    box-shadow: 0 0 0 3px rgba(233, 193, 118, 0.3);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 30%, transparent);
   }
 
   .stepper-item--current .stepper-label {

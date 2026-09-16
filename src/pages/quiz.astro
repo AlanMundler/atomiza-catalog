@@ -23,11 +23,11 @@ const total = quizQuestions.length;
 
       <div class="quiz-card" id="quiz-card">
         <div class="quiz-progress" aria-live="polite">
-          <p class="quiz-progress-text" data-quiz-progress>Pregunta 1 de {total}</p>
+          <p class="quiz-progress-text" id="quiz-progress-text" data-quiz-progress>Pregunta 1 de {total}</p>
           <div
             class="quiz-progress-bar"
             role="progressbar"
-            aria-label="Progreso del cuestionario"
+            aria-labelledby="quiz-progress-text"
             aria-valuemin="1"
             aria-valuemax={total}
             aria-valuenow="1"
@@ -39,15 +39,18 @@ const total = quizQuestions.length;
 
         {quizQuestions.map((question, index) => (
           <fieldset class="quiz-step" data-quiz-step={index} data-quiz-id={question.id} hidden={index !== 0}>
+            {/* h2 dentro de legend es inválido; el span enfocado cumple el mismo rol. */}
             <legend class="quiz-question">
-              <h2 tabindex="-1">{question.title}</h2>
+              <span class="quiz-question-text" tabindex="-1">{question.title}</span>
             </legend>
+            {/* Radios reales (no toggle-buttons): el lector anuncia opción X de Y + flechas. */}
             <div class="quiz-options">
               {question.options.map((option) => (
                 <button
                   type="button"
                   class="quiz-option"
-                  aria-pressed="false"
+                  role="radio"
+                  aria-checked="false"
                   data-quiz-value={option.value}
                 >
                   <span class="quiz-option-label">{option.label}</span>
@@ -64,7 +67,7 @@ const total = quizQuestions.length;
         </div>
       </div>
 
-      <section class="quiz-result" id="quiz-result" hidden aria-live="polite">
+      <section class="quiz-result" id="quiz-result" hidden aria-live="polite" aria-atomic="true">
         <h2 class="quiz-result-title" tabindex="-1">Tu recomendación</h2>
         <p class="quiz-loading" id="quiz-loading" hidden>Analizando tu perfil…</p>
         <div class="quiz-result-list" id="quiz-result-list"></div>
@@ -106,8 +109,17 @@ import type { Perfume } from '@/data/types';
     document.dispatchEvent(new CustomEvent('analytics:quiz_start'));
 
     function selectedValue(step: HTMLElement): string | null {
-      const checked = step.querySelector('[aria-pressed="true"]');
+      const checked = step.querySelector('[aria-checked="true"]');
       return checked ? checked.getAttribute('data-quiz-value') : null;
+    }
+
+    function checkOption(step: HTMLElement, option: HTMLButtonElement): void {
+      step.querySelectorAll('.quiz-option').forEach((other) => other.setAttribute('aria-checked', 'false'));
+      option.setAttribute('aria-checked', 'true');
+      const questionId = step.dataset.quizId as keyof QuizAnswers;
+      const value = option.dataset.quizValue;
+      if (value != null) answers[questionId] = value as QuizAnswers[keyof QuizAnswers];
+      if (nextBtn) nextBtn.disabled = false;
     }
 
     function showStep(index: number) {
@@ -121,21 +133,26 @@ import type { Perfume } from '@/data/types';
       if (progressText) progressText.textContent = `Pregunta ${index + 1} de ${steps.length}`;
       if (progressBar) progressBar.setAttribute('aria-valuenow', String(index + 1));
       if (progressFill) progressFill.style.width = `${((index + 1) / steps.length) * 100}%`;
-      const heading = steps[index]?.querySelector('h2');
+      const heading = steps[index]?.querySelector<HTMLElement>('.quiz-question-text');
       heading?.focus();
     }
 
     steps.forEach((step) => {
       const options = Array.from(step.querySelectorAll<HTMLButtonElement>('.quiz-option'));
-      options.forEach((option) => {
+      options.forEach((option, i) => {
         bindOnce(option, (el) => {
-          el.addEventListener('click', () => {
-            options.forEach((other) => other.setAttribute('aria-pressed', 'false'));
-            el.setAttribute('aria-pressed', 'true');
-            const questionId = step.dataset.quizId as keyof QuizAnswers;
-            const value = el.dataset.quizValue;
-            if (value != null) answers[questionId] = value as QuizAnswers[keyof QuizAnswers];
-            nextBtn.disabled = false;
+          el.addEventListener('click', () => checkOption(step, el));
+          // Flechas mueven y seleccionan como en un radiogroup nativo.
+          el.addEventListener('keydown', (e) => {
+            const key = (e as KeyboardEvent).key;
+            let target: HTMLButtonElement | null = null;
+            if (key === 'ArrowDown' || key === 'ArrowRight') target = options[(i + 1) % options.length];
+            else if (key === 'ArrowUp' || key === 'ArrowLeft') target = options[(i - 1 + options.length) % options.length];
+            if (target) {
+              e.preventDefault();
+              checkOption(step, target);
+              target.focus();
+            }
           });
         });
       });
@@ -166,7 +183,7 @@ import type { Perfume } from '@/data/types';
         // en los pasos que el usuario no re-seleccionaba.
         for (const k of Object.keys(answers)) delete answers[k as keyof QuizAnswers];
         steps.forEach((step) => {
-          step.querySelectorAll('.quiz-option').forEach((option) => option.setAttribute('aria-pressed', 'false'));
+          step.querySelectorAll('.quiz-option').forEach((option) => option.setAttribute('aria-checked', 'false'));
         });
         quizCard!.hidden = false;
         resultSection!.hidden = true;
@@ -303,7 +320,8 @@ import type { Perfume } from '@/data/types';
     margin: 0 0 var(--spacing-stack-sm);
   }
 
-  .quiz-question h2 {
+  .quiz-question-text {
+    display: block;
     font-family: var(--font-family);
     font-size: var(--font-headline-md-size);
     font-weight: var(--font-headline-md-weight);
@@ -315,7 +333,7 @@ import type { Perfume } from '@/data/types';
     text-align: center;
   }
 
-  .quiz-question h2:focus {
+  .quiz-question-text:focus {
     outline: none;
   }
 
@@ -325,9 +343,9 @@ import type { Perfume } from '@/data/types';
     gap: 12px;
   }
 
-  @media (min-width: 641px) {
+  @media (min-width: 640px) {
     .quiz-options {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
@@ -444,7 +462,7 @@ import type { Perfume } from '@/data/types';
     overflow: hidden;
     box-shadow:
       0 24px 60px rgba(0, 0, 0, 0.35),
-      0 0 48px rgba(233, 193, 118, 0.08);
+      0 0 48px color-mix(in srgb, var(--color-primary) 8%, transparent);
     animation: slide-up 400ms var(--transition-easing) both;
     transition: box-shadow var(--transition-duration) var(--transition-easing);
   }
@@ -452,7 +470,7 @@ import type { Perfume } from '@/data/types';
   .quiz-result-card:hover {
     box-shadow:
       0 24px 60px rgba(0, 0, 0, 0.35),
-      0 0 64px rgba(233, 193, 118, 0.16);
+      0 0 64px color-mix(in srgb, var(--color-primary) 16%, transparent);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -473,7 +491,7 @@ import type { Perfume } from '@/data/types';
     align-items: center;
     justify-content: center;
     aspect-ratio: 4 / 3;
-    background-color: #fff;
+    background-color: var(--color-image-bg);
     border-bottom: var(--border-width) solid var(--color-outline-variant);
     overflow: hidden;
   }
@@ -633,6 +651,16 @@ import type { Perfume } from '@/data/types';
   .quiz-result-add {
     width: 100%;
     margin-top: 8px;
+  }
+
+  /* "Consultar por WhatsApp" a 16px uppercase no entra en 264px útiles con
+     el nowrap global: se permite partir en 2 líneas (btn--wrap). */
+  .quiz-result-add,
+  .quiz-result-wa {
+    white-space: normal;
+    height: auto;
+    min-height: 52px;
+    min-width: 0;
   }
 
   .quiz-result-wa {

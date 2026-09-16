@@ -25,8 +25,9 @@ export const site = {
   // v12: talles frasco original 90/100ml en 4 perfumes;
   // v13: anclaje = precio frasco nuestro + $5.000 en esos 4;
   // v14: So Candid y Yara Elixir agregados al catálogo;
-  // v15: corregidas inspiraciones (So Scandal! y Yum Boujee Marshmallow | 81))
-  dataVersion: '15',
+  // v15: corregidas inspiraciones (So Scandal! y Yum Boujee Marshmallow | 81);
+  // v16: banner de cookies propio (CookieBanner) + fixes auditoría UI)
+  dataVersion: '16',
   instagramHandle: 'atomiza.cba',
   instagramUrl: 'https://instagram.com/atomiza.cba',
   tiktokHandle: 'atomiza.cba',
@@ -37,8 +38,9 @@ export const site = {
   tiktokPixelId: 'DADI89RC77UC8FLJM5H0',
   // Google Analytics 4. Dejar en '' para no cargar el script.
   gaMeasurementId: 'G-H2H8WDPR0M',
-  // Secureprivacy cookie consent. Dejar en '' para no cargar el script.
-  secureprivacyScriptId: '6a8c5d62ff5be19c869a2e9d',
+  // Secureprivacy desactivado: usamos banner propio (CookieBanner.astro,
+  // español y compacto). Dejar en '' para no cargar el script de terceros.
+  secureprivacyScriptId: '',
   // Link directo para dejar una reseña en Google Business. Dejalo en ''
   // hasta tenerlo: el CTA "Dejá tu opinión" de la home solo aparece si
   // está configurado.

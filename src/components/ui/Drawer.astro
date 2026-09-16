@@ -148,7 +148,7 @@ const { position = 'right', id, class: className = '' } = Astro.props;
   .drawer-backdrop {
     position: fixed;
     inset: 0;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: var(--color-scrim);
     backdrop-filter: blur(4px);
     z-index: 999;
     opacity: 0;

@@ -34,8 +34,10 @@ const BASE = site.basePath;
       >
         <img src={assetUrl('images/icons/tiktok.svg')} width="32" height="32" alt="" aria-hidden="true" />
       </a>
-      <a href={`${BASE}catalogo/`} class="header-catalogo-btn">Catálogo</a>
-      <a href={`${BASE}quiz/`} class="header-quiz-btn">Descubrí tu perfume</a>
+      <nav class="header-nav" aria-label="Navegación principal">
+        <a href={`${BASE}catalogo/`} class="header-catalogo-btn">Catálogo</a>
+        <a href={`${BASE}quiz/`} class="header-quiz-btn">Descubrí tu perfume</a>
+      </nav>
 
       <button 
         class="header-cart-btn"
@@ -210,15 +212,15 @@ const BASE = site.basePath;
     left: 0;
     right: 0;
     z-index: 100;
-    background-color: rgba(18, 20, 20, 0.8);
+    background-color: color-mix(in srgb, var(--color-surface) 80%, transparent);
     backdrop-filter: blur(20px);
     border-bottom: var(--border-width) solid var(--color-outline-variant);
     transition: all var(--transition-duration) var(--transition-easing);
   }
 
   .header--scrolled {
-    background-color: rgba(18, 20, 20, 0.95);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    background-color: color-mix(in srgb, var(--color-surface) 95%, transparent);
+    box-shadow: var(--shadow-sm);
   }
 
   .header-inner {
@@ -281,6 +283,12 @@ const BASE = site.basePath;
     display: flex;
     align-items: center;
     gap: 12px;
+  }
+
+  /* El nav es semántico pero transparente al layout: los links siguen
+     participando del flex de .header-actions como antes. */
+  .header-nav {
+    display: contents;
   }
 
   @media (max-width: 640px) {

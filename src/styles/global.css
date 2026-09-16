@@ -23,7 +23,14 @@
   --color-on-background: #e3e2e2;
   --color-status-in-stock: #8dba7d;
   --color-status-low-stock: #c5a059;
-  --color-status-out-of-stock: #8a8a8a;
+  /* #a3a3a3 (antes #8a8a8a): el gris apagado a 12px no llegaba a 4.5:1. */
+  --color-status-out-of-stock: #a3a3a3;
+  --color-whatsapp: #25d366;
+  --color-image-bg: #ffffff;
+  --color-scrim: rgba(0, 0, 0, 0.7);
+
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.4);
 
   --font-family: 'Montserrat', system-ui, sans-serif;
 
@@ -255,7 +262,7 @@ ol {
   .btn--primary:hover:not(.btn--disabled),
   .btn--secondary:hover:not(.btn--disabled) {
     transform: translateY(-1px);
-    box-shadow: 0 4px 16px rgba(233, 193, 118, 0.25);
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--color-primary) 25%, transparent);
   }
 
   .btn--primary:active:not(.btn--disabled),
@@ -287,6 +294,10 @@ ol {
   text-decoration: underline;
 }
 
+.btn--ghost:active:not(.btn--disabled) {
+  transform: scale(0.98);
+}
+
 .btn--lg {
   font-size: var(--font-body-md-size);
   padding: 18px 32px;
@@ -297,6 +308,15 @@ ol {
   font-size: var(--font-label-sm-size);
   padding: 14px 24px;
   height: 44px;
+}
+
+/* CTAs largos en mobile ("Consultar por WhatsApp"): permiten 2 líneas en
+   vez de desbordar. El `nowrap` global sigue valiendo para el resto. */
+.btn--wrap {
+  white-space: normal;
+  height: auto;
+  min-height: 52px;
+  min-width: 0;
 }
 
 .skip-link {
@@ -343,7 +363,7 @@ ol {
    OJO cascada: el CSS de cada página carga DESPUÉS que este global, así
    que `display` y `gap` se fuerzan en la página (un solo `@media` con
    todos sus tracks); acá va solo lo que ninguna página pisa. */
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   .slider-nav {
     display: flex;
     align-items: center;
@@ -396,6 +416,15 @@ ol {
   .slider-dot.active {
     width: 24px;
     background-color: var(--color-primary);
+  }
+
+  .slider-dot:hover {
+    background-color: var(--color-primary-container);
+  }
+
+  .slider-dot:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
   }
 
   .carousel-track {
