@@ -24,8 +24,9 @@ export const site = {
   // v10: reencuadre más grande con ?v=3; v11: foto nueva del dueño con ?v=4;
   // v12: talles frasco original 90/100ml en 4 perfumes;
   // v13: anclaje = precio frasco nuestro + $5.000 en esos 4;
-  // v14: So Candid y Yara Elixir agregados al catálogo)
-  dataVersion: '14',
+  // v14: So Candid y Yara Elixir agregados al catálogo;
+  // v15: corregidas inspiraciones (So Scandal! y Yum Boujee Marshmallow | 81))
+  dataVersion: '15',
   instagramHandle: 'atomiza.cba',
   instagramUrl: 'https://instagram.com/atomiza.cba',
   tiktokHandle: 'atomiza.cba',
