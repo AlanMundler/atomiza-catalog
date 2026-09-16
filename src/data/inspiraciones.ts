@@ -339,6 +339,24 @@ export const inspiraciones: Inspiracion[] = [
     slug: 'acqua-di-gioia',
     familia: 'Floral Acuática',
   },
+  {
+    perfumeSlug: 'so-candid',
+    perfumeBrand: 'Maison Alhambra',
+    perfumeName: 'So Candid',
+    original: 'My Way',
+    casa: 'Giorgio Armani',
+    slug: 'my-way-armani',
+    familia: 'Floral',
+  },
+  {
+    perfumeSlug: 'yara-elixir',
+    perfumeBrand: 'Lattafa Perfumes',
+    perfumeName: 'Yara Elixir',
+    original: 'Yara Candy',
+    casa: 'Lattafa Perfumes',
+    slug: 'yara-candy-lattafa',
+    familia: 'Oriental Vainilla',
+  },
 ];
 
 /** Devuelve la inspiración de un perfume por su slug, si existe. */

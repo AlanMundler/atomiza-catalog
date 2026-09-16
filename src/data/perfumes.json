@@ -1671,6 +1671,82 @@
       "isBoutiqueExclusive": false,
       "featured": false,
       "originalPrice": 60000
+    },
+    {
+      "id": "so-candid",
+      "slug": "so-candid",
+      "brand": "Maison Alhambra",
+      "name": "So Candid",
+      "gender": "femenino",
+      "olfactoryFamily": "Floral",
+      "description": "Inspirado en My Way de Giorgio Armani. Flor de azahar del naranjo, nardos y jazmín sobre un fondo de leche cremosa: un floral blanco dulce, limpio y luminoso, versátil para el día a día en cualquier época del año.",
+      "notes": {
+        "top": [
+          "Flor de Azahar"
+        ],
+        "heart": [
+          "Nardos",
+          "Jazmín"
+        ],
+        "base": [
+          "Leche"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/so-candid.avif",
+          "alt": "Maison Alhambra So Candid"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 6000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    },
+    {
+      "id": "yara-elixir",
+      "slug": "yara-elixir",
+      "brand": "Lattafa Perfumes",
+      "name": "Yara Elixir",
+      "gender": "femenino",
+      "olfactoryFamily": "Oriental Vainilla",
+      "description": "Inspirado en Yara Candy de Lattafa Perfumes. S'mores de fresa y grosellas negras con corazón de jazmín y flor de azahar del naranjo sobre un fondo de vainilla, caramelo, ámbar y almizcle. Gourmand frutal dulce y cremoso, rinde mejor en el frío y de noche.",
+      "notes": {
+        "top": [
+          "S'mores de Fresa",
+          "Grosellas Negras"
+        ],
+        "heart": [
+          "Jazmín",
+          "Flor de Azahar"
+        ],
+        "base": [
+          "Vainilla",
+          "Caramelo",
+          "Ámbar",
+          "Almizcle"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/yara-elixir.avif",
+          "alt": "Lattafa Perfumes Yara Elixir"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 9000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
     }
   ]
 }

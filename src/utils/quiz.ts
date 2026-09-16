@@ -137,6 +137,8 @@ const PROFILES: Record<string, PerfumeProfile> = {
   'l-intrude': { styles: ['floral', 'ambarado-especiado'], occasions: ['noche', 'especiales'], intensity: 'notoria', weather: ['frio'] },
   'turathi-blue': { styles: ['citrico-fresco', 'amaderado'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'notoria', weather: ['calor'] },
   'mayar-natural-intense': { styles: ['floral', 'citrico-fresco', 'frutal'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'notoria', weather: ['calor'] },
+  'so-candid': { styles: ['floral', 'dulce-vainilla'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'notoria', weather: ['todo-el-ano'] },
+  'yara-elixir': { styles: ['dulce-vainilla', 'frutal'], occasions: ['todo-el-dia', 'noche'], intensity: 'notoria', weather: ['frio'] },
 };
 
 const STYLE_KEYWORDS: Record<Style, string[]> = {
