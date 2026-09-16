@@ -99,6 +99,17 @@ const mainAlt = images[0]?.alt || alt;
     background-color: var(--color-image-bg);
   }
 
+  /* En PC la columna es ancha y el 3/4 superaba el alto del viewport: como
+     la galería es sticky, la base del frasco quedaba bajo el pliegue sin
+     forma de verla. Se acota al alto visible (menos header + miniaturas);
+     con object-fit: contain el frasco entra entero. */
+  @media (min-width: 1024px) {
+    .image-gallery-main {
+      max-height: calc(100vh - var(--header-height) - 140px);
+      max-height: calc(100svh - var(--header-height) - 140px);
+    }
+  }
+
   .image-gallery-main-image {
     width: 100%;
     height: 100%;
