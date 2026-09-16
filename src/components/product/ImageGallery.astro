@@ -99,14 +99,16 @@ const mainAlt = images[0]?.alt || alt;
     background-color: var(--color-image-bg);
   }
 
-  /* En PC la columna es ancha y el 3/4 superaba el alto del viewport: como
-     la galería es sticky, la base del frasco quedaba bajo el pliegue sin
-     forma de verla. Se acota al alto visible (menos header + miniaturas);
-     con object-fit: contain el frasco entra entero. */
+  /* En PC la caja 3/4 a ancho completo de columna superaba el viewport y,
+     como la galería es sticky, la base quedaba inalcanzable. En vez de
+     recortar el alto (dejaba el frasco chico), se angosta la galería para
+     que conserve la proporción y el conjunto imagen + miniaturas entre
+     entero en pantalla. Reserva: header + offset sticky + miniaturas. */
   @media (min-width: 1024px) {
-    .image-gallery-main {
-      max-height: calc(100vh - var(--header-height) - 140px);
-      max-height: calc(100svh - var(--header-height) - 140px);
+    .image-gallery {
+      max-width: min(100%, calc((100vh - 230px) * 0.75));
+      max-width: min(100%, calc((100svh - 230px) * 0.75));
+      margin-inline: auto;
     }
   }
 
