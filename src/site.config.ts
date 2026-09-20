@@ -27,7 +27,8 @@ export const site = {
   // v14: So Candid y Yara Elixir agregados al catálogo;
   // v15: corregidas inspiraciones (So Scandal! y Yum Boujee Marshmallow | 81);
   // v16: banner de cookies propio (CookieBanner) + fixes auditoría UI)
-  dataVersion: '16',
+  // v17: precio Liam 6000→10000 (invalida caché local con precio viejo)
+  dataVersion: '17',
   instagramHandle: 'atomiza.cba',
   instagramUrl: 'https://instagram.com/atomiza.cba',
   tiktokHandle: 'atomiza.cba',
