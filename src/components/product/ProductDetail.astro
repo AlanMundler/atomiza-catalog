@@ -431,11 +431,26 @@ const waMessage = selectedSize
     display: flex;
     gap: 12px;
     padding-top: var(--spacing-stack-sm);
+    align-items: stretch;
   }
 
-  .product-detail-add-btn,
-  .product-detail-wa-btn {
-    flex: 1;
+  /* En PC "CONSULTAR POR WHATSAPP" no entra en una línea y el
+     `btn--wrap` lo deja más alto que el primario (52px fijos).
+     Ambos en auto + stretch => misma altura, texto centrado. */
+  .product-detail-actions .product-detail-add-btn,
+  .product-detail-actions .product-detail-wa-btn {
+    flex: 1 1 0;
+    min-width: 0;
+    height: auto;
+    min-height: 52px;
+    text-align: center;
+    line-height: 1.25;
+  }
+
+  @media (min-width: 641px) {
+    .product-detail-actions .btn--lg {
+      padding: 12px 16px;
+    }
   }
 
   .price-anchor {
