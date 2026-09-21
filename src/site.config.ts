@@ -28,7 +28,8 @@ export const site = {
   // v15: corregidas inspiraciones (So Scandal! y Yum Boujee Marshmallow | 81);
   // v16: banner de cookies propio (CookieBanner) + fixes auditoría UI)
   // v17: precio Liam 6000→10000 (invalida caché local con precio viejo)
-  dataVersion: '17',
+  // v18: Hawas Black vuelve a stock (0→10))
+  dataVersion: '18',
   instagramHandle: 'atomiza.cba',
   instagramUrl: 'https://instagram.com/atomiza.cba',
   tiktokHandle: 'atomiza.cba',
