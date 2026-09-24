@@ -1747,6 +1747,251 @@
       ],
       "isBoutiqueExclusive": false,
       "featured": false
+    },
+    {
+      "id": "odyssey-aqua-edition",
+      "slug": "odyssey-aqua-edition",
+      "brand": "Armaf",
+      "name": "Odyssey Aqua Edition",
+      "gender": "masculino",
+      "olfactoryFamily": "Amaderada Aromática",
+      "description": "Inspirado en Invictus Aqua de Paco Rabanne. Naranja y toronja con abrótano, corazón de menta y lavanda sobre ambroxan, ciprés y pachulí. Fresco, verde y herbal, con buena proyección: ideal para el calor y el día a día.",
+      "notes": {
+        "top": [
+          "Naranja",
+          "Toronja",
+          "Abrótano"
+        ],
+        "heart": [
+          "Menta",
+          "Lavanda"
+        ],
+        "base": [
+          "Ambroxan",
+          "Ciprés",
+          "Pachulí"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/odyssey-aqua-edition.avif",
+          "alt": "Armaf Odyssey Aqua Edition"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 8000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false,
+      "originalPrice": 80000
+    },
+    {
+      "id": "hawas-for-him",
+      "slug": "hawas-for-him",
+      "brand": "Rasasi",
+      "name": "Hawas for Him",
+      "gender": "masculino",
+      "olfactoryFamily": "Aromática Acuática",
+      "description": "Inspirado en Invictus de Paco Rabanne. Manzana, bergamota y limón con canela, corazón acuoso de ciruela, flor de azahar del naranjo y cardamomo sobre ámbar gris, almizcle y pachulí. Fresco y dulce a la vez, versátil para el día en primavera y verano.",
+      "notes": {
+        "top": [
+          "Manzana",
+          "Bergamota",
+          "Limón",
+          "Canela"
+        ],
+        "heart": [
+          "Notas Acuosas",
+          "Ciruela",
+          "Flor de Azahar del Naranjo",
+          "Cardamomo"
+        ],
+        "base": [
+          "Ámbar Gris",
+          "Almizcle",
+          "Pachulí",
+          "Trozos de Madera a la Deriva"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/hawas-for-him.avif",
+          "alt": "Rasasi Hawas for Him"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 8000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false,
+      "originalPrice": 75000
+    },
+    {
+      "id": "yara-moi",
+      "slug": "yara-moi",
+      "brand": "Lattafa Perfumes",
+      "name": "Yara Moi",
+      "gender": "femenino",
+      "olfactoryFamily": "Floral Gourmand",
+      "description": "Jazmín y durazno con corazón de caramelo y ámbar sobre pachulí y sándalo. Floral dulce y cremosa, suave pero con presencia: va bien de día y de noche, sobre todo en otoño e invierno.",
+      "notes": {
+        "top": [
+          "Jazmín",
+          "Durazno"
+        ],
+        "heart": [
+          "Caramelo",
+          "Ámbar"
+        ],
+        "base": [
+          "Pachulí",
+          "Sándalo"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/yara-moi.avif",
+          "alt": "Lattafa Perfumes Yara Moi"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 6000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false,
+      "originalPrice": 55000
+    },
+    {
+      "id": "yara",
+      "slug": "yara",
+      "brand": "Lattafa Perfumes",
+      "name": "Yara",
+      "gender": "femenino",
+      "olfactoryFamily": "Oriental Vainilla",
+      "description": "Orquídea, heliotropo y naranja tangerina con corazón goloso de frutas tropicales sobre vainilla, almizcle y sándalo. Dulce, tropical y avainillada, de las más pedidas para el día a día.",
+      "notes": {
+        "top": [
+          "Orquídea",
+          "Heliotropo",
+          "Naranja Tangerina"
+        ],
+        "heart": [
+          "Acorde Goloso",
+          "Frutas Tropicales"
+        ],
+        "base": [
+          "Vainilla",
+          "Almizcle",
+          "Sándalo"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/yara.avif",
+          "alt": "Lattafa Perfumes Yara"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 9000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false,
+      "originalPrice": 80000
+    },
+    {
+      "id": "salvo",
+      "slug": "salvo",
+      "brand": "Maison Alhambra",
+      "name": "Salvo",
+      "gender": "masculino",
+      "olfactoryFamily": "Oriental Fougère",
+      "description": "Inspirado en Sauvage de Dior. Bergamota con lavanda, pimienta de Sichuan, anís estrellado y nuez moscada sobre ambroxan y vainilla. Fresco y especiado, limpio y versátil: se banca el trabajo, el día a día y la noche en cualquier estación.",
+      "notes": {
+        "top": [
+          "Bergamota"
+        ],
+        "heart": [
+          "Lavanda",
+          "Pimienta de Sichuan",
+          "Anís Estrellado",
+          "Nuez Moscada"
+        ],
+        "base": [
+          "Ambroxan",
+          "Vainilla"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/salvo.avif",
+          "alt": "Maison Alhambra Salvo"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 6000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false,
+      "originalPrice": 60000
+    },
+    {
+      "id": "club-de-nuit-untold",
+      "slug": "club-de-nuit-untold",
+      "brand": "Armaf",
+      "name": "Club de Nuit Untold",
+      "gender": "unisex",
+      "olfactoryFamily": "Ambarado Especiado",
+      "description": "Inspirado en Baccarat Rouge 540 de Maison Francis Kurkdjian. Azafrán y jazmín con corazón de amberwood y ámbar gris sobre resina de abeto y cedro. Cálido, ambarado y con estela: brilla de noche y en ocasiones especiales, sobre todo en otoño e invierno.",
+      "notes": {
+        "top": [
+          "Azafrán",
+          "Jazmín"
+        ],
+        "heart": [
+          "Amberwood",
+          "Ámbar Gris"
+        ],
+        "base": [
+          "Resina de Abeto",
+          "Cedro"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/club-de-nuit-untold.avif",
+          "alt": "Armaf Club de Nuit Untold"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 10000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false,
+      "originalPrice": 95000
     }
   ]
 }

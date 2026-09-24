@@ -29,7 +29,8 @@ export const site = {
   // v16: banner de cookies propio (CookieBanner) + fixes auditoría UI)
   // v17: precio Liam 6000→10000 (invalida caché local con precio viejo)
   // v18: Hawas Black vuelve a stock (0→10))
-  dataVersion: '18',
+  // v19: 6 perfumes nuevos (Odyssey Aqua, Hawas for Him, Yara Moi, Yara, Salvo, Untold))
+  dataVersion: '19',
   instagramHandle: 'atomiza.cba',
   instagramUrl: 'https://instagram.com/atomiza.cba',
   tiktokHandle: 'atomiza.cba',

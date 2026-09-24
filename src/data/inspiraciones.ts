@@ -357,6 +357,42 @@ export const inspiraciones: Inspiracion[] = [
     slug: 'yum-boujee-marshmallow-kayali',
     familia: 'Oriental Vainilla',
   },
+  {
+    perfumeSlug: 'odyssey-aqua-edition',
+    perfumeBrand: 'Armaf',
+    perfumeName: 'Odyssey Aqua Edition',
+    original: 'Invictus Aqua',
+    casa: 'Paco Rabanne',
+    slug: 'invictus-aqua-armaf',
+    familia: 'Amaderada Aromática',
+  },
+  {
+    perfumeSlug: 'hawas-for-him',
+    perfumeBrand: 'Rasasi',
+    perfumeName: 'Hawas for Him',
+    original: 'Invictus',
+    casa: 'Paco Rabanne',
+    slug: 'invictus-rasasi',
+    familia: 'Aromática Acuática',
+  },
+  {
+    perfumeSlug: 'salvo',
+    perfumeBrand: 'Maison Alhambra',
+    perfumeName: 'Salvo',
+    original: 'Sauvage',
+    casa: 'Dior',
+    slug: 'sauvage',
+    familia: 'Oriental Fougère',
+  },
+  {
+    perfumeSlug: 'club-de-nuit-untold',
+    perfumeBrand: 'Armaf',
+    perfumeName: 'Club de Nuit Untold',
+    original: 'Baccarat Rouge 540',
+    casa: 'Maison Francis Kurkdjian',
+    slug: 'baccarat-rouge-540-untold',
+    familia: 'Ambarado Especiado',
+  },
 ];
 
 /** Devuelve la inspiración de un perfume por su slug, si existe. */
