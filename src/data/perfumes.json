@@ -1213,6 +1213,11 @@
           "ml": 5,
           "price": 8000,
           "stock": 10
+        },
+        {
+          "ml": 100,
+          "price": 75000,
+          "stock": 1
         }
       ],
       "isBoutiqueExclusive": false,
