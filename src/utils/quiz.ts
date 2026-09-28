@@ -154,6 +154,7 @@ const PROFILES: Record<string, PerfumeProfile> = {
   'mayar-cherry-intense': { styles: ['frutal', 'dulce-vainilla'], occasions: ['todo-el-dia', 'noche'], intensity: 'notoria', weather: ['frio'] },
   'hawas-kobra': { styles: ['citrico-fresco', 'amaderado'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'notoria', weather: ['calor'] },
   'your-touch-amber': { styles: ['ambarado-especiado', 'dulce-vainilla'], occasions: ['todo-el-dia', 'noche'], intensity: 'notoria', weather: ['frio'] },
+  'philos-pura': { styles: ['citrico-fresco', 'frutal'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'intensa', weather: ['calor'] },
 };
 
 const STYLE_KEYWORDS: Record<Style, string[]> = {

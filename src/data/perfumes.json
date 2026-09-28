@@ -2364,6 +2364,46 @@
       "isBoutiqueExclusive": false,
       "featured": false,
       "originalPrice": 60000
+    },
+    {
+      "id": "philos-pura",
+      "slug": "philos-pura",
+      "brand": "Maison Alhambra",
+      "name": "Philos Pura",
+      "gender": "unisex",
+      "olfactoryFamily": "Aromática Frutal",
+      "description": "Inspirado en Erba Pura de Xerjoff. Naranja, bergamota y limón con corazón de frutas sobre almizcle blanco, vainilla de Madagascar y ámbar. Cítrico frutal dulce y luminoso, con gran proyección: ideal para el día en primavera y verano.",
+      "notes": {
+        "top": [
+          "Naranja",
+          "Bergamota",
+          "Limón"
+        ],
+        "heart": [
+          "Frutas"
+        ],
+        "base": [
+          "Almizcle Blanco",
+          "Vainilla de Madagascar",
+          "Ámbar"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/philos-pura.avif",
+          "alt": "Maison Alhambra Philos Pura"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 6000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false,
+      "originalPrice": 60000
     }
   ]
 }

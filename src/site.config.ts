@@ -31,7 +31,8 @@ export const site = {
   // v18: Hawas Black vuelve a stock (0→10))
   // v19: 6 perfumes nuevos (Odyssey Aqua, Hawas for Him, Yara Moi, Yara, Salvo, Untold))
   // v20: 9 perfumes nuevos (Amethyst, Victoria, Pacific Aura, Mandarin Sky Elixir, Aquatica, Asad Elixir, Mayar Cherry, Kobra, Touch Amber))
-  dataVersion: '20',
+  // v21: Philos Pura agregado al catálogo)
+  dataVersion: '21',
   instagramHandle: 'atomiza.cba',
   instagramUrl: 'https://instagram.com/atomiza.cba',
   tiktokHandle: 'atomiza.cba',

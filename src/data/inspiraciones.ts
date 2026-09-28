@@ -447,6 +447,15 @@ export const inspiraciones: Inspiracion[] = [
     slug: 'stronger-with-you-amber',
     familia: 'Oriental',
   },
+  {
+    perfumeSlug: 'philos-pura',
+    perfumeBrand: 'Maison Alhambra',
+    perfumeName: 'Philos Pura',
+    original: 'Erba Pura',
+    casa: 'Xerjoff',
+    slug: 'erba-pura-philos',
+    familia: 'Aromática Frutal',
+  },
 ];
 
 /** Devuelve la inspiración de un perfume por su slug, si existe. */
