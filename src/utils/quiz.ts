@@ -145,6 +145,15 @@ const PROFILES: Record<string, PerfumeProfile> = {
   yara: { styles: ['dulce-vainilla', 'frutal'], occasions: ['todo-el-dia', 'noche'], intensity: 'notoria', weather: ['todo-el-ano'] },
   salvo: { styles: ['citrico-fresco', 'ambarado-especiado'], occasions: ['trabajo', 'todo-el-dia', 'noche'], intensity: 'intensa', weather: ['todo-el-ano'] },
   'club-de-nuit-untold': { styles: ['floral', 'ambarado-especiado'], occasions: ['noche', 'especiales'], intensity: 'intensa', weather: ['frio'] },
+  'bade-e-al-oud-amethyst': { styles: ['floral', 'ambarado-especiado'], occasions: ['todo-el-dia', 'noche'], intensity: 'notoria', weather: ['frio'] },
+  victoria: { styles: ['dulce-vainilla', 'citrico-fresco'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'notoria', weather: ['calor'] },
+  'pacific-aura': { styles: ['citrico-fresco'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'notoria', weather: ['calor'] },
+  'odyssey-mandarin-sky-elixir': { styles: ['citrico-fresco', 'dulce-vainilla'], occasions: ['todo-el-dia', 'noche'], intensity: 'notoria', weather: ['todo-el-ano'] },
+  aquatica: { styles: ['citrico-fresco', 'frutal'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'notoria', weather: ['calor'] },
+  'asad-elixir': { styles: ['ambarado-especiado', 'tabaco-cuero'], occasions: ['noche', 'especiales'], intensity: 'intensa', weather: ['frio'] },
+  'mayar-cherry-intense': { styles: ['frutal', 'dulce-vainilla'], occasions: ['todo-el-dia', 'noche'], intensity: 'notoria', weather: ['frio'] },
+  'hawas-kobra': { styles: ['citrico-fresco', 'amaderado'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'notoria', weather: ['calor'] },
+  'your-touch-amber': { styles: ['ambarado-especiado', 'dulce-vainilla'], occasions: ['todo-el-dia', 'noche'], intensity: 'notoria', weather: ['frio'] },
 };
 
 const STYLE_KEYWORDS: Record<Style, string[]> = {

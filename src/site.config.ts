@@ -30,7 +30,8 @@ export const site = {
   // v17: precio Liam 6000→10000 (invalida caché local con precio viejo)
   // v18: Hawas Black vuelve a stock (0→10))
   // v19: 6 perfumes nuevos (Odyssey Aqua, Hawas for Him, Yara Moi, Yara, Salvo, Untold))
-  dataVersion: '19',
+  // v20: 9 perfumes nuevos (Amethyst, Victoria, Pacific Aura, Mandarin Sky Elixir, Aquatica, Asad Elixir, Mayar Cherry, Kobra, Touch Amber))
+  dataVersion: '20',
   instagramHandle: 'atomiza.cba',
   instagramUrl: 'https://instagram.com/atomiza.cba',
   tiktokHandle: 'atomiza.cba',

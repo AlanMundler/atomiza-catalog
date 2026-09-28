@@ -1992,6 +1992,378 @@
       "isBoutiqueExclusive": false,
       "featured": false,
       "originalPrice": 95000
+    },
+    {
+      "id": "bade-e-al-oud-amethyst",
+      "slug": "bade-e-al-oud-amethyst",
+      "brand": "Lattafa Perfumes",
+      "name": "Bade'e Al Oud Amethyst",
+      "gender": "unisex",
+      "olfactoryFamily": "Oriental Vainilla",
+      "description": "Pimienta rosa y bergamota con corazón de rosa turca, rosa de Bulgaria y jazmín sobre madera de oud, ámbar y vainilla. Rosa con oud cálido y elegante, de larga duración: va bien de día y de noche, sobre todo en otoño e invierno.",
+      "notes": {
+        "top": [
+          "Pimienta Rosa",
+          "Bergamota"
+        ],
+        "heart": [
+          "Rosa Turca",
+          "Rosa de Bulgaria",
+          "Jazmín"
+        ],
+        "base": [
+          "Madera de Oud",
+          "Ámbar",
+          "Vainilla"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/bade-e-al-oud-amethyst.avif",
+          "alt": "Lattafa Perfumes Bade'e Al Oud Amethyst"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 6000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false,
+      "originalPrice": 60000
+    },
+    {
+      "id": "victoria",
+      "slug": "victoria",
+      "brand": "Lattafa Perfumes",
+      "name": "Victoria",
+      "gender": "femenino",
+      "olfactoryFamily": "Floral Frutal Gourmand",
+      "description": "Inspirado en Devotion de Dolce & Gabbana. Tarta de limón y merengue con corazón de nerolí sobre vainilla cremosa. Gourmand cítrico y luminoso, como un postre de limón recién hecho: ideal para el día en primavera y verano.",
+      "notes": {
+        "top": [
+          "Tarta de Limón y Merengue"
+        ],
+        "heart": [
+          "Nerolí"
+        ],
+        "base": [
+          "Vainilla"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/victoria.avif",
+          "alt": "Lattafa Perfumes Victoria"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 8000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false,
+      "originalPrice": 80000
+    },
+    {
+      "id": "pacific-aura",
+      "slug": "pacific-aura",
+      "brand": "Rayhaan",
+      "name": "Pacific Aura",
+      "gender": "masculino",
+      "olfactoryFamily": "Aromática Acuática",
+      "description": "Inspirado en Pacific Chill de Louis Vuitton. Mandarina, menta, cidra y bergamota con grosellas negras y cilantro, corazón de albahaca, zanahoria y rosa sobre higo, ambroxan y ámbar. Fresco marino y herbal, luminoso: perfecto para el calor y el día a día.",
+      "notes": {
+        "top": [
+          "Mandarina",
+          "Menta",
+          "Cidra",
+          "Bergamota",
+          "Grosellas Negras",
+          "Cilantro"
+        ],
+        "heart": [
+          "Albahaca",
+          "Zanahoria",
+          "Rosa"
+        ],
+        "base": [
+          "Higo",
+          "Ambroxan",
+          "Ámbar"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/pacific-aura.avif",
+          "alt": "Rayhaan Pacific Aura"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 9000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false,
+      "originalPrice": 90000
+    },
+    {
+      "id": "odyssey-mandarin-sky-elixir",
+      "slug": "odyssey-mandarin-sky-elixir",
+      "brand": "Armaf",
+      "name": "Odyssey Mandarin Sky Elixir",
+      "gender": "unisex",
+      "olfactoryFamily": "Oriental Amaderada",
+      "description": "Mandarina y naranja con lavanda, cardamomo y pimienta negra, corazón de caramelo, haba tonka, pachulí e incienso sobre vainilla y vetiver. Cítrico gourmand con fondo amaderado cálido: versátil para el día y la noche en cualquier estación.",
+      "notes": {
+        "top": [
+          "Mandarina",
+          "Naranja",
+          "Lavanda",
+          "Cardamomo",
+          "Pimienta Negra"
+        ],
+        "heart": [
+          "Caramelo",
+          "Haba Tonka",
+          "Pachulí",
+          "Incienso"
+        ],
+        "base": [
+          "Vainilla",
+          "Vetiver"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/odyssey-mandarin-sky-elixir.avif",
+          "alt": "Armaf Odyssey Mandarin Sky Elixir"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 10000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false,
+      "originalPrice": 100000
+    },
+    {
+      "id": "aquatica",
+      "slug": "aquatica",
+      "brand": "Rayhaan",
+      "name": "Aquatica",
+      "gender": "masculino",
+      "olfactoryFamily": "Cítrica Gourmand",
+      "description": "Inspirado en Virgin Island Water de Creed. Lima y leche de coco con bergamota y mandarina, corazón de caña de azúcar, jazmín, hibisco y gardenia sobre almizcle, ron, haba tonka y pachulí. Un cóctel tropical playero: puro verano, de día y al aire libre.",
+      "notes": {
+        "top": [
+          "Lima",
+          "Leche de Coco",
+          "Bergamota",
+          "Mandarina"
+        ],
+        "heart": [
+          "Caña de Azúcar",
+          "Jazmín",
+          "Hibisco",
+          "Gardenia"
+        ],
+        "base": [
+          "Almizcle",
+          "Ron",
+          "Haba Tonka",
+          "Pachulí"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/aquatica.avif",
+          "alt": "Rayhaan Aquatica"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 9000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false,
+      "originalPrice": 90000
+    },
+    {
+      "id": "asad-elixir",
+      "slug": "asad-elixir",
+      "brand": "Lattafa Perfumes",
+      "name": "Asad Elixir",
+      "gender": "masculino",
+      "olfactoryFamily": "Oriental",
+      "description": "Inspirado en Sauvage Elixir de Dior. Pimienta rosa, azafrán y toronja con corazón de tabaco, vainilla y cedro sobre ámbar, incienso, pachulí y cachemira. Intenso, oscuro y magnético, con gran proyección: mejor de noche y en otoño e invierno.",
+      "notes": {
+        "top": [
+          "Pimienta Rosa",
+          "Azafrán",
+          "Toronja"
+        ],
+        "heart": [
+          "Tabaco",
+          "Vainilla",
+          "Cedro"
+        ],
+        "base": [
+          "Ámbar",
+          "Incienso",
+          "Pachulí",
+          "Cachemira"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/asad-elixir.avif",
+          "alt": "Lattafa Perfumes Asad Elixir"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 9000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false,
+      "originalPrice": 90000
+    },
+    {
+      "id": "mayar-cherry-intense",
+      "slug": "mayar-cherry-intense",
+      "brand": "Lattafa Perfumes",
+      "name": "Mayar Cherry Intense",
+      "gender": "femenino",
+      "olfactoryFamily": "Oriental Vainilla",
+      "description": "Fresa y bergamota con corazón de mermelada de cereza y cacao sobre vainilla, ámbar y pachulí. Gourmand frutal dulce y envolvente: rinde mejor en el frío y de noche.",
+      "notes": {
+        "top": [
+          "Fresa",
+          "Bergamota"
+        ],
+        "heart": [
+          "Mermelada de Cereza",
+          "Cacao"
+        ],
+        "base": [
+          "Vainilla",
+          "Ámbar",
+          "Pachulí"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/mayar-cherry-intense.avif",
+          "alt": "Lattafa Perfumes Mayar Cherry Intense"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 6000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false,
+      "originalPrice": 60000
+    },
+    {
+      "id": "hawas-kobra",
+      "slug": "hawas-kobra",
+      "brand": "Rasasi",
+      "name": "Hawas Kobra",
+      "gender": "masculino",
+      "olfactoryFamily": "Oriental Amaderada",
+      "description": "Inspirado en Imagination de Louis Vuitton. Jengibre, bergamota y naranja tangerina con corazón de té verde, canela y nerolí sobre almizcle, notas amaderadas y ámbar. Fresco especiado y limpio, con presencia: va bien de día y de noche en primavera y verano.",
+      "notes": {
+        "top": [
+          "Jengibre",
+          "Bergamota",
+          "Naranja Tangerina"
+        ],
+        "heart": [
+          "Té Verde",
+          "Canela",
+          "Nerolí"
+        ],
+        "base": [
+          "Almizcle",
+          "Notas Amaderadas",
+          "Ámbar"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/hawas-kobra.avif",
+          "alt": "Rasasi Hawas Kobra"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 10000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false,
+      "originalPrice": 100000
+    },
+    {
+      "id": "your-touch-amber",
+      "slug": "your-touch-amber",
+      "brand": "Maison Alhambra",
+      "name": "Your Touch Amber",
+      "gender": "masculino",
+      "olfactoryFamily": "Oriental",
+      "description": "Inspirado en Stronger With You Amber de Giorgio Armani. Lavanda con corazón de ámbar sobre vainilla cálida. Ambarado dulce y envolvente, luminoso: ideal para el frío y la noche.",
+      "notes": {
+        "top": [
+          "Lavanda"
+        ],
+        "heart": [
+          "Ámbar"
+        ],
+        "base": [
+          "Vainilla"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/your-touch-amber.avif",
+          "alt": "Maison Alhambra Your Touch Amber"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 6000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false,
+      "originalPrice": 60000
     }
   ]
 }
