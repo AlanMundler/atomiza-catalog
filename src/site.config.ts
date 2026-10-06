@@ -34,7 +34,8 @@ export const site = {
   // v21: Philos Pura agregado al catálogo)
   // v22: frascos 100ml en 8 perfumes (Hawas Tropical/Ice, Philos Pura, Hayaati, Opulent Dubai, Intrude, Florence, Bella))
   // v23: frasco 100ml en Angham)
-  dataVersion: '23',
+  // v24: 5 perfumes nuevos (Prive Rose, Odyssey Homme, Mega Man, Tropical Vibe, Qaed Al Fursan))
+  dataVersion: '24',
   instagramHandle: 'atomiza.cba',
   instagramUrl: 'https://instagram.com/atomiza.cba',
   tiktokHandle: 'atomiza.cba',

@@ -155,6 +155,11 @@ const PROFILES: Record<string, PerfumeProfile> = {
   'hawas-kobra': { styles: ['citrico-fresco', 'amaderado'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'notoria', weather: ['calor'] },
   'your-touch-amber': { styles: ['ambarado-especiado', 'dulce-vainilla'], occasions: ['todo-el-dia', 'noche'], intensity: 'notoria', weather: ['frio'] },
   'philos-pura': { styles: ['citrico-fresco', 'frutal'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'intensa', weather: ['calor'] },
+  'ameerat-al-arab-prive-rose': { styles: ['floral', 'frutal'], occasions: ['todo-el-dia', 'noche'], intensity: 'intensa', weather: ['frio'] },
+  'odyssey-homme': { styles: ['ambarado-especiado', 'dulce-vainilla'], occasions: ['noche'], intensity: 'notoria', weather: ['frio'] },
+  'odyssey-mega-man': { styles: ['citrico-fresco', 'frutal'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'notoria', weather: ['calor'] },
+  'tropical-vibe': { styles: ['frutal', 'citrico-fresco'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'intensa', weather: ['calor'] },
+  'qaed-al-fursan': { styles: ['frutal', 'amaderado'], occasions: ['todo-el-dia', 'noche'], intensity: 'notoria', weather: ['calor'] },
 };
 
 const STYLE_KEYWORDS: Record<Style, string[]> = {

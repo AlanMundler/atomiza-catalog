@@ -2449,6 +2449,223 @@
       "isBoutiqueExclusive": false,
       "featured": false,
       "originalPrice": 60000
+    },
+    {
+      "id": "ameerat-al-arab-prive-rose",
+      "slug": "ameerat-al-arab-prive-rose",
+      "brand": "Asdaaf",
+      "name": "Ameerat Al Arab Prive Rose",
+      "gender": "femenino",
+      "olfactoryFamily": "Floral Frutal",
+      "description": "Inspirado en Delina Exclusif de Parfums de Marly. Frutilla, uvas y naranja con corazón de rosa, jazmín, gardenia y ylang-ylang sobre haba tonka, ámbar y sándalo. Rosa frutal dulce y empolvada, con gran duración: brilla de noche, sobre todo en otoño e invierno.",
+      "notes": {
+        "top": [
+          "Frutilla",
+          "Uvas",
+          "Naranja"
+        ],
+        "heart": [
+          "Rosa",
+          "Almizcle Blanco",
+          "Jazmín",
+          "Gardenia",
+          "Ylang-ylang",
+          "Lirio"
+        ],
+        "base": [
+          "Haba Tonka",
+          "Ámbar",
+          "Sándalo"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/ameerat-al-arab-prive-rose.avif",
+          "alt": "Asdaaf Ameerat Al Arab Prive Rose"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 7000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false,
+      "originalPrice": 65000
+    },
+    {
+      "id": "odyssey-homme",
+      "slug": "odyssey-homme",
+      "brand": "Armaf",
+      "name": "Odyssey Homme",
+      "gender": "masculino",
+      "olfactoryFamily": "Oriental",
+      "description": "Inspirado en Noir Extreme de Tom Ford. Cardamomo, nerolí y mandarina con corazón de flor de azahar y rosa sobre vainilla, maderas, ámbar y sándalo. Cálido, especiado y dulce, acogedor: mejor de noche y en otoño e invierno.",
+      "notes": {
+        "top": [
+          "Cardamomo",
+          "Nerolí",
+          "Mandarina"
+        ],
+        "heart": [
+          "Flor de Azahar",
+          "Rosa"
+        ],
+        "base": [
+          "Vainilla",
+          "Notas Amaderadas",
+          "Ámbar",
+          "Sándalo"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/odyssey-homme.avif",
+          "alt": "Armaf Odyssey Homme"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 7000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false,
+      "originalPrice": 65000
+    },
+    {
+      "id": "odyssey-mega-man",
+      "slug": "odyssey-mega-man",
+      "brand": "Armaf",
+      "name": "Odyssey Mega Man",
+      "gender": "masculino",
+      "olfactoryFamily": "Amaderada Aromática",
+      "description": "Inspirado en Y Eau de Parfum de Yves Saint Laurent. Limón, bergamota y naranja con jengibre y menta, corazón de piña, salvia, enebro y geranio sobre almizcle, cedro, haba tonka y vetiver. Fresco frutal moderno y versátil: ideal para el día en primavera y verano.",
+      "notes": {
+        "top": [
+          "Limón",
+          "Bergamota",
+          "Naranja",
+          "Jengibre",
+          "Menta"
+        ],
+        "heart": [
+          "Piña",
+          "Salvia",
+          "Enebro",
+          "Geranio"
+        ],
+        "base": [
+          "Almizcle",
+          "Cedro",
+          "Haba Tonka",
+          "Vetiver"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/odyssey-mega-man.avif",
+          "alt": "Armaf Odyssey Mega Man"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 7000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false,
+      "originalPrice": 65000
+    },
+    {
+      "id": "tropical-vibe",
+      "slug": "tropical-vibe",
+      "brand": "Rayhaan",
+      "name": "Tropical Vibe",
+      "gender": "unisex",
+      "olfactoryFamily": "Frutal Tropical",
+      "description": "Inspirado en Summer Hammer de Lorenzo Pazzaglia. Mango, piña, bergamota y ron con corazón de coco, flores blancas y notas marinas sobre almizcle, ámbar, sándalo y vetiver. Vacaciones en frasco, dulce y playero: puro verano, de día y al aire libre.",
+      "notes": {
+        "top": [
+          "Mango",
+          "Piña",
+          "Bergamota",
+          "Ron"
+        ],
+        "heart": [
+          "Coco",
+          "Flores Blancas",
+          "Notas Marinas"
+        ],
+        "base": [
+          "Almizcle",
+          "Ámbar",
+          "Sándalo",
+          "Vetiver"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/tropical-vibe.avif",
+          "alt": "Rayhaan Tropical Vibe"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 8000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false,
+      "originalPrice": 80000
+    },
+    {
+      "id": "qaed-al-fursan",
+      "slug": "qaed-al-fursan",
+      "brand": "Lattafa Perfumes",
+      "name": "Qaed Al Fursan",
+      "gender": "masculino",
+      "olfactoryFamily": "Oriental Amaderada",
+      "description": "Inspirado en Black XS L'Excès de Paco Rabanne. Piña y azafrán con corazón de abeto balsámico y jazmín sobre cedro, ámbar y oud. Tropical dulce con fondo amaderado, llamativo pero usable: estrella del verano, de día y de noche.",
+      "notes": {
+        "top": [
+          "Piña",
+          "Azafrán"
+        ],
+        "heart": [
+          "Abeto Balsámico",
+          "Jazmín"
+        ],
+        "base": [
+          "Cedro",
+          "Ámbar",
+          "Oud"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/qaed-al-fursan.avif",
+          "alt": "Lattafa Perfumes Qaed Al Fursan"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 6000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false,
+      "originalPrice": 60000
     }
   ]
 }
