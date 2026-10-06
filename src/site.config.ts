@@ -35,7 +35,8 @@ export const site = {
   // v22: frascos 100ml en 8 perfumes (Hawas Tropical/Ice, Philos Pura, Hayaati, Opulent Dubai, Intrude, Florence, Bella))
   // v23: frasco 100ml en Angham)
   // v24: 5 perfumes nuevos (Prive Rose, Odyssey Homme, Mega Man, Tropical Vibe, Qaed Al Fursan))
-  dataVersion: '24',
+  // v25: frascos 100ml en Odyssey Mega Man, Mandarin Sky Elixir y Mayar Natural Intense)
+  dataVersion: '25',
   instagramHandle: 'atomiza.cba',
   instagramUrl: 'https://instagram.com/atomiza.cba',
   tiktokHandle: 'atomiza.cba',

@@ -1706,6 +1706,11 @@
           "ml": 5,
           "price": 6000,
           "stock": 10
+        },
+        {
+          "ml": 100,
+          "price": 60000,
+          "stock": 1
         }
       ],
       "isBoutiqueExclusive": false,
@@ -2193,6 +2198,11 @@
           "ml": 5,
           "price": 10000,
           "stock": 10
+        },
+        {
+          "ml": 100,
+          "price": 100000,
+          "stock": 1
         }
       ],
       "isBoutiqueExclusive": false,
@@ -2577,6 +2587,11 @@
           "ml": 5,
           "price": 7000,
           "stock": 10
+        },
+        {
+          "ml": 100,
+          "price": 65000,
+          "stock": 1
         }
       ],
       "isBoutiqueExclusive": false,
