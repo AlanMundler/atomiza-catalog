@@ -463,7 +463,7 @@
         {
           "ml": 5,
           "price": 7000,
-          "stock": 10
+          "stock": 0
         }
       ],
       "isBoutiqueExclusive": false,
@@ -507,7 +507,7 @@
         {
           "ml": 5,
           "price": 6000,
-          "stock": 10
+          "stock": 3
         }
       ],
       "isBoutiqueExclusive": false,
@@ -1262,7 +1262,7 @@
         },
         {
           "ml": 100,
-          "price": 70000,
+          "price": 75000,
           "stock": 1
         }
       ],
