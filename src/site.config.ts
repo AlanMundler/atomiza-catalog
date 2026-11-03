@@ -54,10 +54,10 @@ export const site = {
   // hasta tenerlo: el CTA "Dejá tu opinión" de la home solo aparece si
   // está configurado.
   googleReviewsUrl: 'https://g.page/r/CTDxPbtfWpKJEAE/review',
-  whatsappNumber: '5493472559307',
-  whatsappUrl: 'https://wa.me/5493472559307',
+  whatsappNumber: '5493518752159',
+  whatsappUrl: 'https://wa.me/5493518752159',
   whatsappMessage: 'Hola, quiero hacer un pedido',
-  phoneDisplay: '54 9 3472 559307',
+  phoneDisplay: '54 9 351 875-2159',
   currency: 'ARS',
   // Localización (Córdoba, Argentina) para SEO local y schema de negocio.
   addressLocality: 'Córdoba Capital',
