@@ -85,12 +85,8 @@ const cards = allCards.filter((card) => (card.key === 'decants' ? decants.length
 ---
 
 <section class="chooser" aria-labelledby="chooser-title">
+  <h1 id="chooser-title" class="visually-hidden">Catálogo</h1>
   <div class="container">
-    <header class="chooser-hero">
-      <h1 id="chooser-title" class="chooser-title">Catálogo</h1>
-      <p class="chooser-subtitle">Elegí cómo querés probarlo: decant de 5 ml para probar sin compromiso, o el frasco original sellado.</p>
-    </header>
-
     <div class="chooser-grid">
       {cards.map((card) => (
         <a class={`mode-card mode-card--${card.key}`} href={card.href}>
@@ -126,34 +122,10 @@ const cards = allCards.filter((card) => (card.key === 'decants' ? decants.length
 
 <style>
   .chooser {
-    padding: var(--spacing-stack-lg) 0 var(--spacing-stack-lg);
-  }
-
-  .chooser-hero {
-    text-align: center;
-    margin-bottom: var(--spacing-stack-lg);
-  }
-
-  .chooser-title {
-    font-family: var(--font-family);
-    font-size: var(--font-display-lg-size);
-    font-weight: var(--font-display-lg-weight);
-    line-height: var(--font-display-lg-line-height);
-    letter-spacing: var(--font-display-lg-tracking);
-    text-transform: uppercase;
-    color: var(--color-on-surface);
-    margin: 0 0 12px;
-  }
-
-  .chooser-subtitle {
-    font-family: var(--font-family);
-    font-size: var(--font-body-lg-size);
-    font-weight: var(--font-body-lg-weight);
-    line-height: var(--font-body-lg-line-height);
-    letter-spacing: var(--font-body-lg-tracking);
-    color: var(--color-on-surface-variant);
-    margin: 0 auto;
-    max-width: 34em;
+    /* Sin hero: las cards son lo primero que se ve. El aire superior sigue
+       el criterio de los listados (respiro chico arriba del primer bloque
+       de contenido), y el footer replica ese mismo gap debajo de la grid. */
+    padding: var(--spacing-stack-md) 0 var(--spacing-stack-lg);
   }
 
   .chooser-grid {
@@ -305,15 +277,7 @@ const cards = allCards.filter((card) => (card.key === 'decants' ? decants.length
 
   @media (max-width: 640px) {
     .chooser {
-      padding: var(--spacing-stack-md) 0 var(--spacing-stack-md);
-    }
-
-    .chooser-hero {
-      margin-bottom: var(--spacing-stack-md);
-    }
-
-    .chooser-title {
-      font-size: 36px;
+      padding: var(--spacing-stack-sm) 0 var(--spacing-stack-md);
     }
 
     .mode-card {
@@ -323,7 +287,8 @@ const cards = allCards.filter((card) => (card.key === 'decants' ? decants.length
   }
 
   .chooser-foot {
-    margin-top: var(--spacing-stack-lg);
+    /* Espejo del aire superior: mismo gap header→cards que cards→footer. */
+    margin-top: var(--spacing-stack-md);
     text-align: center;
   }
 
