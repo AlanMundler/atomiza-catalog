@@ -1,0 +1,510 @@
+{
+  "images/perfumes/24-carat-white-gold.avif": {
+    "width": 289,
+    "height": 469
+  },
+  "images/perfumes/9pm.avif": {
+    "width": 193,
+    "height": 469
+  },
+  "images/perfumes/ajwad.avif": {
+    "width": 167,
+    "height": 471
+  },
+  "images/perfumes/ameer-al-oudh.avif": {
+    "width": 200,
+    "height": 469
+  },
+  "images/perfumes/ameerat-al-arab-prive-rose.avif": {
+    "width": 217,
+    "height": 469
+  },
+  "images/perfumes/angham.avif": {
+    "width": 233,
+    "height": 469
+  },
+  "images/perfumes/aquatica.avif": {
+    "width": 324,
+    "height": 468
+  },
+  "images/perfumes/asad-elixir.avif": {
+    "width": 198,
+    "height": 468
+  },
+  "images/perfumes/bade-e-al-oud-amethyst.avif": {
+    "width": 250,
+    "height": 470
+  },
+  "images/perfumes/badee-al-oud-sublime.avif": {
+    "width": 283,
+    "height": 470
+  },
+  "images/perfumes/baroque-rouge-540.avif": {
+    "width": 300,
+    "height": 470
+  },
+  "images/perfumes/club-de-nuit-intense-man.avif": {
+    "width": 288,
+    "height": 470
+  },
+  "images/perfumes/club-de-nuit-untold.avif": {
+    "width": 294,
+    "height": 469
+  },
+  "images/perfumes/confidential-private-gold.avif": {
+    "width": 344,
+    "height": 436
+  },
+  "images/perfumes/dark-door-sport.avif": {
+    "width": 226,
+    "height": 468
+  },
+  "images/perfumes/delilah.avif": {
+    "width": 303,
+    "height": 470
+  },
+  "images/perfumes/emaan.avif": {
+    "width": 211,
+    "height": 470
+  },
+  "images/perfumes/glacier-bella.avif": {
+    "width": 209,
+    "height": 470
+  },
+  "images/perfumes/glacier-bold.avif": {
+    "width": 178,
+    "height": 469
+  },
+  "images/perfumes/glacier-ultra.avif": {
+    "width": 183,
+    "height": 470
+  },
+  "images/perfumes/habik-for-men.avif": {
+    "width": 225,
+    "height": 470
+  },
+  "images/perfumes/hawas-black.avif": {
+    "width": 262,
+    "height": 470
+  },
+  "images/perfumes/hawas-fire.avif": {
+    "width": 263,
+    "height": 470
+  },
+  "images/perfumes/hawas-for-him.avif": {
+    "width": 261,
+    "height": 470
+  },
+  "images/perfumes/hawas-ice.avif": {
+    "width": 269,
+    "height": 470
+  },
+  "images/perfumes/hawas-kobra.avif": {
+    "width": 262,
+    "height": 470
+  },
+  "images/perfumes/hawas-malibu.avif": {
+    "width": 261,
+    "height": 470
+  },
+  "images/perfumes/hawas-tropical.avif": {
+    "width": 268,
+    "height": 470
+  },
+  "images/perfumes/hawas-verde.avif": {
+    "width": 267,
+    "height": 470
+  },
+  "images/perfumes/haya.avif": {
+    "width": 211,
+    "height": 470
+  },
+  "images/perfumes/hayaati-al-maleky.avif": {
+    "width": 166,
+    "height": 468
+  },
+  "images/perfumes/hayaati-black.avif": {
+    "width": 206,
+    "height": 470
+  },
+  "images/perfumes/hayaati-florence.avif": {
+    "width": 208,
+    "height": 470
+  },
+  "images/perfumes/hayaati-gold-elixir.avif": {
+    "width": 202,
+    "height": 468
+  },
+  "images/perfumes/hercules.avif": {
+    "width": 237,
+    "height": 470
+  },
+  "images/perfumes/jorge-di-profumo.avif": {
+    "width": 222,
+    "height": 470
+  },
+  "images/perfumes/kiss.avif": {
+    "width": 336,
+    "height": 469
+  },
+  "images/perfumes/l-intrude.avif": {
+    "width": 220,
+    "height": 470
+  },
+  "images/perfumes/liam.avif": {
+    "width": 234,
+    "height": 469
+  },
+  "images/perfumes/luminous-sahara.avif": {
+    "width": 237,
+    "height": 469
+  },
+  "images/perfumes/mayar-cherry-intense.avif": {
+    "width": 185,
+    "height": 470
+  },
+  "images/perfumes/mayar-natural-intense.avif": {
+    "width": 185,
+    "height": 470
+  },
+  "images/perfumes/mayar.avif": {
+    "width": 182,
+    "height": 470
+  },
+  "images/perfumes/now-rave.avif": {
+    "width": 319,
+    "height": 469
+  },
+  "images/perfumes/odyssey-aqua-edition.avif": {
+    "width": 323,
+    "height": 468
+  },
+  "images/perfumes/odyssey-candee.avif": {
+    "width": 309,
+    "height": 469
+  },
+  "images/perfumes/odyssey-homme.avif": {
+    "width": 313,
+    "height": 468
+  },
+  "images/perfumes/odyssey-mandarin-sky-elixir.avif": {
+    "width": 323,
+    "height": 471
+  },
+  "images/perfumes/odyssey-mega-man.avif": {
+    "width": 330,
+    "height": 468
+  },
+  "images/perfumes/opulent-dubai.avif": {
+    "width": 284,
+    "height": 468
+  },
+  "images/perfumes/oud-lail-maleki.avif": {
+    "width": 225,
+    "height": 469
+  },
+  "images/perfumes/pacific-aura.avif": {
+    "width": 296,
+    "height": 469
+  },
+  "images/perfumes/perseus-exclusif.avif": {
+    "width": 233,
+    "height": 466
+  },
+  "images/perfumes/philos-pura.avif": {
+    "width": 198,
+    "height": 470
+  },
+  "images/perfumes/qaed-al-fursan-untamed.avif": {
+    "width": 345,
+    "height": 466
+  },
+  "images/perfumes/qaed-al-fursan.avif": {
+    "width": 335,
+    "height": 470
+  },
+  "images/perfumes/reflection.avif": {
+    "width": 237,
+    "height": 469
+  },
+  "images/perfumes/rouat-ajial.avif": {
+    "width": 289,
+    "height": 454
+  },
+  "images/perfumes/salvo-intense.avif": {
+    "width": 196,
+    "height": 470
+  },
+  "images/perfumes/salvo.avif": {
+    "width": 199,
+    "height": 470
+  },
+  "images/perfumes/so-candid.avif": {
+    "width": 180,
+    "height": 470
+  },
+  "images/perfumes/the-kingdom-for-women.avif": {
+    "width": 188,
+    "height": 470
+  },
+  "images/perfumes/tonic-malt.avif": {
+    "width": 345,
+    "height": 361
+  },
+  "images/perfumes/tropical-vibe.avif": {
+    "width": 317,
+    "height": 469
+  },
+  "images/perfumes/turathi-blue.avif": {
+    "width": 311,
+    "height": 470
+  },
+  "images/perfumes/victoria.avif": {
+    "width": 316,
+    "height": 470
+  },
+  "images/perfumes/yara-elixir.avif": {
+    "width": 208,
+    "height": 470
+  },
+  "images/perfumes/yara-moi.avif": {
+    "width": 198,
+    "height": 469
+  },
+  "images/perfumes/yara.avif": {
+    "width": 207,
+    "height": 469
+  },
+  "images/perfumes/yeah.avif": {
+    "width": 211,
+    "height": 469
+  },
+  "images/perfumes/your-touch-amber.avif": {
+    "width": 223,
+    "height": 468
+  },
+  "images/perfumes/your-touch-intense.avif": {
+    "width": 225,
+    "height": 470
+  },
+  "images/perfumes/your-touch.avif": {
+    "width": 274,
+    "height": 470
+  },
+  "images/originales/102791.avif": {
+    "width": 161,
+    "height": 468
+  },
+  "images/originales/13805.avif": {
+    "width": 207,
+    "height": 470
+  },
+  "images/originales/16939.avif": {
+    "width": 235,
+    "height": 470
+  },
+  "images/originales/18471.avif": {
+    "width": 316,
+    "height": 469
+  },
+  "images/originales/29675.avif": {
+    "width": 265,
+    "height": 471
+  },
+  "images/originales/29727.avif": {
+    "width": 250,
+    "height": 469
+  },
+  "images/originales/30947.avif": {
+    "width": 207,
+    "height": 470
+  },
+  "images/originales/31623.avif": {
+    "width": 205,
+    "height": 468
+  },
+  "images/originales/31861.avif": {
+    "width": 202,
+    "height": 468
+  },
+  "images/originales/33519.avif": {
+    "width": 284,
+    "height": 469
+  },
+  "images/originales/34506.avif": {
+    "width": 309,
+    "height": 469
+  },
+  "images/originales/34761.avif": {
+    "width": 145,
+    "height": 470
+  },
+  "images/originales/41222.avif": {
+    "width": 171,
+    "height": 470
+  },
+  "images/originales/43871.avif": {
+    "width": 225,
+    "height": 468
+  },
+  "images/originales/4410.avif": {
+    "width": 256,
+    "height": 461
+  },
+  "images/originales/44174.avif": {
+    "width": 295,
+    "height": 469
+  },
+  "images/originales/45258.avif": {
+    "width": 287,
+    "height": 470
+  },
+  "images/originales/48100.avif": {
+    "width": 204,
+    "height": 470
+  },
+  "images/originales/485.avif": {
+    "width": 189,
+    "height": 468
+  },
+  "images/originales/50370.avif": {
+    "width": 224,
+    "height": 470
+  },
+  "images/originales/50757.avif": {
+    "width": 201,
+    "height": 470
+  },
+  "images/originales/51488.avif": {
+    "width": 238,
+    "height": 470
+  },
+  "images/originales/51694.avif": {
+    "width": 259,
+    "height": 469
+  },
+  "images/originales/52802.avif": {
+    "width": 296,
+    "height": 470
+  },
+  "images/originales/55157.avif": {
+    "width": 212,
+    "height": 468
+  },
+  "images/originales/55785.avif": {
+    "width": 218,
+    "height": 470
+  },
+  "images/originales/55786.avif": {
+    "width": 184,
+    "height": 470
+  },
+  "images/originales/57038.avif": {
+    "width": 188,
+    "height": 469
+  },
+  "images/originales/60942.avif": {
+    "width": 189,
+    "height": 467
+  },
+  "images/originales/61519.avif": {
+    "width": 338,
+    "height": 471
+  },
+  "images/originales/62036.avif": {
+    "width": 252,
+    "height": 470
+  },
+  "images/originales/63100.avif": {
+    "width": 240,
+    "height": 470
+  },
+  "images/originales/65560.avif": {
+    "width": 234,
+    "height": 470
+  },
+  "images/originales/67370.avif": {
+    "width": 194,
+    "height": 468
+  },
+  "images/originales/68226.avif": {
+    "width": 264,
+    "height": 470
+  },
+  "images/originales/68357.avif": {
+    "width": 200,
+    "height": 470
+  },
+  "images/originales/68415.avif": {
+    "width": 259,
+    "height": 469
+  },
+  "images/originales/70424.avif": {
+    "width": 200,
+    "height": 470
+  },
+  "images/originales/70875.avif": {
+    "width": 238,
+    "height": 471
+  },
+  "images/originales/71326.avif": {
+    "width": 194,
+    "height": 467
+  },
+  "images/originales/72381.avif": {
+    "width": 194,
+    "height": 470
+  },
+  "images/originales/79699.avif": {
+    "width": 273,
+    "height": 469
+  },
+  "images/originales/81423.avif": {
+    "width": 194,
+    "height": 469
+  },
+  "images/originales/81476.avif": {
+    "width": 254,
+    "height": 470
+  },
+  "images/originales/81642.avif": {
+    "width": 208,
+    "height": 471
+  },
+  "images/originales/83483.avif": {
+    "width": 302,
+    "height": 470
+  },
+  "images/originales/84109.avif": {
+    "width": 236,
+    "height": 469
+  },
+  "images/originales/8442.avif": {
+    "width": 313,
+    "height": 468
+  },
+  "images/originales/84951.avif": {
+    "width": 192,
+    "height": 470
+  },
+  "images/originales/88836.avif": {
+    "width": 213,
+    "height": 469
+  },
+  "images/originales/899.avif": {
+    "width": 261,
+    "height": 470
+  },
+  "images/originales/9828.avif": {
+    "width": 263,
+    "height": 470
+  },
+  "images/originales/99116.avif": {
+    "width": 342,
+    "height": 469
+  },
+  "images/originales/99254.avif": {
+    "width": 237,
+    "height": 468
+  }
+}

@@ -6,6 +6,7 @@ export interface Inspiracion {
   casa: string;
   slug: string;
   familia: string;
+  originalImageId?: string;
 }
 
 // Cada decant del catálogo tiene una fragancia famosa detrás: lo que la
@@ -23,6 +24,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Parfums de Marly',
     slug: 'althair-parfums-de-marly',
     familia: 'Oriental Vainilla',
+    originalImageId: '84109',
   },
   {
     perfumeSlug: 'hercules',
@@ -32,6 +34,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Parfums de Marly',
     slug: 'herod-parfums-de-marly',
     familia: 'Aromática Especiada',
+    originalImageId: '16939',
   },
   {
     perfumeSlug: 'dark-door-sport',
@@ -41,6 +44,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Dior',
     slug: 'dior-homme-sport',
     familia: 'Amaderada Aromática',
+    originalImageId: '71326',
   },
   {
     perfumeSlug: 'jorge-di-profumo',
@@ -50,6 +54,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Giorgio Armani',
     slug: 'acqua-di-gio-profumo',
     familia: 'Aromática',
+    originalImageId: '29727',
   },
   {
     perfumeSlug: 'your-touch',
@@ -59,6 +64,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Giorgio Armani',
     slug: 'stronger-with-you',
     familia: 'Oriental',
+    originalImageId: '45258',
   },
   {
     perfumeSlug: 'glacier-ultra',
@@ -68,6 +74,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Jean Paul Gaultier',
     slug: 'ultra-male',
     familia: 'Cálido Especiado',
+    originalImageId: '30947',
   },
   {
     perfumeSlug: 'perseus-exclusif',
@@ -77,6 +84,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Parfums de Marly',
     slug: 'pegasus-exclusif',
     familia: 'Amaderada Aromática',
+    originalImageId: '63100',
   },
   {
     perfumeSlug: 'tonic-malt',
@@ -86,6 +94,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Jean Paul Gaultier',
     slug: 'le-male-elixir',
     familia: 'Oriental Fougère',
+    originalImageId: '81642',
   },
   {
     perfumeSlug: 'salvo-intense',
@@ -95,6 +104,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Dior',
     slug: 'sauvage-dior',
     familia: 'Aromática',
+    originalImageId: '48100',
   },
   {
     perfumeSlug: 'glacier-bold',
@@ -104,6 +114,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Jean Paul Gaultier',
     slug: 'le-beau',
     familia: 'Coco Dulce',
+    originalImageId: '55785',
   },
   {
     perfumeSlug: 'your-touch-intense',
@@ -113,6 +124,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Giorgio Armani',
     slug: 'stronger-with-you-intensely',
     familia: 'Oriental Vainilla',
+    originalImageId: '52802',
   },
   {
     perfumeSlug: 'yeah',
@@ -122,6 +134,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'YSL',
     slug: 'ysl-y',
     familia: 'Aromática Frutal',
+    originalImageId: '50757',
   },
   {
     perfumeSlug: 'baroque-rouge-540',
@@ -131,6 +144,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Maison Francis Kurkdjian',
     slug: 'baccarat-rouge-540',
     familia: 'Oriental',
+    originalImageId: '33519',
   },
   {
     perfumeSlug: 'glacier-bella',
@@ -140,6 +154,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Jean Paul Gaultier',
     slug: 'la-belle',
     familia: 'Pera Avainillada',
+    originalImageId: '55786',
   },
   {
     perfumeSlug: 'delilah',
@@ -149,6 +164,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Parfums de Marly',
     slug: 'delina',
     familia: 'Floral Frutal',
+    originalImageId: '43871',
   },
   {
     perfumeSlug: 'confidential-private-gold',
@@ -158,6 +174,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Xerjoff',
     slug: 'erba-pura-xerjoff',
     familia: 'Chipre Frutal',
+    originalImageId: '55157',
   },
   {
     perfumeSlug: 'ameer-al-oudh',
@@ -167,6 +184,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Maison Margiela',
     slug: 'by-the-fireplace',
     familia: 'Oriental',
+    originalImageId: '31623',
   },
   {
     perfumeSlug: 'now-rave',
@@ -176,6 +194,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Creed',
     slug: 'aventus-creed',
     familia: 'Amaderada Aromática',
+    originalImageId: '9828',
   },
   {
     perfumeSlug: 'qaed-al-fursan-untamed',
@@ -185,6 +204,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Versace',
     slug: 'eros-najim',
     familia: 'Amaderada Especiada',
+    originalImageId: '99116',
   },
   {
     perfumeSlug: 'liam',
@@ -194,6 +214,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'BDK Parfums',
     slug: 'gris-charnel',
     familia: 'Amaderado Especiado',
+    originalImageId: '57038',
   },
   {
     perfumeSlug: 'hayaati-black',
@@ -203,6 +224,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Paco Rabanne',
     slug: 'invictus-paco-rabanne',
     familia: 'Amaderada Aromática',
+    originalImageId: '18471',
   },
   {
     perfumeSlug: 'hayaati-al-maleky',
@@ -212,6 +234,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Paco Rabanne',
     slug: 'phantom-paco-rabanne',
     familia: 'Oriental Especiada',
+    originalImageId: '68226',
   },
   {
     perfumeSlug: 'opulent-dubai',
@@ -221,6 +244,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Stéphane Humbert Lucas 777',
     slug: 'god-of-fire',
     familia: 'Oriental Floral',
+    originalImageId: '72381',
   },
   {
     perfumeSlug: 'mayar',
@@ -230,6 +254,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Mugler',
     slug: 'angel-nova',
     familia: 'Floral Frutal',
+    originalImageId: '61519',
   },
   {
     perfumeSlug: 'angham',
@@ -239,6 +264,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Burberry',
     slug: 'burberry-goddess',
     familia: 'Oriental Vainilla',
+    originalImageId: '83483',
   },
   {
     perfumeSlug: 'badee-al-oud-sublime',
@@ -248,6 +274,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Kayali',
     slug: 'eden-juicy-apple',
     familia: 'Amaderada Aromática',
+    originalImageId: '70875',
   },
   {
     perfumeSlug: 'hayaati-florence',
@@ -257,6 +284,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Carolina Herrera',
     slug: 'very-good-girl',
     familia: 'Floral Frutal Gourmand',
+    originalImageId: '65560',
   },
   {
     perfumeSlug: 'hawas-ice',
@@ -266,6 +294,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Paco Rabanne',
     slug: 'invictus-aqua',
     familia: 'Aromática',
+    originalImageId: '34506',
   },
   {
     perfumeSlug: 'hawas-black',
@@ -275,6 +304,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Nishane',
     slug: 'hacivat-nishane',
     familia: 'Aromática Frutal',
+    originalImageId: '44174',
   },
   {
     perfumeSlug: 'hawas-tropical',
@@ -284,6 +314,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Jean Paul Gaultier',
     slug: 'le-beau-paradise-garden',
     familia: 'Aromática Verde',
+    originalImageId: '88836',
   },
   {
     perfumeSlug: 'haya',
@@ -293,6 +324,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Juicy Couture',
     slug: 'viva-la-juicy',
     familia: 'Frutal Floral',
+    originalImageId: '4410',
   },
   {
     perfumeSlug: 'emaan',
@@ -302,6 +334,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Giorgio Armani',
     slug: 'my-way-giorgio-armani',
     familia: 'Chipre Floral',
+    originalImageId: '62036',
   },
   {
     perfumeSlug: 'l-intrude',
@@ -311,6 +344,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Givenchy',
     slug: 'l-interdit-givenchy',
     familia: 'Floral',
+    originalImageId: '51488',
   },
   {
     perfumeSlug: '24-carat-white-gold',
@@ -320,6 +354,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Dolce & Gabbana',
     slug: 'light-blue-dolce-gabbana',
     familia: 'Aromática Cítrica',
+    originalImageId: '485',
   },
   {
     perfumeSlug: 'turathi-blue',
@@ -329,6 +364,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Bvlgari',
     slug: 'tygar-bvlgari',
     familia: 'Aromática Acuática',
+    originalImageId: '41222',
   },
   {
     perfumeSlug: 'mayar-natural-intense',
@@ -338,6 +374,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Giorgio Armani',
     slug: 'acqua-di-gioia',
     familia: 'Floral Acuática',
+    originalImageId: '8442',
   },
   {
     perfumeSlug: 'so-candid',
@@ -347,6 +384,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Jean Paul Gaultier',
     slug: 'so-scandal-jean-paul-gaultier',
     familia: 'Floral',
+    originalImageId: '60942',
   },
   {
     perfumeSlug: 'yara-elixir',
@@ -356,6 +394,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Kayali Fragrances',
     slug: 'yum-boujee-marshmallow-kayali',
     familia: 'Oriental Vainilla',
+    originalImageId: '99254',
   },
   {
     perfumeSlug: 'odyssey-aqua-edition',
@@ -365,6 +404,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Paco Rabanne',
     slug: 'invictus-aqua-armaf',
     familia: 'Amaderada Aromática',
+    originalImageId: '34506',
   },
   {
     perfumeSlug: 'hawas-for-him',
@@ -374,6 +414,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Paco Rabanne',
     slug: 'invictus-rasasi',
     familia: 'Aromática Acuática',
+    originalImageId: '18471',
   },
   {
     perfumeSlug: 'salvo',
@@ -383,6 +424,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Dior',
     slug: 'sauvage',
     familia: 'Oriental Fougère',
+    originalImageId: '31861',
   },
   {
     perfumeSlug: 'club-de-nuit-untold',
@@ -392,6 +434,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Maison Francis Kurkdjian',
     slug: 'baccarat-rouge-540-untold',
     familia: 'Ambarado Especiado',
+    originalImageId: '33519',
   },
   {
     perfumeSlug: 'victoria',
@@ -401,6 +444,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Dolce & Gabbana',
     slug: 'devotion-dolce-gabbana',
     familia: 'Floral Frutal Gourmand',
+    originalImageId: '84951',
   },
   {
     perfumeSlug: 'pacific-aura',
@@ -410,6 +454,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Louis Vuitton',
     slug: 'pacific-chill-louis-vuitton',
     familia: 'Aromática Acuática',
+    originalImageId: '81423',
   },
   {
     perfumeSlug: 'aquatica',
@@ -419,6 +464,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Creed',
     slug: 'virgin-island-water-creed',
     familia: 'Cítrica Gourmand',
+    originalImageId: '899',
   },
   {
     perfumeSlug: 'asad-elixir',
@@ -428,6 +474,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Dior',
     slug: 'sauvage-elixir-dior',
     familia: 'Oriental',
+    originalImageId: '68415',
   },
   {
     perfumeSlug: 'hawas-kobra',
@@ -437,6 +484,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Louis Vuitton',
     slug: 'imagination-louis-vuitton',
     familia: 'Oriental Amaderada',
+    originalImageId: '67370',
   },
   {
     perfumeSlug: 'your-touch-amber',
@@ -446,6 +494,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Giorgio Armani',
     slug: 'stronger-with-you-amber',
     familia: 'Oriental',
+    originalImageId: '79699',
   },
   {
     perfumeSlug: 'philos-pura',
@@ -455,6 +504,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Xerjoff',
     slug: 'erba-pura-philos',
     familia: 'Aromática Frutal',
+    originalImageId: '55157',
   },
   {
     perfumeSlug: 'ameerat-al-arab-prive-rose',
@@ -464,6 +514,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Parfums de Marly',
     slug: 'delina-exclusif',
     familia: 'Floral Frutal',
+    originalImageId: '50370',
   },
   {
     perfumeSlug: 'odyssey-homme',
@@ -473,6 +524,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Tom Ford',
     slug: 'noir-extreme-tom-ford',
     familia: 'Oriental',
+    originalImageId: '29675',
   },
   {
     perfumeSlug: 'odyssey-mega-man',
@@ -482,6 +534,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Yves Saint Laurent',
     slug: 'y-edp-ysl',
     familia: 'Amaderada Aromática',
+    originalImageId: '50757',
   },
   {
     perfumeSlug: 'tropical-vibe',
@@ -491,6 +544,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Lorenzo Pazzaglia',
     slug: 'summer-hammer-pazzaglia',
     familia: 'Frutal Tropical',
+    originalImageId: '81476',
   },
   {
     perfumeSlug: 'qaed-al-fursan',
@@ -500,6 +554,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Paco Rabanne',
     slug: 'black-xs-lexces',
     familia: 'Oriental Amaderada',
+    originalImageId: '13805',
   },
   {
     perfumeSlug: '9pm',
@@ -509,6 +564,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Jean Paul Gaultier',
     slug: 'ultra-male-9pm',
     familia: 'Oriental Vainilla',
+    originalImageId: '30947',
   },
   {
     perfumeSlug: 'club-de-nuit-intense-man',
@@ -518,6 +574,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Creed',
     slug: 'aventus-creed-cdnim',
     familia: 'Amaderada Especiada',
+    originalImageId: '9828',
   },
   {
     perfumeSlug: 'hawas-malibu',
@@ -527,6 +584,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Jean Paul Gaultier',
     slug: 'le-beau-malibu',
     familia: 'Aromática',
+    originalImageId: '55785',
   },
   {
     perfumeSlug: 'hawas-verde',
@@ -536,6 +594,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Xerjoff',
     slug: 'torino21-xerjoff',
     familia: 'Cítrica Aromática',
+    originalImageId: '70424',
   },
   {
     perfumeSlug: 'hayaati-gold-elixir',
@@ -545,6 +604,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Giorgio Armani',
     slug: 'code-profumo-armani',
     familia: 'Dulce Especiado',
+    originalImageId: '34761',
   },
   {
     perfumeSlug: 'kiss',
@@ -554,6 +614,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Paris Corner',
     slug: 'marshmallow-paris-corner',
     familia: 'Floral Frutal Gourmand',
+    originalImageId: '102791',
   },
   {
     perfumeSlug: 'reflection',
@@ -563,6 +624,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Louis Vuitton',
     slug: 'symphony-louis-vuitton',
     familia: 'Almizcle Floral Amaderado',
+    originalImageId: '68357',
   },
   {
     perfumeSlug: 'odyssey-candee',
@@ -572,6 +634,7 @@ export const inspiraciones: Inspiracion[] = [
     casa: 'Burberry',
     slug: 'burberry-her-odyssey',
     familia: 'Floral Frutal Gourmand',
+    originalImageId: '51694',
   },
 ];
 

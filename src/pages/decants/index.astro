@@ -4,6 +4,7 @@ import Search from '@/components/catalog/Search.astro';
 import Chip from '@/components/ui/Chip.astro';
 import { inspiraciones } from '@/data/inspiraciones';
 import perfumesData from '@/data/perfumes.json';
+import imageDimsRaw from '@/data/image-dims.json';
 import { site, assetUrl } from '@/site.config';
 import { formatPrice } from '@/utils/formatters';
 import {
@@ -21,6 +22,16 @@ import type { Inspiracion } from '@/data/inspiraciones';
 const BASE = site.basePath;
 const perfumes = perfumesData.perfumes as Perfume[];
 
+// Ancho/alto reales de cada avif (los genera `node scripts/image-dims.mjs`),
+// claveados por la ruta relativa sin base path. Van en width/height de las
+// <img> para que el navegador reserve el espacio: sin CLS aunque las fotos
+// de originales tienen proporciones distintas entre sí.
+type ImageDims = { width: number; height: number };
+const imageDims = imageDimsRaw as unknown as Record<string, ImageDims>;
+const FALLBACK_DIMS: ImageDims = { width: 400, height: 400 };
+const dimsFor = (relSrc: string | undefined): ImageDims =>
+  (relSrc && imageDims[relSrc]) || FALLBACK_DIMS;
+
 // Mismo índice que usa el catálogo: aroma famoso, casa, perfume nuestro,
 // marca y familia. Se usa para el fuzzy (typos) y como `data-search` de cada
 // card (fallback literal sin JS).
@@ -34,7 +45,19 @@ interface HubItem {
   casaSlug: string;
   perfumeName: string;
   imageSrc: string;
+  imageW: number;
+  imageH: number;
+  // Alt del frasco nuestro cuando va SOLO (sin foto del original): nombra a
+  // ambos para no perder contexto.
   imageAlt: string;
+  // Alt del frasco nuestro en la pareja: el original ya se nombra al lado.
+  oursAlt: string;
+  // Foto del perfume original (la inspiración). '' si la inspiración no la
+  // tiene o falta el archivo: la card cae al layout de una sola botella.
+  originalSrc: string;
+  originalAlt: string;
+  originalW: number;
+  originalH: number;
   priceText: string;
   stockVariant: 'in-stock' | 'low-stock' | 'out-of-stock';
   stockLabel: string;
@@ -45,6 +68,14 @@ const items: HubItem[] = inspiraciones.map((insp) => {
   const size = perfume ? primarySize(perfume) : undefined;
   const status = size ? getStockStatus(size) : 'out-of-stock';
   const image = perfume?.images[0];
+  const originalRel = insp.originalImageId
+    ? `images/originales/${insp.originalImageId}.avif`
+    : undefined;
+  // Solo mostramos la pareja si la foto existe en el manifest (o sea, en
+  // public/images/originales/); si no, mejor una botella limpia que un 404.
+  const hasOriginal = Boolean(originalRel && imageDims[originalRel]);
+  const ourDims = dimsFor(image?.src?.replace(/^\//, ''));
+  const originalDims = dimsFor(originalRel);
   return {
     slug: insp.slug,
     original: insp.original,
@@ -52,9 +83,16 @@ const items: HubItem[] = inspiraciones.map((insp) => {
     casaSlug: hubCasaSlug(insp.casa),
     perfumeName: insp.perfumeName,
     imageSrc: assetUrl(image?.src),
+    imageW: ourDims.width,
+    imageH: ourDims.height,
     // Alt útil en el orden de lectura de la card: qué aroma famoso es y con
     // qué perfume nuestro está hecho.
     imageAlt: `${insp.original} — ${insp.perfumeName}`,
+    oursAlt: `nuestro ${insp.perfumeName}`,
+    originalSrc: hasOriginal && originalRel ? assetUrl(originalRel) : '',
+    originalAlt: `${insp.original} (original)`,
+    originalW: originalDims.width,
+    originalH: originalDims.height,
     priceText: size ? formatPrice(size.price) : '—',
     stockVariant: status,
     stockLabel: getStockLabel(status),
@@ -62,8 +100,8 @@ const items: HubItem[] = inspiraciones.map((insp) => {
 });
 
 // Tira de casas: las de 3+ aromas siempre a la vista; el resto detrás de un
-// botón de expansión que vive FUERA del scroller (en mobile) y alineado a la
-// derecha (en desktop), siempre alcanzable sin scrollear nada.
+// botón de expansión compacto que vive FUERA del scroller (debajo en mobile,
+// alineado a la derecha en desktop), siempre alcanzable sin scrollear nada.
 const casas = casasDeInspiraciones(items);
 const topCasas = casasPrincipales(casas);
 const otherCasas = casas.filter((c) => !topCasas.includes(c));
@@ -115,12 +153,12 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
               </button>
             ))}
           </div>
-          {/* Indicador de más contenido: solo mobile, se apaga al llegar al final. */}
+          {/* Indicador de más contenido a la derecha; se apaga al llegar al final (JS). */}
           <span class="hub-casa-fade" data-casa-fade aria-hidden="true"></span>
         </div>
         <div class="hub-casa-toggle">
           <button type="button" class="casa-chip casa-chip--more" data-casa-more aria-expanded="false">
-            Ver las {otherCasas.length} casas restantes
+            Ver {otherCasas.length} más
           </button>
         </div>
       </div>
@@ -141,14 +179,44 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
             data-search={searchTextFor(inspiraciones[idx])}
           >
             <div class="hub-card-media">
-              <img
-                src={item.imageSrc}
-                alt={item.imageAlt}
-                class="hub-card-img"
-                loading={idx < 4 ? 'eager' : 'lazy'}
-                width="400"
-                height="400"
-              />
+              {item.originalSrc ? (
+                <div class="hub-duo">
+                  <span class="hub-bottle hub-bottle--orig">
+                    <img
+                      src={item.originalSrc}
+                      alt={item.originalAlt}
+                      class="hub-card-img"
+                      loading={idx < 4 ? 'eager' : 'lazy'}
+                      decoding="async"
+                      width={item.originalW}
+                      height={item.originalH}
+                    />
+                    <span class="hub-bottle-tag" aria-hidden="true">original</span>
+                  </span>
+                  <span class="hub-duo-arrow" aria-hidden="true">&rarr;</span>
+                  <span class="hub-bottle hub-bottle--ours">
+                    <img
+                      src={item.imageSrc}
+                      alt={item.oursAlt}
+                      class="hub-card-img"
+                      loading={idx < 4 ? 'eager' : 'lazy'}
+                      decoding="async"
+                      width={item.imageW}
+                      height={item.imageH}
+                    />
+                    <span class="hub-bottle-tag" aria-hidden="true">decant</span>
+                  </span>
+                </div>
+              ) : (
+                <img
+                  src={item.imageSrc}
+                  alt={item.imageAlt}
+                  class="hub-card-img hub-card-img--solo"
+                  loading={idx < 4 ? 'eager' : 'lazy'}
+                  width={item.imageW}
+                  height={item.imageH}
+                />
+              )}
               <Chip variant={item.stockVariant} class="hub-card-stock">{item.stockLabel}</Chip>
             </div>
             <div class="hub-card-info">
@@ -222,14 +290,12 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
   }
 
   /**
-   * Label del toggle de casas. En mobile (`≤640px`) es corto ("Ver 20 más")
-   * para no comprimir el scroller de chips: si ocupa media fila, la tira
-   * queda inservible. El botón vive fuera del scroller, siempre visible.
+   * Label del toggle de casas, siempre compacto ("Ver 20 más"): en desktop el
+   * botón comparte la fila con el scroller de chips, y un label largo dejaría
+   * apenas unos pocos chips visibles. Vive fuera del scroller, siempre a mano.
    */
   function moreLabel(total: number): string {
-    if (casasExpanded) return 'Ver menos';
-    const compact = window.matchMedia('(max-width: 640px)').matches;
-    return compact ? `Ver ${total} más` : `Ver las ${total} casas restantes`;
+    return casasExpanded ? 'Ver menos' : `Ver ${total} más`;
   }
 
   /**
@@ -350,6 +416,9 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
         const chip = target.closest<HTMLElement>('[data-casa-chip]');
         if (!chip) return;
         currentCasa = chip.getAttribute('data-casa-slug') || HUB_CASA_ALL;
+        // En la fila con scroll horizontal (desktop), el chip tocado queda
+        // siempre a la vista tras filtrar.
+        chip.scrollIntoView({ inline: 'nearest', block: 'nearest' });
         pushUrl();
         syncControls();
         applyFilters();
@@ -375,7 +444,7 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
     });
   }
 
-  // Al cruzar el breakpoint, el label del toggle pasa a la variante compacta.
+  // Al redimensionar se recalcula el fade del scroller (y el label si cambia el estado).
   onWindowOnce('decants-hub-resize', 'resize', () => {
     syncControls();
     updateCasaFade();
@@ -515,10 +584,13 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
     }
   }
 
-  /* Tira de casas. Mobile: los chips ocupan TODO el ancho con scroll horizontal
-     y el botón de expansión va DEBAJO, a lo ancho. Si comparte la fila con el
-     scroller, este queda de ~150px y no se entiende que hay más casas.
-     Desktop: los chips envuelven a varias líneas + toggle a la derecha. */
+  /* Tira de casas. Mobile/tablet (≤767px): los chips ocupan TODO el ancho con
+     scroll horizontal y el botón de expansión va DEBAJO, a lo ancho. Si
+     comparte la fila con el scroller, este queda de ~150px y no se entiende
+     que hay más casas.
+     Desktop (≥768px): UNA sola fila con scroll horizontal (mismo fade/chevron
+     que mobile) + toggle compacto fuera del scroller, a la derecha. Nada de
+     wrap: la barra sticky no debe tapar media pantalla. */
   .hub-casa {
     display: flex;
     flex-direction: column;
@@ -529,7 +601,10 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
 
   @media (min-width: 768px) {
     .hub-casa {
-      display: block;
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+      padding: 2px 0 4px;
     }
   }
 
@@ -590,25 +665,25 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
     justify-content: center;
   }
 
+  /* Desktop: una sola fila con scroll horizontal. El fade/chevron (mismo que
+     mobile) avisa que hay más chips; el toggle compacto queda fuera del
+     scroller, siempre a mano. */
   @media (min-width: 768px) {
-    .hub-casa-scroller {
-      flex-wrap: wrap;
-      overflow: visible;
-    }
-
-    .hub-casa-fade {
-      display: none;
-    }
-
     .hub-casa-toggle {
-      display: flex;
-      justify-content: flex-end;
-      margin-top: 8px;
+      flex: 0 0 auto;
     }
 
-    /* Anula el a-lo-ancho de mobile: en desktop el toggle queda chico, a la derecha. */
+    /* Anula el ancho completo de móvil: en escritorio el botón va chico, en la fila. */
     .hub-casa-toggle .casa-chip--more {
       width: auto;
+    }
+  }
+
+  /* 44 px es un objetivo táctil; con puntero fino basta 36 px y la barra entra en ~120 px. */
+  @media (min-width: 768px) and (pointer: fine) {
+    .casa-chip {
+      min-height: 36px;
+      padding: 0 12px;
     }
   }
 
@@ -707,6 +782,17 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
     .hub-card:hover .hub-card-img {
       transform: scale(1.05);
     }
+
+    /* El guiño de la pareja: la flecha se despierta y el original toma el
+       color del acento. Solo CSS, sin JS; reduced-motion lo apaga global. */
+    .hub-card:hover .hub-duo-arrow {
+      opacity: 0.85;
+      transform: translateX(2px);
+    }
+
+    .hub-card:hover .hub-bottle--orig .hub-bottle-tag {
+      color: var(--color-primary);
+    }
   }
 
   .hub-card:focus-visible {
@@ -722,19 +808,90 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    /* Container query: las dos botellas se dimensionan contra la altura ANCHA
+       de la media (cqh/cqw), así la pareja escala igual en una card de 160px
+       que en una de 300px sin hardcodear tamaños. */
+    container-type: size;
   }
 
   .hub-card-img {
-    width: 100%;
-    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
     object-fit: contain;
-    padding: 8%;
     transition: transform 400ms var(--transition-easing);
   }
 
+  /* Fallback sin foto del original: una sola botella, como siempre. */
+  .hub-card-img--solo {
+    width: 100%;
+    height: 100%;
+    padding: 8%;
+  }
+
+  /* ---------- Pareja: original pequeño ← decant grande ---------- */
+  .hub-duo {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 3cqw;
+    padding: 8cqh 5cqw 5cqh;
+    box-sizing: border-box;
+  }
+
+  .hub-bottle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  /* El nuestro manda (es lo que se compra); el original es la referencia. */
+  .hub-bottle--orig .hub-card-img {
+    height: 52cqh;
+    width: auto;
+  }
+
+  .hub-bottle--ours .hub-card-img {
+    height: 70cqh;
+    width: auto;
+  }
+
+  .hub-bottle-tag {
+    font-family: var(--font-family);
+    font-size: 9px;
+    font-weight: var(--font-label-sm-weight);
+    line-height: 1;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+    opacity: 0.7;
+    transition: color 400ms var(--transition-easing);
+  }
+
+  .hub-bottle--ours .hub-bottle-tag {
+    color: var(--color-primary);
+    opacity: 1;
+  }
+
+  .hub-duo-arrow {
+    align-self: center;
+    font-size: 13px;
+    line-height: 1;
+    color: var(--color-on-surface-variant);
+    opacity: 0.4;
+    transition: opacity 400ms var(--transition-easing),
+      transform 400ms var(--transition-easing);
+  }
+
+  /* Esquina libre: las botellas pisan el borde inferior, arriba a la
+     izquierda el chip nunca pisa una foto. */
   .hub-card-stock {
     position: absolute;
-    bottom: 8px;
+    top: 8px;
     left: 8px;
     background-color: rgba(255, 255, 255, 0.85);
   }
