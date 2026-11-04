@@ -2270,24 +2270,20 @@
       "brand": "Lattafa Perfumes",
       "name": "Asad Elixir",
       "gender": "masculino",
-      "olfactoryFamily": "Oriental",
-      "description": "Inspirado en Sauvage Elixir de Dior. Pimienta rosa, azafrán y toronja con corazón de tabaco, vainilla y cedro sobre ámbar, incienso, pachulí y cachemira. Intenso, oscuro y magnético, con gran proyección: mejor de noche y en otoño e invierno.",
+      "olfactoryFamily": "Cuero Amaderado",
+      "description": "Inspirado en Bottled Absolu de Hugo Boss. Cuero e incienso abren oscuro y balsámico, con corazón de pachulí y mirra sobre cedro y davana. Amaderado, resinoso y elegante: de noche, en otoño e invierno.",
       "notes": {
         "top": [
-          "Pimienta Rosa",
-          "Azafrán",
-          "Toronja"
+          "Cuero",
+          "Incienso"
         ],
         "heart": [
-          "Tabaco",
-          "Vainilla",
-          "Cedro"
+          "Pachulí",
+          "Mirra"
         ],
         "base": [
-          "Ámbar",
-          "Incienso",
-          "Pachulí",
-          "Cachemira"
+          "Cedro",
+          "Davana"
         ]
       },
       "images": [

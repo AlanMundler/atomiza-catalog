@@ -15,6 +15,11 @@ export default defineConfig({
   base: BASE_PATH,
   output: 'static',
   trailingSlash: 'always',
+  // Asad Elixir pasó de "Sauvage Elixir" a "Bottled Absolu": la landing vieja
+  // (/decants/sauvage-elixir-dior/) redirige a la nueva para no perder el link.
+  redirects: {
+    '/decants/sauvage-elixir-dior': '/decants/bottled-absolu-hugo-boss/',
+  },
   // El Dev Toolbar de Astro solo aporta en desarrollo. En el preview (que usan
   // los tests e2e) y en producción no debe inyectarse, porque si no inyecta un
   // overlay con <h1> extra ("No islands detected.", "Settings"...) que ensucia
