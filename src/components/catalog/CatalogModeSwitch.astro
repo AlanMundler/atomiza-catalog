@@ -35,19 +35,27 @@ const modes: { key: CatalogMode; label: string; href: string }[] = [
 </nav>
 
 <style>
+  /* Control segmentado recto: misma estética del sitio (radio 0, pelo de
+     1px con --color-outline-variant), mismo lenguaje que Filters.astro.
+     El segmento activo se rellena con el dorado del sistema. */
   .mode-switch {
     display: flex;
     justify-content: center;
+    /* Más aire arriba (respecto del header) que abajo (respecto del hero). */
+    margin-top: 20px;
   }
 
-  /* Pill segmentada: pastilla con pelo, el segmento activo se rellena
-     con el dorado del sistema. Radius 999px es la única excepción
-     deliberada al radio 0 del sitio: acá pide ser leída como "pill". */
+  @media (min-width: 768px) {
+    .mode-switch {
+      margin-top: 32px;
+    }
+  }
+
   .mode-switch-pill {
     display: inline-flex;
     background-color: var(--color-surface-container);
     border: var(--border-width) solid var(--color-outline-variant);
-    border-radius: 999px;
+    border-radius: var(--border-radius);
     padding: 3px;
   }
 
@@ -57,7 +65,7 @@ const modes: { key: CatalogMode; label: string; href: string }[] = [
     justify-content: center;
     min-height: 44px;
     padding: 0 28px;
-    border-radius: 999px;
+    border-radius: var(--border-radius);
     font-family: var(--font-family);
     font-size: var(--font-label-sm-size);
     font-weight: var(--font-label-sm-weight);

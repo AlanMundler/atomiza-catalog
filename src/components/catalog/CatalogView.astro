@@ -235,8 +235,16 @@ const initialFilter: GenderFilter = urlFilter === 'masculino' || urlFilter === '
 
 <style>
   .catalog-hero {
-    padding: var(--spacing-stack-md) 0 var(--spacing-stack-sm);
+    /* Aire superior chico: el respiro grande vive arriba del switch
+       (CatalogModeSwitch.astro), no entre el switch y el H1. */
+    padding: 16px 0 var(--spacing-stack-sm);
     text-align: center;
+  }
+
+  @media (max-width: 640px) {
+    .catalog-hero {
+      padding-top: 12px;
+    }
   }
 
   .catalog-title {
