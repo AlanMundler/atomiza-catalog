@@ -1,19 +1,31 @@
 ---
 import Layout from '@/layouts/Layout.astro';
+import Search from '@/components/catalog/Search.astro';
 import { inspiraciones } from '@/data/inspiraciones';
 import perfumesData from '@/data/perfumes.json';
 import { site } from '@/site.config';
 import { formatPrice } from '@/utils/formatters';
+import { buildHubCountText } from '@/utils/hub';
 import type { Perfume } from '@/data/types';
+import type { Inspiracion } from '@/data/inspiraciones';
 
 const BASE = site.basePath;
 const perfumes = perfumesData.perfumes as Perfume[];
+
+// Mismo índice que usa el catálogo: aroma famoso, casa, perfume nuestro,
+// marca y familia. Se usa para el fuzzy (typos) y como `data-search` de cada
+// card (fallback literal sin JS).
+const searchTextFor = (insp: Inspiracion): string =>
+  `${insp.original} ${insp.casa} ${insp.perfumeName} ${insp.perfumeBrand} ${insp.familia}`.toLowerCase();
+
+const hubSearchIndex = inspiraciones.map((insp) => ({ id: insp.slug, text: searchTextFor(insp) }));
 
 const pageTitle = `Decants inspirados en perfumes famosos · ${site.addressLocality}`;
 const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: decants de 5ml inspirados en Baccarat Rouge, Sauvage, Delina y más, en ${site.addressLocality}.`;
 ---
 
 <Layout title={pageTitle} description={pageDescription} ogImage="og-decants.jpg">
+  <script is:inline type="application/json" id="hub-search-index" set:html={JSON.stringify(hubSearchIndex).replace(/</g, '\\u003c')} />
   <section class="hub-hero" aria-labelledby="hub-title">
     <div class="container">
       <h1 id="hub-title" class="hub-title">Buscá tu perfume por el aroma famoso</h1>
@@ -24,6 +36,19 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
     </div>
   </section>
 
+  <section class="hub-toolbar" aria-label="Buscar aromas por perfume, casa o familia">
+    <div class="container">
+      <div class="hub-toolbar-content">
+        <div class="hub-toolbar-search">
+          <Search />
+        </div>
+        <p class="hub-count" data-hub-count role="status" aria-live="polite">
+          {buildHubCountText(inspiraciones.length)}
+        </p>
+      </div>
+    </div>
+  </section>
+
   <section class="hub-list" aria-label="Aromas famosos en decant">
     <div class="container">
       <div class="hub-grid">
@@ -31,7 +56,13 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
           const perfume = perfumes.find((p) => p.slug === insp.perfumeSlug);
           const price = perfume?.sizes.find((s) => s.ml === 5) || perfume?.sizes[0];
           return (
-            <a href={`${BASE}decants/${insp.slug}/`} class="hub-card">
+            <a
+              href={`${BASE}decants/${insp.slug}/`}
+              class="hub-card"
+              data-hub-card
+              data-insp-slug={insp.slug}
+              data-search={searchTextFor(insp)}
+            >
               <div class="hub-card-body">
                 <h2 class="hub-card-title">{insp.original}</h2>
                 <p class="hub-card-sub">{insp.perfumeName} · {insp.casa}</p>
@@ -40,6 +71,13 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
             </a>
           );
         })}
+      </div>
+      <div class="hub-empty" role="status" hidden>
+        <h2 class="hub-empty-title">No encontramos ese aroma</h2>
+        <p class="hub-empty-text">
+          Probá con el nombre del perfume original (por ejemplo, Aventus) o mirá el catálogo completo.
+        </p>
+        <a href={`${BASE}catalogo/`} class="btn btn--secondary btn--md hub-empty-cta">Ver todo el catálogo</a>
       </div>
     </div>
   </section>
@@ -53,6 +91,107 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
     </div>
   </section>
 </Layout>
+
+<script>
+  import { onPageLoad, onWindowOnce } from '@/utils/view-transitions';
+  import { fuzzySearchIds } from '@/utils/catalogo';
+  import { buildHubCountText, hubSearchMatches } from '@/utils/hub';
+
+  let currentSearch = '';
+  let fuzzyMatches: Set<string> | null = null;
+  // Token anti-race: el tecleo rápido dispara varias búsquedas difusas en
+  // paralelo; solo la última puede escribir el Set.
+  let searchSeq = 0;
+
+  function readUrlState() {
+    const params = new URL(window.location.href).searchParams;
+    currentSearch = params.get('search') || '';
+  }
+
+  function syncSearchInput() {
+    const input = document.querySelector('[data-search-input]') as HTMLInputElement | null;
+    if (input && input.value !== currentSearch) input.value = currentSearch;
+  }
+
+  function applyFilters() {
+    const cards = Array.from(document.querySelectorAll('[data-hub-card]')) as HTMLElement[];
+    const countEl = document.querySelector('[data-hub-count]') as HTMLElement | null;
+    const emptyEl = document.querySelector('.hub-empty') as HTMLElement | null;
+    const gridEl = document.querySelector('.hub-grid') as HTMLElement | null;
+
+    const matches = hubSearchMatches(
+      cards.map((card) => ({
+        id: card.getAttribute('data-insp-slug') || '',
+        text: card.getAttribute('data-search') || '',
+      })),
+      currentSearch,
+      fuzzyMatches
+    );
+
+    let visible = 0;
+    cards.forEach((card) => {
+      const match = matches.has(card.getAttribute('data-insp-slug') || '');
+      card.style.display = match ? '' : 'none';
+      if (match) visible++;
+    });
+
+    if (countEl) countEl.textContent = buildHubCountText(visible);
+    if (emptyEl) emptyEl.hidden = visible !== 0;
+    if (gridEl) gridEl.style.display = visible === 0 ? 'none' : '';
+  }
+
+  // Recalcula el set difuso para la búsqueda actual. Se usa al escribir y en
+  // popstate, porque el Set anterior no sirve para el query nuevo.
+  async function refreshFuzzyMatches(query: string, seq: number): Promise<void> {
+    if (!query) {
+      if (seq === searchSeq) fuzzyMatches = null;
+      return;
+    }
+    try {
+      const indexEl = document.getElementById('hub-search-index');
+      const indexData: { id: string; text: string }[] = indexEl
+        ? JSON.parse(indexEl.textContent || '[]')
+        : [];
+      const ids = fuzzySearchIds(indexData, query);
+      if (seq === searchSeq) fuzzyMatches = ids;
+    } catch {
+      if (seq === searchSeq) fuzzyMatches = null;
+    }
+  }
+
+  onWindowOnce('decants-hub-search', 'search:change', async (e) => {
+    currentSearch = (e as CustomEvent).detail?.query || '';
+    const url = new URL(window.location.href);
+    if (currentSearch) {
+      url.searchParams.set('search', currentSearch);
+    } else {
+      url.searchParams.delete('search');
+    }
+    window.history.pushState({}, '', url);
+
+    await refreshFuzzyMatches(currentSearch, ++searchSeq);
+    applyFilters();
+  });
+
+  // Back/forward: se re-lee la URL y se recalculan los matches difusos.
+  onWindowOnce('decants-hub-popstate', 'popstate', () => {
+    readUrlState();
+    syncSearchInput();
+    const seq = ++searchSeq;
+    void refreshFuzzyMatches(currentSearch, seq).then(() => applyFilters());
+  });
+
+  onPageLoad('decants-hub', () => {
+    readUrlState();
+    syncSearchInput();
+
+    // Primer pintado con el estado de la URL (coincidencia literal, sin
+    // esperar al fuzzy); después se corrige con el set difuso.
+    applyFilters();
+    const seq = ++searchSeq;
+    void refreshFuzzyMatches(currentSearch, seq).then(() => applyFilters());
+  });
+</script>
 
 <style>
   .hub-hero {
@@ -103,6 +242,45 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
     .hub-subtitle {
       font-size: var(--font-body-md-size);
     }
+  }
+
+  .hub-toolbar {
+    padding: 12px 0;
+    border-top: var(--border-width) solid var(--color-outline-variant);
+    border-bottom: var(--border-width) solid var(--color-outline-variant);
+    position: sticky;
+    top: var(--header-height);
+    z-index: 50;
+    background-color: var(--color-background);
+  }
+
+  @media (max-width: 640px) {
+    .hub-toolbar {
+      padding: 8px 0;
+    }
+  }
+
+  .hub-toolbar-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .hub-toolbar-search {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .hub-count {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+    margin: 0;
+    text-align: center;
   }
 
   .hub-list {
@@ -161,6 +339,42 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
     text-transform: uppercase;
     color: var(--color-primary);
     white-space: nowrap;
+  }
+
+  .hub-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 24px;
+    text-align: center;
+    color: var(--color-on-surface-variant);
+  }
+
+  .hub-empty[hidden] {
+    display: none;
+  }
+
+  .hub-empty-title {
+    font-family: var(--font-family);
+    font-size: var(--font-headline-md-size);
+    font-weight: var(--font-headline-md-weight);
+    letter-spacing: var(--font-headline-md-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    margin: 0 0 8px;
+  }
+
+  .hub-empty-text {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    margin: 0;
+    max-width: 420px;
+  }
+
+  .hub-empty-cta {
+    margin-top: var(--spacing-stack-md);
+    min-height: 44px;
   }
 
   .hub-more {
