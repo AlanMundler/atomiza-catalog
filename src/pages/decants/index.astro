@@ -204,7 +204,7 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
                       width={item.imageW}
                       height={item.imageH}
                     />
-                    <span class="hub-bottle-tag" aria-hidden="true">decant</span>
+                    <span class="hub-bottle-tag" aria-hidden="true">dupe</span>
                   </span>
                 </div>
               ) : (
@@ -783,15 +783,12 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
       transform: scale(1.05);
     }
 
-    /* El guiño de la pareja: la flecha se despierta y el original toma el
-       color del acento. Solo CSS, sin JS; reduced-motion lo apaga global. */
+    /* El guiño de la pareja: la flecha se despierta. Solo CSS, sin JS;
+       reduced-motion lo apaga global. Los labels ya no cambian de color: van
+       siempre en negro para leerse sobre el blanco de la foto. */
     .hub-card:hover .hub-duo-arrow {
       opacity: 0.85;
       transform: translateX(2px);
-    }
-
-    .hub-card:hover .hub-bottle--orig .hub-bottle-tag {
-      color: var(--color-primary);
     }
   }
 
@@ -867,14 +864,9 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
     line-height: 1;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--color-on-surface-variant);
-    opacity: 0.7;
-    transition: color 400ms var(--transition-easing);
-  }
-
-  .hub-bottle--ours .hub-bottle-tag {
-    color: var(--color-primary);
-    opacity: 1;
+    /* Negro del sistema sobre el blanco del área de imagen: los dos labels
+       legibles (antes: gris al 0.7 y dorado, ambos invisibles sobre la foto). */
+    color: var(--color-on-image);
   }
 
   .hub-duo-arrow {

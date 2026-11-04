@@ -27,6 +27,9 @@
   --color-status-out-of-stock: #a3a3a3;
   --color-whatsapp: #25d366;
   --color-image-bg: #ffffff;
+  /* Texto que va SOBRE el área blanca de las fotos (--color-image-bg): negro
+     del sistema #121414, legible con contraste real. */
+  --color-on-image: #121414;
   --color-scrim: rgba(0, 0, 0, 0.7);
 
   --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
