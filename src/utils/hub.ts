@@ -32,3 +32,53 @@ export function hubSearchMatches(
   if (literal.size > 0 || !fuzzyIds) return literal;
   return fuzzyIds;
 }
+
+/** Valor del filtro "sin casa elegida" en la URL (`?casa=` ausente). */
+export const HUB_CASA_ALL = 'all';
+
+/**
+ * Slug de una casa para el query param `?casa=`: "Parfums de Marly" →
+ * "parfums-de-marly". Sin acentos ni símbolos; estable frente a renames
+ * de datos porque deriva del nombre visible.
+ */
+export function hubCasaSlug(casa: string): string {
+  return casa
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+export interface HubCasa {
+  casa: string;
+  slug: string;
+  count: number;
+}
+
+/**
+ * Casas únicas con su cantidad de aromas, ordenadas por cantidad desc y
+ * luego por nombre (locale 'es'). Alimenta los chips del hub de decants.
+ */
+export function casasDeInspiraciones(items: ReadonlyArray<{ casa: string }>): HubCasa[] {
+  const counts = new Map<string, number>();
+  items.forEach((item) => counts.set(item.casa, (counts.get(item.casa) || 0) + 1));
+  return [...counts.entries()]
+    .map(([casa, count]) => ({ casa, slug: hubCasaSlug(casa), count }))
+    .sort((a, b) => b.count - a.count || a.casa.localeCompare(b.casa, 'es'));
+}
+
+/**
+ * Qué casas muestra la tira sin expandir: las con 3+ aromas. El resto queda
+ * detrás del botón "Ver las N casas restantes" (28 casas en una fila son
+ * contenido inalcanzable, aunque envuelvan).
+ */
+export function casasPrincipales(casas: ReadonlyArray<HubCasa>, min = 3): HubCasa[] {
+  return casas.filter((c) => c.count >= min);
+}
+
+/** Contador con filtro de casa: "12 aromas" / "3 aromas de Creed". */
+export function buildHubCountTextWithCasa(visible: number, casa: string | null): string {
+  const base = buildHubCountText(visible);
+  return casa ? `${base} de ${casa}` : base;
+}

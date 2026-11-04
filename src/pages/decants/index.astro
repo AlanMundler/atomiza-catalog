@@ -1,11 +1,20 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import Search from '@/components/catalog/Search.astro';
+import Chip from '@/components/ui/Chip.astro';
 import { inspiraciones } from '@/data/inspiraciones';
 import perfumesData from '@/data/perfumes.json';
-import { site } from '@/site.config';
+import { site, assetUrl } from '@/site.config';
 import { formatPrice } from '@/utils/formatters';
-import { buildHubCountText } from '@/utils/hub';
+import {
+  HUB_CASA_ALL,
+  buildHubCountText,
+  buildHubCountTextWithCasa,
+  casasDeInspiraciones,
+  casasPrincipales,
+  hubCasaSlug,
+} from '@/utils/hub';
+import { primarySize, getStockStatus, getStockLabel } from '@/utils/stock';
 import type { Perfume } from '@/data/types';
 import type { Inspiracion } from '@/data/inspiraciones';
 
@@ -18,6 +27,47 @@ const perfumes = perfumesData.perfumes as Perfume[];
 const searchTextFor = (insp: Inspiracion): string =>
   `${insp.original} ${insp.casa} ${insp.perfumeName} ${insp.perfumeBrand} ${insp.familia}`.toLowerCase();
 
+interface HubItem {
+  slug: string;
+  original: string;
+  casa: string;
+  casaSlug: string;
+  perfumeName: string;
+  imageSrc: string;
+  imageAlt: string;
+  priceText: string;
+  stockVariant: 'in-stock' | 'low-stock' | 'out-of-stock';
+  stockLabel: string;
+}
+
+const items: HubItem[] = inspiraciones.map((insp) => {
+  const perfume = perfumes.find((p) => p.slug === insp.perfumeSlug);
+  const size = perfume ? primarySize(perfume) : undefined;
+  const status = size ? getStockStatus(size) : 'out-of-stock';
+  const image = perfume?.images[0];
+  return {
+    slug: insp.slug,
+    original: insp.original,
+    casa: insp.casa,
+    casaSlug: hubCasaSlug(insp.casa),
+    perfumeName: insp.perfumeName,
+    imageSrc: assetUrl(image?.src),
+    // Alt útil en el orden de lectura de la card: qué aroma famoso es y con
+    // qué perfume nuestro está hecho.
+    imageAlt: `${insp.original} — ${insp.perfumeName}`,
+    priceText: size ? formatPrice(size.price) : '—',
+    stockVariant: status,
+    stockLabel: getStockLabel(status),
+  };
+});
+
+// Tira de casas: las de 3+ aromas siempre a la vista; el resto detrás de un
+// botón de expansión que vive FUERA del scroller (en mobile) y alineado a la
+// derecha (en desktop), siempre alcanzable sin scrollear nada.
+const casas = casasDeInspiraciones(items);
+const topCasas = casasPrincipales(casas);
+const otherCasas = casas.filter((c) => !topCasas.includes(c));
+
 const hubSearchIndex = inspiraciones.map((insp) => ({ id: insp.slug, text: searchTextFor(insp) }));
 
 const pageTitle = `Decants inspirados en perfumes famosos · ${site.addressLocality}`;
@@ -26,25 +76,53 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
 
 <Layout title={pageTitle} description={pageDescription} ogImage="og-decants.jpg">
   <script is:inline type="application/json" id="hub-search-index" set:html={JSON.stringify(hubSearchIndex).replace(/</g, '\\u003c')} />
+
   <section class="hub-hero" aria-labelledby="hub-title">
     <div class="container">
+      <p class="hub-eyebrow">Decants de 5 ml · {site.addressLocality}</p>
       <h1 id="hub-title" class="hub-title">Buscá tu perfume por el aroma famoso</h1>
       <p class="hub-subtitle">
-        Todos nuestros decants tienen una fragancia famosa detrás. Elegí la que más te gusta y
-        probala sobre tu piel en decant de 5ml antes de comprar el frasco completo.
+        Elegí la casa que te gusta o escribí el aroma: cada tarjeta ya tiene su frasco a la vista.
       </p>
     </div>
   </section>
 
-  <section class="hub-toolbar" aria-label="Buscar aromas por perfume, casa o familia">
+  <section class="hub-toolbar" aria-label="Buscar y filtrar aromas por casa">
     <div class="container">
-      <div class="hub-toolbar-content">
+      <div class="hub-toolbar-row">
         <div class="hub-toolbar-search">
           <Search />
         </div>
         <p class="hub-count" data-hub-count role="status" aria-live="polite">
-          {buildHubCountText(inspiraciones.length)}
+          {buildHubCountText(items.length)}
         </p>
+      </div>
+
+      <div class="hub-casa">
+        <div class="hub-casa-scrollwrap">
+          <div class="hub-casa-scroller" data-casa-scroller>
+            <button type="button" class="casa-chip casa-chip--active" data-casa-chip data-casa="Todas" data-casa-slug={HUB_CASA_ALL} aria-pressed="true">
+              Todas
+            </button>
+            {topCasas.map((c) => (
+              <button type="button" class="casa-chip" data-casa-chip data-casa={c.casa} data-casa-slug={c.slug} aria-pressed="false">
+                {c.casa} <span class="casa-chip-n">{c.count}</span>
+              </button>
+            ))}
+            {otherCasas.map((c) => (
+              <button type="button" class="casa-chip casa-chip--extra" data-casa-chip data-casa={c.casa} data-casa-slug={c.slug} aria-pressed="false" hidden>
+                {c.casa} <span class="casa-chip-n">{c.count}</span>
+              </button>
+            ))}
+          </div>
+          {/* Indicador de más contenido: solo mobile, se apaga al llegar al final. */}
+          <span class="hub-casa-fade" data-casa-fade aria-hidden="true"></span>
+        </div>
+        <div class="hub-casa-toggle">
+          <button type="button" class="casa-chip casa-chip--more" data-casa-more aria-expanded="false">
+            Ver las {otherCasas.length} casas restantes
+          </button>
+        </div>
       </div>
     </div>
   </section>
@@ -52,32 +130,44 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
   <section class="hub-list" aria-label="Aromas famosos en decant">
     <div class="container">
       <div class="hub-grid">
-        {inspiraciones.map((insp) => {
-          const perfume = perfumes.find((p) => p.slug === insp.perfumeSlug);
-          const price = perfume?.sizes.find((s) => s.ml === 5) || perfume?.sizes[0];
-          return (
-            <a
-              href={`${BASE}decants/${insp.slug}/`}
-              class="hub-card"
-              data-hub-card
-              data-insp-slug={insp.slug}
-              data-search={searchTextFor(insp)}
-            >
-              <div class="hub-card-body">
-                <h2 class="hub-card-title">{insp.original}</h2>
-                <p class="hub-card-sub">{insp.perfumeName} · {insp.casa}</p>
-              </div>
-              <span class="hub-card-price">{price ? formatPrice(price.price) : ''}</span>
-            </a>
-          );
-        })}
+        {items.map((item, idx) => (
+          <a
+            href={`${BASE}decants/${item.slug}/`}
+            class="hub-card"
+            data-hub-card
+            data-insp-slug={item.slug}
+            data-casa={item.casa}
+            data-casa-slug={item.casaSlug}
+            data-search={searchTextFor(inspiraciones[idx])}
+          >
+            <div class="hub-card-media">
+              <img
+                src={item.imageSrc}
+                alt={item.imageAlt}
+                class="hub-card-img"
+                loading={idx < 4 ? 'eager' : 'lazy'}
+                width="400"
+                height="400"
+              />
+              <Chip variant={item.stockVariant} class="hub-card-stock">{item.stockLabel}</Chip>
+            </div>
+            <div class="hub-card-info">
+              <h2 class="hub-card-title" title={item.original}>{item.original}</h2>
+              <p class="hub-card-casa" title={item.casa}>{item.casa}</p>
+              <p class="hub-card-sub" title={item.perfumeName}>{item.perfumeName}</p>
+              <span class="hub-card-price">Decant 5 ml · {item.priceText}</span>
+            </div>
+          </a>
+        ))}
       </div>
+
       <div class="hub-empty" role="status" hidden>
         <h2 class="hub-empty-title">No encontramos ese aroma</h2>
         <p class="hub-empty-text">
           Probá con el nombre del perfume original (por ejemplo, Aventus) o mirá el catálogo completo.
         </p>
-        <a href={`${BASE}catalogo/`} class="btn btn--secondary btn--md hub-empty-cta">Ver todo el catálogo</a>
+        <button type="button" class="btn btn--secondary btn--md hub-empty-btn" data-clear-filters>Limpiar filtros</button>
+        <a href={`${BASE}catalogo/`} class="hub-empty-link">Ver todo el catálogo →</a>
       </div>
     </div>
   </section>
@@ -93,36 +183,98 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
 </Layout>
 
 <script>
-  import { onPageLoad, onWindowOnce } from '@/utils/view-transitions';
+  import { onPageLoad, onWindowOnce, bindOnce } from '@/utils/view-transitions';
   import { fuzzySearchIds } from '@/utils/catalogo';
-  import { buildHubCountText, hubSearchMatches } from '@/utils/hub';
+  import {
+    HUB_CASA_ALL,
+    buildHubCountTextWithCasa,
+    hubSearchMatches,
+  } from '@/utils/hub';
 
   let currentSearch = '';
+  // Slug de casa ("" = todas). Va en la URL como ?casa=creed.
+  let currentCasa = HUB_CASA_ALL;
   let fuzzyMatches: Set<string> | null = null;
   // Token anti-race: el tecleo rápido dispara varias búsquedas difusas en
   // paralelo; solo la última puede escribir el Set.
   let searchSeq = 0;
+  let casasExpanded = false;
 
   function readUrlState() {
     const params = new URL(window.location.href).searchParams;
     currentSearch = params.get('search') || '';
+    currentCasa = params.get('casa') || HUB_CASA_ALL;
   }
 
-  function syncSearchInput() {
+  function pushUrl() {
+    const url = new URL(window.location.href);
+    if (currentSearch) url.searchParams.set('search', currentSearch);
+    else url.searchParams.delete('search');
+    if (currentCasa !== HUB_CASA_ALL) url.searchParams.set('casa', currentCasa);
+    else url.searchParams.delete('casa');
+    window.history.pushState({}, '', url);
+  }
+
+  function casaDisplayFor(slug: string): string | null {
+    if (slug === HUB_CASA_ALL) return null;
+    const chip = document.querySelector<HTMLElement>(`[data-casa-chip][data-casa-slug="${slug}"]`);
+    return chip?.getAttribute('data-casa') || slug;
+  }
+
+  /**
+   * Label del toggle de casas. En mobile (`≤640px`) es corto ("Ver 20 más")
+   * para no comprimir el scroller de chips: si ocupa media fila, la tira
+   * queda inservible. El botón vive fuera del scroller, siempre visible.
+   */
+  function moreLabel(total: number): string {
+    if (casasExpanded) return 'Ver menos';
+    const compact = window.matchMedia('(max-width: 640px)').matches;
+    return compact ? `Ver ${total} más` : `Ver las ${total} casas restantes`;
+  }
+
+  /**
+   * Pone la UI de control en el estado lógico (input, chips, botón de
+   * expansión). Al plegar, la casa activa aunque sea "extra" queda visible:
+   * nunca mostramos un filtro que no se ve.
+   */
+  function syncControls() {
     const input = document.querySelector('[data-search-input]') as HTMLInputElement | null;
     if (input && input.value !== currentSearch) input.value = currentSearch;
+
+    document.querySelectorAll<HTMLElement>('[data-casa-chip]').forEach((chip) => {
+      const active = chip.getAttribute('data-casa-slug') === currentCasa;
+      chip.setAttribute('aria-pressed', String(active));
+      chip.classList.toggle('casa-chip--active', active);
+    });
+
+    document.querySelectorAll<HTMLElement>('.casa-chip--extra').forEach((chip) => {
+      chip.hidden = !casasExpanded && chip.getAttribute('data-casa-slug') !== currentCasa;
+    });
+
+    const moreBtn = document.querySelector<HTMLElement>('[data-casa-more]');
+    if (moreBtn) {
+      const total = document.querySelectorAll('.casa-chip--extra').length;
+      moreBtn.setAttribute('aria-expanded', String(casasExpanded));
+      moreBtn.textContent = moreLabel(total);
+    }
+  }
+
+  /** Fade de "hay más chips" solo si el scroller tiene overflow y no está al final. */
+  function updateCasaFade(): void {
+    const scroller = document.querySelector<HTMLElement>('[data-casa-scroller]');
+    const fade = document.querySelector<HTMLElement>('[data-casa-fade]');
+    if (!scroller || !fade) return;
+    const overflow = scroller.scrollWidth - scroller.clientWidth;
+    const atEnd = scroller.scrollLeft >= overflow - 2;
+    fade.classList.toggle('hub-casa-fade--hidden', overflow <= 2 || atEnd);
   }
 
   function applyFilters() {
-    const cards = Array.from(document.querySelectorAll('[data-hub-card]')) as HTMLElement[];
-    const countEl = document.querySelector('[data-hub-count]') as HTMLElement | null;
-    const emptyEl = document.querySelector('.hub-empty') as HTMLElement | null;
-    const gridEl = document.querySelector('.hub-grid') as HTMLElement | null;
-
+    const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-hub-card]'));
     const matches = hubSearchMatches(
-      cards.map((card) => ({
-        id: card.getAttribute('data-insp-slug') || '',
-        text: card.getAttribute('data-search') || '',
+      cards.map((c) => ({
+        id: c.getAttribute('data-insp-slug') || '',
+        text: c.getAttribute('data-search') || '',
       })),
       currentSearch,
       fuzzyMatches
@@ -130,14 +282,22 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
 
     let visible = 0;
     cards.forEach((card) => {
-      const match = matches.has(card.getAttribute('data-insp-slug') || '');
-      card.style.display = match ? '' : 'none';
-      if (match) visible++;
+      const ok =
+        matches.has(card.getAttribute('data-insp-slug') || '') &&
+        (currentCasa === HUB_CASA_ALL || card.getAttribute('data-casa-slug') === currentCasa);
+      card.style.display = ok ? '' : 'none';
+      if (ok) visible++;
     });
 
-    if (countEl) countEl.textContent = buildHubCountText(visible);
+    const countEl = document.querySelector('[data-hub-count]');
+    if (countEl) countEl.textContent = buildHubCountTextWithCasa(visible, casaDisplayFor(currentCasa));
+
+    const emptyEl = document.querySelector('.hub-empty') as HTMLElement | null;
+    const gridEl = document.querySelector('.hub-grid') as HTMLElement | null;
     if (emptyEl) emptyEl.hidden = visible !== 0;
     if (gridEl) gridEl.style.display = visible === 0 ? 'none' : '';
+
+    updateCasaFade();
   }
 
   // Recalcula el set difuso para la búsqueda actual. Se usa al escribir y en
@@ -159,93 +319,148 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
     }
   }
 
-  onWindowOnce('decants-hub-search', 'search:change', async (e) => {
-    currentSearch = (e as CustomEvent).detail?.query || '';
-    const url = new URL(window.location.href);
-    if (currentSearch) {
-      url.searchParams.set('search', currentSearch);
-    } else {
-      url.searchParams.delete('search');
-    }
-    window.history.pushState({}, '', url);
+  /** Entra filtrado con ?casa=de-una-extra: el chip activo debe quedar a la vista. */
+  function revealActiveChip(): void {
+    if (currentCasa === HUB_CASA_ALL) return;
+    const chip = document.querySelector<HTMLElement>(
+      `[data-casa-chip][data-casa-slug="${currentCasa}"]`
+    );
+    chip?.scrollIntoView({ inline: 'nearest', block: 'nearest' });
+  }
 
+  function setupCasaStrip() {
+    const wrap = document.querySelector('.hub-casa');
+    const scroller = document.querySelector('[data-casa-scroller]');
+    if (!wrap || !scroller) return;
+
+    // El click se delega en .hub-casa porque el botón de expansión vive FUERA
+    // del scroller (así queda siempre visible sin scrollear).
+    bindOnce(wrap, (el) => {
+      el.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement;
+
+        const moreBtn = target.closest<HTMLElement>('[data-casa-more]');
+        if (moreBtn) {
+          casasExpanded = !casasExpanded;
+          syncControls();
+          updateCasaFade();
+          return;
+        }
+
+        const chip = target.closest<HTMLElement>('[data-casa-chip]');
+        if (!chip) return;
+        currentCasa = chip.getAttribute('data-casa-slug') || HUB_CASA_ALL;
+        pushUrl();
+        syncControls();
+        applyFilters();
+      });
+    });
+
+    bindOnce(scroller, (el) => {
+      el.addEventListener('scroll', updateCasaFade, { passive: true });
+    });
+  }
+
+  function setupClear() {
+    const btn = document.querySelector('[data-clear-filters]');
+    if (!btn) return;
+    bindOnce(btn, (el) => {
+      el.addEventListener('click', () => {
+        currentSearch = '';
+        currentCasa = HUB_CASA_ALL;
+        pushUrl();
+        syncControls();
+        void refreshFuzzyMatches('', ++searchSeq).then(() => applyFilters());
+      });
+    });
+  }
+
+  // Al cruzar el breakpoint, el label del toggle pasa a la variante compacta.
+  onWindowOnce('decants-hub-resize', 'resize', () => {
+    syncControls();
+    updateCasaFade();
+  });
+
+  onWindowOnce('decants-hub-search', 'search:change', async (e) => {
+    currentSearch = (e as CustomEvent<{ query?: string }>).detail?.query || '';
+    pushUrl();
     await refreshFuzzyMatches(currentSearch, ++searchSeq);
     applyFilters();
   });
 
-  // Back/forward: se re-lee la URL y se recalculan los matches difusos.
+  // Back/forward: se re-lee la URL (búsqueda y casa) y se recalculan los matches difusos.
   onWindowOnce('decants-hub-popstate', 'popstate', () => {
     readUrlState();
-    syncSearchInput();
-    const seq = ++searchSeq;
-    void refreshFuzzyMatches(currentSearch, seq).then(() => applyFilters());
+    syncControls();
+    revealActiveChip();
+    void refreshFuzzyMatches(currentSearch, ++searchSeq).then(() => applyFilters());
   });
 
   onPageLoad('decants-hub', () => {
+    casasExpanded = false;
     readUrlState();
-    syncSearchInput();
+    syncControls();
+    setupCasaStrip();
+    setupClear();
+    revealActiveChip();
 
     // Primer pintado con el estado de la URL (coincidencia literal, sin
     // esperar al fuzzy); después se corrige con el set difuso.
     applyFilters();
-    const seq = ++searchSeq;
-    void refreshFuzzyMatches(currentSearch, seq).then(() => applyFilters());
+    void refreshFuzzyMatches(currentSearch, ++searchSeq).then(() => applyFilters());
   });
 </script>
 
 <style>
+  /* ---------- Hero ---------- */
   .hub-hero {
     padding: var(--spacing-stack-md) 0 var(--spacing-stack-sm);
     text-align: center;
   }
 
-  @media (max-width: 640px) {
-    .hub-hero {
-      padding: var(--spacing-stack-md) 0;
-    }
+  .hub-eyebrow {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-primary);
+    margin: 0 0 10px;
   }
 
   .hub-title {
     font-family: var(--font-family);
-    font-size: var(--font-display-lg-size);
-    font-weight: var(--font-display-lg-weight);
-    letter-spacing: var(--font-display-lg-tracking);
+    font-size: var(--font-headline-lg-size);
+    font-weight: var(--font-headline-lg-weight);
+    line-height: var(--font-headline-lg-line-height);
+    letter-spacing: var(--font-headline-lg-tracking);
     text-transform: uppercase;
     color: var(--color-on-surface);
-    margin: 0 auto var(--spacing-stack-sm);
-    max-width: 720px;
+    margin: 0 auto 10px;
+    max-width: 780px;
   }
 
+  /* Mobile: headline-md para que el hero no se coma media pantalla. */
   @media (max-width: 640px) {
     .hub-title {
       font-size: var(--font-headline-md-size);
+      font-weight: var(--font-headline-md-weight);
       letter-spacing: var(--font-headline-md-tracking);
-    }
-  }
-
-  @media (min-width: 641px) {
-    .hub-title {
-      margin-bottom: 12px;
     }
   }
 
   .hub-subtitle {
     font-family: var(--font-family);
-    font-size: var(--font-body-lg-size);
-    line-height: var(--font-body-lg-line-height);
+    font-size: var(--font-body-md-size);
+    line-height: var(--font-body-md-line-height);
     color: var(--color-on-surface-variant);
     margin: 0 auto;
-    max-width: 640px;
+    max-width: 620px;
   }
 
-  @media (max-width: 640px) {
-    .hub-subtitle {
-      font-size: var(--font-body-md-size);
-    }
-  }
-
+  /* ---------- Toolbar (búsqueda + chips de casa) ---------- */
   .hub-toolbar {
-    padding: 12px 0;
+    padding: 10px 0 2px;
     border-top: var(--border-width) solid var(--color-outline-variant);
     border-bottom: var(--border-width) solid var(--color-outline-variant);
     position: sticky;
@@ -254,22 +469,30 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
     background-color: var(--color-background);
   }
 
+  .hub-toolbar-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
   @media (max-width: 640px) {
-    .hub-toolbar {
-      padding: 8px 0;
+    .hub-toolbar-row {
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
     }
   }
 
-  .hub-toolbar-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
+  .hub-toolbar-search {
+    flex: 1;
+    max-width: 420px;
   }
 
-  .hub-toolbar-search {
-    width: 100%;
-    max-width: 400px;
+  @media (max-width: 640px) {
+    .hub-toolbar-search {
+      width: 100%;
+    }
   }
 
   .hub-count {
@@ -280,67 +503,311 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
     text-transform: uppercase;
     color: var(--color-on-surface-variant);
     margin: 0;
-    text-align: center;
+    white-space: nowrap;
+    padding-bottom: 10px;
+    text-align: right;
   }
 
+  @media (max-width: 640px) {
+    .hub-count {
+      text-align: center;
+      padding-bottom: 0;
+    }
+  }
+
+  /* Tira de casas. Mobile: los chips ocupan TODO el ancho con scroll horizontal
+     y el botón de expansión va DEBAJO, a lo ancho. Si comparte la fila con el
+     scroller, este queda de ~150px y no se entiende que hay más casas.
+     Desktop: los chips envuelven a varias líneas + toggle a la derecha. */
+  .hub-casa {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 8px 0 10px;
+  }
+
+  @media (min-width: 768px) {
+    .hub-casa {
+      display: block;
+    }
+  }
+
+  .hub-casa-scrollwrap {
+    position: relative;
+    min-width: 0;
+  }
+
+  .hub-casa-scroller {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .hub-casa-scroller::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Gradiente sobre el borde derecho del scroller + chevron: indica que hay más
+     chips a la derecha. Se apaga al llegar al final (JS). `right: 0` para no
+     generar overflow horizontal. */
+  .hub-casa-fade {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 56px;
+    pointer-events: none;
+    background: linear-gradient(to right, transparent, var(--color-background) 55%);
+    transition: opacity var(--transition-duration) var(--transition-easing);
+  }
+
+  .hub-casa-fade::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    width: 8px;
+    height: 8px;
+    border-top: 2px solid var(--color-primary);
+    border-right: 2px solid var(--color-primary);
+    transform: translateY(-50%) rotate(45deg);
+  }
+
+  .hub-casa-fade--hidden {
+    opacity: 0;
+  }
+
+  /* Mobile: el toggle debajo de la fila, a lo ancho (tap ≥44px vía .casa-chip). */
+  .hub-casa-toggle {
+    display: flex;
+  }
+
+  .hub-casa-toggle .casa-chip--more {
+    width: 100%;
+    justify-content: center;
+  }
+
+  @media (min-width: 768px) {
+    .hub-casa-scroller {
+      flex-wrap: wrap;
+      overflow: visible;
+    }
+
+    .hub-casa-fade {
+      display: none;
+    }
+
+    .hub-casa-toggle {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 8px;
+    }
+
+    /* Anula el a-lo-ancho de mobile: en desktop el toggle queda chico, a la derecha. */
+    .hub-casa-toggle .casa-chip--more {
+      width: auto;
+    }
+  }
+
+  .casa-chip {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+    background-color: transparent;
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: var(--border-radius);
+    padding: 0 14px;
+    min-height: 44px;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all var(--transition-duration) var(--transition-easing);
+  }
+
+  .casa-chip:hover {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+  }
+
+  .casa-chip:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .casa-chip--active {
+    color: var(--color-on-primary);
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+  }
+
+  .casa-chip-n {
+    font-size: 10px;
+    opacity: 0.7;
+  }
+
+  .casa-chip--more {
+    border-style: dashed;
+  }
+
+  /* El display:flex del chip pisa el [hidden] del navegador: lo restauramos. */
+  .casa-chip[hidden] {
+    display: none;
+  }
+
+  /* ---------- Grilla de cards ---------- */
   .hub-list {
-    padding: var(--spacing-stack-lg) 0;
+    padding: var(--spacing-stack-md) 0 var(--spacing-stack-lg);
   }
 
   .hub-grid {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--spacing-stack-sm);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 16px;
   }
 
-  @media (min-width: 768px) {
+  @media (min-width: 640px) {
     .hub-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 820px) {
+    .hub-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 28px 24px;
     }
   }
 
   .hub-card {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: var(--spacing-stack-md);
-    border: var(--border-width) solid var(--color-outline-variant);
-    border-radius: var(--border-radius);
-    background-color: var(--color-surface-container);
+    flex-direction: column;
+    color: inherit;
     text-decoration: none;
-    transition: border-color var(--transition-duration) var(--transition-easing);
+    background-color: var(--color-surface-container-lowest);
+    border: var(--border-width) solid transparent;
+    transition: border-color var(--transition-duration) var(--transition-easing),
+      transform var(--transition-duration) var(--transition-easing);
   }
 
-  .hub-card:hover {
-    border-color: var(--color-primary);
+  @media (hover: hover) and (pointer: fine) {
+    .hub-card:hover {
+      border-color: var(--color-primary);
+      transform: translateY(-3px);
+    }
+
+    .hub-card:hover .hub-card-img {
+      transform: scale(1.05);
+    }
+  }
+
+  .hub-card:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .hub-card-media {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    background-color: var(--color-image-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .hub-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 8%;
+    transition: transform 400ms var(--transition-easing);
+  }
+
+  .hub-card-stock {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    background-color: rgba(255, 255, 255, 0.85);
+  }
+
+  .hub-card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 12px 12px 14px;
+    flex: 1;
   }
 
   .hub-card-title {
     font-family: var(--font-family);
-    font-size: var(--font-headline-md-size);
+    font-size: var(--font-body-lg-size);
     font-weight: var(--font-headline-md-weight);
+    line-height: 1.25;
     color: var(--color-on-surface);
     margin: 0;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
   }
 
+  @media (max-width: 640px) {
+    .hub-card-title {
+      font-size: var(--font-body-md-size);
+    }
+  }
+
+  .hub-card-casa {
+    font-family: var(--font-family);
+    font-size: 11px;
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-primary);
+    margin: 2px 0 0;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    overflow: hidden;
+  }
+
+  /* Una línea con line-clamp + title: si el nombre nuestro no entra, se corta
+     en el borde y el tooltip completa — nunca "…". */
   .hub-card-sub {
     font-family: var(--font-family);
     font-size: var(--font-label-sm-size);
     color: var(--color-on-surface-variant);
-    margin: 4px 0 0;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    overflow: hidden;
   }
 
   .hub-card-price {
+    margin-top: auto;
+    padding-top: 6px;
     font-family: var(--font-family);
     font-size: var(--font-label-sm-size);
     font-weight: var(--font-label-sm-weight);
     letter-spacing: var(--font-label-sm-tracking);
     text-transform: uppercase;
     color: var(--color-primary);
-    white-space: nowrap;
   }
 
+  /* ---------- Estado vacío ---------- */
   .hub-empty {
     display: flex;
     flex-direction: column;
@@ -372,11 +839,22 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
     max-width: 420px;
   }
 
-  .hub-empty-cta {
-    margin-top: var(--spacing-stack-md);
+  .hub-empty-btn {
+    margin-top: var(--spacing-stack-sm);
     min-height: 44px;
   }
 
+  .hub-empty-link {
+    margin-top: 16px;
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* ---------- Cierre ---------- */
   .hub-more {
     padding: var(--spacing-stack-lg) 0;
     border-top: var(--border-width) solid var(--color-outline-variant);

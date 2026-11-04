@@ -81,3 +81,89 @@ test.describe('Buscador del hub de decants', () => {
     await expect(page).not.toHaveURL(/[?&]search=/);
   });
 });
+
+test.describe('Filtro por casa en el hub de decants', () => {
+  test('el chip de casa deja solo sus cards y pisa ?casa= en la URL', async ({ page }) => {
+    await page.goto('decants/');
+    await page.waitForLoadState('networkidle');
+
+    const creed = page.locator('[data-casa-chip][data-casa-slug="creed"]');
+    await expect(creed).toHaveCount(1);
+    await creed.click();
+
+    await expect(page).toHaveURL(/[?&]casa=creed/);
+    await expect(creed).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('[data-casa-chip][data-casa-slug="all"]')).toHaveAttribute(
+      'aria-pressed',
+      'false'
+    );
+    await expect(page.locator('[data-hub-count]')).toHaveText('3 aromas de Creed');
+
+    const visible = page.locator('.hub-card:visible');
+    expect(await visible.count()).toBe(3);
+    await expect
+      .poll(async () =>
+        visible.evaluateAll((els) =>
+          els.every((el) => el.getAttribute('data-casa') === 'Creed')
+        )
+      )
+      .toBe(true);
+  });
+
+  test('la casa se combina con ?search= y "Limpiar filtros" reinicia todo', async ({ page }) => {
+    await page.goto('decants/?search=aventus&casa=creed');
+    await page.waitForLoadState('networkidle');
+
+    await expect(page.locator('input[type=search]')).toHaveValue('aventus');
+    await expect(page.locator('[data-hub-count]')).toHaveText('2 aromas de Creed');
+
+    const visible = page.locator('.hub-card:visible');
+    expect(await visible.count()).toBe(2);
+    await expect
+      .poll(async () =>
+        visible.evaluateAll((els) =>
+          els.every(
+            (el) =>
+              el.getAttribute('data-casa') === 'Creed' &&
+              (el.getAttribute('data-search') || '').includes('aventus')
+          )
+        )
+      )
+      .toBe(true);
+
+    // Cambiar de casa conservando la búsqueda: sin resultados, estado vacío.
+    await page.locator('[data-casa-chip][data-casa-slug="dior"]').click();
+    await expect(page.locator('[data-hub-count]')).toHaveText('0 aromas de Dior');
+    await expect(page.locator('.hub-empty')).toBeVisible();
+    await expect(page).toHaveURL(/[?&]search=aventus/);
+    await expect(page).toHaveURL(/[?&]casa=dior/);
+
+    // "Limpiar filtros" deja todo el hub otra vez y sanea la URL.
+    await page.locator('[data-clear-filters]').click();
+    await expect(page.locator('.hub-empty')).toBeHidden();
+    await expect(page.locator('[data-hub-count]')).toHaveText('62 aromas');
+    await expect(page.locator('input[type=search]')).toHaveValue('');
+    await expect(page).not.toHaveURL(/casa=/);
+    await expect(page).not.toHaveURL(/search=/);
+  });
+
+  test('el botón de casas restantes expande y pliega la tira', async ({ page }) => {
+    await page.goto('decants/');
+    await page.waitForLoadState('networkidle');
+
+    const more = page.locator('[data-casa-more]');
+    await expect(more).toHaveAttribute('aria-expanded', 'false');
+    const before = await page.locator('[data-casa-chip]:visible').count();
+
+    await more.click();
+    await expect(more).toHaveAttribute('aria-expanded', 'true');
+    await expect(more).toHaveText('Ver menos');
+    const after = await page.locator('[data-casa-chip]:visible').count();
+    expect(after).toBeGreaterThan(before);
+    await expect(page.locator('.casa-chip--extra').first()).toBeVisible();
+
+    await more.click();
+    await expect(more).toHaveAttribute('aria-expanded', 'false');
+    expect(await page.locator('.casa-chip--extra:visible').count()).toBe(0);
+  });
+});
