@@ -1,0 +1,41 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import CatalogView from '@/components/catalog/CatalogView.astro';
+import perfumesData from '@/data/perfumes.json';
+import { perfumesForMode } from '@/utils/catalogo';
+import { site } from '@/site.config';
+import type { Perfume } from '@/data/types';
+
+const allPerfumes = perfumesData.perfumes as Perfume[];
+const perfumes = perfumesForMode(allPerfumes, 'frascos');
+
+const catalogDescription = `Frascos sellados de 90 y 100 ml de perfumes árabes originales en ${site.addressLocality}, sin decantar. Filtra por género y busca tu fragancia favorita.`;
+const catalogSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: `Frascos originales ${site.namePlain}`,
+  numberOfItems: perfumes.length,
+  itemListElement: perfumes.map((perfume, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: `${perfume.brand} ${perfume.name}`,
+    url: `${Astro.site?.origin}${site.basePath}producto/${perfume.slug}/`,
+  })),
+};
+---
+
+<Layout
+  title="Frascos originales de perfumes árabes en Córdoba"
+  description={catalogDescription}
+  ogImage="og-catalogo.jpg"
+>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(catalogSchema).replace(/</g, '\\u003c')} />
+  <!-- Sin sizeMl fijo: el frasco es 100 ml salvo qaed-al-fursan-untamed (90 ml).
+       CatalogView pasa el modo y la card elige el talle de cada producto. -->
+  <CatalogView
+    perfumes={perfumes}
+    mode="frascos"
+    title="Frascos originales"
+    subtitle="Frascos sellados de 90 y 100 ml, sin decantar."
+  />
+</Layout>

@@ -1,0 +1,40 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import CatalogView from '@/components/catalog/CatalogView.astro';
+import perfumesData from '@/data/perfumes.json';
+import { perfumesForMode } from '@/utils/catalogo';
+import { site } from '@/site.config';
+import type { Perfume } from '@/data/types';
+
+const allPerfumes = perfumesData.perfumes as Perfume[];
+const perfumes = perfumesForMode(allPerfumes, 'decants');
+
+const catalogDescription = `Decants de 5 ml de perfumes árabes originales en ${site.addressLocality}. Filtra por género y busca tu fragancia favorita.`;
+const catalogSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: `Decants de 5 ml ${site.namePlain}`,
+  numberOfItems: perfumes.length,
+  itemListElement: perfumes.map((perfume, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: `${perfume.brand} ${perfume.name}`,
+    url: `${Astro.site?.origin}${site.basePath}producto/${perfume.slug}/`,
+  })),
+};
+---
+
+<Layout
+  title="Decants de 5 ml de perfumes árabes en Córdoba"
+  description={catalogDescription}
+  ogImage="og-catalogo.jpg"
+>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(catalogSchema).replace(/</g, '\\u003c')} />
+  <CatalogView
+    perfumes={perfumes}
+    mode="decants"
+    sizeMl={5}
+    title="Decants de 5 ml"
+    subtitle="Perfumes árabes originales para probar antes de comprar el frasco."
+  />
+</Layout>

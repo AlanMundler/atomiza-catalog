@@ -5,16 +5,27 @@ import type { Perfume } from '@/data/types';
 
 interface Props {
   perfumes: Perfume[];
+  /** Fuerza un talle concreto en todas las cards (ml). */
+  sizeMl?: number;
+  /** Elige el talle por modo, por producto (frascos de 90/100 ml). */
+  sizeMode?: 'decants' | 'frascos';
+  /** Título del estado vacío. */
+  emptyMessage?: string;
 }
 
-const { perfumes } = Astro.props;
+const {
+  perfumes,
+  sizeMl,
+  sizeMode,
+  emptyMessage = 'No se encontraron perfumes',
+} = Astro.props;
 const BASE = site.basePath;
 ---
 
 {perfumes.length > 0 ? (
   <div class="product-grid" role="list" aria-label="Catálogo de perfumes">
     {perfumes.map((perfume) => (
-      <ProductCard perfume={perfume} />
+      <ProductCard perfume={perfume} sizeMl={sizeMl} sizeMode={sizeMode} />
     ))}
   </div>
 ) : null}
@@ -23,7 +34,7 @@ const BASE = site.basePath;
     <circle cx="11" cy="11" r="8"></circle>
     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
   </svg>
-  <h3 class="empty-title">No se encontraron perfumes</h3>
+  <h3 class="empty-title">{emptyMessage}</h3>
   <p class="empty-text">Intenta ajustar los filtros o la búsqueda</p>
   <a href={`${BASE}catalogo/`} class="btn btn--secondary btn--md empty-cta">Ver todo el catálogo</a>
 </div>

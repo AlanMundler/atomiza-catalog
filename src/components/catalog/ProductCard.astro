@@ -1,6 +1,7 @@
 ---
 import Chip from '@/components/ui/Chip.astro';
 import { getStockStatus, getStockLabel, primarySize } from '@/utils/stock';
+import { sizeForMode } from '@/utils/catalogo';
 import { formatPrice } from '@/utils/formatters';
 import { site, assetUrl } from '@/site.config';
 import type { Perfume } from '@/data/types';
@@ -9,16 +10,26 @@ interface Props {
   perfume: Perfume;
   /** true en las cards above-the-fold (home): eager + prioridad alta (LCP). */
   eager?: boolean;
+  /** Fuerza un talle concreto (ml). Si no existe, se usa el talle principal. */
+  sizeMl?: number;
+  /**
+   * Elige el talle por modo, por producto (los frascos pueden ser 90 o 100 ml).
+   * Se ignora cuando `sizeMl` matchea una talla existente.
+   */
+  sizeMode?: 'decants' | 'frascos';
 }
 
-const { perfume, eager = false } = Astro.props;
+const { perfume, eager = false, sizeMl, sizeMode } = Astro.props;
 const mainImage = assetUrl(perfume.images[0]?.src);
 const mainAlt = perfume.images[0]?.alt || `${perfume.brand} ${perfume.name}`;
 
-// Get primary size (5ml) for price display. Si el perfume no tiene tallas,
-// se muestra como sin stock en vez de romper el build.
-const primary = primarySize(perfume);
-const stockStatus = primary ? getStockStatus(primary) : 'out-of-stock';
+// Talle de la card: el forzado (si existe), el del modo, o el principal (5ml).
+// Si el perfume no tiene tallas, se muestra como sin stock en vez de romper
+// el build.
+const forcedSize = sizeMl != null ? perfume.sizes.find((s) => s.ml === sizeMl) : undefined;
+const selectedSize =
+  forcedSize ?? (sizeMode ? sizeForMode(perfume, sizeMode) : undefined) ?? primarySize(perfume);
+const stockStatus = selectedSize ? getStockStatus(selectedSize) : 'out-of-stock';
 const stockLabel = getStockLabel(stockStatus);
 const isOutOfStock = stockStatus === 'out-of-stock';
 ---
@@ -60,15 +71,15 @@ const isOutOfStock = stockStatus === 'out-of-stock';
     <div class="product-card-info">
       <span class="product-card-brand">{perfume.brand}</span>
       <h3 class="product-card-name" title={perfume.name}>{perfume.name}</h3>
-      <span class="product-card-price">{primary ? formatPrice(primary.price) : '—'}</span>
+      <span class="product-card-price">{selectedSize ? formatPrice(selectedSize.price) : '—'}</span>
     </div>
   </a>
-  {primary && !isOutOfStock && (
+  {selectedSize && !isOutOfStock && (
     <button
       type="button"
       class="product-card-quick"
       data-quick-add
-      data-size-ml={primary.ml}
+      data-size-ml={selectedSize.ml}
       aria-label={`Agregar ${perfume.brand} ${perfume.name} al pedido`}
     >
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">

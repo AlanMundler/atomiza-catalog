@@ -1,5 +1,8 @@
 /** Lógica pura del filtrado del catálogo (sin DOM, testeable). */
 
+import type { Perfume, PerfumeSize } from '@/data/types';
+import { primarySize } from '@/utils/stock';
+
 const GENDERS: Record<string, string[]> = {
   masculino: ['masculino', 'unisex'],
   femenino: ['femenino', 'unisex'],
@@ -37,6 +40,32 @@ export function cardMatches(input: CardMatchInput): boolean {
   if (!input.query) return true;
   if (input.fuzzyIds) return input.fuzzyIds.has(input.perfumeId);
   return input.searchText.includes(input.query.toLowerCase());
+}
+
+/**
+ * Talle que corresponde a cada modo del catálogo.
+ * - `decants`: el decant de 5 ml (con `primarySize` como fallback).
+ * - `frascos`: el frasco original de 90/100 ml; si hay varios, el de mayor ml.
+ * Devuelve `undefined` si el perfume no tiene talle para ese modo.
+ */
+export function sizeForMode(perfume: Perfume, mode: 'decants' | 'frascos'): PerfumeSize | undefined {
+  if (mode === 'decants') {
+    return perfume.sizes.find((s) => s.ml === 5) || primarySize(perfume);
+  }
+  const bottles = perfume.sizes.filter((s) => s.ml >= 90);
+  if (bottles.length === 0) return undefined;
+  return bottles.reduce((max, size) => (size.ml > max.ml ? size : max));
+}
+
+/**
+ * Perfumes que tienen talle para el modo, ordenados por nombre (es).
+ * Los frascos sin stock se incluyen: la card los muestra con chip SIN STOCK.
+ */
+export function perfumesForMode(perfumes: Perfume[], mode: 'decants' | 'frascos'): Perfume[] {
+  return perfumes
+    .filter((perfume) => sizeForMode(perfume, mode) !== undefined)
+    .slice()
+    .sort((a, b) => a.name.localeCompare(b.name, 'es'));
 }
 
 /** Texto del contador ("3 perfumes encontrados en femenino para ..."). */

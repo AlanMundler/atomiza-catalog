@@ -1,13 +1,13 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { initQuickAdd } from '@/utils/quick-add';
 
-function mountCard(attrs = 'data-perfume-id="p1"'): { btn: HTMLElement; root: HTMLElement } {
+function mountCard(attrs = 'data-perfume-id="p1"', sizeMl = 5): { btn: HTMLElement; root: HTMLElement } {
   // Markup real de ProductCard: wrapper + link estirado + botón hermano
   // (nunca botón dentro del link: es HTML inválido y rompe teclado).
   document.body.innerHTML = `
     <div class="product-card" ${attrs}>
       <a class="product-card-link" href="/producto/p1/">Detalle</a>
-      <button type="button" data-quick-add data-size-ml="5" aria-label="Agregar">
+      <button type="button" data-quick-add data-size-ml="${sizeMl}" aria-label="Agregar">
         <span>+</span>
       </button>
     </div>
@@ -43,6 +43,20 @@ describe('initQuickAdd', () => {
 
     window.removeEventListener('cart:add', onAdd);
     window.removeEventListener('cart:open', onOpen);
+  });
+
+  it('envía el talle de la card cuando es un frasco (100 ml)', () => {
+    const { btn } = mountCard('data-perfume-id="p2"', 100);
+    const adds: CustomEvent[] = [];
+    const onAdd = (e: Event) => adds.push(e as CustomEvent);
+    window.addEventListener('cart:add', onAdd);
+
+    btn.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+
+    expect(adds).toHaveLength(1);
+    expect(adds[0].detail).toEqual({ perfumeId: 'p2', sizeMl: 100, quantity: 1 });
+
+    window.removeEventListener('cart:add', onAdd);
   });
 
   it('ignora clicks fuera del botón y botones deshabilitados', () => {

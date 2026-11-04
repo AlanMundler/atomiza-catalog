@@ -35,6 +35,15 @@ export default defineConfig({
         if (path === '/' || path === '') {
           item.changefreq = ChangeFreqEnum.WEEKLY;
           item.priority = 1.0;
+        } else if (
+          path === '/catalogo/decants' ||
+          path === '/catalogo/decants/' ||
+          path === '/catalogo/frascos' ||
+          path === '/catalogo/frascos/'
+        ) {
+          // Listados separados del catálogo (decants / frascos).
+          item.changefreq = ChangeFreqEnum.WEEKLY;
+          item.priority = 0.9;
         } else if (path.startsWith('/catalogo') || path.startsWith('/decants')) {
           item.changefreq = ChangeFreqEnum.WEEKLY;
           item.priority = 0.9;

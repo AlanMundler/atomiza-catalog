@@ -1,0 +1,107 @@
+---
+/**
+ * Control segmentado Decants | Frascos. Navegación real (dos links),
+ * sin JS. Lo usan /catalogo/decants/ y /catalogo/frascos/ dentro de
+ * una barra sticky; el control trae fondo propio para verse bien encima.
+ */
+import { site } from '@/site.config';
+
+type CatalogMode = 'decants' | 'frascos';
+
+interface Props {
+  active: CatalogMode;
+}
+
+const { active } = Astro.props;
+
+const modes: { key: CatalogMode; label: string; href: string }[] = [
+  { key: 'decants', label: 'Decants', href: `${site.basePath}catalogo/decants/` },
+  { key: 'frascos', label: 'Frascos', href: `${site.basePath}catalogo/frascos/` },
+];
+---
+
+<nav class="mode-switch" aria-label="Elegir tipo de producto">
+  <span class="mode-switch-pill" role="group" aria-label="Decants o frascos">
+    {modes.map((mode) => (
+      <a
+        href={mode.href}
+        class={`mode-switch-segment ${active === mode.key ? 'mode-switch-segment--active' : ''}`}
+        aria-current={active === mode.key ? 'page' : undefined}
+      >
+        {mode.label}
+      </a>
+    ))}
+  </span>
+</nav>
+
+<style>
+  .mode-switch {
+    display: flex;
+    justify-content: center;
+  }
+
+  /* Pill segmentada: pastilla con pelo, el segmento activo se rellena
+     con el dorado del sistema. Radius 999px es la única excepción
+     deliberada al radio 0 del sitio: acá pide ser leída como "pill". */
+  .mode-switch-pill {
+    display: inline-flex;
+    background-color: var(--color-surface-container);
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: 999px;
+    padding: 3px;
+  }
+
+  .mode-switch-segment {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 28px;
+    border-radius: 999px;
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      background-color var(--transition-duration) var(--transition-easing),
+      color var(--transition-duration) var(--transition-easing);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .mode-switch-segment:hover {
+      color: var(--color-primary);
+    }
+
+    .mode-switch-segment--active:hover {
+      color: var(--color-on-primary);
+      background-color: var(--color-primary-container);
+    }
+  }
+
+  .mode-switch-segment--active {
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+  }
+
+  .mode-switch-segment:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 640px) {
+    .mode-switch-pill {
+      width: 100%;
+      max-width: 360px;
+    }
+
+    .mode-switch-segment {
+      padding: 0 20px;
+      flex: 1 1 50%;
+    }
+  }
+</style>

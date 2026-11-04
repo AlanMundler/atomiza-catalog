@@ -5,7 +5,28 @@ import {
   fuzzySearchIds,
   genderMatches,
   normalizeFilter,
+  perfumesForMode,
+  sizeForMode,
 } from '@/utils/catalogo';
+import type { Perfume } from '@/data/types';
+
+function makePerfume(overrides: Partial<Perfume> & { name: string }): Perfume {
+  return {
+    id: overrides.name.toLowerCase().replace(/\s+/g, '-'),
+    slug: overrides.name.toLowerCase().replace(/\s+/g, '-'),
+    brand: 'Marca',
+    gender: 'unisex',
+    olfactoryFamily: 'Amaderada',
+    description: '',
+    notes: { top: [], heart: [], base: [] },
+    images: [],
+    sizes: [],
+    isBoutiqueExclusive: false,
+    featured: false,
+    ...overrides,
+  };
+}
+
 
 describe('normalizeFilter', () => {
   it('acepta los tres géneros y defaultea a all', () => {
@@ -85,3 +106,97 @@ describe('fuzzySearchIds', () => {
     expect(await fuzzySearchIds(index, 'zzzzzz')).toEqual(new Set());
   });
 });
+
+describe('sizeForMode', () => {
+  it('decants devuelve el talle de 5 ml', () => {
+    const perfume = makePerfume({
+      name: 'Decant',
+      sizes: [
+        { ml: 100, price: 90000, stock: 1 },
+        { ml: 5, price: 7000, stock: 10 },
+      ],
+    });
+    expect(sizeForMode(perfume, 'decants')?.ml).toBe(5);
+  });
+
+  it('frascos devuelve el frasco de 100 ml', () => {
+    const perfume = makePerfume({
+      name: 'Frasco',
+      sizes: [
+        { ml: 5, price: 7000, stock: 10 },
+        { ml: 100, price: 90000, stock: 2 },
+      ],
+    });
+    expect(sizeForMode(perfume, 'frascos')?.ml).toBe(100);
+  });
+
+  it('frascos acepta 90 ml y elige el de mayor ml si hay varios', () => {
+    const noventa = makePerfume({
+      name: 'Noventa',
+      sizes: [
+        { ml: 5, price: 7000, stock: 10 },
+        { ml: 90, price: 85000, stock: 0 },
+      ],
+    });
+    expect(sizeForMode(noventa, 'frascos')?.ml).toBe(90);
+
+    const varios = makePerfume({
+      name: 'Varios',
+      sizes: [
+        { ml: 90, price: 85000, stock: 1 },
+        { ml: 100, price: 90000, stock: 1 },
+      ],
+    });
+    expect(sizeForMode(varios, 'frascos')?.ml).toBe(100);
+  });
+
+  it('frascos devuelve undefined sin frasco (solo decant)', () => {
+    const perfume = makePerfume({
+      name: 'Solo decant',
+      sizes: [{ ml: 5, price: 7000, stock: 10 }],
+    });
+    expect(sizeForMode(perfume, 'frascos')).toBeUndefined();
+  });
+});
+
+describe('perfumesForMode', () => {
+  const soloDecant = makePerfume({
+    name: 'Zeta',
+    sizes: [{ ml: 5, price: 7000, stock: 10 }],
+  });
+  const frascoNoventa = makePerfume({
+    name: 'Alfa',
+    sizes: [
+      { ml: 5, price: 7000, stock: 10 },
+      { ml: 90, price: 85000, stock: 0 },
+    ],
+  });
+  const frascoCien = makePerfume({
+    name: 'Beta',
+    sizes: [
+      { ml: 5, price: 7000, stock: 10 },
+      { ml: 100, price: 90000, stock: 3 },
+    ],
+  });
+  const perfumes = [soloDecant, frascoCien, frascoNoventa];
+
+  it('frascos excluye los de solo 5 ml e incluye 90 y 100 (aun sin stock)', () => {
+    const result = perfumesForMode(perfumes, 'frascos');
+    expect(result.map((p) => p.name)).toEqual(['Alfa', 'Beta']);
+  });
+
+  it('frascos ordena por nombre con locale es', () => {
+    const result = perfumesForMode(perfumes, 'frascos');
+    const names = result.map((p) => p.name);
+    expect(names).toEqual([...names].sort((a, b) => a.localeCompare(b, 'es')));
+  });
+
+  it('decants devuelve todos los que tienen 5 ml', () => {
+    const result = perfumesForMode(perfumes, 'decants');
+    expect(result).toHaveLength(3);
+    result.forEach((p) => {
+      expect(sizeForMode(p, 'decants')?.ml).toBe(5);
+    });
+  });
+});
+

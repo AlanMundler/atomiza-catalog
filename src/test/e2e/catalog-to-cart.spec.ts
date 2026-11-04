@@ -2,7 +2,17 @@ import { test, expect } from './test';
 
 const HOME = '.';
 const CATALOG = 'catalogo/';
+const DECANTS = 'catalogo/decants/';
+const FRASCOS = 'catalogo/frascos/';
 const PRODUCT = 'producto/baroque-rouge-540/';
+
+/** Entra al listado de decants desde la portada del catálogo (flujo nuevo). */
+async function goToDecantsFromCatalog(page: import('@playwright/test').Page): Promise<void> {
+  await page.goto(CATALOG);
+  await page.waitForLoadState('networkidle');
+  await page.locator('a[href*="catalogo/decants"]').first().click();
+  await page.waitForLoadState('networkidle');
+}
 
 test.describe('Catalog to Cart Flow', () => {
   test.beforeEach(async ({ page }) => {
@@ -19,8 +29,14 @@ test.describe('Catalog to Cart Flow', () => {
       const mobileNav = page.getByRole('navigation', { name: 'Menú móvil' });
       await mobileNav.getByRole('link', { name: 'Catálogo' }).click();
     }
-    await expect(page).toHaveURL(/\/catalogo/);
+    await expect(page).toHaveURL(/\/catalogo\//);
     await expect(page.locator('h1')).toContainText('Catálogo');
+
+    // La portada separa los listados: decants y frascos.
+    await page.locator('a[href*="catalogo/decants"]').first().click();
+    await page.waitForLoadState('networkidle');
+    await expect(page).toHaveURL(/\/catalogo\/decants\//);
+    await expect(page.locator('h1')).toContainText('Decants de 5 ml');
 
     // Regression: filters must work after a client-side (SPA) navigation
     await page.click('button[data-filter="masculino"]');
@@ -29,8 +45,7 @@ test.describe('Catalog to Cart Flow', () => {
   });
 
   test('should filter catalog by gender', async ({ page }) => {
-    await page.goto(CATALOG);
-    await page.waitForLoadState('networkidle');
+    await goToDecantsFromCatalog(page);
 
     await page.click('button[data-filter="masculino"]');
     await expect(page).toHaveURL(/filter=masculino/);
@@ -62,8 +77,7 @@ test.describe('Catalog to Cart Flow', () => {
   });
 
   test('should search for perfumes', async ({ page }) => {
-    await page.goto(CATALOG);
-    await page.waitForLoadState('networkidle');
+    await goToDecantsFromCatalog(page);
 
     await page.fill('input[type="search"]', 'baroque');
     await page.waitForTimeout(500);
@@ -77,8 +91,7 @@ test.describe('Catalog to Cart Flow', () => {
   });
 
   test('shows an empty state when no results match', async ({ page }) => {
-    await page.goto(CATALOG);
-    await page.waitForLoadState('networkidle');
+    await goToDecantsFromCatalog(page);
 
     await page.fill('input[type="search"]', 'zzzzz-no-existe');
     await page.waitForTimeout(500);
@@ -88,8 +101,7 @@ test.describe('Catalog to Cart Flow', () => {
   });
 
   test('hides the empty state while there are results', async ({ page }) => {
-    await page.goto(CATALOG);
-    await page.waitForLoadState('networkidle');
+    await goToDecantsFromCatalog(page);
 
     await expect(page.locator('.product-card:visible').first()).toBeVisible();
     await expect(page.locator('.product-grid-empty')).toBeHidden();
@@ -101,7 +113,7 @@ test.describe('Catalog to Cart Flow', () => {
   });
 
   test('restores search input and filters from the URL', async ({ page }) => {
-    await page.goto(`${CATALOG}?filter=femenino&search=baroque`);
+    await page.goto(`${DECANTS}?filter=femenino&search=baroque`);
     await page.waitForLoadState('networkidle');
 
     await expect(page.locator('input[type="search"]')).toHaveValue('baroque');
@@ -122,8 +134,7 @@ test.describe('Catalog to Cart Flow', () => {
   });
 
   test('should navigate to product detail from catalog', async ({ page }) => {
-    await page.goto(CATALOG);
-    await page.waitForLoadState('networkidle');
+    await goToDecantsFromCatalog(page);
 
     await page.locator('.product-card').first().click();
     await page.waitForLoadState('networkidle');
@@ -134,8 +145,7 @@ test.describe('Catalog to Cart Flow', () => {
 
   test('should add product to cart after client-side navigation', async ({ page }) => {
     // Navigate catalog -> product via SPA transition (no full reload)
-    await page.goto(CATALOG);
-    await page.waitForLoadState('networkidle');
+    await goToDecantsFromCatalog(page);
     await page.locator('.product-card').first().click();
     await page.waitForTimeout(1000);
     await expect(page).toHaveURL(/\/producto\//);
@@ -154,6 +164,20 @@ test.describe('Catalog to Cart Flow', () => {
     // Regression: cart drawer must open after the add and show the item
     await expect(page.locator('#cart-drawer .drawer--open')).toBeVisible();
     await expect(page.locator('#cart-content .cart-item')).toHaveCount(1);
+  });
+
+  test('frascos listing shows cards and quick-add uses a 90/100 ml size', async ({ page }) => {
+    await page.goto(FRASCOS);
+    await page.waitForLoadState('networkidle');
+
+    await expect(page.locator('h1')).toContainText('Frascos originales');
+    await expect(page.locator('.product-card:visible').first()).toBeVisible();
+
+    const sizes = await page.locator('.product-card [data-quick-add]').evaluateAll((buttons) =>
+      buttons.map((b) => parseInt(b.getAttribute('data-size-ml') || '0', 10))
+    );
+    expect(sizes.length).toBeGreaterThan(0);
+    expect(sizes.every((ml) => ml >= 90)).toBe(true);
   });
 });
 
