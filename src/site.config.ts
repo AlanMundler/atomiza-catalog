@@ -36,7 +36,8 @@ export const site = {
   // v23: frasco 100ml en Angham)
   // v24: 5 perfumes nuevos (Prive Rose, Odyssey Homme, Mega Man, Tropical Vibe, Qaed Al Fursan))
   // v25: frascos 100ml en Odyssey Mega Man, Mandarin Sky Elixir y Mayar Natural Intense)
-  dataVersion: '25',
+  // v26: 11 perfumes nuevos (9pm, Club de Nuit Intense Man, Habik For Men, Hayaati Gold Elixir, Hawas Malibu, Hawas Verde, Kiss, Reflection, The Kingdom For Women, Odyssey Candee, Ajwad))
+  dataVersion: '26',
   instagramHandle: 'atomiza.cba',
   instagramUrl: 'https://instagram.com/atomiza.cba',
   tiktokHandle: 'atomiza.cba',

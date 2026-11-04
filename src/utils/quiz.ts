@@ -160,6 +160,17 @@ const PROFILES: Record<string, PerfumeProfile> = {
   'odyssey-mega-man': { styles: ['citrico-fresco', 'frutal'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'notoria', weather: ['calor'] },
   'tropical-vibe': { styles: ['frutal', 'citrico-fresco'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'intensa', weather: ['calor'] },
   'qaed-al-fursan': { styles: ['frutal', 'amaderado'], occasions: ['todo-el-dia', 'noche'], intensity: 'notoria', weather: ['calor'] },
+  '9pm': { styles: ['dulce-vainilla', 'ambarado-especiado'], occasions: ['noche'], intensity: 'intensa', weather: ['frio'] },
+  'club-de-nuit-intense-man': { styles: ['frutal', 'amaderado'], occasions: ['todo-el-dia', 'noche'], intensity: 'intensa', weather: ['todo-el-ano'] },
+  'habik-for-men': { styles: ['ambarado-especiado', 'amaderado'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'notoria', weather: ['frio'] },
+  'hayaati-gold-elixir': { styles: ['dulce-vainilla', 'tabaco-cuero'], occasions: ['noche', 'especiales'], intensity: 'intensa', weather: ['frio'] },
+  'hawas-malibu': { styles: ['frutal', 'citrico-fresco'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'notoria', weather: ['calor'] },
+  'hawas-verde': { styles: ['citrico-fresco'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'notoria', weather: ['calor'] },
+  kiss: { styles: ['dulce-vainilla', 'frutal'], occasions: ['noche'], intensity: 'intensa', weather: ['frio'] },
+  reflection: { styles: ['citrico-fresco', 'floral'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'notoria', weather: ['todo-el-ano'] },
+  'the-kingdom-for-women': { styles: ['dulce-vainilla', 'frutal'], occasions: ['todo-el-dia', 'noche'], intensity: 'notoria', weather: ['frio'] },
+  'odyssey-candee': { styles: ['frutal', 'dulce-vainilla'], occasions: ['todo-el-dia', 'noche'], intensity: 'notoria', weather: ['todo-el-ano'] },
+  ajwad: { styles: ['floral', 'amaderado'], occasions: ['todo-el-dia', 'noche'], intensity: 'notoria', weather: ['todo-el-ano'] },
 };
 
 const STYLE_KEYWORDS: Record<Style, string[]> = {

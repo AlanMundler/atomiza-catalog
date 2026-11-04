@@ -2681,6 +2681,472 @@
       "isBoutiqueExclusive": false,
       "featured": false,
       "originalPrice": 60000
+    },
+    {
+      "id": "9pm",
+      "slug": "9pm",
+      "brand": "Afnan",
+      "name": "9pm",
+      "gender": "masculino",
+      "olfactoryFamily": "Oriental Vainilla",
+      "description": "Inspirado en Ultra Male de Jean Paul Gaultier. Manzana, canela y lavanda abren dulce y especiado, con corazón de flor de azahar y muguet sobre vainilla, haba tonka y ámbar. Dulce, potente y seductor: de las mejores para salir de noche en otoño e invierno.",
+      "notes": {
+        "top": [
+          "Manzana",
+          "Canela",
+          "Lavanda Silvestre",
+          "Bergamota"
+        ],
+        "heart": [
+          "Flor de Azahar del Naranjo",
+          "Lirio de los Valles"
+        ],
+        "base": [
+          "Vainilla",
+          "Haba Tonka",
+          "Ámbar",
+          "Pachulí"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/9pm.avif",
+          "alt": "Afnan 9pm"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 8000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    },
+    {
+      "id": "club-de-nuit-intense-man",
+      "slug": "club-de-nuit-intense-man",
+      "brand": "Armaf",
+      "name": "Club de Nuit Intense Man",
+      "gender": "masculino",
+      "olfactoryFamily": "Amaderada Especiada",
+      "description": "Inspirado en Aventus de Creed. Piña y limón con humo de abedul, corazón de jazmín y rosa sobre almizcle, ámbar gris y vainilla. Frutal y ahumado, potente y versátil: sirve de día y de noche, todo el año.",
+      "notes": {
+        "top": [
+          "Limón",
+          "Piña",
+          "Bergamota",
+          "Grosellas Negras",
+          "Manzana"
+        ],
+        "heart": [
+          "Abedul",
+          "Jazmín",
+          "Rosa"
+        ],
+        "base": [
+          "Almizcle",
+          "Ámbar Gris",
+          "Pachulí",
+          "Vainilla"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/club-de-nuit-intense-man.avif",
+          "alt": "Armaf Club de Nuit Intense Man"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 8000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    },
+    {
+      "id": "habik-for-men",
+      "slug": "habik-for-men",
+      "brand": "Lattafa Perfumes",
+      "name": "Habik For Men",
+      "gender": "masculino",
+      "olfactoryFamily": "Amaderada Aromática",
+      "description": "Apertura de cardamomo, pimienta y bergamota, corazón de lavanda, canela y salvia sobre haba tonka, sándalo y ámbar. Especiado y limpio, con un dejo cremoso: ideal para el día a día en otoño e invierno.",
+      "notes": {
+        "top": [
+          "Cardamomo",
+          "Pimienta",
+          "Abrótano",
+          "Bergamota"
+        ],
+        "heart": [
+          "Lavanda",
+          "Canela",
+          "Salvia"
+        ],
+        "base": [
+          "Haba Tonka",
+          "Sándalo",
+          "Amberwood",
+          "Almizcle",
+          "Pachulí"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/habik-for-men.avif",
+          "alt": "Lattafa Perfumes Habik For Men"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 7000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    },
+    {
+      "id": "hayaati-gold-elixir",
+      "slug": "hayaati-gold-elixir",
+      "brand": "Lattafa Perfumes",
+      "name": "Hayaati Gold Elixir",
+      "gender": "masculino",
+      "olfactoryFamily": "Dulce Especiado",
+      "description": "Inspirado en Code Profumo de Giorgio Armani. Bergamota y pomelo con corazón de cuero, durazno y azafrán sobre vainilla, ámbar y vetiver. Dulce, especiado y con cuero: potente de noche, rinde mejor en el frío.",
+      "notes": {
+        "top": [
+          "Bergamota",
+          "Toronja",
+          "Casis"
+        ],
+        "heart": [
+          "Cuero",
+          "Durazno",
+          "Azafrán"
+        ],
+        "base": [
+          "Vainilla",
+          "Ámbar",
+          "Almizcle",
+          "Vetiver"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/hayaati-gold-elixir.avif",
+          "alt": "Lattafa Perfumes Hayaati Gold Elixir"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 6000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    },
+    {
+      "id": "hawas-malibu",
+      "slug": "hawas-malibu",
+      "brand": "Rasasi",
+      "name": "Hawas Malibu",
+      "gender": "masculino",
+      "olfactoryFamily": "Aromática",
+      "description": "Inspirado en Le Beau de Jean Paul Gaultier. Piña, naranja y pomelo con corazón de ámbar, raíz de lirio y lavanda sobre haba tonka, almizcle y cachemira. Frutal y aromático, con un lado cremoso: fresco y veraniego, para el día.",
+      "notes": {
+        "top": [
+          "Piña",
+          "Naranja",
+          "Toronja"
+        ],
+        "heart": [
+          "Ámbar",
+          "Raíz de Lirio",
+          "Lavanda"
+        ],
+        "base": [
+          "Haba Tonka",
+          "Almizcle",
+          "Pachulí",
+          "Cachemira"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/hawas-malibu.avif",
+          "alt": "Rasasi Hawas Malibu"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 10000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    },
+    {
+      "id": "hawas-verde",
+      "slug": "hawas-verde",
+      "brand": "Rasasi",
+      "name": "Hawas Verde",
+      "gender": "masculino",
+      "olfactoryFamily": "Cítrica Aromática",
+      "description": "Inspirado en Torino21 de Xerjoff. Lima, manzana verde y romero sobre ámbar y pachulí. Cítrico, verde y aromático, con un fondo cálido que lo sostiene: pensado para el día en primavera y verano.",
+      "notes": {
+        "top": [
+          "Lima",
+          "Manzana Verde"
+        ],
+        "heart": [
+          "Romero"
+        ],
+        "base": [
+          "Ámbar",
+          "Pachulí"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/hawas-verde.avif",
+          "alt": "Rasasi Hawas Verde"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 10000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    },
+    {
+      "id": "kiss",
+      "slug": "kiss",
+      "brand": "Rayhaan",
+      "name": "Kiss",
+      "gender": "femenino",
+      "olfactoryFamily": "Floral Frutal Gourmand",
+      "description": "Inspirado en Marshmallow de Paris Corner. Fresa, coco y frambuesa con corazón de leche condensada, caramelo y flores blancas sobre vainilla, haba tonka y sándalo. Gourmand cremoso y goloso: para el frío y las salidas de noche.",
+      "notes": {
+        "top": [
+          "Fresa",
+          "Coco",
+          "Praliné",
+          "Frambuesa"
+        ],
+        "heart": [
+          "Leche Condensada",
+          "Caramelo",
+          "Flor de Azahar del Naranjo",
+          "Flores Blancas"
+        ],
+        "base": [
+          "Vainilla",
+          "Haba Tonka",
+          "Almizcle",
+          "Sándalo"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/kiss.avif",
+          "alt": "Rayhaan Kiss"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 8000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    },
+    {
+      "id": "reflection",
+      "slug": "reflection",
+      "brand": "Mykonos",
+      "name": "Reflection",
+      "gender": "masculino",
+      "olfactoryFamily": "Almizcle Floral Amaderado",
+      "description": "Inspirado en Symphony de Louis Vuitton. Pomelo, mandarina y notas verdes con corazón de durazno, jazmín y rosa sobre almizcle, cedro y vainilla. Cítrico floral, limpio y elegante: versátil para el día, todo el año.",
+      "notes": {
+        "top": [
+          "Toronja",
+          "Mandarina",
+          "Notas Afrutadas",
+          "Bergamota",
+          "Notas Verdes"
+        ],
+        "heart": [
+          "Durazno",
+          "Jazmín",
+          "Geranio",
+          "Pachulí",
+          "Rosa"
+        ],
+        "base": [
+          "Almizcle",
+          "Ámbar",
+          "Cedro",
+          "Sándalo",
+          "Vainilla"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/reflection.avif",
+          "alt": "Mykonos Reflection"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 9000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    },
+    {
+      "id": "the-kingdom-for-women",
+      "slug": "the-kingdom-for-women",
+      "brand": "Lattafa Perfumes",
+      "name": "The Kingdom For Women",
+      "gender": "femenino",
+      "olfactoryFamily": "Floral Frutal Gourmand",
+      "description": "Pera, peonía y casis con corazón de praliné, jazmín y haba tonka sobre vainilla, almizcle, sándalo y ámbar. Floral frutal goloso y envolvente: perfecto para el día a día en otoño e invierno.",
+      "notes": {
+        "top": [
+          "Pera",
+          "Peonía",
+          "Casis"
+        ],
+        "heart": [
+          "Praliné",
+          "Jazmín",
+          "Haba Tonka"
+        ],
+        "base": [
+          "Vainilla",
+          "Almizcle",
+          "Sándalo",
+          "Ámbar"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/the-kingdom-for-women.avif",
+          "alt": "Lattafa Perfumes The Kingdom For Women"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 8000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    },
+    {
+      "id": "odyssey-candee",
+      "slug": "odyssey-candee",
+      "brand": "Armaf",
+      "name": "Odyssey Candee",
+      "gender": "femenino",
+      "olfactoryFamily": "Floral Frutal Gourmand",
+      "description": "Inspirado en Burberry Her de Burberry. Fresa, frambuesa y durazno con corazón de caramelo, jazmín y maracuyá sobre pachulí, almizcle y ámbar. Frutal gourmand jugoso y dulce: va bien de día y de noche.",
+      "notes": {
+        "top": [
+          "Fresa",
+          "Frambuesa",
+          "Geranio",
+          "Durazno",
+          "Bergamota"
+        ],
+        "heart": [
+          "Caramelo",
+          "Jazmín",
+          "Maracuyá"
+        ],
+        "base": [
+          "Pachulí",
+          "Almizcle",
+          "Ámbar"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/odyssey-candee.avif",
+          "alt": "Armaf Odyssey Candee"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 6000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    },
+    {
+      "id": "ajwad",
+      "slug": "ajwad",
+      "brand": "Lattafa Perfumes",
+      "name": "Ajwad",
+      "gender": "femenino",
+      "olfactoryFamily": "Amaderada Aromática",
+      "description": "Notas afrutadas con corazón de rosa y jazmín sobre vainilla, almizcle, ámbar y cedro. Floral amaderado dulce y elegante, sin estridencias: sirve de día y de noche, todo el año.",
+      "notes": {
+        "top": [
+          "Notas Afrutadas"
+        ],
+        "heart": [
+          "Rosa",
+          "Jazmín"
+        ],
+        "base": [
+          "Vainilla",
+          "Almizcle",
+          "Ámbar",
+          "Cedro"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/ajwad.avif",
+          "alt": "Lattafa Perfumes Ajwad"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 6000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
     }
   ]
 }
