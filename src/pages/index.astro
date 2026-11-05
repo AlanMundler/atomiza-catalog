@@ -463,7 +463,9 @@ const faqs = [
     color: var(--color-primary);
   }
 
-  /* Items apilados para fundido en celu; en PC fluyen en fila. */
+  /* Items apilados para fundido en celu; en PC fluyen en fila. El fade es
+     secuencial, nunca crossfade: el saliente se va en 250 ms y el entrante
+     recién arranca con 280 ms de delay, así las dos frases no se enciman. */
   .promo-strip-items {
     display: grid;
     flex: 1 1 auto;
@@ -480,15 +482,19 @@ const faqs = [
     visibility: hidden;
     transform: translateY(8px);
     transition:
-      opacity 0.45s var(--transition-easing),
-      transform 0.45s var(--transition-easing),
-      visibility 0.45s;
+      opacity 0.25s var(--transition-easing),
+      transform 0.25s var(--transition-easing),
+      visibility 0.25s;
   }
 
   .promo-strip-item.active {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
+    transition:
+      opacity 0.3s var(--transition-easing) 0.28s,
+      transform 0.3s var(--transition-easing) 0.28s,
+      visibility 0s linear 0.28s;
   }
 
   .promo-strip-item strong {

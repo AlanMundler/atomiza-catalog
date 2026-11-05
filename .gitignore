@@ -40,3 +40,6 @@ coverage/
 
 # deepwork state
 .slim/deepwork/
+
+# capturas de auditoría (scratch)
+mockups/

@@ -308,6 +308,16 @@ const waMessage = selectedSize
     gap: 8px;
   }
 
+  /* El FAB de WhatsApp queda fijo a la derecha y, en estas alturas de
+     viewport, el bloque de título entra en su franja al cargar la ficha:
+     se le reserva aire para que el nombre nunca pase por debajo. No toca
+     el layout de PC (el FAB vive en el margen vacío de la grilla). */
+  @media (max-width: 1023px) {
+    .product-detail-header {
+      padding-right: 80px;
+    }
+  }
+
   .product-detail-brand {
     font-family: var(--font-family);
     font-size: var(--font-label-sm-size);

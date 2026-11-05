@@ -51,7 +51,11 @@ import Input from '@/components/ui/Input.astro';
   }
 
   .search .search-input {
-    padding: 8px 0 6px;
-    font-size: 13px;
+    /* Target táctil (WCAG 2.2 / Apple HIG 44pt) y 16px para que iOS no
+       haga zoom automático al enfocar. Solo el input: la toolbar y la
+       grilla conservan su densidad. */
+    min-height: 44px;
+    padding: 12px 0 8px;
+    font-size: 16px;
   }
 </style>
