@@ -4,7 +4,7 @@ import ProductDetail from '@/components/product/ProductDetail.astro';
 import ProductCard from '@/components/catalog/ProductCard.astro';
 import perfumesData from '@/data/perfumes.json';
 import { site, assetUrl } from '@/site.config';
-import { isSizeAvailable } from '@/utils/stock';
+import { DECANT_ML, isSizeAvailable } from '@/utils/stock';
 import { getRelated } from '@/utils/related';
 import type { Perfume } from '@/data/types';
 
@@ -22,7 +22,7 @@ const { perfume } = Astro.props;
 const allPerfumes: Perfume[] = perfumesData.perfumes as Perfume[];
 const related = getRelated(perfume, allPerfumes);
 
-const primarySize = perfume.sizes.find((s) => s.ml === 5) || perfume.sizes[0];
+const primarySize = perfume.sizes.find((s) => s.ml === DECANT_ML) || perfume.sizes[0];
 const productImage = perfume.images[0]?.src;
 const productSchema = {
   '@context': 'https://schema.org',
@@ -68,7 +68,7 @@ const productSchema = {
     <section class="related" aria-labelledby="related-title">
       <div class="container">
         <h2 id="related-title" class="related-title">Podría interesarte</h2>
-        <div class="related-grid">
+        <div class="related-grid" role="list">
           {related.map((p) => (
             <ProductCard perfume={p} />
           ))}

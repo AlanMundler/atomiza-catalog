@@ -188,7 +188,7 @@ const cards = allCards.filter((card) => (card.key === 'decants' ? decants.length
     }
 
     .mode-card:hover .mode-card-ml {
-      opacity: 0.5;
+      opacity: 0.65;
     }
 
     .mode-card:hover .mode-card-cta {
@@ -216,7 +216,11 @@ const cards = allCards.filter((card) => (card.key === 'decants' ? decants.length
     line-height: 1;
     letter-spacing: -0.02em;
     color: var(--mode-accent);
-    opacity: 0.3;
+    /* 0.5 (antes 0.3): marca de agua grande (clamp 40–56px) sobre el fondo
+       de la card; con 0.3 el color compuesto queda en ~2.1:1 y no pasa el
+       3:1 de texto grande (axe color-contrast). Con 0.5 mide ~3.4:1
+       compuesto (decants y frascos) y sigue leyéndose como firma sutil. */
+    opacity: 0.5;
     pointer-events: none;
     user-select: none;
     transition: opacity var(--transition-duration) var(--transition-easing);

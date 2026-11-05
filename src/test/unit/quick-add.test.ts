@@ -34,7 +34,7 @@ describe('initQuickAdd', () => {
     const ev = new MouseEvent('click', { bubbles: true, cancelable: true });
     btn.querySelector('span')!.dispatchEvent(ev);
 
-    expect(ev.defaultPrevented).toBe(true);
+    expect(ev.defaultPrevented).toBe(false);
     expect(seen).toContainEqual({
       type: 'cart:add',
       detail: { perfumeId: 'p1', sizeMl: 5, quantity: 1 },
@@ -55,6 +55,26 @@ describe('initQuickAdd', () => {
 
     expect(adds).toHaveLength(1);
     expect(adds[0].detail).toEqual({ perfumeId: 'p2', sizeMl: 100, quantity: 1 });
+
+    window.removeEventListener('cart:add', onAdd);
+  });
+
+  it('dentro de un link: cancela la navegación del anchor', () => {
+    document.body.innerHTML = `
+      <a class="product-card" href="/producto/p3/" data-perfume-id="p3">
+        <button type="button" data-quick-add data-size-ml="5">+</button>
+      </a>
+    `;
+    const btn = document.querySelector('[data-quick-add]') as HTMLElement;
+    const adds: CustomEvent[] = [];
+    const onAdd = (e: Event) => adds.push(e as CustomEvent);
+    window.addEventListener('cart:add', onAdd);
+
+    const ev = new MouseEvent('click', { bubbles: true, cancelable: true });
+    btn.dispatchEvent(ev);
+
+    expect(ev.defaultPrevented).toBe(true);
+    expect(adds).toHaveLength(1);
 
     window.removeEventListener('cart:add', onAdd);
   });

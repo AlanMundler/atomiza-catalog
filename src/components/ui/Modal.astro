@@ -103,7 +103,9 @@ const modalId = id;
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    transition: opacity var(--transition-duration) var(--transition-easing), visibility var(--transition-duration) var(--transition-easing);
+    transition:
+      opacity var(--transition-duration) var(--transition-easing),
+      visibility 0s linear var(--transition-duration);
   }
 
   .modal {
@@ -127,6 +129,9 @@ const modalId = id;
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
+    transition:
+      opacity var(--transition-duration) var(--transition-easing),
+      visibility 0s;
   }
 
   .modal::backdrop {

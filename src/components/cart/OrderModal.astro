@@ -154,7 +154,13 @@ import { assetUrl, site } from '@/site.config';
     const perfumesMap = await getPerfumesMap();
     const name = nameInput?.value.trim() || '[Tu nombre]';
     const contact = contactInput?.value.trim() || '[Tu WhatsApp/Instagram]';
-    return generateOrderText(cart.items, perfumesMap, name, contact, channel);
+    return generateOrderText({
+      items: cart.items,
+      perfumes: perfumesMap,
+      customerName: name,
+      contact: contact,
+      channel,
+    });
   }
 
   async function refreshPreview() {

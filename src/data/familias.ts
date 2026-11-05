@@ -1,7 +1,7 @@
 import perfumesData from '@/data/perfumes.json';
 import type { Perfume } from '@/data/types';
 
-export interface Familia {
+interface Familia {
   name: string;
   slug: string;
   items: Perfume[];

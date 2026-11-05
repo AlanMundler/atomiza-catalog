@@ -34,6 +34,13 @@ const variantClasses = {
     padding: 3px 10px;
     height: 22px;
     white-space: nowrap;
+    /* Plato negro del sistema (no transparente): el chip cae sobre el área
+       blanca de las fotos (--color-image-bg) en hub/catalogo/home, y los
+       textos de estado claros (#8dba7d/#c5a059/#a3a3a3) sobre blanco dan
+       ~2:1. Sobre este negro pasan de 7:1. En fondos oscuros (SizeSelector,
+       drawer) el plato es apenas más hondo que la superficie: el borde del
+       color de estado mantiene la identidad. Contraste AAA en los 3 estados. */
+    background-color: var(--color-surface-container-lowest);
   }
 
   .chip--in-stock {

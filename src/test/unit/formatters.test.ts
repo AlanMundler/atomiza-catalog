@@ -58,13 +58,13 @@ describe('formatters', () => {
       const items: CartItem[] = [
         { perfumeId: 'tobacco-vanille', size: { ml: 5, price: 1, stock: 2 }, quantity: 1 }
       ];
-      const result = generateOrderText(items, perfumesMap, 'Test', 'Test');
+      const result = generateOrderText({ items, perfumes: perfumesMap, customerName: 'Test', contact: 'Test' });
       expect(result).toContain('$32.000');
       expect(result).not.toContain('$1');
     });
 
     it('includes a correct WhatsApp footer', () => {
-      const result = generateOrderText([], perfumesMap, 'Test', 'Test', 'whatsapp');
+      const result = generateOrderText({ items: [], perfumes: perfumesMap, customerName: 'Test', contact: 'Test', channel: 'whatsapp' });
       expect(result).toContain('Enviar por WhatsApp a ΛTOMIZΛ');
       expect(result).not.toContain('@atomiza.cba');
     });
@@ -190,7 +190,7 @@ describe('formatters', () => {
         { perfumeId: 'tobacco-vanille', size: { ml: 5, price: 32000, stock: 2 }, quantity: 1 },
         { perfumeId: 'hawas-black', size: { ml: 5, price: 10000, stock: 0 }, quantity: 1 }
       ];
-      const result = generateOrderText(items, perfumesMap, 'Test', 'Test');
+      const result = generateOrderText({ items, perfumes: perfumesMap, customerName: 'Test', contact: 'Test' });
       expect(result).toContain('• Tom Ford - Tobacco Vanille (5ml) x1 — $32.000');
       expect(result).not.toContain('Hawas Black');
       expect(result).toContain('💰 TOTAL: $32.000');
@@ -201,7 +201,7 @@ describe('formatters', () => {
       const items: CartItem[] = [
         { perfumeId: 'tobacco-vanille', size: { ml: 5, price: 32000, stock: 2 }, quantity: 5 }
       ];
-      const result = generateOrderText(items, perfumesMap, 'Test', 'Test');
+      const result = generateOrderText({ items, perfumes: perfumesMap, customerName: 'Test', contact: 'Test' });
       expect(result).toContain('x2 — $64.000');
       expect(result).toContain('💰 TOTAL: $64.000');
     });
@@ -261,7 +261,7 @@ describe('formatters', () => {
     ]);
 
     it('generates correct Instagram order text with all sections', () => {
-      const result = generateOrderText(cartItems, perfumesMap, 'Juan Pérez', '+54 9 11 1234-5678', 'instagram');
+      const result = generateOrderText({ items: cartItems, perfumes: perfumesMap, customerName: 'Juan Pérez', contact: '+54 9 11 1234-5678', channel: 'instagram' });
 
       expect(result).toContain('📦 NUEVO PEDIDO - ΛTOMIZΛ');
       expect(result).toContain('👤 Cliente: Juan Pérez');
@@ -278,8 +278,36 @@ describe('formatters', () => {
       expect(result).toContain('Enviar a @atomiza.cba por Instagram DM');
     });
 
+    // Fija el output COMPLETO de un caso típico (carrito con tridente,
+    // canal Instagram): si el texto del pedido cambia sin querer, este
+    // test rompe en vez de diferir silenciosamente.
+    it('snapshot: el texto del pedido típico queda byte a byte igual', () => {
+      const result = generateOrderText({ items: cartItems, perfumes: perfumesMap, customerName: 'Juan Pérez', contact: '+54 9 11 1234-5678', channel: 'instagram' });
+      expect(result).toBe(
+        '📦 NUEVO PEDIDO - ΛTOMIZΛ\n' +
+        '\n' +
+        '👤 Cliente: Juan Pérez\n' +
+        '📱 Contacto: +54 9 11 1234-5678\n' +
+        '\n' +
+        '🛍️ DETALLE:\n' +
+        '• Tom Ford - Tobacco Vanille (5ml) x2 — $64.000\n' +
+        '• Maison Francis Kurkdjian - Baccarat Rouge 540 (5ml) x1 — $42.000\n' +
+        '\n' +
+        '💰 SUBTOTAL: $106.000\n' +
+        '🎁 DESCUENTO TRIDENTE (1 tridente): -$2.000\n' +
+        '\n' +
+        '💰 TOTAL: $104.000\n' +
+        '\n' +
+        '📍 Envío: [A coordinar]\n' +
+        '💳 Pago: [Transferencia / Efectivo / A coordinar]\n' +
+        '\n' +
+        '—\n' +
+        'Enviar a @atomiza.cba por Instagram DM'
+      );
+    });
+
     it('handles empty cart', () => {
-      const result = generateOrderText([], perfumesMap, 'Test', 'Test', 'instagram');
+      const result = generateOrderText({ items: [], perfumes: perfumesMap, customerName: 'Test', contact: 'Test', channel: 'instagram' });
       expect(result).toContain('💰 TOTAL: $0');
     });
 
@@ -287,7 +315,7 @@ describe('formatters', () => {
       const items: CartItem[] = [
         { perfumeId: 'tobacco-vanille', size: { ml: 5, price: 15000, stock: 5 }, quantity: 3 }
       ];
-      const result = generateOrderText(items, perfumesMap, 'Test', 'Test', 'instagram');
+      const result = generateOrderText({ items, perfumes: perfumesMap, customerName: 'Test', contact: 'Test', channel: 'instagram' });
       expect(result).toContain('x2');
       expect(result).toContain('$64.000');
     });
@@ -314,7 +342,7 @@ describe('formatters', () => {
       const items: CartItem[] = [
         { perfumeId: 'six-pack', size: { ml: 5, price: 6000, stock: 10 }, quantity: 3 }
       ];
-      const result = generateOrderText(items, map, 'Test', 'Test');
+      const result = generateOrderText({ items, perfumes: map, customerName: 'Test', contact: 'Test' });
       expect(result).toContain('💰 SUBTOTAL: $18.000');
       expect(result).toContain('🎁 DESCUENTO TRIDENTE (1 tridente): -$2.000');
       expect(result).toContain('💰 TOTAL: $16.000');
@@ -324,7 +352,7 @@ describe('formatters', () => {
       const items: CartItem[] = [
         { perfumeId: 'six-pack', size: { ml: 5, price: 6000, stock: 10 }, quantity: 6 }
       ];
-      const result = generateOrderText(items, map, 'Test', 'Test');
+      const result = generateOrderText({ items, perfumes: map, customerName: 'Test', contact: 'Test' });
       expect(result).toContain('💰 SUBTOTAL: $36.000');
       expect(result).toContain('🎁 DESCUENTO TRIDENTE (2 tridentes): -$6.000');
       expect(result).toContain('💰 TOTAL: $30.000');
@@ -334,7 +362,7 @@ describe('formatters', () => {
       const items: CartItem[] = [
         { perfumeId: 'six-pack', size: { ml: 5, price: 6000, stock: 10 }, quantity: 2 }
       ];
-      const result = generateOrderText(items, map, 'Test', 'Test');
+      const result = generateOrderText({ items, perfumes: map, customerName: 'Test', contact: 'Test' });
       expect(result).toContain('💰 TOTAL: $12.000');
       expect(result).not.toContain('DESCUENTO TRIDENTE');
       expect(result).not.toContain('SUBTOTAL');

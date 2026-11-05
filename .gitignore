@@ -37,3 +37,6 @@ public/data/
 
 # test coverage
 coverage/
+
+# deepwork state
+.slim/deepwork/

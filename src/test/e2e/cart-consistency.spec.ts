@@ -48,8 +48,11 @@ test.describe('Cart consistency', () => {
         quantity: 1
       },
       {
-        perfumeId: 'hawas-black',
-        size: { ml: 5, price: 10000, stock: 0 },
+        // Tiene que ser un perfume que HOY esté sin stock en perfumes.json:
+        // el drawer resuelve el stock contra el catálogo vivo, no contra el
+        // carrito sembrado. Si se repone, este test deja de tener sentido.
+        perfumeId: 'club-de-nuit-intense-man',
+        size: { ml: 5, price: 8000, stock: 0 },
         quantity: 1
       }
     ]);

@@ -595,7 +595,7 @@
       ],
       "isBoutiqueExclusive": false,
       "featured": false,
-      "originalPrice": 55000
+      "originalPrice": 60000
     },
     {
       "id": "delilah",
@@ -686,7 +686,7 @@
       ],
       "isBoutiqueExclusive": true,
       "featured": true,
-      "originalPrice": 55000
+      "originalPrice": 65000
     },
     {
       "id": "ameer-al-oudh",

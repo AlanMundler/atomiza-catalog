@@ -23,7 +23,7 @@ export function pickRandom<T>(items: readonly T[], n: number, rand: () => number
 }
 
 /** Aleatorio criptográfico (sin sesgo de seed diaria): cada visita sortea. */
-export function cryptoRand(): number {
+function cryptoRand(): number {
   try {
     const buf = new Uint32Array(1);
     crypto.getRandomValues(buf);
@@ -55,10 +55,10 @@ export function homeCardHtml(perfume: Perfume, eager = false): string {
     `<div class="product-card" role="listitem"` +
     ` data-perfume-id="${escapeHtml(perfume.id)}" data-gender="${escapeHtml(perfume.gender)}" data-search="${escapeHtml(search)}">` +
     `<a href="${escapeHtml(site.basePath)}producto/${escapeHtml(perfume.slug)}/" class="product-card-link"` +
-    ` aria-label="Ver ${escapeHtml(perfume.brand)} ${escapeHtml(perfume.name)}">` +
+    `>` +
     `<div class="product-card-image-wrapper">` +
     `<img src="${escapeHtml(mainImage)}" alt="${escapeHtml(mainAlt)}" class="product-card-image"` +
-    ` loading="${eager ? 'eager' : 'lazy'}"${eager ? ' fetchpriority="high"' : ''} width="400" height="400">` +
+    ` loading="${eager ? 'eager' : 'lazy'}"${eager ? ' fetchpriority="high"' : ''} decoding="async" width="400" height="400">` +
     (isOutOfStock ? `<div class="product-card-overlay" aria-hidden="true"></div>` : '') +
     `<span class="chip ${variantClass} product-card-stock">${escapeHtml(stockLabel)}</span></div>` +
     `<div class="product-card-info"><span class="product-card-brand">${escapeHtml(perfume.brand)}</span>` +

@@ -48,7 +48,8 @@ const pageDescription = `Decants de 5ml con nota de ${nota.name.toLowerCase()}: 
   {items.length > 0 && (
     <section class="nota-list" aria-label={`Decants con ${nota.name}`}>
       <div class="container">
-        <div class="nota-grid">
+        <h2 class="visually-hidden">Decants con {nota.name}</h2>
+        <div class="nota-grid" role="list">
           {items.map((p) => (
             <ProductCard perfume={p} />
           ))}

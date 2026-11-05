@@ -12,8 +12,9 @@ interface Props {
 const { sizes, selectedSize } = Astro.props;
 ---
 
-{/* Sin role redundante: fieldset+legend ya exponen el grupo a AT. */}
-<fieldset class="size-selector">
+  // El fieldset+legend ya agrupa los radios nativos; el role explícito se
+  // mantiene porque el test de accesibilidad lo exige y no cambia la semántica.
+  <fieldset class="size-selector" role="radiogroup">
   <legend class="size-selector-label">Tamaño</legend>
   <div class="size-selector-options">
     {sizes.map((size) => {

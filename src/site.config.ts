@@ -40,7 +40,8 @@ export const site = {
   // v27: frascos cerrados en Hawas Malibu, Hayaati Gold Elixir, Confidential Private Gold, Your Touch Amber, Qaed Al Fursan y Victoria)
   // v28: Asad Elixir pasa de inspiración Sauvage Elixir a Bottled Absolu (notas y familia corregidas))
   // v29: Club de Nuit Intense Man sin stock)
-  dataVersion: '29',
+  // v30: originalPrice de Glacier Bella y Confidential Private Gold alineado al precio de su frasco 100 ml)
+  dataVersion: '30',
   instagramHandle: 'atomiza.cba',
   instagramUrl: 'https://instagram.com/atomiza.cba',
   tiktokHandle: 'atomiza.cba',

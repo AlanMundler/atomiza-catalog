@@ -54,16 +54,25 @@ const { position = 'right', id, class: className = '' } = Astro.props;
     ).filter((el) => !el.hasAttribute('disabled') && el.offsetParent !== null);
   }
 
-  onWindowOnce('drawer-escape', 'keydown', (e) => {
-    if ((e as KeyboardEvent).key === 'Escape') {
+  onWindowOnce(
+    'drawer-escape',
+    'keydown',
+    (e) => {
+      if ((e as KeyboardEvent).key !== 'Escape') return;
+      // Si hay un modal abierto encima (ej. pedido sobre el carrito), Escape
+      // lo cierra a él; el drawer de abajo debe seguir abierto.
+      if (document.querySelector('dialog[open], [data-modal][open]')) return;
       const openDrawerEl = document.querySelector('.drawer--open');
       if (openDrawerEl) {
         openDrawerEl.closest('[data-drawer-root]')?.dispatchEvent(
           new CustomEvent('drawer:toggle', { detail: { open: false } })
         );
       }
-    }
-  });
+    },
+    // Captura: corre antes de los listeners de burbuja (p. ej. el del modal),
+    // así el `dialog[open]` todavía existe cuando hacemos el chequeo.
+    { capture: true }
+  );
 
   onPageLoad('drawer', () => {
     document.querySelectorAll('[data-drawer-root]').forEach((root) => {
@@ -154,7 +163,12 @@ const { position = 'right', id, class: className = '' } = Astro.props;
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    transition: opacity var(--transition-duration) var(--transition-easing), visibility var(--transition-duration) var(--transition-easing);
+    /* `visibility` se retrasa al cerrar pero no al abrir: si se anima, el
+       backdrop no recibe clicks durante la apertura y el tap se "cuela" a la
+       página de abajo (bug real). */
+    transition:
+      opacity var(--transition-duration) var(--transition-easing),
+      visibility 0s linear var(--transition-duration);
   }
 
   .drawer {
@@ -192,6 +206,9 @@ const { position = 'right', id, class: className = '' } = Astro.props;
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
+    transition:
+      opacity var(--transition-duration) var(--transition-easing),
+      visibility 0s;
   }
 
   .drawer-header {

@@ -36,7 +36,7 @@ const pageDescription = `Decants de 5ml de perfumes árabes de la familia olfati
   <section class="fam-list" aria-labelledby="fam-list-title">
     <div class="container">
       <h2 id="fam-list-title" class="visually-hidden">Decants de {familia.name}</h2>
-      <div class="fam-grid">
+      <div class="fam-grid" role="list">
         {familia.items.map((p) => (
           <ProductCard perfume={p} />
         ))}

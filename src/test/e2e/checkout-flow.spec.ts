@@ -162,9 +162,9 @@ test.describe('Checkout Flow', () => {
     await page.click('[data-add-to-cart]');
     await page.waitForTimeout(300);
 
-    // Click clear cart (accept the confirm dialog)
-    page.once('dialog', (dialog) => dialog.accept());
+    // El vaciado usa el Modal accesible del sitio (no confirm() nativo).
     await page.click('[data-clear-cart]');
+    await page.click('[data-clear-confirm]');
     await page.waitForTimeout(300);
 
     // Cart should be empty

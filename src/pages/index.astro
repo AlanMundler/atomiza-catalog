@@ -76,15 +76,15 @@ const faqs = [
       acceptedAnswer: { '@type': 'Answer', text: faq.answer },
     })),
   }).replace(/</g, '\\u003c')} />
-  <button type="button" class="promo-strip" data-open-tridente aria-haspopup="dialog" aria-label={`Ver promociones: 3 decants ${formatPrice(TRIDENT_DISCOUNT)} menos, 6 ${formatPrice(TRIDENT_BULK_PER_DECANT * 6)} menos, 9 ${formatPrice(TRIDENT_BULK_PER_DECANT * 9)} menos`}>
+  <button type="button" class="promo-strip" data-open-tridente aria-haspopup="dialog">
     <span aria-hidden="true">🎁</span>
-    <strong class="promo-strip-label" aria-hidden="true">Promociones:</strong>
-    <span class="promo-strip-items" aria-hidden="true">
+    <strong class="promo-strip-label">Promociones:</strong>
+    <span class="promo-strip-items">
       <span class="promo-strip-item active" data-promo-item><strong>3</strong> → {formatPrice(TRIDENT_DISCOUNT)} menos</span>
       <span class="promo-strip-item" data-promo-item><strong>6</strong> → {formatPrice(TRIDENT_BULK_PER_DECANT * 6)} menos</span>
       <span class="promo-strip-item" data-promo-item><strong>9</strong> → {formatPrice(TRIDENT_BULK_PER_DECANT * 9)} menos</span>
     </span>
-    <span class="promo-strip-cta" aria-hidden="true">Ver →</span>
+    <span class="promo-strip-cta">Ver →</span>
   </button>
   <section class="hero" aria-labelledby="hero-heading">
     <div class="container">
@@ -124,9 +124,9 @@ const faqs = [
       <div class="home-perfume-head">
         <h2 id="home-perfumes-title" class="section-title">Decants en stock</h2>
       </div>
-      <div class="home-perfume-grid" id="home-perfume-grid">
+      <div class="home-perfume-grid" id="home-perfume-grid" role="list">
         {homePerfumes.map((perfume) => (
-          <div class="home-perfume-item">
+          <div class="home-perfume-item" role="none">
             <ProductCard perfume={perfume} eager />
           </div>
         ))}

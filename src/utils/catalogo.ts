@@ -1,7 +1,7 @@
 /** Lógica pura del filtrado del catálogo (sin DOM, testeable). */
 
 import type { Perfume, PerfumeSize } from '@/data/types';
-import { primarySize } from '@/utils/stock';
+import { DECANT_ML, primarySize } from '@/utils/stock';
 
 const GENDERS: Record<string, string[]> = {
   masculino: ['masculino', 'unisex'],
@@ -50,7 +50,7 @@ export function cardMatches(input: CardMatchInput): boolean {
  */
 export function sizeForMode(perfume: Perfume, mode: 'decants' | 'frascos'): PerfumeSize | undefined {
   if (mode === 'decants') {
-    return perfume.sizes.find((s) => s.ml === 5) || primarySize(perfume);
+    return perfume.sizes.find((s) => s.ml === DECANT_ML) || primarySize(perfume);
   }
   const bottles = perfume.sizes.filter((s) => s.ml >= 90);
   if (bottles.length === 0) return undefined;

@@ -30,7 +30,7 @@ const catalogSchema = {
   ogImage="og-catalogo.jpg"
 >
   <script is:inline type="application/ld+json" set:html={JSON.stringify(catalogSchema).replace(/</g, '\\u003c')} />
-  <!-- Sin sizeMl fijo: el frasco es 100 ml salvo qaed-al-fursan-untamed (90 ml).
+  <!-- Sin sizeMl fijo: el frasco es 100 ml salvo qaed-al-fursan y qaed-al-fursan-untamed (90 ml).
        CatalogView pasa el modo y la card elige el talle de cada producto. -->
   <CatalogView
     perfumes={perfumes}

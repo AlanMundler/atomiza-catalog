@@ -53,7 +53,7 @@ const initialFilter: GenderFilter = urlFilter === 'masculino' || urlFilter === '
   </div>
 </section>
 
-<section class="catalog-results" aria-labelledby="catalog-results-title">
+<section class="catalog-results" data-catalog-page aria-labelledby="catalog-results-title">
   <div class="container">
     <div class="results-header">
       <h2 id="catalog-results-title" class="visually-hidden">Perfumes disponibles</h2>
@@ -71,82 +71,69 @@ const initialFilter: GenderFilter = urlFilter === 'masculino' || urlFilter === '
   import {
     buildResultsText,
     cardMatches,
-    fuzzySearchIds,
     normalizeFilter,
   } from '@/utils/catalogo';
+  import {
+    applyCardVisibility,
+    createFuzzyMatches,
+    isPageActive,
+    readSearchFromUrl,
+    readSearchIndex,
+    setEmptyState,
+    setResultsCount,
+    syncSearchInput,
+    writeSearchToUrl,
+  } from '@/utils/search-page';
+  import type { SearchIndexEntry } from '@/utils/search-page';
 
   let currentFilter = 'all';
   let currentSearch = '';
   let fuzzyMatches: Set<string> | null = null;
-  // Token anti-race: el tecleo rápido dispara varias búsquedas Fuse en
-  // paralelo; solo la última puede escribir el Set.
-  let searchSeq = 0;
 
   function readUrlState() {
     const params = new URL(window.location.href).searchParams;
     currentFilter = normalizeFilter(params.get('filter'));
-    currentSearch = params.get('search') || '';
-  }
-
-  function syncSearchInput() {
-    const input = document.querySelector('[data-search-input]') as HTMLInputElement | null;
-    if (input && input.value !== currentSearch) input.value = currentSearch;
+    currentSearch = readSearchFromUrl();
   }
 
   function applyFilters() {
-    const cards = Array.from(document.querySelectorAll('.product-card')) as HTMLElement[];
-    const countEl = document.querySelector('[data-results-count]') as HTMLElement | null;
-    const emptyEl = document.querySelector('.product-grid-empty') as HTMLElement | null;
-    const gridEl = document.querySelector('.product-grid') as HTMLElement | null;
-
-    let visible = 0;
-    cards.forEach((card) => {
-      const matches = cardMatches({
+    const cards = Array.from(document.querySelectorAll<HTMLElement>('.product-card'));
+    const visible = applyCardVisibility(cards, (card) =>
+      cardMatches({
         gender: card.getAttribute('data-gender') || '',
         searchText: card.getAttribute('data-search') || '',
         perfumeId: card.getAttribute('data-perfume-id') || '',
         filter: currentFilter,
         query: currentSearch,
         fuzzyIds: fuzzyMatches,
-      });
+      })
+    );
 
-      card.style.display = matches ? '' : 'none';
-      if (matches) visible++;
-    });
-
-    if (countEl) {
-      countEl.textContent = buildResultsText(visible, currentFilter, currentSearch);
-    }
-
-    if (emptyEl && gridEl) {
-      emptyEl.hidden = visible !== 0;
-      gridEl.style.display = visible === 0 ? 'none' : '';
-    }
+    setResultsCount(
+      document.querySelector('[data-results-count]'),
+      buildResultsText(visible, currentFilter, currentSearch)
+    );
+    setEmptyState(
+      document.querySelector('.product-grid'),
+      document.querySelector('.product-grid-empty'),
+      visible
+    );
   }
 
   // Recalcula el set de fuzzy matches para la búsqueda actual. Se usa al
-  // escribir (search:change) y al navegar con atrás/adelante (popstate),
-  // porque el Set viejo no sirve para el query nuevo. Devuelve el Set (o
-  // null) y solo lo publica si sigue siendo la búsqueda vigente.
-  async function refreshFuzzyMatches(query: string, seq: number): Promise<void> {
-    if (!query) {
-      if (seq === searchSeq) fuzzyMatches = null;
-      return;
-    }
-    try {
-      const indexEl = document.getElementById('search-index');
-      const indexData: { id: string; text: string }[] = indexEl ? JSON.parse(indexEl.textContent || '[]') : [];
-      const ids = await fuzzySearchIds(indexData, query);
-      if (seq === searchSeq) fuzzyMatches = ids;
-    } catch {
-      if (seq === searchSeq) fuzzyMatches = null;
-    }
+  // escribir (search:change), al navegar con atrás/adelante (popstate) y al
+  // entrar a la página. El índice se relee del DOM cada vez: decants y frascos
+  // tienen índices distintos y cachearlo entre navegaciones dejaría un set
+  // incompleto (regresión detectada en review).
+  function refreshFuzzyMatches() {
+    fuzzyMatches = createFuzzyMatches(readSearchIndex('search-index'), currentSearch);
   }
 
   function applyUrlState() {
     readUrlState();
-    syncSearchInput();
+    syncSearchInput(currentSearch);
     updateActiveChip();
+    refreshFuzzyMatches();
     applyFilters();
   }
 
@@ -159,18 +146,18 @@ const initialFilter: GenderFilter = urlFilter === 'masculino' || urlFilter === '
     });
   }
 
-  onWindowOnce('catalogo-search', 'search:change', async (e) => {
-    currentSearch = (e as CustomEvent).detail?.query || '';
-    const url = new URL(window.location.href);
-    if (currentSearch) {
-      url.searchParams.set('search', currentSearch);
-    } else {
-      url.searchParams.delete('search');
-    }
-    window.history.pushState({}, '', url);
+  onWindowOnce('catalogo-search', 'search:change', (e) => {
+    // Guarda View Transitions: este listener vive en window toda la sesión y,
+    // tras navegar catálogo <-> hub, sigue registrado. Sin este root correría
+    // en la página equivocada (índice inexistente, analytics falso) y una
+    // tecla dispararía los dos handlers.
+    if (!isPageActive('[data-catalog-page]')) return;
 
-    // Búsqueda fuzzy con Fuse.js (lazy-loaded)
-    await refreshFuzzyMatches(currentSearch, ++searchSeq);
+    currentSearch = (e as CustomEvent<{ query?: string }>).detail?.query || '';
+    writeSearchToUrl(currentSearch);
+
+    // Búsqueda fuzzy (lazy-loaded) sobre el índice inline
+    refreshFuzzyMatches();
 
     applyFilters();
     if (currentSearch) {
@@ -182,11 +169,12 @@ const initialFilter: GenderFilter = urlFilter === 'masculino' || urlFilter === '
   // Se recalculan los fuzzy matches porque el Set corresponde al query
   // anterior y si no el filtrado queda incorrecto.
   onWindowOnce('catalogo-popstate', 'popstate', () => {
+    if (!isPageActive('[data-catalog-page]')) return;
     readUrlState();
-    syncSearchInput();
+    syncSearchInput(currentSearch);
     updateActiveChip();
-    const seq = ++searchSeq;
-    void refreshFuzzyMatches(currentSearch, seq).then(() => applyFilters());
+    refreshFuzzyMatches();
+    applyFilters();
   });
 
   onPageLoad('catalogo', () => {

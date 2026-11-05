@@ -100,7 +100,6 @@ export function resolveCartItems(
     } else {
       size = item.size;
     }
-    if (!size) continue;
     const requestedQuantity = Number.isInteger(item.quantity) && item.quantity > 0 ? item.quantity : 1;
     const quantity = Math.min(requestedQuantity, Math.max(size.stock, 0));
     resolved.push({
@@ -121,16 +120,20 @@ function oneLine(value: string, max: number): string {
   return value.replace(/[\r\n]+/g, ' ').trim().slice(0, max);
 }
 
-export function generateOrderText(
-  items: CartItem[],
-  perfumesMap: Map<string, Perfume>,
-  customerName: string,
-  customerContact: string,
-  channel: OrderChannel = 'whatsapp'
-): string {
-  customerName = oneLine(customerName, 80);
-  customerContact = oneLine(customerContact, 120);
-  const resolved = resolveCartItems(items, perfumesMap);
+export interface OrderTextOptions {
+  items: CartItem[];
+  perfumes: Map<string, Perfume>;
+  customerName?: string;
+  contact?: string;
+  channel?: OrderChannel;
+}
+
+export function generateOrderText(options: OrderTextOptions): string {
+  const { items, perfumes } = options;
+  const channel: OrderChannel = options.channel ?? 'whatsapp';
+  const customerName = oneLine(options.customerName ?? '', 80);
+  const customerContact = oneLine(options.contact ?? '', 120);
+  const resolved = resolveCartItems(items, perfumes);
   const orderable = resolved.filter((r) => r.available);
   const excludedCount = resolved.length - orderable.length;
   // Descuento automático por tridente sobre decants comprables.

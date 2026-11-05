@@ -2,7 +2,7 @@ import type { Perfume } from '@/data/types';
 import { isSizeAvailable, primarySize } from '@/utils/stock';
 
 /** Cuántas cards muestra la ficha en "Podría interesarte". */
-export const RELATED_COUNT = 4;
+const RELATED_COUNT = 4;
 
 function normalizar(input: string): string {
   return input
@@ -22,7 +22,8 @@ function gendersCompatible(a: Perfume['gender'], b: Perfume['gender']): boolean 
 /**
  * Afinidad entre la ficha actual y un candidato: misma familia pesa
  * más que el género, las notas compartidas desempatan y el stock
- * disponible evita sugerir decants agotados primero.
+ * del talle primario (decant, o frasco si no tuviera) evita sugerir
+ * primero los agotados.
  */
 export function relatedScore(current: Perfume, candidate: Perfume): number {
   let score = 0;

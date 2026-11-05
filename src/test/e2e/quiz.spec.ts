@@ -6,7 +6,7 @@ const QUIZ = 'quiz/';
 
 async function answerCurrentQuestion(page: Page, optionText: string) {
   const step = page.locator('.quiz-step:not([hidden])');
-  await step.getByRole('button', { name: new RegExp(optionText, 'i') }).click();
+  await step.getByRole('radio', { name: new RegExp(optionText, 'i') }).click();
   const next = page.locator('[data-quiz-next]');
   if ((await next.textContent()) === 'Continuar') {
     // El click en la opción habilita el botón de forma asíncrona: esperar a
@@ -162,7 +162,7 @@ test.describe('Perfume Quiz Flow', () => {
     await page.waitForLoadState('networkidle');
 
     await page.locator('.quiz-step:not([hidden]) .quiz-option').first().click();
-    await expect(page.locator('.quiz-step:not([hidden]) [aria-pressed="true"]')).toHaveCount(1);
+    await expect(page.locator('.quiz-step:not([hidden]) [aria-checked="true"]')).toHaveCount(1);
     await expect(page.locator('[data-quiz-next]')).toBeEnabled();
   });
 });

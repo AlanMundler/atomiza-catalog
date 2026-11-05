@@ -4,7 +4,7 @@ import ProductCard from '@/components/catalog/ProductCard.astro';
 import Faq from '@/components/ui/Faq.astro';
 import perfumesData from '@/data/perfumes.json';
 import { inspiraciones } from '@/data/inspiraciones';
-import { getStockStatus, getStockLabel } from '@/utils/stock';
+import { DECANT_ML, getStockStatus, getStockLabel } from '@/utils/stock';
 import { formatPrice, buildWhatsAppLink } from '@/utils/formatters';
 import { site } from '@/site.config';
 import type { Perfume } from '@/data/types';
@@ -27,7 +27,7 @@ const perfume: Perfume | undefined = (perfumesData.perfumes as Perfume[]).find(
 const pageTitle = `Huele a ${insp.original} · Decant 5ml`;
 const pageDescription = `${insp.perfumeBrand} ${insp.perfumeName}, inspirado en ${insp.original} de ${insp.casa}, en decant de 5ml. Probalo sobre tu piel en ${site.addressLocality} antes de comprar el frasco completo.`;
 
-const primarySize = perfume?.sizes.find((s) => s.ml === 5) || perfume?.sizes[0];
+const primarySize = perfume?.sizes.find((s) => s.ml === DECANT_ML) || perfume?.sizes[0];
 const stockStatus = primarySize ? getStockStatus(primarySize) : undefined;
 const stockLabel = stockStatus ? getStockLabel(stockStatus) : undefined;
 
@@ -98,7 +98,8 @@ const whatsappHref = buildWhatsAppLink(
 
   {perfume && (
     <section class="insp-card" aria-label="Producto sugerido">
-      <div class="container">
+      <h2 class="visually-hidden">Nuestro decant de {insp.original}</h2>
+      <div class="container" role="list">
         <ProductCard perfume={perfume} />
       </div>
     </section>

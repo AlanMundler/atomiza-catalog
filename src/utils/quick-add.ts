@@ -29,10 +29,12 @@ export function initQuickAdd(): void {
       const btn = (target as Element).closest('[data-quick-add]');
       if (!btn || !(btn instanceof HTMLElement)) return;
       if (btn.hasAttribute('disabled')) return;
-      // Frena la navegación del anchor padre (la card entera es un link)
-      // y que el router SPA la procese.
-      e.preventDefault();
-      e.stopPropagation();
+      // Solo hay navegación que frenar si el botón vive dentro de un link
+      // (card clickeable). Si no, el click sigue su curso normal.
+      if (btn.closest('a')) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
       const card = btn.closest('.product-card');
       const perfumeId = card?.getAttribute('data-perfume-id') || '';
       const sizeMl = parseInt(btn.getAttribute('data-size-ml') || '5', 10);

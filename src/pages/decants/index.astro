@@ -106,14 +106,13 @@ const casas = casasDeInspiraciones(items);
 const topCasas = casasPrincipales(casas);
 const otherCasas = casas.filter((c) => !topCasas.includes(c));
 
-const hubSearchIndex = inspiraciones.map((insp) => ({ id: insp.slug, text: searchTextFor(insp) }));
-
 const pageTitle = `Decants inspirados en perfumes famosos · ${site.addressLocality}`;
 const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: decants de 5ml inspirados en Baccarat Rouge, Sauvage, Delina y más, en ${site.addressLocality}.`;
 ---
 
 <Layout title={pageTitle} description={pageDescription} ogImage="og-decants.jpg">
-  <script is:inline type="application/json" id="hub-search-index" set:html={JSON.stringify(hubSearchIndex).replace(/</g, '\\u003c')} />
+  <!-- Fuente única para la búsqueda: el `data-search` de cada card (ver
+       comentario sobre fuzzyIndex en el script). No hay JSON inline duplicado. -->
 
   <section class="hub-hero" aria-labelledby="hub-title">
     <div class="container">
@@ -165,7 +164,7 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
     </div>
   </section>
 
-  <section class="hub-list" aria-label="Aromas famosos en decant">
+  <section class="hub-list" data-hub-page aria-label="Aromas famosos en decant">
     <div class="container">
       <div class="hub-grid">
         {items.map((item, idx) => (
@@ -252,35 +251,62 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
 
 <script>
   import { onPageLoad, onWindowOnce, bindOnce } from '@/utils/view-transitions';
-  import { fuzzySearchIds } from '@/utils/catalogo';
   import {
     HUB_CASA_ALL,
     buildHubCountTextWithCasa,
     hubSearchMatches,
   } from '@/utils/hub';
+  import {
+    applyCardVisibility,
+    buildCardIndex,
+    createFuzzyMatches,
+    isPageActive,
+    readSearchFromUrl,
+    setEmptyState,
+    setResultsCount,
+    syncSearchInput,
+    writeSearchToUrl,
+  } from '@/utils/search-page';
 
   let currentSearch = '';
   // Slug de casa ("" = todas). Va en la URL como ?casa=creed.
   let currentCasa = HUB_CASA_ALL;
   let fuzzyMatches: Set<string> | null = null;
-  // Token anti-race: el tecleo rápido dispara varias búsquedas difusas en
-  // paralelo; solo la última puede escribir el Set.
-  let searchSeq = 0;
   let casasExpanded = false;
+
+  /**
+   * Índice difuso del hub. FUENTE ÚNICA: el `data-search` de cada card. Antes
+   * ese mismo texto viajaba dos veces (JSON inline `hub-search-index` + el
+   * atributo); se dejó solo en las cards porque es lo que ya renderiza el
+   * servidor, lo que usan los e2e y el fallback literal, así no hay JSON
+   * duplicado que descargar ni riesgo de que las dos copias se desincronicen.
+   * No hay flash: el primer pintado filtra con coincidencia literal sobre el
+   * índice ya presente en el DOM.
+   */
+  function fuzzyIndex() {
+    return buildCardIndex(
+      Array.from(document.querySelectorAll<HTMLElement>('[data-hub-card]')),
+      'data-insp-slug',
+      'data-search'
+    );
+  }
+
+  // Recalcula el set difuso para la búsqueda actual. Se usa al escribir y en
+  // popstate, porque el Set anterior no sirve para el query nuevo.
+  function refreshFuzzyMatches() {
+    fuzzyMatches = createFuzzyMatches(fuzzyIndex(), currentSearch);
+  }
 
   function readUrlState() {
     const params = new URL(window.location.href).searchParams;
-    currentSearch = params.get('search') || '';
+    currentSearch = readSearchFromUrl();
     currentCasa = params.get('casa') || HUB_CASA_ALL;
   }
 
   function pushUrl() {
-    const url = new URL(window.location.href);
-    if (currentSearch) url.searchParams.set('search', currentSearch);
-    else url.searchParams.delete('search');
-    if (currentCasa !== HUB_CASA_ALL) url.searchParams.set('casa', currentCasa);
-    else url.searchParams.delete('casa');
-    window.history.pushState({}, '', url);
+    writeSearchToUrl(currentSearch, {
+      casa: currentCasa === HUB_CASA_ALL ? null : currentCasa,
+    });
   }
 
   function casaDisplayFor(slug: string): string | null {
@@ -304,8 +330,7 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
    * nunca mostramos un filtro que no se ve.
    */
   function syncControls() {
-    const input = document.querySelector('[data-search-input]') as HTMLInputElement | null;
-    if (input && input.value !== currentSearch) input.value = currentSearch;
+    syncSearchInput(currentSearch);
 
     document.querySelectorAll<HTMLElement>('[data-casa-chip]').forEach((chip) => {
       const active = chip.getAttribute('data-casa-slug') === currentCasa;
@@ -338,51 +363,29 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
   function applyFilters() {
     const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-hub-card]'));
     const matches = hubSearchMatches(
-      cards.map((c) => ({
-        id: c.getAttribute('data-insp-slug') || '',
-        text: c.getAttribute('data-search') || '',
-      })),
+      buildCardIndex(cards, 'data-insp-slug', 'data-search'),
       currentSearch,
       fuzzyMatches
     );
 
-    let visible = 0;
-    cards.forEach((card) => {
-      const ok =
+    const visible = applyCardVisibility(
+      cards,
+      (card) =>
         matches.has(card.getAttribute('data-insp-slug') || '') &&
-        (currentCasa === HUB_CASA_ALL || card.getAttribute('data-casa-slug') === currentCasa);
-      card.style.display = ok ? '' : 'none';
-      if (ok) visible++;
-    });
+        (currentCasa === HUB_CASA_ALL || card.getAttribute('data-casa-slug') === currentCasa)
+    );
 
-    const countEl = document.querySelector('[data-hub-count]');
-    if (countEl) countEl.textContent = buildHubCountTextWithCasa(visible, casaDisplayFor(currentCasa));
-
-    const emptyEl = document.querySelector('.hub-empty') as HTMLElement | null;
-    const gridEl = document.querySelector('.hub-grid') as HTMLElement | null;
-    if (emptyEl) emptyEl.hidden = visible !== 0;
-    if (gridEl) gridEl.style.display = visible === 0 ? 'none' : '';
+    setResultsCount(
+      document.querySelector('[data-hub-count]'),
+      buildHubCountTextWithCasa(visible, casaDisplayFor(currentCasa))
+    );
+    setEmptyState(
+      document.querySelector('.hub-grid'),
+      document.querySelector('.hub-empty'),
+      visible
+    );
 
     updateCasaFade();
-  }
-
-  // Recalcula el set difuso para la búsqueda actual. Se usa al escribir y en
-  // popstate, porque el Set anterior no sirve para el query nuevo.
-  async function refreshFuzzyMatches(query: string, seq: number): Promise<void> {
-    if (!query) {
-      if (seq === searchSeq) fuzzyMatches = null;
-      return;
-    }
-    try {
-      const indexEl = document.getElementById('hub-search-index');
-      const indexData: { id: string; text: string }[] = indexEl
-        ? JSON.parse(indexEl.textContent || '[]')
-        : [];
-      const ids = fuzzySearchIds(indexData, query);
-      if (seq === searchSeq) fuzzyMatches = ids;
-    } catch {
-      if (seq === searchSeq) fuzzyMatches = null;
-    }
   }
 
   /** Entra filtrado con ?casa=de-una-extra: el chip activo debe quedar a la vista. */
@@ -439,7 +442,8 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
         currentCasa = HUB_CASA_ALL;
         pushUrl();
         syncControls();
-        void refreshFuzzyMatches('', ++searchSeq).then(() => applyFilters());
+        refreshFuzzyMatches();
+        applyFilters();
       });
     });
   }
@@ -450,19 +454,26 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
     updateCasaFade();
   });
 
-  onWindowOnce('decants-hub-search', 'search:change', async (e) => {
+  onWindowOnce('decants-hub-search', 'search:change', (e) => {
+    // Misma guarda que el catálogo: este listener vive en window toda la
+    // sesión tras navegar entre páginas con buscador, y solo debe filtrar
+    // cuando el root del hub está en el DOM.
+    if (!isPageActive('[data-hub-page]')) return;
+
     currentSearch = (e as CustomEvent<{ query?: string }>).detail?.query || '';
     pushUrl();
-    await refreshFuzzyMatches(currentSearch, ++searchSeq);
+    refreshFuzzyMatches();
     applyFilters();
   });
 
   // Back/forward: se re-lee la URL (búsqueda y casa) y se recalculan los matches difusos.
   onWindowOnce('decants-hub-popstate', 'popstate', () => {
+    if (!isPageActive('[data-hub-page]')) return;
     readUrlState();
     syncControls();
     revealActiveChip();
-    void refreshFuzzyMatches(currentSearch, ++searchSeq).then(() => applyFilters());
+    refreshFuzzyMatches();
+    applyFilters();
   });
 
   onPageLoad('decants-hub', () => {
@@ -473,10 +484,10 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
     setupClear();
     revealActiveChip();
 
-    // Primer pintado con el estado de la URL (coincidencia literal, sin
-    // esperar al fuzzy); después se corrige con el set difuso.
+    // Primer pintado con el estado de la URL, ya con el set difuso calculado
+    // (coincidencia literal priorizada dentro de hubSearchMatches).
+    refreshFuzzyMatches();
     applyFilters();
-    void refreshFuzzyMatches(currentSearch, ++searchSeq).then(() => applyFilters());
   });
 </script>
 
@@ -880,12 +891,13 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
   }
 
   /* Esquina libre: las botellas pisan el borde inferior, arriba a la
-     izquierda el chip nunca pisa una foto. */
+     izquierda el chip nunca pisa una foto. El plato oscuro del chip lo pone
+     Chip.astro; acá solo posición (antes había un fondo blanco 0.85 que
+     hundía el contraste del texto de estado sobre la foto). */
   .hub-card-stock {
     position: absolute;
     top: 8px;
     left: 8px;
-    background-color: rgba(255, 255, 255, 0.85);
   }
 
   .hub-card-info {
