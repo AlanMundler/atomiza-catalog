@@ -8,7 +8,7 @@
 ## Secciones principales
 
 - Inicio: https://atomiza.com.ar/
-- Catálogo de decants: https://atomiza.com.ar/catalogo/
+- Catálogo de decants: https://atomiza.com.ar/catalogo/decants/
 - Descubrí tu perfume (quiz de 5 preguntas): https://atomiza.com.ar/quiz/
 - Promoción tridente (cada 3 decants, $2.000 menos; 6 o más, $1.000 por decant): https://atomiza.com.ar/tridentes/
 - Decants por aroma famoso (inspirados en Baccarat Rouge, Sauvage, Delina y más): https://atomiza.com.ar/decants/

@@ -6,8 +6,9 @@ import Faq from '@/components/ui/Faq.astro';
 import { DECANT_ML, isDecantSize, isSizeAvailable, sizeStockMessage } from '@/utils/stock';
 import { buildWhatsAppLink, formatPrice } from '@/utils/formatters';
 import { TRIDENT_DISCOUNT } from '@/utils/trident';
+import { resenas, resenasRating, hasResenas } from '@/data/resenas';
 import { site } from '@/site.config';
-import type { Perfume } from '@/data/types';
+import type { Perfume, PerfumeSize } from '@/data/types';
 
 interface Props {
   perfume: Perfume;
@@ -23,14 +24,32 @@ const selectedSize =
   perfume.sizes[0];
 const available = selectedSize ? isSizeAvailable(selectedSize) : false;
 const countdownMessage = selectedSize ? sizeStockMessage(selectedSize) : null;
-// Ancla de precio: solo si hay talle seleccionado y el frasco completo de
-// este mismo producto no cuesta más que el número cargado. Si `originalPrice`
-// quedó por debajo de lo que cobramos, es dato viejo y no se muestra.
-const ownBottleSize = perfume.sizes.find((s) => !isDecantSize(s));
-const showPriceAnchor =
-  selectedSize != null &&
-  typeof perfume.originalPrice === 'number' &&
-  (!ownBottleSize || perfume.originalPrice >= ownBottleSize.price);
+// Ancla de precio honesta:
+// - Si el producto tiene frasco propio (un talle de ml >= 90), el "ancla de
+//   mercado" mentía: `originalPrice` ES el precio de nuestro frasco, así que
+//   mostramos la comparación real decant ↔ frasco (qué % del frasco ocupa el
+//   decant + precio y $/ml de cada uno).
+// - Sin frasco propio pero con `originalPrice`, se mantiene el ancla de
+//   mercado (ahí sí es un precio externo que da contexto).
+// - Sin ninguna de las dos, no se muestra ancla.
+const BOTTLE_MIN_ML = 90;
+const bottleSize = perfume.sizes.find((s) => s.ml >= BOTTLE_MIN_ML);
+const decantSize = perfume.sizes.find((s) => isDecantSize(s));
+const pricePerMl = (size: PerfumeSize) => Math.round(size.price / size.ml);
+// % del frasco que ocupa el decant (5/100 => 5%) y cuántas veces rinde el
+// frasco comparado con el decant (100/5 => 20×). Redondeados a entero.
+const bottlePct = bottleSize && decantSize ? Math.round((decantSize.ml / bottleSize.ml) * 100) : null;
+const bottleYield = bottleSize && decantSize ? Math.round(bottleSize.ml / decantSize.ml) : null;
+const anchorMode: 'bottle' | 'market' | 'none' =
+  selectedSize != null && bottleSize != null && decantSize != null
+    ? 'bottle'
+    : selectedSize != null && bottleSize == null && typeof perfume.originalPrice === 'number'
+      ? 'market'
+      : 'none';
+const showPriceAnchor = anchorMode !== 'none';
+// Dos reseñas reales para el punto de decisión: las de texto completo
+// (Google trunca la primera con "..."). Nunca inventar testimonios.
+const fichaResenas = resenas.filter((r) => !r.text.endsWith('...')).slice(0, 2);
 // Sin talles cargados no se puede consultar precio: link genérico en vez
 // de crashear el build en `selectedSize.price`.
 const waMessage = selectedSize
@@ -130,13 +149,39 @@ const waMessage = selectedSize
         </a>
       </div>
 
-      {selectedSize && showPriceAnchor && (
+      {/* Ancla honesta: comparación decant ↔ frasco cuando el producto
+          tiene frasco propio; ancla de mercado solo si no lo tiene. */}
+      {showPriceAnchor && anchorMode === 'bottle' && decantSize && bottleSize && (
+        <div class="price-anchor">
+          <p class="price-anchor-text">
+            <strong>{decantSize.ml} ml = {bottlePct}% del frasco</strong>. Un frasco de {bottleSize.ml} ml rinde <strong>{bottleYield}×</strong> este decant: el decant es la entrada, te lo ponés unos días y el frasco completo lo llevás si te convence.
+          </p>
+          <p class="price-anchor-compare">
+            Decant {decantSize.ml} ml <strong>{formatPrice(decantSize.price)}</strong> · <strong>{formatPrice(pricePerMl(decantSize))}/ml</strong>
+            <span class="price-anchor-sep" aria-hidden="true">—</span>
+            Frasco {bottleSize.ml} ml <strong>{formatPrice(bottleSize.price)}</strong> · <strong>{formatPrice(pricePerMl(bottleSize))}/ml</strong>
+          </p>
+        </div>
+      )}
+
+      {showPriceAnchor && anchorMode === 'market' && selectedSize && (
         <div class="price-anchor">
           <p class="price-anchor-text">
             Un frasco completo de {perfume.brand} {perfume.name} ronda los <strong>{formatPrice(perfume.originalPrice!)}</strong>. Probalo primero por <strong>{formatPrice(selectedSize.price)}</strong> y decidí después.
           </p>
         </div>
       )}
+
+      <div class="trust-strip" role="list" aria-label="Garantías de la compra">
+        <span class="trust-item" role="listitem">{site.trust.origin}</span>
+        <span class="trust-item" role="listitem">{site.trust.delivery}</span>
+        {hasResenas && (
+          <span class="trust-item trust-item--rating" role="listitem">
+            <span class="trust-star" aria-hidden="true">★</span>
+            {resenasRating.ratingValue.toFixed(1)} en Google · {resenasRating.reviewCount} reseñas
+          </span>
+        )}
+      </div>
 
       <a href={`${site.basePath}tridentes/`} class="trident-cta">
         <span class="trident-cta-text">3 decants = {formatPrice(TRIDENT_DISCOUNT)} menos, automático</span>
@@ -157,6 +202,35 @@ const waMessage = selectedSize
           ctaVariant="link"
         />
       </div>
+
+      {/* Reseñas reales de Google al pie del bloque de compra: nunca arriba
+          de los CTAs para no empujarlos en mobile. */}
+      {fichaResenas.length > 0 && (
+        <div class="product-reviews">
+          <p class="product-reviews-title">Clientes reales en Google</p>
+          <div class="product-reviews-grid">
+            {fichaResenas.map((r) => (
+              <figure class="product-review">
+                <div class="product-review-stars" role="img" aria-label={`${r.rating} de 5 estrellas`}>
+                  {'★'.repeat(r.rating)}{'☆'.repeat(Math.max(0, 5 - r.rating))}
+                </div>
+                <blockquote class="product-review-text">“{r.text}”</blockquote>
+                <figcaption class="product-review-name">{r.name} · {r.locality}</figcaption>
+              </figure>
+            ))}
+          </div>
+          {site.googleReviewsUrl && (
+            <a
+              href={site.googleReviewsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="product-reviews-link"
+            >
+              Ver todas en Google
+            </a>
+          )}
+        </div>
+      )}
     </div>
   </div>
 </article>
@@ -491,6 +565,76 @@ const waMessage = selectedSize
     font-weight: 600;
   }
 
+  /* Segunda línea del ancla decant ↔ frasco: los dos precios con su $/ml. */
+  .price-anchor-compare {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    line-height: var(--font-body-md-line-height);
+    letter-spacing: var(--font-body-md-tracking);
+    color: var(--color-on-surface-variant);
+    margin: 8px 0 0;
+  }
+
+  .price-anchor-compare strong {
+    color: var(--color-on-surface);
+    font-weight: 600;
+  }
+
+  .price-anchor-sep {
+    margin: 0 8px;
+    color: var(--color-primary);
+  }
+
+  /* Trust strip: tres garantías cortas bajo los CTAs. Uppercase label como
+     el resto de la ficha; check en dorado, la estrella solo en la línea
+     de rating. */
+  .trust-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    padding: var(--spacing-stack-sm) var(--spacing-stack-md);
+    background-color: var(--color-surface-container-high);
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: var(--border-radius);
+  }
+
+  .trust-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    line-height: var(--font-label-sm-line-height);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+  }
+
+  .trust-item::before {
+    content: '✓';
+    color: var(--color-primary);
+    flex-shrink: 0;
+  }
+
+  .trust-item--rating::before {
+    content: none;
+  }
+
+  .trust-star {
+    color: var(--color-primary);
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 640px) {
+    .trust-strip {
+      flex-direction: column;
+      gap: 8px;
+    }
+  }
+
   .stock-countdown {
     display: flex;
     flex-direction: column;
@@ -614,5 +758,86 @@ const waMessage = selectedSize
     text-transform: uppercase;
     color: var(--color-on-surface-variant);
     margin: 0 0 12px;
+  }
+
+  /* Reseñas reales al pie del bloque de compra (después de la FAQ): en
+     mobile nunca empujan los CTAs porque van por debajo de ellos. */
+  .product-reviews {
+    padding-top: var(--spacing-stack-sm);
+    border-top: var(--border-width) solid var(--color-outline-variant);
+  }
+
+  .product-reviews-title {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+    margin: 0 0 12px;
+  }
+
+  .product-reviews-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  @media (min-width: 641px) {
+    .product-reviews-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .product-review {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+    padding: var(--spacing-stack-sm);
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: var(--border-radius);
+    background-color: var(--color-surface-container);
+  }
+
+  .product-review-stars {
+    font-size: 14px;
+    color: var(--color-primary);
+    letter-spacing: 2px;
+  }
+
+  .product-review-text {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    line-height: var(--font-body-md-line-height);
+    letter-spacing: var(--font-body-md-tracking);
+    color: var(--color-on-surface);
+    margin: 0;
+  }
+
+  .product-review-name {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+  }
+
+  .product-reviews-link {
+    display: inline-block;
+    margin-top: 12px;
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-primary);
+    text-decoration: none;
+    border-bottom: var(--border-width) solid var(--color-primary);
+  }
+
+  .product-reviews-link:hover {
+    color: var(--color-primary-container);
+    border-color: var(--color-primary-container);
   }
 </style>

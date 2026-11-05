@@ -59,10 +59,25 @@ export const site = {
   // hasta tenerlo: el CTA "Dejá tu opinión" de la home solo aparece si
   // está configurado.
   googleReviewsUrl: 'https://g.page/r/CTDxPbtfWpKJEAE/review',
+  // Trust strip de la ficha de producto (debajo de los CTAs). La tercera
+  // línea se compone con los datos reales de `src/data/resenas.ts`.
+  trust: {
+    origin: 'Sale de un frasco original y sellado',
+    delivery: 'Entrega en mano o Uber en Córdoba Capital',
+  },
   whatsappNumber: '5493518752159',
   whatsappUrl: 'https://wa.me/5493518752159',
   whatsappMessage: 'Hola, quiero hacer un pedido',
   phoneDisplay: '54 9 351 875-2159',
+  // Modal de pedido: modalidades de entrega que el cliente puede elegir.
+  // La clave viaja a `generateOrderText({ delivery })`; el valor es el texto
+  // visible (chip del modal y línea del mensaje). `coordinar` es el default
+  // y NO agrega una línea propia: el pedido ya dice "📍 Envío: [A coordinar]".
+  delivery: {
+    coordinar: 'A coordinar',
+    mano: 'Entrega en mano (Córdoba)',
+    uber: 'Envío por Uber',
+  },
   currency: 'ARS',
   // Localización (Córdoba, Argentina) para SEO local y schema de negocio.
   addressLocality: 'Córdoba Capital',

@@ -76,3 +76,15 @@ Ya existen: `view_item_list`, `select_item`, `view_item`, `add_to_cart`, `view_c
 - Tira de promos: nunca más de 1 visible a la vez (80 muestras cada 50 ms → 0 solapamientos).
 - FAB de WhatsApp: 0 intersecciones con H1/CTA/precio en 3 fichas × 320/390/1440.
 - Buscador: 44 px y 16 px de fuente en catálogo y hub (antes 31 px / 13 px).
+
+## Implementado el 2026-11-05 (paquete de bajo riesgo, commit `67d03c7` + siguiente)
+
+| Propuesta | Estado | Evidencia |
+|---|---|---|
+| #2 Eliminar portada de catálogo | ✅ `/catalogo/` redirige a `/catalogo/decants/` (sitemap excluye el redirect); home→ficha en **2 clics** | Playwright: `/` → `/catalogo/decants/` (73 cards) → `/producto/24-carat-white-gold/` |
+| #6 Ancla decant↔frasco honesta | ✅ con frasco: "5 ml = {x}% del frasco" + $/ml de ambos; sin frasco: ancla de mercado; sin datos: no muestra | glacier-bella: "5 ml = 5%…", "$1.200/ml vs $600/ml"; luminous-sahara: ancla de mercado; ajwad: sin ancla |
+| #5 Modal "Armar pedido" | ✅ 1 CTA primario, preview colapsable, chips de entrega (la línea reemplaza el placeholder) | modal: title "Armar pedido", 1 `.btn--primary`, `details` cerrado, opciones `coordinar/mano/uber` |
+| #7 Reseñas + trust en la ficha | ✅ trust strip 3 ítems + 2 reseñas reales + link a Google | 3 `.trust-item`, 2 `.product-review`, link `g.page/r/…` |
+
+Pendiente de aprobación: #1 buybox PDP, #3 tridente en PLP/PDP, #4 home merchandizada, #8 PLP densa, #9 quiz 3 resultados, #10 aviso de reposición.
+

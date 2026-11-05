@@ -23,7 +23,7 @@ export function cartEmptyHtml(): string {
       </svg>
       <p class="cart-empty-text">Tu carrito está vacío</p>
       <p class="cart-empty-subtext">Agrega decants desde el catálogo</p>
-      <a href="${assetUrl('catalogo/')}" class="btn btn--primary btn--md empty-cta">Ver catálogo</a>
+      <a href="${assetUrl('catalogo/decants/')}" class="btn btn--primary btn--md empty-cta">Ver catálogo</a>
     </div>
   `;
 }
@@ -48,7 +48,7 @@ export function cartContentHtml(items: CartItem[], perfumesMap: Map<string, Perf
     dots += `<i class="${i < orderableCount ? 'on' : ''}"></i>`;
   }
   const tridentNudge = orderableCount > 0 && missing > 0
-    ? `<a class="trident-nudge" href="${assetUrl('catalogo/')}"><span class="trident-dots" aria-hidden="true">${dots}</span><span>Te falta${missing === 1 ? '' : 'n'} ${missing} para −${formatPrice(TRIDENT_DISCOUNT)}</span><span aria-hidden="true">→</span></a>`
+    ? `<a class="trident-nudge" href="${assetUrl('catalogo/decants/')}"><span class="trident-dots" aria-hidden="true">${dots}</span><span>Te falta${missing === 1 ? '' : 'n'} ${missing} para −${formatPrice(TRIDENT_DISCOUNT)}</span><span aria-hidden="true">→</span></a>`
     : tridentes > 0
       ? `<p class="trident-nudge trident-nudge--ready"><span aria-hidden="true">✓</span><span>${tridentes} ${tridentes === 1 ? 'tridente' : 'tridentes'}: −${formatPrice(discount)} en tu pedido</span></p>`
       : '';
@@ -85,7 +85,7 @@ export function cartContentHtml(items: CartItem[], perfumesMap: Map<string, Perf
       }
       <p class="order-summary-note">El total final se confirma al coordinar el envío</p>
       <button type="button" class="btn btn--primary btn--lg order-summary-btn" data-finalize-order>
-        Finalizar pedido
+        Armar pedido
       </button>
     </div>
   `;

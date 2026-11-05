@@ -1,7 +1,7 @@
 import { test, expect } from './test';
 
 const HOME = '.';
-const CATALOG = 'catalogo/';
+const CATALOG = 'catalogo/decants/';
 const PRODUCT_1 = 'producto/baroque-rouge-540/';
 const PRODUCT_2 = 'producto/luminous-sahara/';
 
@@ -81,6 +81,75 @@ test.describe('Checkout Flow', () => {
     // Test copy button
     await page.click('[data-copy-order]');
     await expect(page.locator('[data-copy-order]')).toContainText('¡Copiado!');
+  });
+
+  test('simplified order modal: one primary CTA, collapsible preview, delivery chips', async ({ page }) => {
+    await page.goto(PRODUCT_1);
+    await page.waitForLoadState('networkidle');
+    await page.click('[data-add-to-cart]');
+    await page.waitForTimeout(300);
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(300);
+
+    // El botón del carrito ya no promete pago online: es "Armar pedido".
+    await page.click('[data-cart-trigger]');
+    await page.waitForTimeout(300);
+    await expect(page.locator('[data-finalize-order]')).toHaveText('Armar pedido');
+
+    await page.click('[data-finalize-order]');
+    await page.waitForTimeout(300);
+    const modal = page.locator('#order-modal dialog[open]');
+    await expect(modal).toBeVisible();
+    await expect(modal.locator('.modal-title')).toHaveText('Armar pedido');
+
+    // Jerarquía de CTAs: WhatsApp es el ÚNICO primario; Instagram y Copiar
+    // son secundarios en la fila discreta de abajo.
+    await expect(modal.locator('.order-modal-actions .btn--primary')).toHaveCount(1);
+    await expect(page.locator('[data-send-whatsapp]')).toHaveClass(/btn--primary/);
+    await expect(page.locator('[data-send-instagram]')).toHaveClass(/btn--secondary/);
+    await expect(page.locator('[data-copy-order]')).toHaveClass(/btn--secondary/);
+
+    // Microcopy de confianza bajo el CTA, con la cuenta mencionada.
+    await expect(modal.locator('.order-modal-note')).toContainText(
+      'Te respondemos hoy y coordinamos pago y entrega.'
+    );
+    await expect(modal.locator('.order-modal-note')).toContainText('@atomiza.cba');
+
+    // El preview arranca cerrado y NO se abre solo.
+    const details = modal.locator('.order-preview-details');
+    await expect(details).toHaveJSProperty('open', false);
+    await page.waitForTimeout(400);
+    await expect(details).toHaveJSProperty('open', false);
+    await expect(details.locator('summary')).toHaveText('Ver el mensaje del pedido');
+
+    await page.fill('#customer-name', 'Juan Pérez');
+    await page.fill('#customer-contact', '+54 9 11 1234-5678');
+    await page.waitForTimeout(200);
+    const preview = page.locator('#order-preview');
+    await expect(preview).toHaveValue(/Juan Pérez/);
+
+    // "A coordinar" (default) no ensucia el mensaje: sin línea 🚚.
+    await expect(preview).toHaveValue(/📍 Envío: \[A coordinar\]/);
+    await expect(preview).not.toHaveValue(/🚚/);
+
+    // "Entrega en mano" agrega la línea 🚚 y reemplaza el placeholder.
+    await page.locator('.delivery-chip').filter({ hasText: 'Entrega en mano (Córdoba)' }).click();
+    await page.waitForTimeout(200);
+    await expect(preview).toHaveValue(/🚚 Entrega: Entrega en mano \(Córdoba\)/);
+    await expect(preview).not.toHaveValue(/📍 Envío: \[A coordinar\]/);
+
+    // Volver a "A coordinar" saca la línea de nuevo.
+    await page.locator('.delivery-chip').filter({ hasText: 'A coordinar' }).click();
+    await page.waitForTimeout(200);
+    await expect(preview).not.toHaveValue(/🚚/);
+    await expect(preview).toHaveValue(/📍 Envío: \[A coordinar\]/);
+
+    // Al abrir el <details> el texto se muestra y es seleccionable, y el
+    // auto-resize (que se saltea mientras está cerrado) ya lo deja visible.
+    await details.locator('summary').click();
+    await expect(preview).toBeVisible();
+    const previewHeight = await preview.evaluate((el) => el.clientHeight);
+    expect(previewHeight).toBeGreaterThan(40);
   });
 
   test('should apply the automatic tridente discount with 3 decants', async ({ page }) => {

@@ -21,6 +21,9 @@ export function escapeHtml(value: string | number | null | undefined): string {
 
 export type OrderChannel = 'whatsapp' | 'instagram';
 
+/** Clave de entrega elegida en el modal (ver `site.delivery` en site.config). */
+export type DeliveryKey = keyof typeof site.delivery;
+
 export interface ResolvedCartItem {
   perfumeId: string;
   perfume: Perfume | null;
@@ -126,6 +129,14 @@ export interface OrderTextOptions {
   customerName?: string;
   contact?: string;
   channel?: OrderChannel;
+  /**
+   * Entrega elegida en el modal. `'coordinar'` (default) deja el mensaje
+   * idéntico a siempre: la línea `🚚 Entrega:` solo aparece con una opción
+   * concreta, y en ese caso reemplaza al placeholder `📍 Envío: [A
+   * coordinar]` para que un pedido "por Uber" no se contradiga diciendo
+   * también "a coordinar".
+   */
+  delivery?: DeliveryKey;
 }
 
 export function generateOrderText(options: OrderTextOptions): string {
@@ -133,6 +144,13 @@ export function generateOrderText(options: OrderTextOptions): string {
   const channel: OrderChannel = options.channel ?? 'whatsapp';
   const customerName = oneLine(options.customerName ?? '', 80);
   const customerContact = oneLine(options.contact ?? '', 120);
+  const delivery = options.delivery ?? 'coordinar';
+  // Lookup defensivo: una clave inválida (storage tocado a mano) cae al
+  // default y no imprime "undefined" en el pedido.
+  const deliveryLabel =
+    delivery !== 'coordinar'
+      ? (site.delivery as Record<string, string>)[delivery]
+      : undefined;
   const resolved = resolveCartItems(items, perfumes);
   const orderable = resolved.filter((r) => r.available);
   const excludedCount = resolved.length - orderable.length;
@@ -176,9 +194,14 @@ export function generateOrderText(options: OrderTextOptions): string {
       `💰 TOTAL: ${formatPrice(total)}`,
     );
   }
+  lines.push('');
+  if (deliveryLabel) {
+    // La opción concreta reemplaza al placeholder (nunca las dos líneas).
+    lines.push(`🚚 Entrega: ${deliveryLabel}`);
+  } else {
+    lines.push('📍 Envío: [A coordinar]');
+  }
   lines.push(
-    '',
-    '📍 Envío: [A coordinar]',
     '💳 Pago: [Transferencia / Efectivo / A coordinar]',
     '',
     '—',

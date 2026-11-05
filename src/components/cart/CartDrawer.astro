@@ -355,7 +355,10 @@ import Modal from '@/components/ui/Modal.astro';
   }
 
   .cart-items {
-    flex: 1;
+    /* `flex: 1` estiraba la lista aunque hubiera 1-2 items: el hueco entre
+       el último item y el resumen era espacio muerto. Con altura natural la
+       lista solo encoge (y scrollea) cuando no entra. */
+    flex: 0 1 auto;
     min-height: 0;
     overflow-y: auto;
     scrollbar-width: thin;

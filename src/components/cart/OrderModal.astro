@@ -6,7 +6,7 @@ import { assetUrl, site } from '@/site.config';
 
 <Modal 
   id="order-modal"
-  title="Finalizar pedido"
+  title="Armar pedido"
   class="order-modal"
 >
   <div class="order-modal-content">
@@ -27,7 +27,7 @@ import { assetUrl, site } from '@/site.config';
         </li>
       </ol>
     </nav>
-    <p class="order-modal-text">Completa tus datos y elegí cómo enviar el pedido:</p>
+    <p class="order-modal-text">Completá tus datos y elegí cómo querés recibir el pedido:</p>
 
     <div class="form-group">
       <label for="customer-name" class="form-label">Nombre completo</label>
@@ -60,18 +60,39 @@ import { assetUrl, site } from '@/site.config';
     <p class="form-error" id="order-form-error" data-form-error hidden role="alert"></p>
 
     <div class="form-group">
-      <label for="order-preview" class="form-label">Mensaje del pedido</label>
+      <span class="form-label" id="order-delivery-label">Entrega</span>
+      <div class="delivery-options" role="radiogroup" aria-labelledby="order-delivery-label">
+        {Object.entries(site.delivery).map(([value, label]) => (
+          <label class="delivery-chip">
+            <input
+              type="radio"
+              class="delivery-radio"
+              name="order-delivery"
+              value={value}
+              checked={value === 'coordinar'}
+              data-delivery-option
+            />
+            <span class="delivery-chip-text">{label}</span>
+          </label>
+        ))}
+      </div>
+    </div>
+
+    <details class="order-preview-details">
+      <summary class="order-preview-summary">Ver el mensaje del pedido</summary>
       <textarea
         id="order-preview"
         class="form-textarea order-preview"
         readonly
+        aria-label="Mensaje del pedido"
       ></textarea>
-    </div>
+    </details>
 
     <div class="order-modal-actions">
       <Button 
         variant="primary" 
-        class="order-modal-btn"
+        size="lg"
+        class="order-modal-btn order-modal-btn--main"
         data-send-whatsapp
         aria-label="Enviar por WhatsApp"
       >
@@ -80,41 +101,44 @@ import { assetUrl, site } from '@/site.config';
         </span>
         <span class="order-modal-btn-label">Enviar por WhatsApp</span>
       </Button>
-      <Button 
-        variant="secondary" 
-        class="order-modal-btn"
-        data-send-instagram
-        aria-label="Enviar por Instagram"
-      >
-        <span class="order-modal-btn-icon">
-          <img src={assetUrl('images/icons/instagram.svg')} width="26" height="26" alt="" aria-hidden="true" />
-        </span>
-        <span class="order-modal-btn-label">Enviar por Instagram</span>
-      </Button>
-      <Button 
-        variant="secondary" 
-        class="order-modal-btn order-modal-btn--copy"
-        data-copy-order
-        aria-label="Copiar mensaje"
-      >
-        <span class="order-modal-btn-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-          </svg>
-        </span>
-        <span class="order-modal-btn-label">Copiar mensaje</span>
-      </Button>
-    </div>
 
-    <p class="order-modal-note">Al enviar coordinamos por mensaje el pago y la entrega. El pedido se envía a <strong>@{site.instagramHandle}</strong></p>
+      <p class="order-modal-note">Te respondemos hoy y coordinamos pago y entrega. El pedido va a <strong>@{site.instagramHandle}</strong></p>
+
+      <div class="order-modal-actions-secondary">
+        <Button 
+          variant="secondary" 
+          class="order-modal-btn order-modal-btn--alt"
+          data-send-instagram
+          aria-label="Enviar por Instagram"
+        >
+          <span class="order-modal-btn-icon">
+            <img src={assetUrl('images/icons/instagram.svg')} width="20" height="20" alt="" aria-hidden="true" />
+          </span>
+          <span class="order-modal-btn-label">Instagram</span>
+        </Button>
+        <Button 
+          variant="secondary" 
+          class="order-modal-btn order-modal-btn--alt"
+          data-copy-order
+          aria-label="Copiar mensaje"
+        >
+          <span class="order-modal-btn-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+          </span>
+          <span class="order-modal-btn-label">Copiar mensaje</span>
+        </Button>
+      </div>
+    </div>
   </div>
 </Modal>
 
 <script>
   import { getCart } from '@/utils/cart';
   import { generateOrderText, buildWhatsAppLink, resolveCartItems } from '@/utils/formatters';
-  import type { OrderChannel } from '@/utils/formatters';
+  import type { DeliveryKey, OrderChannel } from '@/utils/formatters';
   import { getPerfumesMap } from '@/utils/perfumes-client';
   import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
   import { site } from '@/site.config';
@@ -123,22 +147,30 @@ import { assetUrl, site } from '@/site.config';
   const INSTAGRAM_HANDLE = site.instagramHandle;
   const ORDER_FORM_STORAGE_KEY = site.storage.orderForm;
 
-  function loadSavedForm(): { name: string; contact: string } {
+  function isDeliveryKey(value: unknown): value is DeliveryKey {
+    return typeof value === 'string' && Object.prototype.hasOwnProperty.call(site.delivery, value);
+  }
+
+  function loadSavedForm(): { name: string; contact: string; delivery: DeliveryKey } {
     try {
       const stored = localStorage.getItem(ORDER_FORM_STORAGE_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
-        return { name: parsed.name || '', contact: parsed.contact || '' };
+        return {
+          name: parsed.name || '',
+          contact: parsed.contact || '',
+          delivery: isDeliveryKey(parsed.delivery) ? parsed.delivery : 'coordinar',
+        };
       }
     } catch {
       // Ignore parse errors
     }
-    return { name: '', contact: '' };
+    return { name: '', contact: '', delivery: 'coordinar' };
   }
 
-  function saveForm(name: string, contact: string): void {
+  function saveForm(name: string, contact: string, delivery: DeliveryKey): void {
     try {
-      localStorage.setItem(ORDER_FORM_STORAGE_KEY, JSON.stringify({ name, contact }));
+      localStorage.setItem(ORDER_FORM_STORAGE_KEY, JSON.stringify({ name, contact, delivery }));
     } catch {
       // Ignore quota errors
     }
@@ -148,6 +180,15 @@ import { assetUrl, site } from '@/site.config';
   let contactInput: HTMLInputElement | null = null;
   let preview: HTMLTextAreaElement | null = null;
   let copyBtn: HTMLElement | null = null;
+  let previewDetails: HTMLDetailsElement | null = null;
+
+  /** Entrega elegida en los chips (default 'coordinar' si nada marcado). */
+  function getDelivery(): DeliveryKey {
+    const checked = document.querySelector<HTMLInputElement>(
+      '#order-modal [name="order-delivery"]:checked'
+    );
+    return isDeliveryKey(checked?.value) ? checked.value : 'coordinar';
+  }
 
   async function buildOrderText(channel: OrderChannel = 'whatsapp'): Promise<string> {
     const cart = getCart();
@@ -160,6 +201,7 @@ import { assetUrl, site } from '@/site.config';
       customerName: name,
       contact: contact,
       channel,
+      delivery: getDelivery(),
     });
   }
 
@@ -225,6 +267,9 @@ import { assetUrl, site } from '@/site.config';
 
   function autoResizePreview() {
     if (!preview) return;
+    // Con el <details> cerrado el textarea no está pintado y scrollHeight da
+    // 0: redimensionar igual lo dejaría en altura 0 al abrirlo.
+    if (preview.getClientRects().length === 0) return;
     preview.style.height = 'auto';
     preview.style.height = `${preview.scrollHeight}px`;
   }
@@ -235,6 +280,9 @@ import { assetUrl, site } from '@/site.config';
       return true;
     } catch {
       if (preview) {
+        // El fallback selecciona el textarea: necesita que el <details> esté
+        // abierto para que la selección exista.
+        if (previewDetails) previewDetails.open = true;
         preview.select();
         try {
           return document.execCommand('copy');
@@ -246,6 +294,10 @@ import { assetUrl, site } from '@/site.config';
     }
   }
 
+  function persistForm(): void {
+    saveForm(nameInput?.value || '', contactInput?.value || '', getDelivery());
+  }
+
   function openModal() {
     const modal = document.querySelector('#order-modal');
     if (!modal) return;
@@ -255,6 +307,12 @@ import { assetUrl, site } from '@/site.config';
       const saved = loadSavedForm();
       if (saved.name) nameInput.value = saved.name;
       if (contactInput && saved.contact) contactInput.value = saved.contact;
+      if (saved.delivery !== 'coordinar') {
+        const radio = modal.querySelector<HTMLInputElement>(
+          `[name="order-delivery"][value="${saved.delivery}"]`
+        );
+        if (radio) radio.checked = true;
+      }
     }
 
     modal.dispatchEvent(new CustomEvent('modal:open'));
@@ -278,15 +336,27 @@ import { assetUrl, site } from '@/site.config';
     nameInput = modal.querySelector('#customer-name') as HTMLInputElement | null;
     contactInput = modal.querySelector('#customer-contact') as HTMLInputElement | null;
     preview = modal.querySelector('#order-preview') as HTMLTextAreaElement | null;
+    previewDetails = modal.querySelector('.order-preview-details') as HTMLDetailsElement | null;
     const whatsappBtn = modal.querySelector('[data-send-whatsapp]') as HTMLElement | null;
     const instagramBtn = modal.querySelector('[data-send-instagram]') as HTMLElement | null;
     copyBtn = modal.querySelector('[data-copy-order]') as HTMLElement | null;
 
     if (nameInput) {
-      bindOnce(nameInput, (el) => el.addEventListener('input', () => { showFormError(null); refreshPreview(); saveForm(el.value, contactInput?.value || ''); }));
+      bindOnce(nameInput, (el) => el.addEventListener('input', () => { showFormError(null); refreshPreview(); saveForm(el.value, contactInput?.value || '', getDelivery()); }));
     }
     if (contactInput) {
-      bindOnce(contactInput, (el) => el.addEventListener('input', () => { showFormError(null); refreshPreview(); saveForm(nameInput?.value || '', el.value); }));
+      bindOnce(contactInput, (el) => el.addEventListener('input', () => { showFormError(null); refreshPreview(); saveForm(nameInput?.value || '', el.value, getDelivery()); }));
+    }
+    // Chips de entrega: la opción elegida cambia una línea del mensaje.
+    modal.querySelectorAll<HTMLInputElement>('[name="order-delivery"]').forEach((radio) => {
+      bindOnce(radio, (el) => el.addEventListener('change', () => { refreshPreview(); persistForm(); }));
+    });
+    // El preview vive en un <details> cerrado: al abrirlo recién se puede
+    // medir, así que se redimensiona ahí.
+    if (previewDetails) {
+      bindOnce(previewDetails, (el) => el.addEventListener('toggle', () => {
+        if (el.open) autoResizePreview();
+      }));
     }
     if (whatsappBtn) {
       bindOnce(whatsappBtn, (el) => el.addEventListener('click', async () => {
@@ -440,6 +510,117 @@ import { assetUrl, site } from '@/site.config';
     margin: 0;
   }
 
+  /* Chips de entrega: radios nativos (accesibles, funcionan sin JS para
+     marcar la opción) disfrazados de botones. */
+  .delivery-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .delivery-chip {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .delivery-radio {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .delivery-chip-text {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 6px 14px;
+    font-family: var(--font-family);
+    font-size: 13px;
+    color: var(--color-on-surface-variant);
+    background-color: var(--color-surface-container-high);
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: var(--border-radius);
+    transition: all var(--transition-duration) var(--transition-easing);
+    user-select: none;
+  }
+
+  .delivery-chip:hover .delivery-chip-text {
+    border-color: var(--color-primary);
+    color: var(--color-on-surface);
+  }
+
+  .delivery-radio:checked + .delivery-chip-text {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+    background-color: color-mix(in srgb, var(--color-primary-container) 14%, transparent);
+    font-weight: 600;
+  }
+
+  .delivery-radio:focus-visible + .delivery-chip-text {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  /* Preview colapsable: el mensaje es para verificar, no para leer.
+     Cerrado por default; NUNCA se abre solo (el JS solo redimensiona al
+     abrirlo el usuario). */
+  .order-preview-details {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .order-preview-summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-primary);
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+  }
+
+  .order-preview-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .order-preview-summary::after {
+    content: '+';
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: 50%;
+    font-size: 14px;
+    line-height: 1;
+    transition: transform var(--transition-duration) var(--transition-easing);
+  }
+
+  .order-preview-details[open] .order-preview-summary::after {
+    transform: rotate(45deg);
+  }
+
+  .order-preview-summary:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    border-radius: var(--border-radius);
+  }
+
   .form-textarea {
     font-family: var(--font-family);
     font-size: var(--font-body-md-size);
@@ -473,32 +654,54 @@ import { assetUrl, site } from '@/site.config';
     font-family: 'Montserrat', monospace;
     font-size: 13px;
     white-space: pre-wrap;
+    /* Dentro del <details> (flex) el textarea encoge al ancho de sus cols
+       si no se fuerza: siempre a lo ancho del modal. */
+    width: 100%;
   }
 
+  /* Un solo CTA principal: WhatsApp grande y a lo ancho. Instagram y
+     Copiar mensaje pasan a una fila secundaria discreta (el peso visual
+     que antes tenían los tres repartidos ahora concentra la acción). */
   .order-modal-actions {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
     margin-top: 4px;
   }
 
   .order-modal-actions .order-modal-btn {
-    flex: none;
-    width: 100%;
-    min-width: 0;
-    min-height: 44px;
-    padding: 0 12px;
-    gap: 8px;
     border-radius: var(--border-radius);
-    font-size: var(--font-label-sm-size);
     letter-spacing: var(--font-label-sm-tracking);
   }
 
-  .order-modal-actions .order-modal-btn--copy {
-    grid-column: 1 / -1;
-    justify-self: center;
+  .order-modal-btn--main {
+    width: 100%;
+    height: auto;
+    min-height: 56px;
+    padding: 0 20px;
+    gap: 10px;
+    font-size: var(--font-label-md-size, var(--font-label-sm-size));
+  }
+
+  .order-modal-actions-secondary {
+    /* Fila discreta: botones achicados al contenido, centrados. Con dos
+       columnas 1fr en 390px el ellipsis se comía "Copiar mensaje". */
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, auto));
+    justify-content: center;
+    gap: 8px 12px;
+  }
+
+  .order-modal-actions-secondary .order-modal-btn--alt {
     width: auto;
-    padding: 0 16px;
+    min-width: 0;
+    min-height: 38px;
+    height: auto;
+    padding: 6px 14px;
+    gap: 6px;
+    justify-content: center;
+    font-size: 12px;
+    opacity: 0.9;
   }
 
   .order-modal-btn-icon {
@@ -517,24 +720,6 @@ import { assetUrl, site } from '@/site.config';
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-  }
-
-  /* 1 columna desde 640px: en la franja 480-640 los 2 botones quedaban
-     angostos y el ellipsis truncaba "Enviar por WhatsApp / Instagram". */
-  @media (max-width: 640px) {
-    .order-modal-actions {
-      grid-template-columns: minmax(0, 1fr);
-    }
-
-    .order-modal-actions .order-modal-btn {
-      min-height: 48px;
-      font-size: var(--font-label-sm-size);
-      justify-content: center;
-    }
-
-    .order-modal-actions .order-modal-btn--copy {
-      grid-column: 1;
-    }
   }
 
   .order-modal-note {
@@ -642,6 +827,12 @@ import { assetUrl, site } from '@/site.config';
     }
     .stepper-label {
       font-size: 10px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .order-modal-btn--main {
+      min-height: 56px;
     }
   }
 </style>

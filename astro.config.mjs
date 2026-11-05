@@ -19,6 +19,9 @@ export default defineConfig({
   // (/decants/sauvage-elixir-dior/) redirige a la nueva para no perder el link.
   redirects: {
     '/decants/sauvage-elixir-dior': '/decants/bottled-absolu-hugo-boss/',
+    // La portada /catalogo/ era una pantalla intermedia (0 productos): el
+    // usuario ya elige decants/frascos con los tabs de los listados.
+    '/catalogo': '/catalogo/decants/',
   },
   // El Dev Toolbar de Astro solo aporta en desarrollo. En el preview (que usan
   // los tests e2e) y en producción no debe inyectarse, porque si no inyecta un
@@ -29,8 +32,12 @@ export default defineConfig({
     sitemap({
       // Sin lastmod: con `new Date()` todas las URLs cambiaban en cada
       // deploy aunque el contenido no cambiara (los buscadores lo ignoran).
-      // El 404 tiene noindex: no va al sitemap.
-      filter: (page) => !page.endsWith('/404/') && !page.endsWith('/404.html'),
+      // El 404 tiene noindex: no va al sitemap. /catalogo/ es un redirect
+      // estático a /catalogo/decants/: tampoco debe indexarse.
+      filter: (page) =>
+        !page.endsWith('/404/') &&
+        !page.endsWith('/404.html') &&
+        !page.endsWith('/catalogo/'),
       serialize(item) {
         // Prioridades CRO: lo que vende primero (home, catálogo, fichas).
         // Se descuenta el base path para que funcione en subpath (Pages).

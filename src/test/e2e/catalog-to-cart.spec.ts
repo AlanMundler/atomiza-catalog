@@ -6,11 +6,10 @@ const DECANTS = 'catalogo/decants/';
 const FRASCOS = 'catalogo/frascos/';
 const PRODUCT = 'producto/baroque-rouge-540/';
 
-/** Entra al listado de decants desde la portada del catálogo (flujo nuevo). */
+/** Entra al listado de decants desde /catalogo/, que ahora redirige. */
 async function goToDecantsFromCatalog(page: import('@playwright/test').Page): Promise<void> {
   await page.goto(CATALOG);
-  await page.waitForLoadState('networkidle');
-  await page.locator('a[href*="catalogo/decants"]').first().click();
+  await expect(page).toHaveURL(/\/catalogo\/decants\//);
   await page.waitForLoadState('networkidle');
 }
 
@@ -20,7 +19,7 @@ test.describe('Catalog to Cart Flow', () => {
     await page.waitForLoadState('networkidle');
   });
 
-  test('should navigate from home to catalog', async ({ page }) => {
+  test('should navigate from home directly to the decants listing', async ({ page }) => {
     const headerBtn = page.locator('.header-catalogo-btn');
     if (await headerBtn.isVisible()) {
       await headerBtn.click();
@@ -29,18 +28,21 @@ test.describe('Catalog to Cart Flow', () => {
       const mobileNav = page.getByRole('navigation', { name: 'Menú móvil' });
       await mobileNav.getByRole('link', { name: 'Catálogo' }).click();
     }
-    await expect(page).toHaveURL(/\/catalogo\//);
-    await expect(page.locator('h1')).toContainText('Catálogo');
-
-    // La portada separa los listados: decants y frascos.
-    await page.locator('a[href*="catalogo/decants"]').first().click();
-    await page.waitForLoadState('networkidle');
+    // El header apunta directo al listado: sin pantalla intermedia.
     await expect(page).toHaveURL(/\/catalogo\/decants\//);
     await expect(page.locator('h1')).toContainText('Decants de 5 ml');
 
     // Regression: filters must work after a client-side (SPA) navigation
     await page.click('button[data-filter="masculino"]');
     await expect(page).toHaveURL(/filter=masculino/);
+    await expect(page.locator('.product-card:visible').first()).toBeVisible();
+  });
+
+  test('redirects /catalogo/ to /catalogo/decants/', async ({ page }) => {
+    await page.goto(CATALOG);
+    await expect(page).toHaveURL(/\/catalogo\/decants\//);
+    await page.waitForLoadState('networkidle');
+    await expect(page.locator('h1')).toContainText('Decants de 5 ml');
     await expect(page.locator('.product-card:visible').first()).toBeVisible();
   });
 

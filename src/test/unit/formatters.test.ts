@@ -369,6 +369,59 @@ describe('formatters', () => {
     });
   });
 
+  describe('generateOrderText (entrega)', () => {
+    const sixPack: Perfume = {
+      id: 'six-pack',
+      slug: 'six-pack',
+      brand: 'Lattafa',
+      name: 'Six Pack',
+      gender: 'unisex',
+      olfactoryFamily: 'Oriental',
+      description: 'Seis decants.',
+      notes: { top: [], heart: [], base: [] },
+      images: [],
+      sizes: [{ ml: 5, price: 6000, stock: 10 }],
+      isBoutiqueExclusive: false,
+      featured: false
+    };
+    const map = new Map([['six-pack', sixPack]]);
+    const items: CartItem[] = [
+      { perfumeId: 'six-pack', size: { ml: 5, price: 6000, stock: 10 }, quantity: 1 }
+    ];
+    const base = { items, perfumes: map, customerName: 'Test', contact: 'Test' };
+
+    it('default sin delivery: el mensaje no cambia (sin línea 🚚)', () => {
+      const result = generateOrderText(base);
+      expect(result).not.toContain('🚚');
+      expect(result).toContain('📍 Envío: [A coordinar]');
+    });
+
+    it("'coordinar' explícito es idéntico al default", () => {
+      expect(generateOrderText({ ...base, delivery: 'coordinar' })).toBe(
+        generateOrderText(base)
+      );
+    });
+
+    it("'mano' agrega la línea 🚚 Entrega y reemplaza el placeholder de envío", () => {
+      const result = generateOrderText({ ...base, delivery: 'mano' });
+      expect(result).toContain('🚚 Entrega: Entrega en mano (Córdoba)');
+      // No se contradice: la opción concreta toma el lugar de "[A coordinar]".
+      expect(result).not.toContain('📍 Envío: [A coordinar]');
+    });
+
+    it("'uber' agrega su propia línea", () => {
+      const result = generateOrderText({ ...base, delivery: 'uber' });
+      expect(result).toContain('🚚 Entrega: Envío por Uber');
+      expect(result).not.toContain('📍 Envío: [A coordinar]');
+    });
+
+    it('una clave inválida (storage tocado a mano) cae al default sin romperse', () => {
+      const result = generateOrderText({ ...base, delivery: 'heliportero' as never });
+      expect(result).not.toContain('🚚');
+      expect(result).toContain('📍 Envío: [A coordinar]');
+    });
+  });
+
   describe('cartTotals', () => {
     const ok = (quantity: number, price = 6000): ResolvedCartItem => ({
       perfumeId: 'x', perfume: null,
