@@ -70,13 +70,19 @@ export const site = {
   whatsappMessage: 'Hola, quiero hacer un pedido',
   phoneDisplay: '54 9 351 875-2159',
   // Modal de pedido: modalidades de entrega que el cliente puede elegir.
-  // La clave viaja a `generateOrderText({ delivery })`; el valor es el texto
-  // visible (chip del modal y línea del mensaje). `coordinar` es el default
-  // y NO agrega una línea propia: el pedido ya dice "📍 Envío: [A coordinar]".
+  // La clave viaja a `generateOrderText({ delivery })`; `label` es el texto
+  // del chip y `message` el de la línea `🚚 Entrega:` del pedido (se separan
+  // porque "Retiro en mano" necesita la plaza en el mensaje y no en el chip,
+  // que se aprieta en 320 px). Default preseleccionado: `retiro`.
   delivery: {
-    coordinar: 'A coordinar',
-    mano: 'Entrega en mano (Córdoba)',
-    uber: 'Envío por Uber',
+    retiro: { label: 'Retiro en mano', message: 'Retiro en mano (Córdoba)' },
+    uber: { label: 'Envío por Uber', message: 'Envío por Uber' },
+  },
+  // Modal de pedido: medios de pago que el cliente puede elegir. Mismas
+  // reglas que `delivery`. Default preseleccionado: `efectivo`.
+  payment: {
+    efectivo: { label: 'Efectivo', message: 'Efectivo' },
+    transferencia: { label: 'Transferencia', message: 'Transferencia' },
   },
   currency: 'ARS',
   // Localización (Córdoba, Argentina) para SEO local y schema de negocio.

@@ -83,7 +83,7 @@ test.describe('Checkout Flow', () => {
     await expect(page.locator('[data-copy-order]')).toContainText('¡Copiado!');
   });
 
-  test('simplified order modal: one primary CTA, collapsible preview, delivery chips', async ({ page }) => {
+  test('simplified order modal: one primary CTA, collapsible preview, delivery + payment chips', async ({ page }) => {
     await page.goto(PRODUCT_1);
     await page.waitForLoadState('networkidle');
     await page.click('[data-add-to-cart]');
@@ -128,21 +128,57 @@ test.describe('Checkout Flow', () => {
     const preview = page.locator('#order-preview');
     await expect(preview).toHaveValue(/Juan Pérez/);
 
-    // "A coordinar" (default) no ensucia el mensaje: sin línea 🚚.
-    await expect(preview).toHaveValue(/📍 Envío: \[A coordinar\]/);
-    await expect(preview).not.toHaveValue(/🚚/);
+    // Entrega y pago llegan preseleccionados (retiro + efectivo) y el
+    // mensaje SIEMPRE lleva las dos líneas: ya no existe "A coordinar".
+    await expect(preview).toHaveValue(/🚚 Entrega: Retiro en mano \(Córdoba\)/);
+    await expect(preview).toHaveValue(/💳 Pago: Efectivo/);
+    await expect(preview).not.toHaveValue(/A coordinar/);
 
-    // "Entrega en mano" agrega la línea 🚚 y reemplaza el placeholder.
-    await page.locator('.delivery-chip').filter({ hasText: 'Entrega en mano (Córdoba)' }).click();
-    await page.waitForTimeout(200);
-    await expect(preview).toHaveValue(/🚚 Entrega: Entrega en mano \(Córdoba\)/);
-    await expect(preview).not.toHaveValue(/📍 Envío: \[A coordinar\]/);
+    // Los dos grupos tienen sus dos chips con el mismo ancho (±1 px), misma
+    // altura ≥44 px y sin wraps: simetría garantizada por la grilla 1fr 1fr.
+    const chipMetrics = async (groupIndex: number) =>
+      modal.locator('.option-chips').nth(groupIndex).locator('.option-chip-text').evaluateAll(
+        (els) => els.map((el) => {
+          const b = el.getBoundingClientRect();
+          // Líneas de texto reales vía rects del Range (min-height 44 no
+          // permite deducirlas de height/lineHeight del chip).
+          const range = document.createRange();
+          range.selectNodeContents(el);
+          const rects = [...range.getClientRects()].filter((r) => r.width > 1 && r.height > 1);
+          return {
+            width: b.width,
+            height: b.height,
+            lines: new Set(rects.map((r) => Math.round(r.top))).size,
+            overflowX: el.scrollWidth - el.clientWidth,
+          };
+        })
+      );
+    for (const group of [0, 1]) {
+      const [a, b] = await chipMetrics(group);
+      expect(Math.abs(a.width - b.width)).toBeLessThanOrEqual(1);
+      expect(Math.abs(a.height - b.height)).toBeLessThanOrEqual(1);
+      expect(a.height).toBeGreaterThanOrEqual(44);
+      expect(b.height).toBeGreaterThanOrEqual(44);
+      expect(a.lines).toBe(1);
+      expect(b.lines).toBe(1);
+      expect(a.overflowX).toBeLessThanOrEqual(0);
+      expect(b.overflowX).toBeLessThanOrEqual(0);
+    }
 
-    // Volver a "A coordinar" saca la línea de nuevo.
-    await page.locator('.delivery-chip').filter({ hasText: 'A coordinar' }).click();
+    // Combo uber + transferencia: ambas líneas cambian en vivo.
+    await modal.locator('.option-chip').filter({ hasText: 'Envío por Uber' }).click();
+    await modal.locator('.option-chip').filter({ hasText: 'Transferencia' }).click();
     await page.waitForTimeout(200);
-    await expect(preview).not.toHaveValue(/🚚/);
-    await expect(preview).toHaveValue(/📍 Envío: \[A coordinar\]/);
+    await expect(preview).toHaveValue(/🚚 Entrega: Envío por Uber/);
+    await expect(preview).not.toHaveValue(/Retiro en mano/);
+    await expect(preview).toHaveValue(/💳 Pago: Transferencia/);
+
+    // Volver a retiro + efectivo deja las líneas default de nuevo.
+    await modal.locator('.option-chip').filter({ hasText: 'Retiro en mano' }).click();
+    await modal.locator('.option-chip').filter({ hasText: 'Efectivo' }).click();
+    await page.waitForTimeout(200);
+    await expect(preview).toHaveValue(/🚚 Entrega: Retiro en mano \(Córdoba\)/);
+    await expect(preview).toHaveValue(/💳 Pago: Efectivo/);
 
     // Al abrir el <details> el texto se muestra y es seleccionable, y el
     // auto-resize (que se saltea mientras está cerrado) ya lo deja visible.

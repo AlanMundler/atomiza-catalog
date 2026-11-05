@@ -2,6 +2,7 @@
 import Modal from '@/components/ui/Modal.astro';
 import Button from '@/components/ui/Button.astro';
 import { assetUrl, site } from '@/site.config';
+import { DEFAULT_DELIVERY, DEFAULT_PAYMENT } from '@/utils/formatters';
 ---
 
 <Modal 
@@ -27,7 +28,7 @@ import { assetUrl, site } from '@/site.config';
         </li>
       </ol>
     </nav>
-    <p class="order-modal-text">Completá tus datos y elegí cómo querés recibir el pedido:</p>
+    <p class="order-modal-text">Completá tus datos y elegí cómo recibís y cómo pagás el pedido.</p>
 
     <div class="form-group">
       <label for="customer-name" class="form-label">Nombre completo</label>
@@ -61,18 +62,39 @@ import { assetUrl, site } from '@/site.config';
 
     <div class="form-group">
       <span class="form-label" id="order-delivery-label">Entrega</span>
-      <div class="delivery-options" role="radiogroup" aria-labelledby="order-delivery-label">
-        {Object.entries(site.delivery).map(([value, label]) => (
-          <label class="delivery-chip">
+      {/* role="radiogroup" + aria-labelledby: equivalente al fieldset/legend,
+          con los radios nativos dentro de cada label-chip. */}
+      <div class="option-chips" role="radiogroup" aria-labelledby="order-delivery-label">
+        {Object.entries(site.delivery).map(([value, option]) => (
+          <label class="option-chip">
             <input
               type="radio"
-              class="delivery-radio"
+              class="option-chip-radio"
               name="order-delivery"
               value={value}
-              checked={value === 'coordinar'}
+              checked={value === DEFAULT_DELIVERY}
               data-delivery-option
             />
-            <span class="delivery-chip-text">{label}</span>
+            <span class="option-chip-text">{option.label}</span>
+          </label>
+        ))}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <span class="form-label" id="order-payment-label">Pago</span>
+      <div class="option-chips" role="radiogroup" aria-labelledby="order-payment-label">
+        {Object.entries(site.payment).map(([value, option]) => (
+          <label class="option-chip">
+            <input
+              type="radio"
+              class="option-chip-radio"
+              name="order-payment"
+              value={value}
+              checked={value === DEFAULT_PAYMENT}
+              data-payment-option
+            />
+            <span class="option-chip-text">{option.label}</span>
           </label>
         ))}
       </div>
@@ -137,8 +159,14 @@ import { assetUrl, site } from '@/site.config';
 
 <script>
   import { getCart } from '@/utils/cart';
-  import { generateOrderText, buildWhatsAppLink, resolveCartItems } from '@/utils/formatters';
-  import type { DeliveryKey, OrderChannel } from '@/utils/formatters';
+  import {
+    generateOrderText,
+    buildWhatsAppLink,
+    resolveCartItems,
+    DEFAULT_DELIVERY,
+    DEFAULT_PAYMENT,
+  } from '@/utils/formatters';
+  import type { DeliveryKey, PaymentKey, OrderChannel } from '@/utils/formatters';
   import { getPerfumesMap } from '@/utils/perfumes-client';
   import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
   import { site } from '@/site.config';
@@ -151,7 +179,11 @@ import { assetUrl, site } from '@/site.config';
     return typeof value === 'string' && Object.prototype.hasOwnProperty.call(site.delivery, value);
   }
 
-  function loadSavedForm(): { name: string; contact: string; delivery: DeliveryKey } {
+  function isPaymentKey(value: unknown): value is PaymentKey {
+    return typeof value === 'string' && Object.prototype.hasOwnProperty.call(site.payment, value);
+  }
+
+  function loadSavedForm(): { name: string; contact: string; delivery: DeliveryKey; payment: PaymentKey } {
     try {
       const stored = localStorage.getItem(ORDER_FORM_STORAGE_KEY);
       if (stored) {
@@ -159,18 +191,19 @@ import { assetUrl, site } from '@/site.config';
         return {
           name: parsed.name || '',
           contact: parsed.contact || '',
-          delivery: isDeliveryKey(parsed.delivery) ? parsed.delivery : 'coordinar',
+          delivery: isDeliveryKey(parsed.delivery) ? parsed.delivery : DEFAULT_DELIVERY,
+          payment: isPaymentKey(parsed.payment) ? parsed.payment : DEFAULT_PAYMENT,
         };
       }
     } catch {
       // Ignore parse errors
     }
-    return { name: '', contact: '', delivery: 'coordinar' };
+    return { name: '', contact: '', delivery: DEFAULT_DELIVERY, payment: DEFAULT_PAYMENT };
   }
 
-  function saveForm(name: string, contact: string, delivery: DeliveryKey): void {
+  function saveForm(name: string, contact: string, delivery: DeliveryKey, payment: PaymentKey): void {
     try {
-      localStorage.setItem(ORDER_FORM_STORAGE_KEY, JSON.stringify({ name, contact, delivery }));
+      localStorage.setItem(ORDER_FORM_STORAGE_KEY, JSON.stringify({ name, contact, delivery, payment }));
     } catch {
       // Ignore quota errors
     }
@@ -182,12 +215,20 @@ import { assetUrl, site } from '@/site.config';
   let copyBtn: HTMLElement | null = null;
   let previewDetails: HTMLDetailsElement | null = null;
 
-  /** Entrega elegida en los chips (default 'coordinar' si nada marcado). */
+  /** Entrega elegida en los chips (default si nada marcado). */
   function getDelivery(): DeliveryKey {
     const checked = document.querySelector<HTMLInputElement>(
       '#order-modal [name="order-delivery"]:checked'
     );
-    return isDeliveryKey(checked?.value) ? checked.value : 'coordinar';
+    return isDeliveryKey(checked?.value) ? checked.value : DEFAULT_DELIVERY;
+  }
+
+  /** Pago elegido en los chips (default si nada marcado). */
+  function getPayment(): PaymentKey {
+    const checked = document.querySelector<HTMLInputElement>(
+      '#order-modal [name="order-payment"]:checked'
+    );
+    return isPaymentKey(checked?.value) ? checked.value : DEFAULT_PAYMENT;
   }
 
   async function buildOrderText(channel: OrderChannel = 'whatsapp'): Promise<string> {
@@ -202,6 +243,7 @@ import { assetUrl, site } from '@/site.config';
       contact: contact,
       channel,
       delivery: getDelivery(),
+      payment: getPayment(),
     });
   }
 
@@ -295,7 +337,17 @@ import { assetUrl, site } from '@/site.config';
   }
 
   function persistForm(): void {
-    saveForm(nameInput?.value || '', contactInput?.value || '', getDelivery());
+    saveForm(nameInput?.value || '', contactInput?.value || '', getDelivery(), getPayment());
+  }
+
+  /** Marca el radio de un grupo que corresponda al valor guardado. Si el
+   * valor no existe (storage manipulado) no toca nada: queda el default del
+   * markup, que coincide con DEFAULT_DELIVERY / DEFAULT_PAYMENT. */
+  function restoreChoice(modal: Element, name: string, value: string): void {
+    const radio = modal.querySelector<HTMLInputElement>(
+      `[name="${name}"][value="${value}"]`
+    );
+    if (radio) radio.checked = true;
   }
 
   function openModal() {
@@ -307,12 +359,8 @@ import { assetUrl, site } from '@/site.config';
       const saved = loadSavedForm();
       if (saved.name) nameInput.value = saved.name;
       if (contactInput && saved.contact) contactInput.value = saved.contact;
-      if (saved.delivery !== 'coordinar') {
-        const radio = modal.querySelector<HTMLInputElement>(
-          `[name="order-delivery"][value="${saved.delivery}"]`
-        );
-        if (radio) radio.checked = true;
-      }
+      restoreChoice(modal, 'order-delivery', saved.delivery);
+      restoreChoice(modal, 'order-payment', saved.payment);
     }
 
     modal.dispatchEvent(new CustomEvent('modal:open'));
@@ -342,13 +390,13 @@ import { assetUrl, site } from '@/site.config';
     copyBtn = modal.querySelector('[data-copy-order]') as HTMLElement | null;
 
     if (nameInput) {
-      bindOnce(nameInput, (el) => el.addEventListener('input', () => { showFormError(null); refreshPreview(); saveForm(el.value, contactInput?.value || '', getDelivery()); }));
+      bindOnce(nameInput, (el) => el.addEventListener('input', () => { showFormError(null); refreshPreview(); saveForm(el.value, contactInput?.value || '', getDelivery(), getPayment()); }));
     }
     if (contactInput) {
-      bindOnce(contactInput, (el) => el.addEventListener('input', () => { showFormError(null); refreshPreview(); saveForm(nameInput?.value || '', el.value, getDelivery()); }));
+      bindOnce(contactInput, (el) => el.addEventListener('input', () => { showFormError(null); refreshPreview(); saveForm(nameInput?.value || '', el.value, getDelivery(), getPayment()); }));
     }
-    // Chips de entrega: la opción elegida cambia una línea del mensaje.
-    modal.querySelectorAll<HTMLInputElement>('[name="order-delivery"]').forEach((radio) => {
+    // Chips de entrega y pago: la opción elegida cambia una línea del mensaje.
+    modal.querySelectorAll<HTMLInputElement>('[name="order-delivery"], [name="order-payment"]').forEach((radio) => {
       bindOnce(radio, (el) => el.addEventListener('change', () => { refreshPreview(); persistForm(); }));
     });
     // El preview vive en un <details> cerrado: al abrirlo recién se puede
@@ -510,20 +558,25 @@ import { assetUrl, site } from '@/site.config';
     margin: 0;
   }
 
-  /* Chips de entrega: radios nativos (accesibles, funcionan sin JS para
-     marcar la opción) disfrazados de botones. */
-  .delivery-options {
-    display: flex;
-    flex-wrap: wrap;
+  /* Chips de entrega y pago: radios nativos (accesibles, funcionan sin JS
+     para marcar la opción) disfrazados de botones. Grilla de 2 columnas
+     EXACTAMENTE iguales (`minmax(0, 1fr)`): los dos chips de cada grupo
+     miden lo mismo incluso en 320 px y nunca caen a otra línea. La altura
+     mínima (44 px) es el área táctil recomendada. */
+  .option-chips {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
   }
 
-  .delivery-chip {
+  .option-chip {
     position: relative;
     cursor: pointer;
+    /* El label es grid item: estira a la celda (anchos idénticos ±1 px). */
+    min-width: 0;
   }
 
-  .delivery-radio {
+  .option-chip-radio {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -535,14 +588,16 @@ import { assetUrl, site } from '@/site.config';
     border: 0;
   }
 
-  .delivery-chip-text {
-    display: inline-flex;
+  .option-chip-text {
+    display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 40px;
-    padding: 6px 14px;
+    min-height: 44px;
+    padding: 6px 10px;
     font-family: var(--font-family);
     font-size: 13px;
+    line-height: 1.3;
+    text-align: center;
     color: var(--color-on-surface-variant);
     background-color: var(--color-surface-container-high);
     border: var(--border-width) solid var(--color-outline-variant);
@@ -551,19 +606,19 @@ import { assetUrl, site } from '@/site.config';
     user-select: none;
   }
 
-  .delivery-chip:hover .delivery-chip-text {
+  .option-chip:hover .option-chip-text {
     border-color: var(--color-primary);
     color: var(--color-on-surface);
   }
 
-  .delivery-radio:checked + .delivery-chip-text {
+  .option-chip-radio:checked + .option-chip-text {
     color: var(--color-primary);
     border-color: var(--color-primary);
     background-color: color-mix(in srgb, var(--color-primary-container) 14%, transparent);
     font-weight: 600;
   }
 
-  .delivery-radio:focus-visible + .delivery-chip-text {
+  .option-chip-radio:focus-visible + .option-chip-text {
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
   }

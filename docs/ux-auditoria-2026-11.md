@@ -83,7 +83,7 @@ Ya existen: `view_item_list`, `select_item`, `view_item`, `add_to_cart`, `view_c
 |---|---|---|
 | #2 Eliminar portada de catálogo | ✅ `/catalogo/` redirige a `/catalogo/decants/` (sitemap excluye el redirect); home→ficha en **2 clics** | Playwright: `/` → `/catalogo/decants/` (73 cards) → `/producto/24-carat-white-gold/` |
 | #6 Ancla decant↔frasco honesta | ✅ con frasco: "5 ml = {x}% del frasco" + $/ml de ambos; sin frasco: ancla de mercado; sin datos: no muestra | glacier-bella: "5 ml = 5%…", "$1.200/ml vs $600/ml"; luminous-sahara: ancla de mercado; ajwad: sin ancla |
-| #5 Modal "Armar pedido" | ✅ 1 CTA primario, preview colapsable, chips de entrega (la línea reemplaza el placeholder) | modal: title "Armar pedido", 1 `.btn--primary`, `details` cerrado, opciones `coordinar/mano/uber` |
+| #5 Modal "Armar pedido" | ✅ 1 CTA primario, preview colapsable, **entrega simétrica (Retiro / Uber)** y **pago (Efectivo / Transferencia)**, ambos en el mensaje | modal: title "Armar pedido", 1 `.btn--primary`, chips 2×2 de ancho idéntico (228.5/228.5 px a 1440; 0.0 px de diferencia a 320), `details` cerrado |
 | #7 Reseñas + trust en la ficha | ✅ trust strip 3 ítems + 2 reseñas reales + link a Google | 3 `.trust-item`, 2 `.product-review`, link `g.page/r/…` |
 
 Pendiente de aprobación: #1 buybox PDP, #3 tridente en PLP/PDP, #4 home merchandizada, #8 PLP densa, #9 quiz 3 resultados, #10 aviso de reposición.

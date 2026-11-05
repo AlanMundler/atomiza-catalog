@@ -1,7 +1,7 @@
 ﻿import { describe, it, expect } from 'vitest';
 import { formatPrice, generateOrderText, escapeHtml, resolveCartItems, cartTotals } from '@/utils/formatters';
 import type { CartItem, Perfume } from '@/data/types';
-import type { ResolvedCartItem } from '@/utils/formatters';
+import type { ResolvedCartItem, DeliveryKey, PaymentKey } from '@/utils/formatters';
 
 describe('formatters', () => {
   describe('formatPrice', () => {
@@ -273,8 +273,11 @@ describe('formatters', () => {
       expect(result).toContain('💰 SUBTOTAL: $106.000');
       expect(result).toContain('🎁 DESCUENTO TRIDENTE (1 tridente): -$2.000');
       expect(result).toContain('💰 TOTAL: $104.000');
-      expect(result).toContain('📍 Envío: [A coordinar]');
-      expect(result).toContain('💳 Pago: [Transferencia / Efectivo / A coordinar]');
+      // Entrega y pago por default (preseleccionados en el modal): siempre
+      // viajan las dos líneas, ya no existe "A coordinar".
+      expect(result).toContain('🚚 Entrega: Retiro en mano (Córdoba)');
+      expect(result).toContain('💳 Pago: Efectivo');
+      expect(result).not.toContain('A coordinar');
       expect(result).toContain('Enviar a @atomiza.cba por Instagram DM');
     });
 
@@ -298,8 +301,8 @@ describe('formatters', () => {
         '\n' +
         '💰 TOTAL: $104.000\n' +
         '\n' +
-        '📍 Envío: [A coordinar]\n' +
-        '💳 Pago: [Transferencia / Efectivo / A coordinar]\n' +
+        '🚚 Entrega: Retiro en mano (Córdoba)\n' +
+        '💳 Pago: Efectivo\n' +
         '\n' +
         '—\n' +
         'Enviar a @atomiza.cba por Instagram DM'
@@ -369,7 +372,7 @@ describe('formatters', () => {
     });
   });
 
-  describe('generateOrderText (entrega)', () => {
+  describe('generateOrderText (entrega y pago)', () => {
     const sixPack: Perfume = {
       id: 'six-pack',
       slug: 'six-pack',
@@ -390,35 +393,77 @@ describe('formatters', () => {
     ];
     const base = { items, perfumes: map, customerName: 'Test', contact: 'Test' };
 
-    it('default sin delivery: el mensaje no cambia (sin línea 🚚)', () => {
+    it('default (sin delivery ni payment): retiro + efectivo, preseleccionados en el modal', () => {
       const result = generateOrderText(base);
-      expect(result).not.toContain('🚚');
-      expect(result).toContain('📍 Envío: [A coordinar]');
+      expect(result).toContain('🚚 Entrega: Retiro en mano (Córdoba)');
+      expect(result).toContain('💳 Pago: Efectivo');
+      // El mensaje ya no tiene placeholders de "a coordinar".
+      expect(result).not.toContain('📍 Envío: [A coordinar]');
+      expect(result).not.toContain('[Transferencia / Efectivo / A coordinar]');
     });
 
-    it("'coordinar' explícito es idéntico al default", () => {
-      expect(generateOrderText({ ...base, delivery: 'coordinar' })).toBe(
+    it("'retiro' explícito es idéntico al default", () => {
+      expect(generateOrderText({ ...base, delivery: 'retiro', payment: 'efectivo' })).toBe(
         generateOrderText(base)
       );
     });
 
-    it("'mano' agrega la línea 🚚 Entrega y reemplaza el placeholder de envío", () => {
-      const result = generateOrderText({ ...base, delivery: 'mano' });
-      expect(result).toContain('🚚 Entrega: Entrega en mano (Córdoba)');
-      // No se contradice: la opción concreta toma el lugar de "[A coordinar]".
-      expect(result).not.toContain('📍 Envío: [A coordinar]');
-    });
+    // Los 4 combos del modal (entrega × pago): cada uno fija sus dos líneas.
+    const combos: Array<{
+      name: string;
+      delivery: DeliveryKey;
+      payment: PaymentKey;
+      deliveryLine: string;
+      paymentLine: string;
+    }> = [
+      {
+        name: 'retiro + efectivo',
+        delivery: 'retiro', payment: 'efectivo',
+        deliveryLine: '🚚 Entrega: Retiro en mano (Córdoba)',
+        paymentLine: '💳 Pago: Efectivo',
+      },
+      {
+        name: 'retiro + transferencia',
+        delivery: 'retiro', payment: 'transferencia',
+        deliveryLine: '🚚 Entrega: Retiro en mano (Córdoba)',
+        paymentLine: '💳 Pago: Transferencia',
+      },
+      {
+        name: 'uber + efectivo',
+        delivery: 'uber', payment: 'efectivo',
+        deliveryLine: '🚚 Entrega: Envío por Uber',
+        paymentLine: '💳 Pago: Efectivo',
+      },
+      {
+        name: 'uber + transferencia',
+        delivery: 'uber', payment: 'transferencia',
+        deliveryLine: '🚚 Entrega: Envío por Uber',
+        paymentLine: '💳 Pago: Transferencia',
+      },
+    ];
 
-    it("'uber' agrega su propia línea", () => {
-      const result = generateOrderText({ ...base, delivery: 'uber' });
-      expect(result).toContain('🚚 Entrega: Envío por Uber');
-      expect(result).not.toContain('📍 Envío: [A coordinar]');
-    });
+    for (const combo of combos) {
+      it(`combo ${combo.name}: ambas líneas exactas`, () => {
+        const result = generateOrderText({
+          ...base,
+          delivery: combo.delivery,
+          payment: combo.payment,
+        });
+        expect(result.split('\n')).toContain(combo.deliveryLine);
+        expect(result.split('\n')).toContain(combo.paymentLine);
+      });
+    }
 
-    it('una clave inválida (storage tocado a mano) cae al default sin romperse', () => {
+    it('una clave de entrega inválida (storage tocado a mano) cae al default sin imprimir undefined', () => {
       const result = generateOrderText({ ...base, delivery: 'heliportero' as never });
-      expect(result).not.toContain('🚚');
-      expect(result).toContain('📍 Envío: [A coordinar]');
+      expect(result).toContain('🚚 Entrega: Retiro en mano (Córdoba)');
+      expect(result).not.toContain('undefined');
+    });
+
+    it('una clave de pago inválida cae al default sin imprimir undefined', () => {
+      const result = generateOrderText({ ...base, payment: 'bitcoin' as never });
+      expect(result).toContain('💳 Pago: Efectivo');
+      expect(result).not.toContain('undefined');
     });
   });
 

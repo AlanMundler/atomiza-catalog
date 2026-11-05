@@ -23,6 +23,26 @@ export type OrderChannel = 'whatsapp' | 'instagram';
 
 /** Clave de entrega elegida en el modal (ver `site.delivery` en site.config). */
 export type DeliveryKey = keyof typeof site.delivery;
+/** Clave de pago elegida en el modal (ver `site.payment` en site.config). */
+export type PaymentKey = keyof typeof site.payment;
+
+/** Defaults preseleccionados en el modal; también el fallback si la clave
+ * que llega (storage manipulado) no existe en la config. */
+export const DEFAULT_DELIVERY: DeliveryKey = 'retiro';
+export const DEFAULT_PAYMENT: PaymentKey = 'efectivo';
+
+/** Mensaje de una opción (`site.delivery` / `site.payment`) con lookup
+ * defensivo: clave inexistente o ausente → mensaje del default. Nunca
+ * imprime `undefined` en el pedido. */
+function optionMessage<K extends string>(
+  options: Record<string, { message: string }>,
+  key: K | undefined,
+  fallback: K
+): string {
+  const chosen =
+    key !== undefined && Object.prototype.hasOwnProperty.call(options, key) ? key : fallback;
+  return options[chosen].message;
+}
 
 export interface ResolvedCartItem {
   perfumeId: string;
@@ -130,13 +150,15 @@ export interface OrderTextOptions {
   contact?: string;
   channel?: OrderChannel;
   /**
-   * Entrega elegida en el modal. `'coordinar'` (default) deja el mensaje
-   * idéntico a siempre: la línea `🚚 Entrega:` solo aparece con una opción
-   * concreta, y en ese caso reemplaza al placeholder `📍 Envío: [A
-   * coordinar]` para que un pedido "por Uber" no se contradiga diciendo
-   * también "a coordinar".
+   * Entrega elegida en el modal (default `retiro`). Siempre viaja en la
+   * línea `🚚 Entrega:` del pedido.
    */
   delivery?: DeliveryKey;
+  /**
+   * Medio de pago elegido en el modal (default `efectivo`). Siempre viaja
+   * en la línea `💳 Pago:` del pedido.
+   */
+  payment?: PaymentKey;
 }
 
 export function generateOrderText(options: OrderTextOptions): string {
@@ -144,13 +166,8 @@ export function generateOrderText(options: OrderTextOptions): string {
   const channel: OrderChannel = options.channel ?? 'whatsapp';
   const customerName = oneLine(options.customerName ?? '', 80);
   const customerContact = oneLine(options.contact ?? '', 120);
-  const delivery = options.delivery ?? 'coordinar';
-  // Lookup defensivo: una clave inválida (storage tocado a mano) cae al
-  // default y no imprime "undefined" en el pedido.
-  const deliveryLabel =
-    delivery !== 'coordinar'
-      ? (site.delivery as Record<string, string>)[delivery]
-      : undefined;
+  const deliveryMessage = optionMessage(site.delivery, options.delivery, DEFAULT_DELIVERY);
+  const paymentMessage = optionMessage(site.payment, options.payment, DEFAULT_PAYMENT);
   const resolved = resolveCartItems(items, perfumes);
   const orderable = resolved.filter((r) => r.available);
   const excludedCount = resolved.length - orderable.length;
@@ -195,14 +212,11 @@ export function generateOrderText(options: OrderTextOptions): string {
     );
   }
   lines.push('');
-  if (deliveryLabel) {
-    // La opción concreta reemplaza al placeholder (nunca las dos líneas).
-    lines.push(`🚚 Entrega: ${deliveryLabel}`);
-  } else {
-    lines.push('📍 Envío: [A coordinar]');
-  }
+  // Entrega y pago elegidos en el modal: siempre van las dos líneas, ya no
+  // existe el placeholder "[A coordinar]".
   lines.push(
-    '💳 Pago: [Transferencia / Efectivo / A coordinar]',
+    `🚚 Entrega: ${deliveryMessage}`,
+    `💳 Pago: ${paymentMessage}`,
     '',
     '—',
     channel === 'instagram'
