@@ -39,7 +39,8 @@ export const site = {
   // v26: 11 perfumes nuevos (9pm, Club de Nuit Intense Man, Habik For Men, Hayaati Gold Elixir, Hawas Malibu, Hawas Verde, Kiss, Reflection, The Kingdom For Women, Odyssey Candee, Ajwad))
   // v27: frascos cerrados en Hawas Malibu, Hayaati Gold Elixir, Confidential Private Gold, Your Touch Amber, Qaed Al Fursan y Victoria)
   // v28: Asad Elixir pasa de inspiración Sauvage Elixir a Bottled Absolu (notas y familia corregidas))
-  dataVersion: '28',
+  // v29: Club de Nuit Intense Man sin stock)
+  dataVersion: '29',
   instagramHandle: 'atomiza.cba',
   instagramUrl: 'https://instagram.com/atomiza.cba',
   tiktokHandle: 'atomiza.cba',

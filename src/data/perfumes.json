@@ -2778,7 +2778,7 @@
         {
           "ml": 5,
           "price": 8000,
-          "stock": 10
+          "stock": 0
         }
       ],
       "isBoutiqueExclusive": false,
