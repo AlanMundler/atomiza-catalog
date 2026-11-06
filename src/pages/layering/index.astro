@@ -110,12 +110,17 @@ const comboViews = combos.map((combo, i) => {
   const anchorSize = primarySize(anchor);
   const accentSize = primarySize(accent);
   const aff = layeringAffinity(anchor, accent);
+  const shared = sharedNotes(anchor, accent);
+  // Fila de chips con altura fija: se muestran las 3 primeras y el resto
+  // queda resumido en un chip "+N" (el listado completo viaja en `title`).
   return {
     ...combo,
     index: i,
     anchor,
     accent,
-    shared: sharedNotes(anchor, accent),
+    shared,
+    notesShown: shared.slice(0, 3),
+    notesRest: shared.slice(3),
     total: pairPrice(anchor, accent) ?? 0,
     score: aff.score,
     verdict: aff.verdict,
@@ -314,7 +319,7 @@ const meterTicks = (score: number): number => Math.max(0, Math.min(10, Math.roun
             <span class="ly-sub-2">Se leen como un solo perfume.</span>
           </p>
 
-          <div class="ly-star" aria-label={`Combo estrella: ${star.title}`}>
+          <div class="ly-star" role="group" aria-label={`Combo estrella: ${star.title}`}>
             <div class="ly-star-pair">
               <figure class="ly-bottle">
                 <span class="ly-role-tag ly-role-tag--base">Base</span>
@@ -615,15 +620,21 @@ const meterTicks = (score: number): number => Math.max(0, Math.min(10, Math.roun
               data-affinity={c.score}
               data-cur={c.index}
             >
-              <span class="ly-combo-index" aria-hidden="true">{String(c.index + 1).padStart(2, '0')}</span>
+              {/* Esqueleto de filas fijas: cada bloque mide lo mismo en todas
+                  las cards para que la grilla se lea como un sistema. */}
               <header class="ly-combo-head">
-                <h3 class="ly-combo-title">{c.title}</h3>
-                <p class={`ly-combo-aff ly-combo-aff--${c.verdict}`}>Afinidad {c.verdict}</p>
-                {c.lowStock && (
-                  <Chip variant="low-stock" class="ly-combo-low">Poco stock</Chip>
-                )}
-                <p class="ly-combo-meta">{c.occasion} · {c.season}</p>
+                <div class="ly-combo-titlerow">
+                  <span class="ly-combo-index" aria-hidden="true">{String(c.index + 1).padStart(2, '0')}</span>
+                  <h3 class="ly-combo-title" title={c.title}>{c.title}</h3>
+                </div>
+                {/* Badge SIEMPRE debajo del título, en posición constante. */}
+                <div class="ly-combo-badges">
+                  <p class={`ly-combo-aff ly-combo-aff--${c.verdict}`}>Afinidad {c.verdict}</p>
+                  {c.lowStock && <Chip variant="low-stock">Poco stock</Chip>}
+                </div>
               </header>
+
+              <p class="ly-combo-meta" title={`${c.occasion} · ${c.season}`}>{c.occasion} · {c.season}</p>
 
               <div class="ly-combo-pair">
                 <figure class="ly-bottle ly-bottle--sm">
@@ -636,7 +647,7 @@ const meterTicks = (score: number): number => Math.max(0, Math.min(10, Math.roun
                     loading="lazy"
                     decoding="async"
                   />
-                  <figcaption><a href={`${BASE}producto/${c.anchor.slug}/`} class="ly-inline-link">{c.anchor.name}</a></figcaption>
+                  <figcaption><a href={`${BASE}producto/${c.anchor.slug}/`} class="ly-inline-link" title={c.anchor.name}>{c.anchor.name}</a></figcaption>
                 </figure>
                 <span class="ly-combo-plus" aria-hidden="true">+</span>
                 <figure class="ly-bottle ly-bottle--sm">
@@ -649,18 +660,30 @@ const meterTicks = (score: number): number => Math.max(0, Math.min(10, Math.roun
                     loading="lazy"
                     decoding="async"
                   />
-                  <figcaption><a href={`${BASE}producto/${c.accent.slug}/`} class="ly-inline-link">{c.accent.name}</a></figcaption>
+                  <figcaption><a href={`${BASE}producto/${c.accent.slug}/`} class="ly-inline-link" title={c.accent.name}>{c.accent.name}</a></figcaption>
                 </figure>
               </div>
 
-              {c.shared.length > 0 && (
-                <ul class="ly-shared" aria-label={`Notas puente de ${c.title}`}>
-                  {c.shared.map((n) => <li class="ly-note-chip">{n}</li>)}
-                </ul>
-              )}
+              {/* La fila de notas existe SIEMPRE (altura fija): sin ella, las
+                  cards sin notas puente desalinean todo lo que sigue. Cuando
+                  no hay coincidencias de texto, queda como espacio vacío
+                  decorativo (el "por qué" ya explica la costura del par). */}
+              <ul
+                class="ly-shared ly-combo-notes"
+                aria-label={c.notesShown.length > 0 ? `Notas puente de ${c.title}` : undefined}
+                aria-hidden={c.notesShown.length === 0 || undefined}
+              >
+                {c.notesShown.map((n) => <li class="ly-note-chip" title={n}>{n}</li>)}
+                {c.notesRest.length > 0 && (
+                  <li
+                    class="ly-note-chip ly-note-more"
+                    title={`y ${c.notesRest.length} más: ${c.notesRest.join(', ')}`}
+                  >+{c.notesRest.length}</li>
+                )}
+              </ul>
 
-              <p class="ly-combo-why">{c.why}</p>
-              <p class="ly-ratio"><span class="ly-ratio-label">Proporción</span>{c.ratio}</p>
+              <p class="ly-combo-why" title={c.why}>{c.why}</p>
+              <p class="ly-ratio ly-combo-ratio" title={`Proporción: ${c.ratio}`}><span class="ly-ratio-label">Proporción</span>{c.ratio}</p>
 
               <footer class="ly-combo-foot">
                 <p class="ly-combo-price"><strong>{formatPrice(c.total)}</strong> el par ({DECANT_ML} ml)</p>
@@ -1436,10 +1459,8 @@ const meterTicks = (score: number): number => Math.max(0, Math.min(10, Math.roun
     width: auto;
     max-width: 40vw;
     object-fit: contain;
-  }
-
-  .ly-bottle--sm img {
-    height: 92px;
+    /* cuando el ancho topa con `max-width`, el envase apoya igual en la base */
+    object-position: bottom;
   }
 
   .ly-bottle figcaption {
@@ -1449,6 +1470,23 @@ const meterTicks = (score: number): number => Math.max(0, Math.min(10, Math.roun
     text-transform: uppercase;
     color: var(--color-on-image);
     text-align: center;
+  }
+
+  /* Nombres del hero/preview: misma mecánica que las cards — 2 líneas fijas
+     para que las dos botellas apoyen en la misma base. */
+  .ly-star-pair .ly-bottle,
+  .ly-preview .ly-bottle {
+    justify-content: flex-end;
+  }
+
+  .ly-star-pair .ly-bottle figcaption {
+    min-height: calc(2 * var(--ly-line-name));
+    line-height: var(--ly-line-name);
+    max-width: 100%;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
   }
 
   .ly-bottle figcaption a {
@@ -1931,7 +1969,7 @@ const meterTicks = (score: number): number => Math.max(0, Math.min(10, Math.roun
 
   .ly-preview {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
     gap: 6px;
     background-color: var(--color-image-bg);
@@ -2248,22 +2286,38 @@ const meterTicks = (score: number): number => Math.max(0, Math.min(10, Math.roun
     border-color: var(--color-primary);
   }
 
+  /* --- Combos: galería de cards con esqueleto de filas fijas -------------
+     Cada fila tiene altura fija (clamp incluido) para que en una misma fila
+     de la grilla todos los bloques arranquen en la misma Y y el CTA quede
+     anclado al pie. Alturas medidas con Playwright (ly4-verify): ≤2 px de
+     diferencia dentro de una fila. */
+  .ly {
+    --ly-bottle-h: 96px;  /* escenario blanco: botellas todas al mismo alto, base común */
+    --ly-line-why: 23px;  /* cuerpo de 15 px en la card (1.53) */
+    --ly-line-name: 17px; /* label de 12 px en 1.4 */
+  }
+
   .ly-combos {
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--spacing-stack-sm);
   }
 
+  /* 2 columnas desde 768 (no desde 640): medido, a 640 en 2 columnas el
+     interior de cada card queda en ~236 px y los nombres / el "por qué"
+     desbordan el clamp fijo; 768 es el mínimo donde nada se corta. */
   @media (min-width: 768px) {
     .ly-combos {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
+  /* 3 columnas desde 1100: con el container de 1200 máx. el interior de la
+     card queda en ~296 px, el mínimo medido donde nombres en 2 líneas y
+     "por qué" en 4 líneas entran sin elipsis. */
   @media (min-width: 1100px) {
     .ly-combos {
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: var(--spacing-stack-sm) var(--spacing-stack-sm);
     }
   }
 
@@ -2271,10 +2325,10 @@ const meterTicks = (score: number): number => Math.max(0, Math.min(10, Math.roun
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
     border: var(--border-width) solid var(--color-outline-variant);
     background-color: var(--color-surface-container);
-    padding: var(--spacing-stack-sm) var(--spacing-stack-sm) var(--spacing-stack-sm) 22px;
+    padding: 16px 18px;
     transition: border-color var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing);
   }
 
@@ -2294,39 +2348,62 @@ const meterTicks = (score: number): number => Math.max(0, Math.min(10, Math.roun
     border-left: 3px solid var(--color-primary);
   }
 
+  /* Fila 1 · número + título (2 líneas fijas) y badges SIEMPRE debajo. */
+  .ly-combo-head {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .ly-combo-titlerow {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
   .ly-combo-index {
-    position: absolute;
-    top: 14px;
-    left: 6px;
+    flex: none;
     font-size: 10px;
     font-weight: var(--font-label-sm-weight);
     letter-spacing: 0.08em;
+    line-height: calc(1.25 * var(--font-body-lg-size));
     color: var(--color-primary);
   }
 
-  .ly-combo-head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 6px 14px;
-  }
-
   .ly-combo-title {
+    flex: 1 1 auto;
+    min-width: 0;
     font-size: var(--font-body-lg-size);
     font-weight: 500;
     letter-spacing: 0.06em;
+    line-height: 1.25;
     text-transform: uppercase;
     color: var(--color-on-surface);
     margin: 0;
+    height: calc(2 * 1.25 * var(--font-body-lg-size));
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .ly-combo-badges {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 22px;
   }
 
   .ly-combo-aff {
+    display: inline-flex;
+    align-items: center;
     font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.14em;
     text-transform: uppercase;
     margin: 0;
-    padding: 2px 8px;
+    height: 22px;
+    padding: 0 8px;
     border: var(--border-width) solid currentColor;
   }
 
@@ -2342,35 +2419,140 @@ const meterTicks = (score: number): number => Math.max(0, Math.min(10, Math.roun
     color: var(--color-error);
   }
 
+  /* Fila 2 · ocasión · estación (2 líneas fijas). */
   .ly-combo-meta {
     font-size: var(--font-label-sm-size);
+    line-height: var(--font-label-sm-line-height);
     letter-spacing: var(--font-label-sm-tracking);
     text-transform: uppercase;
     color: var(--color-on-surface-variant);
     margin: 0;
-    width: 100%;
+    height: calc(2 * var(--ly-line-name));
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
   }
 
-  .ly-combo-low {
-    margin-left: auto;
-  }
-
+  /* Fila 3/4 · par de botellas + nombres: escenario blanco de altura fija,
+     botellas alineadas a la base y nombres en 2 líneas fijas (target ≥44 px). */
   .ly-combo-pair {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: end;
     gap: 4px;
     background-color: var(--color-image-bg);
-    padding: 10px 8px;
+    padding: 14px 10px 10px;
   }
 
-  .ly-combo-why {
-    font-size: var(--font-body-md-size);
-    line-height: var(--font-body-md-line-height);
-    color: var(--color-on-surface-variant);
+  .ly-combo-pair .ly-bottle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .ly-combo-pair .ly-bottle img {
+    height: var(--ly-bottle-h);
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+  }
+
+  .ly-combo-pair .ly-bottle figcaption {
+    width: 100%;
+    height: 44px;
     margin: 0;
   }
 
+  .ly-combo-pair .ly-bottle figcaption a {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    min-height: 44px;
+    height: 100%;
+    padding: 2px 4px 0;
+    line-height: var(--ly-line-name);
+  }
+
+  .ly-combo-plus {
+    align-self: end;
+    /* centrado vertical contra la botella: caption + gap + mitad del stage */
+    margin-bottom: calc(var(--ly-bottle-h) / 2 + 38px);
+  }
+
+  /* Fila 5 · notas puente: hasta 3 visibles + "+N", altura fija de 2 filas.
+     Cada chip ocupa como máximo media fila → con 4 chips nunca más de 2
+     líneas y la tercera, si apareciera, queda oculta por el bloque fijo. */
+  .ly-combo-notes {
+    margin: 0;
+    height: calc(2 * 25px + 8px);
+    overflow: hidden;
+    align-content: flex-start;
+  }
+
+  .ly-combo-notes .ly-note-chip {
+    max-width: calc(50% - 4px);
+    height: 25px;
+    line-height: 23px;
+    padding: 0 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ly-note-more {
+    color: var(--color-primary);
+    font-weight: var(--font-label-sm-weight);
+  }
+
+  /* Fila 6 · "por qué": celular 5 líneas, desktop 4 (nada se corta sin
+     elipsis visible y `title` con el texto completo). */
+  .ly-combo-why {
+    font-size: 15px;
+    line-height: 1.53;
+    color: var(--color-on-surface-variant);
+    margin: 0;
+    height: calc(5 * var(--ly-line-why));
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 5;
+  }
+
+  @media (min-width: 1280px) {
+    /* Con el container a 1200 máx., desde 1280 el interior de la card es
+       ~329 px: el "por qué" más largo (155 car.) entra en 4 líneas. Antes de
+       eso (2 col. en 768, 3 col. en 1100) el interior cae a ~296 px y hacen
+       falta 5 líneas para no cortar copy. */
+    .ly-combo-why {
+      height: calc(4 * var(--ly-line-why));
+      -webkit-line-clamp: 4;
+    }
+  }
+
+  /* Fila 7 · proporción: 2 líneas fijas. */
+  .ly-combo-ratio {
+    font-size: 15px;
+    line-height: var(--ly-line-why);
+    color: var(--color-on-surface);
+    margin: 0;
+    height: calc(2 * var(--ly-line-why));
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .ly-combo-ratio .ly-ratio-label {
+    display: inline;
+    margin-right: 8px;
+  }
+
+  /* Fila 8 · precio + CTA anclados al pie (margin-top: auto + altura de
+     card idéntica en la fila → el botón queda al píxel en todas). */
   .ly-combo-foot {
     display: flex;
     flex-wrap: wrap;
@@ -2892,10 +3074,6 @@ const meterTicks = (score: number): number => Math.max(0, Math.min(10, Math.roun
 
     .ly-bottle img {
       height: 64px;
-    }
-
-    .ly-bottle--sm img {
-      height: 84px;
     }
 
     .ly-star-title {
