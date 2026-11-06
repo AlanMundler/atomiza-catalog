@@ -69,7 +69,7 @@ const whatsappHref = buildWhatsAppLink(
         <p class="insp-breadcrumb">
           <a href={`${BASE}decants/`}>Decants por aroma</a> › {insp.original}
         </p>
-        <h1 id="insp-title" class="insp-title">Perfume que huele a {insp.original} en {site.addressLocality}</h1>
+        <h1 id="insp-title" class="page-title insp-title">Perfume que huele a {insp.original} en {site.addressLocality}</h1>
         <p class="insp-subtitle">
           {insp.perfumeName} de {insp.perfumeBrand} es una fragancia árabe inspirada en el ADN de
           {insp.original} de {insp.casa}. Se consigue en decant de 5ml: la probás sobre tu piel unos
@@ -87,7 +87,7 @@ const whatsappHref = buildWhatsAppLink(
   ) : (
     <section class="insp-hero">
       <div class="container">
-        <h1 class="insp-title">Fragancia inspirada en {insp.original}</h1>
+        <h1 class="page-title insp-title">Fragancia inspirada en {insp.original}</h1>
         <p class="insp-subtitle">Revisá nuestro catálogo o preguntanos por WhatsApp: seguramente la tenemos en decant.</p>
         <div class="insp-cta">
           <a href={`${BASE}catalogo/decants/`} class="btn btn--primary btn--md">Ver catálogo</a>
@@ -156,23 +156,10 @@ const whatsappHref = buildWhatsAppLink(
     text-underline-offset: 2px;
   }
 
+  /* Tipografía y escala mobile: clase global `.page-title` (global.css). */
   .insp-title {
-    font-family: var(--font-family);
-    font-size: var(--font-display-lg-size);
-    font-weight: var(--font-display-lg-weight);
-    line-height: var(--font-display-lg-line-height);
-    letter-spacing: var(--font-display-lg-tracking);
-    text-transform: uppercase;
-    color: var(--color-on-surface);
     margin: 0 auto var(--spacing-stack-sm);
     max-width: 720px;
-  }
-
-  @media (max-width: 640px) {
-    .insp-title {
-      font-size: var(--font-headline-md-size);
-      letter-spacing: var(--font-headline-md-tracking);
-    }
   }
 
   .insp-subtitle {

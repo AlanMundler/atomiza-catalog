@@ -157,6 +157,109 @@ const robots = noindex ? 'noindex, nofollow' : 'index, follow';
   </body>
 </html>
 
+<script>
+  import { onPageLoad } from '@/utils/view-transitions';
+
+  /**
+   * Anti-solape del FAB (auditoría v2 N3, "el FAB tapa CTAs").
+   * Medición: el FAB es `position:fixed` abajo a la derecha (48–56 px +
+   * margen). Un CTA marcado [data-fab-avoid] solo es víctima cuando su caja
+   * entra en el rect del FAB; ocultarlo "siempre que un CTA esté en viewport"
+   * lo haría desaparecer en toda la ficha y en cualquier listado con botón
+   * visible (demasiado agresivo; y el fix v1 de la ficha demuestra que mover
+   * el FAB alcanza cuando el solape es fijo: sticky-buy). Por eso el
+   * IntersectionObserver usa el rect del propio FAB como "viewport" vía
+   * rootMargins negativos: el FAB cede (`.fab-yield`, regla en global.css)
+   * SOLO mientras un CTA prioritario pasa por su franja, y vuelve cuando
+   * sale. Con drawer/modal abiertos el CSS lo retira aparte (:has), porque
+   * ahí vive bajo el scrim y sería un toque muerto.
+   *
+   * Con ClientRouter el <body> se reemplaza en cada navegación: todo estado
+   * vive en módulos y `currentSetup` apunta siempre a la página actual.
+   */
+  let currentSetup: (() => void) | null = null;
+  let watchers: IntersectionObserver[] = [];
+  let ctaWatcher: MutationObserver | null = null;
+  let resizeTimer: ReturnType<typeof setTimeout> | undefined;
+  let resizeWired = false;
+
+  function teardown() {
+    watchers.forEach((o) => o.disconnect());
+    watchers = [];
+    ctaWatcher?.disconnect();
+    ctaWatcher = null;
+  }
+
+  function initFabAvoid() {
+    const fab = document.querySelector<HTMLElement>('.whatsapp-fab');
+    if (!fab) {
+      currentSetup = null;
+      return;
+    }
+
+    const overlapping = new Set<Element>();
+    const apply = () => fab.classList.toggle('fab-yield', overlapping.size > 0);
+
+    const observeCtas = (zone: IntersectionObserver) => {
+      document.querySelectorAll<HTMLElement>('[data-fab-avoid]').forEach((el) => zone.observe(el));
+    };
+
+    const setup = () => {
+      // Root = el rect actual del FAB (rootMargins negativos achican el
+      // viewport hasta esa esquina). Si el FAB no tiene caja, nada que
+      // proteger y el estado cedido se limpia solo al reconstruir.
+      const rect = fab.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+      watchers.forEach((o) => o.disconnect());
+      overlapping.clear();
+      apply();
+      const rootMargin = [
+        `-${Math.round(rect.top)}px`,
+        `-${Math.round(window.innerWidth - rect.right)}px`,
+        `-${Math.round(window.innerHeight - rect.bottom)}px`,
+        `-${Math.round(rect.left)}px`,
+      ].join(' ');
+      const zone = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) overlapping.add(entry.target);
+            else overlapping.delete(entry.target);
+          }
+          apply();
+        },
+        { rootMargin }
+      );
+      watchers = [zone];
+      observeCtas(zone);
+    };
+
+    // Los CTAs de quiz (resultado), carrito ("Armar pedido") y ficha se
+    // inyectan/re-renderizan por JS: los nuevos [data-fab-avoid] entran al
+    // observer apenas aparecen en el DOM.
+    ctaWatcher = new MutationObserver(() => watchers.forEach((o) => observeCtas(o)));
+    // Se observa <html>, no <body>: el ClientRouter reemplaza el body entero.
+    ctaWatcher.observe(document.documentElement, { childList: true, subtree: true });
+
+    setup();
+    currentSetup = setup;
+
+    if (!resizeWired) {
+      resizeWired = true;
+      // El root depende del viewport y de la posición del FAB (cambia con la
+      // sticky-buy en <=1023px): se reconstruye al redimensionar.
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => currentSetup?.(), 200);
+      });
+    }
+  }
+
+  onPageLoad('fab-avoid', () => {
+    teardown();
+    initFabAvoid();
+  });
+</script>
+
 <style>
   body {
     min-height: 100vh;
@@ -183,7 +286,11 @@ const robots = noindex ? 'noindex, nofollow' : 'index, follow';
     border-radius: 50%;
     box-shadow: var(--shadow-sm);
     text-decoration: none;
-    transition: transform var(--transition-duration) var(--transition-easing), box-shadow var(--transition-duration) var(--transition-easing);
+    transition:
+      transform var(--transition-duration) var(--transition-easing),
+      box-shadow var(--transition-duration) var(--transition-easing),
+      opacity var(--transition-duration) var(--transition-easing),
+      visibility var(--transition-duration) var(--transition-easing);
   }
 
   .whatsapp-fab:hover {

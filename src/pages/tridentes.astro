@@ -14,7 +14,7 @@ const BASE = site.basePath;
 >
   <section class="trident-hero" aria-labelledby="trident-title">
     <div class="container">
-      <h1 id="trident-title" class="trident-title">Cada {TRIDENT_COUNT} decants, {formatPrice(TRIDENT_DISCOUNT)} menos.</h1>
+      <h1 id="trident-title" class="page-title trident-title">Cada {TRIDENT_COUNT} decants, {formatPrice(TRIDENT_DISCOUNT)} menos.</h1>
       <p class="trident-subtitle">
         Automático, sin códigos ni vueltas: el descuento se aplica solo en tu pedido.
       </p>
@@ -78,21 +78,9 @@ const BASE = site.basePath;
     text-align: center;
   }
 
+  /* Tipografía y escala mobile: clase global `.page-title` (global.css). */
   .trident-title {
-    font-family: var(--font-family);
-    font-size: var(--font-display-lg-size);
-    font-weight: var(--font-display-lg-weight);
-    line-height: var(--font-display-lg-line-height);
-    letter-spacing: var(--font-display-lg-tracking);
-    text-transform: uppercase;
-    color: var(--color-on-surface);
     margin: 0 0 12px;
-  }
-
-  @media (max-width: 640px) {
-    .trident-title {
-      font-size: 36px;
-    }
   }
 
   .trident-subtitle {

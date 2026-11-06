@@ -35,7 +35,7 @@ const initialFilter: GenderFilter = urlFilter === 'masculino' || urlFilter === '
 </div>
 <section class="catalog-hero" aria-labelledby="catalog-title">
   <div class="container">
-    <h1 id="catalog-title" class="catalog-title">{title}</h1>
+    <h1 id="catalog-title" class="page-title catalog-title">{title}</h1>
     <p class="catalog-subtitle">{subtitle}</p>
   </div>
 </section>
@@ -235,21 +235,9 @@ const initialFilter: GenderFilter = urlFilter === 'masculino' || urlFilter === '
     }
   }
 
+  /* Tipografía y escala mobile: clase global `.page-title` (global.css). */
   .catalog-title {
-    font-family: var(--font-family);
-    font-size: var(--font-display-lg-size);
-    font-weight: var(--font-display-lg-weight);
-    line-height: var(--font-display-lg-line-height);
-    letter-spacing: var(--font-display-lg-tracking);
-    text-transform: uppercase;
-    color: var(--color-on-surface);
     margin: 0 0 12px;
-  }
-
-  @media (max-width: 640px) {
-    .catalog-title {
-      font-size: 36px;
-    }
   }
 
   .catalog-subtitle {

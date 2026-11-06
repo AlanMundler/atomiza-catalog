@@ -28,7 +28,7 @@ const schema = {
   <script is:inline type="application/ld+json" set:html={JSON.stringify(schema).replace(/</g, '\\u003c')} />
   <section class="shipping-hero" aria-labelledby="shipping-title">
     <div class="container">
-      <h1 id="shipping-title" class="shipping-title">Envíos y entregas en {site.addressLocality}</h1>
+      <h1 id="shipping-title" class="page-title shipping-title">Envíos y entregas en {site.addressLocality}</h1>
       <p class="shipping-subtitle">Te llevamos tus decants de perfumes árabes en mano o por envío. Todo se coordina por mensaje, a tu medida.</p>
     </div>
   </section>
@@ -77,12 +77,8 @@ const schema = {
     padding: var(--spacing-stack-lg) 0;
   }
 
+  /* Tipografía y escala mobile: clase global `.page-title` (global.css). */
   .shipping-title {
-    font-family: var(--font-family);
-    font-size: var(--font-display-lg-size);
-    font-weight: var(--font-display-lg-weight);
-    letter-spacing: var(--font-display-lg-tracking);
-    text-transform: uppercase;
     margin: 0 0 var(--spacing-stack-sm);
   }
 

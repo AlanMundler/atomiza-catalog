@@ -24,7 +24,7 @@ const pageDescription = `Decants de 5ml de perfumes árabes de la familia olfati
       <p class="fam-breadcrumb">
         <a href={`${BASE}decants/`}>Aromas</a> › {familia.name}
       </p>
-      <h1 id="fam-title" class="fam-title">Perfumes árabes de {familia.name} en decant</h1>
+      <h1 id="fam-title" class="page-title fam-title">Perfumes árabes de {familia.name} en decant</h1>
       <p class="fam-subtitle">
         {familia.items.length} {familia.items.length === 1 ? 'fragancia' : 'fragancias'} de esta familia,
         en decant de 5ml, con entrega en {site.addressLocality}. Probalas sobre tu piel unos días y
@@ -86,22 +86,10 @@ const pageDescription = `Decants de 5ml de perfumes árabes de la familia olfati
     text-underline-offset: 2px;
   }
 
+  /* Tipografía y escala mobile: clase global `.page-title` (global.css). */
   .fam-title {
-    font-family: var(--font-family);
-    font-size: var(--font-display-lg-size);
-    font-weight: var(--font-display-lg-weight);
-    letter-spacing: var(--font-display-lg-tracking);
-    text-transform: uppercase;
-    color: var(--color-on-surface);
     margin: 0 auto var(--spacing-stack-sm);
     max-width: 720px;
-  }
-
-  @media (max-width: 640px) {
-    .fam-title {
-      font-size: var(--font-headline-md-size);
-      letter-spacing: var(--font-headline-md-tracking);
-    }
   }
 
   .fam-subtitle {

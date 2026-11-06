@@ -2,6 +2,7 @@
 import ImageGallery from '@/components/product/ImageGallery.astro';
 import SizeSelector from '@/components/product/SizeSelector.astro';
 import Button from '@/components/ui/Button.astro';
+import Chip from '@/components/ui/Chip.astro';
 import Faq from '@/components/ui/Faq.astro';
 import { DECANT_ML, isDecantSize, isSizeAvailable, sizeStockMessage } from '@/utils/stock';
 import { buildWhatsAppLink, formatPrice } from '@/utils/formatters';
@@ -58,6 +59,14 @@ const waMessage = selectedSize
       `Hola! Quiero consultar por ${perfume.brand} ${perfume.name} (${selectedSize.ml}ml, ${formatPrice(selectedSize.price)}). ¿Me ayudás?`
     )
   : site.whatsappUrl;
+// Recuperación sin stock (auditoría v2 N2): el decant de 5 ml es SIEMPRE el
+// talle que se avisa, aunque el producto tenga frascos: es lo que se acaba y
+// lo que el cliente vuelve a buscar. Solo cuando el producto completo quedó
+// sin stock (`!available`) reemplaza el CTA deshabilitado.
+const restockWaMessage = buildWhatsAppLink(
+  site.whatsappNumber,
+  `Hola, avisame cuando vuelva ${perfume.brand} ${perfume.name} (${DECANT_ML} ml).`
+);
 ---
 
 <article
@@ -75,7 +84,16 @@ const waMessage = selectedSize
     <div class="product-detail-info">
       <div class="product-detail-header">
         <span class="product-detail-brand">{perfume.brand}</span>
-        <h1 class="product-detail-name">{perfume.name}</h1>
+        <div class="product-detail-title-row">
+          <h1 class="product-detail-name">{perfume.name}</h1>
+          {/* Sin stock se avisa DESDE el primer píxel (auditoría v2 N2): el
+              chip vive junto al nombre, no 1-2 pantallas más abajo. */}
+          {!available && (
+            <Chip variant="out-of-stock" class="product-detail-stock-chip">
+              Sin Stock
+            </Chip>
+          )}
+        </div>
         <p class="product-detail-family">{perfume.olfactoryFamily}</p>
       </div>
 
@@ -129,15 +147,30 @@ const waMessage = selectedSize
       </div>
 
       <div class="product-detail-actions">
-        <Button 
-          variant="primary" 
-          size="lg" 
-          class="product-detail-add-btn"
-          disabled={!available}
-          data-add-to-cart
-        >
-          {available ? 'Agregar al pedido' : 'Sin Stock'}
-        </Button>
+        {available ? (
+          <Button 
+            variant="primary" 
+            size="lg" 
+            class="product-detail-add-btn"
+            data-add-to-cart
+            data-fab-avoid
+          >
+            Agregar al pedido
+          </Button>
+        ) : (
+          /* Sin stock no hay callejón (auditoría v2 N2): en el lugar del CTA
+             deshabilitado, "Avisame cuando reponga" abre WhatsApp con el
+             mensaje pre-armado para el decant de 5 ml. */
+          <a
+            href={restockWaMessage}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn--secondary btn--lg btn--wrap product-detail-restock-btn"
+            data-fab-avoid
+          >
+            Avisame cuando reponga
+          </a>
+        )}
         <a
           href={waMessage}
           target="_blank"
@@ -236,7 +269,7 @@ const waMessage = selectedSize
 </article>
 
 {available && selectedSize && (
-  <div class="sticky-buy" data-sticky-buy role="region" aria-label="Compra rápida">
+  <div class="sticky-buy" data-sticky-buy data-fab-avoid role="region" aria-label="Compra rápida">
     <div class="sticky-buy-info">
       <span class="sticky-buy-name">{perfume.brand} {perfume.name}</span>
       <span class="sticky-buy-price" data-sticky-price>{formatPrice(selectedSize.price)} · {selectedSize.ml}ml</span>
@@ -380,6 +413,20 @@ const waMessage = selectedSize
     display: flex;
     flex-direction: column;
     gap: 8px;
+  }
+
+  /* Nombre + chip SIN STOCK en la misma línea visual: si el nombre es largo
+     el chip baja y queda pegado a él, nunca suelto a una pantalla de
+     distancia (auditoría v2 N2). */
+  .product-detail-title-row {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+  }
+
+  .product-detail-stock-chip {
+    flex-shrink: 0;
   }
 
   /* El FAB de WhatsApp queda fijo a la derecha y, en estas alturas de
@@ -530,6 +577,7 @@ const waMessage = selectedSize
      `btn--wrap` lo deja más alto que el primario (52px fijos).
      Ambos en auto + stretch => misma altura, texto centrado. */
   .product-detail-actions .product-detail-add-btn,
+  .product-detail-actions .product-detail-restock-btn,
   .product-detail-actions .product-detail-wa-btn {
     flex: 1 1 0;
     min-width: 0;

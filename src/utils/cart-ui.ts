@@ -84,7 +84,7 @@ export function cartContentHtml(items: CartItem[], perfumesMap: Map<string, Perf
           : ''
       }
       <p class="order-summary-note">El total final se confirma al coordinar el envío</p>
-      <button type="button" class="btn btn--primary btn--lg order-summary-btn" data-finalize-order>
+      <button type="button" class="btn btn--primary btn--lg order-summary-btn" data-finalize-order data-fab-avoid>
         Armar pedido
       </button>
     </div>

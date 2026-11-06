@@ -30,7 +30,7 @@ function desdePrecio(items: Perfume[]): string {
 <Layout title={pageTitle} description={pageDescription}>
   <section class="notahub-hero" aria-labelledby="notahub-title">
     <div class="container">
-      <h1 id="notahub-title" class="notahub-title">Buscá por nota</h1>
+      <h1 id="notahub-title" class="page-title notahub-title">Buscá por nota</h1>
       <p class="notahub-subtitle">
         Vainilla, oud, rosa, bergamota: si hay una nota que te encanta,
         acá están sus decants de 5ml.
@@ -76,22 +76,10 @@ function desdePrecio(items: Perfume[]): string {
     text-align: center;
   }
 
+  /* Tipografía y escala mobile: clase global `.page-title` (global.css). */
   .notahub-title {
-    font-family: var(--font-family);
-    font-size: var(--font-display-lg-size);
-    font-weight: var(--font-display-lg-weight);
-    letter-spacing: var(--font-display-lg-tracking);
-    text-transform: uppercase;
-    color: var(--color-on-surface);
     margin: 0 auto var(--spacing-stack-sm);
     max-width: 720px;
-  }
-
-  @media (max-width: 640px) {
-    .notahub-title {
-      font-size: var(--font-headline-md-size);
-      letter-spacing: var(--font-headline-md-tracking);
-    }
   }
 
   .notahub-subtitle {

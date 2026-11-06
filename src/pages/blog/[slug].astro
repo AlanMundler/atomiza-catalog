@@ -40,7 +40,7 @@ const faq = guia.faq.map((f) => ({
             <li aria-current="page">{guia.title}</li>
           </ol>
         </nav>
-        <h1 class="guia-title">{guia.title}</h1>
+        <h1 class="page-title guia-title">{guia.title}</h1>
         <p class="guia-meta">{guia.category} · {guia.mins} min</p>
         <p class="guia-intro">{guia.intro}</p>
       </header>
@@ -130,22 +130,10 @@ const faq = guia.faq.map((f) => ({
     text-underline-offset: 2px;
   }
 
+  /* Tipografía y escala mobile: clase global `.page-title` (global.css). */
   .guia-title {
-    font-family: var(--font-family);
-    font-size: var(--font-display-lg-size);
-    font-weight: var(--font-display-lg-weight);
-    letter-spacing: var(--font-display-lg-tracking);
-    text-transform: uppercase;
-    color: var(--color-on-surface);
     margin: 0 auto var(--spacing-stack-sm);
     max-width: 720px;
-  }
-
-  @media (max-width: 640px) {
-    .guia-title {
-      font-size: var(--font-headline-md-size);
-      letter-spacing: var(--font-headline-md-tracking);
-    }
   }
 
   .guia-meta {

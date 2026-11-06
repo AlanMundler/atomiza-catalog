@@ -35,7 +35,7 @@ const pageDescription = `Decants de 5ml con nota de ${nota.name.toLowerCase()}: 
         width="120"
         height="120"
       />
-      <h1 id="nota-title" class="nota-title">Decants con {nota.name}</h1>
+      <h1 id="nota-title" class="page-title nota-title">Decants con {nota.name}</h1>
       <p class="nota-subtitle">
         {nota.blurb} {items.length} {items.length === 1 ? 'decant disponible' : 'decants disponibles'}.
       </p>
@@ -105,22 +105,10 @@ const pageDescription = `Decants de 5ml con nota de ${nota.name.toLowerCase()}: 
     border: var(--border-width) solid var(--color-outline-variant);
   }
 
+  /* Tipografía y escala mobile: clase global `.page-title` (global.css). */
   .nota-title {
-    font-family: var(--font-family);
-    font-size: var(--font-display-lg-size);
-    font-weight: var(--font-display-lg-weight);
-    letter-spacing: var(--font-display-lg-tracking);
-    text-transform: uppercase;
-    color: var(--color-on-surface);
     margin: 0 auto var(--spacing-stack-sm);
     max-width: 720px;
-  }
-
-  @media (max-width: 640px) {
-    .nota-title {
-      font-size: var(--font-headline-md-size);
-      letter-spacing: var(--font-headline-md-tracking);
-    }
   }
 
   .nota-subtitle {

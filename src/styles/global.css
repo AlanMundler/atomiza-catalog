@@ -322,6 +322,69 @@ ol {
   min-width: 0;
 }
 
+/* ==========================================================================
+   .page-title — H1 de página con escala responsive UNICA (auditoría v2 N1).
+   Sustituye el literal `display-lg` copiado en 10+ páginas (familias, notas,
+   envíos, blog, decants, tridentes, legales, home, catálogo). Reglas:
+   - >= 769 px: 64 px, intacto (goal: "en 1440 mantiene el tamaño actual").
+   - <= 768 px: 28 px. <= 480 px: 20 px. Medido en Chromium con la fuente
+     real del sitio (Montserrat 200, balance, content 342 px en 390): es el
+     umbral mínimo para que el peor H1 de familia ("PERFUMES ÁRABES DE
+     FLORAL FRUTAL GOURMAND EN DECANT") ocupe <= 2 líneas y "ENVÍOS Y
+     ENTREGAS EN CÓRDOBA CAPITAL" <= 2 (objetivos de la auditoría).
+   - text-wrap: balance reparte las líneas y mata las "palabras sueltas".
+   Cada página conserva su margin/text-align propios vía su clase scoped.
+   ========================================================================== */
+.page-title {
+  font-family: var(--font-family);
+  font-size: var(--font-display-lg-size);
+  font-weight: var(--font-display-lg-weight);
+  line-height: var(--font-display-lg-line-height);
+  letter-spacing: var(--font-display-lg-tracking);
+  text-transform: uppercase;
+  color: var(--color-on-surface);
+  text-wrap: balance;
+}
+
+@media (max-width: 768px) {
+  .page-title {
+    font-size: 28px;
+    line-height: 1.2;
+    letter-spacing: 0.06em;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    /* 19px/0.03em es el umbral MEDIDO en la página real (contenedor 342 px
+       a 390): a 20px el peor título de familia ("…FLORAL FRUTAL GOURMAND…")
+       todavía rompe en 3 líneas; acá da 2, y "ENVÍOS Y ENTREGAS EN CÓRDOBA
+       CAPITAL" da 2 (objetivos N1). */
+    font-size: 19px;
+    letter-spacing: 0.03em;
+  }
+}
+
+/* ==========================================================================
+   Anti-solape del FAB de WhatsApp (auditoría v2 N3). El FAB es global y
+   vive en la esquina inferior derecha: cualquier CTA prioritario
+   ([data-fab-avoid], marcado en quiz/ficha/carrito/modal) que caiga en su
+   franja queda tapado. Dos reglas:
+   - `.fab-yield`: estado que aplica el script de Layout.astro cuando un
+     elemento marcado intersecta el rect del FAB (IntersectionObserver con
+     el rect del FAB como root). Sin solape, el FAB vuelve solo.
+   - `:has()`: con drawer o modal abiertos el FAB está detrás del scrim
+     (z 90 vs 999/1100): es un toque muerto, se retira.
+   ========================================================================== */
+.whatsapp-fab.fab-yield,
+body:has(.drawer--open) .whatsapp-fab,
+body:has(dialog[open]) .whatsapp-fab {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: scale(0.85);
+}
+
 .skip-link {
   position: absolute;
   top: -40px;

@@ -71,6 +71,17 @@ Ya existen: `view_item_list`, `select_item`, `view_item`, `add_to_cart`, `view_c
 3. Semana 3-4: #3 (tridente en PLP/PDP) y #4 (home) — las dos que más mueven ticket y entrada.
 4. Después: #8, #9, #10.
 
+## Segunda pasada (v2) y fixes v3
+
+La auditoría v2 (`docs/ux-auditoria-2026-11-v2.md`) cubrió lo que faltaba: blog, quiz completo, notas/familias, legales, 404, menú móvil, carrito vacío/1/3, modal abierto, búsqueda con y sin resultados, filtro por casa, ficha sin stock y home en desktop (59 capturas en `mockups/ux/v2/`). Sumó 10 hallazgos y 10 propuestas nuevas (N1-N10) y 13 correcciones de copy.
+
+De esa pasada ya se corrigieron y verificaron tres defectos:
+
+| Fix | Evidencia |
+|---|---|
+| H1 sin escala móvil en familias/notas/envíos/blog/legales → clase única `.page-title` (28 px ≤768, 19 px ≤480, balance) en 11 archivos | 390 px: familia 2 líneas, nota 1, envíos 2; primer producto en familias y=439 / notas y=535; 1440 conserva 64 px |
+| FAB tapaba CTAs del quiz → el FAB cede cuando un `[data-fab-avoid]` intersecta su rect (IntersectionObserver + `:has` para drawers) | `/quiz/` FAB oculto sin solape; ficha FAB visible sin solape; carrito abierto FAB oculto |
+| Ficha sin stock sin recuperación → chip **SIN STOCK** junto al nombre y botón **"Avisame cuando reponga"** con WhatsApp pre-armado | `/producto/club-de-nuit-intense-man/`: chip a y=786 (visible sin scroll en 844) y link `wa.me/5493472559307?text=…avisame cuando vuelva Armaf Club de Nuit Intense Man (5 ml)`; producto con stock no muestra el botón |
 ## Quick wins ya aplicados (verificados)
 
 - Tira de promos: nunca más de 1 visible a la vez (80 muestras cada 50 ms → 0 solapamientos).
@@ -86,5 +97,5 @@ Ya existen: `view_item_list`, `select_item`, `view_item`, `add_to_cart`, `view_c
 | #5 Modal "Armar pedido" | ✅ 1 CTA primario, preview colapsable, **entrega simétrica (Retiro / Uber)** y **pago (Efectivo / Transferencia)**, ambos en el mensaje | modal: title "Armar pedido", 1 `.btn--primary`, chips 2×2 de ancho idéntico (228.5/228.5 px a 1440; 0.0 px de diferencia a 320), `details` cerrado |
 | #7 Reseñas + trust en la ficha | ✅ trust strip 3 ítems + 2 reseñas reales + link a Google | 3 `.trust-item`, 2 `.product-review`, link `g.page/r/…` |
 
-Pendiente de aprobación: #1 buybox PDP, #3 tridente en PLP/PDP, #4 home merchandizada, #8 PLP densa, #9 quiz 3 resultados, #10 aviso de reposición.
+Pendiente de aprobación: #1 buybox PDP (v2 N1: precio grande + un solo CTA), #3 tridente en PLP/PDP, #4 home merchandizada (v2 N10: rediseñar primero para desktop), #8 PLP densa (v2 N3), #9 quiz 3 resultados, y el resto del backlog v2 (N4 blog que vende, N5 empty-search con captura, N6 carrito vidriera, N7 targets 44 px, N8 menú móvil, N9 orden por stock).
 

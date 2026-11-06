@@ -8,7 +8,7 @@ const BASE = site.basePath;
 <Layout title="Política de privacidad" description={`Política de privacidad de ${site.name}. Qué datos recopilamos, cómo los usamos y qué derechos tenés sobre ellos.`}>
   <section class="legal-hero" aria-labelledby="legal-title">
     <div class="container">
-      <h1 id="legal-title" class="legal-title">Política de privacidad</h1>
+      <h1 id="legal-title" class="page-title legal-title">Política de privacidad</h1>
       <p class="legal-subtitle">Última actualización: septiembre de 2026</p>
     </div>
   </section>
@@ -77,21 +77,9 @@ const BASE = site.basePath;
     text-align: center;
   }
 
+  /* Tipografía y escala mobile: clase global `.page-title` (global.css). */
   .legal-title {
-    font-family: var(--font-family);
-    font-size: var(--font-display-lg-size);
-    font-weight: var(--font-display-lg-weight);
-    line-height: var(--font-display-lg-line-height);
-    letter-spacing: var(--font-display-lg-tracking);
-    text-transform: uppercase;
-    color: var(--color-on-surface);
     margin: 0 0 var(--spacing-stack-sm);
-  }
-
-  @media (max-width: 640px) {
-    .legal-title {
-      font-size: 36px;
-    }
   }
 
   .legal-subtitle {

@@ -106,6 +106,9 @@ export function resultCard(perfume: Perfume, reason: string): HTMLElement {
   addBtn.className = 'btn btn--primary btn--lg quiz-result-add';
   addBtn.textContent = QUIZ_COPY.addButton;
   addBtn.dataset.addPerfumeId = perfume.id;
+  // CTA prioritario del quiz: el FAB de WhatsApp cede cuando pasa por su
+  // franja (lógica en Layout.astro, auditoría v2 N3).
+  addBtn.dataset.fabAvoid = '';
   bindOnce(addBtn, (el) => {
     el.addEventListener('click', () => {
       const event = new CustomEvent('cart:add', {
