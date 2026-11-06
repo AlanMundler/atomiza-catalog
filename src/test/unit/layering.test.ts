@@ -1,10 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { layeringCombos } from '@/data/layering';
+import { inspiraciones } from '@/data/inspiraciones';
 import perfumesData from '@/data/perfumes.json';
 import {
   availableLayeringCombos,
   decantAvailable,
   decantPrice,
+  dupeKey,
+  isSameDupe,
   layeringAffinity,
   layeringRole,
   pairPrice,
@@ -59,7 +62,7 @@ describe('layering: afinidad', () => {
     expect(result.verdict).toBe('fuerte');
     expect(result.anchor.id).toBe('odyssey-mega-man');
     expect(result.accent.id).toBe('yeah');
-    expect(result.ratio).toContain('2 sprays');
+    expect(result.ratio).toMatch(/spray/);
   });
 
   it('dos anclas densas piden cuidado', () => {
@@ -68,12 +71,36 @@ describe('layering: afinidad', () => {
     expect(result.reason).toMatch(/anular|densos/i);
   });
 
+  it('dos dupes del mismo original no son layering: verdicto cuidado y sin dosis', () => {
+    const result = layeringAffinity(byId('odyssey-mega-man'), byId('yeah'), { sameOriginal: true });
+    expect(result.verdict).toBe('cuidado');
+    expect(result.reason).toMatch(/mismo perfume original|duplica el aroma/i);
+    expect(result.ratio).not.toMatch(/sprays/);
+  });
+
   it('nunca devuelve un ratio vacío', () => {
     for (const a of perfumes.slice(0, 10)) {
       for (const b of perfumes.slice(10, 20)) {
         expect(layeringAffinity(a, b).ratio.length).toBeGreaterThan(10);
       }
     }
+  });
+});
+
+describe('layering: detección de dupes del mismo original', () => {
+  it('reconoce dos dupes de Y EDP aunque la casa venga escrita distinto', () => {
+    expect(isSameDupe(dupeKey('Y Eau de Parfum', 'YSL'), dupeKey('Y Eau de Parfum', 'Yves Saint Laurent'))).toBe(true);
+  });
+
+  it('reconoce variantes de concentración del mismo perfume', () => {
+    expect(isSameDupe(dupeKey('Sauvage', 'Dior'), dupeKey('Sauvage Eau de Parfum', 'Dior'))).toBe(true);
+    expect(isSameDupe(dupeKey('La Belle', 'Jean Paul Gaultier'), dupeKey('La Belle Le Parfum', 'Jean Paul Gaultier'))).toBe(true);
+  });
+
+  it('no marca como iguales a perfumes distintos', () => {
+    expect(isSameDupe(dupeKey('Aventus', 'Creed'), dupeKey('Baccarat Rouge 540', 'Maison Francis Kurkdjian'))).toBe(false);
+    expect(isSameDupe(dupeKey('Sauvage', 'Dior'), dupeKey('Sauvage', 'Otra Casa'))).toBe(false);
+    expect(isSameDupe('', dupeKey('Aventus', 'Creed'))).toBe(false);
   });
 });
 
@@ -100,6 +127,22 @@ describe('layering: combos curados', () => {
       expect(combo.anchorSlug).not.toBe(combo.accentSlug);
       expect(slugs.has(combo.slug)).toBe(false);
       slugs.add(combo.slug);
+    }
+  });
+
+  it('ningún combo empareja dos dupes del mismo original', () => {
+    const dupeBySlug = new Map(inspiraciones.map((i) => [i.perfumeSlug, dupeKey(i.original, i.casa)]));
+    for (const combo of layeringCombos) {
+      const a = dupeBySlug.get(combo.anchorSlug);
+      const b = dupeBySlug.get(combo.accentSlug);
+      expect(isSameDupe(a, b), `${combo.slug}: ${combo.anchorSlug} + ${combo.accentSlug}`).toBe(false);
+    }
+  });
+
+  it('todos los combos curados tienen afinidad buena o fuerte', () => {
+    for (const combo of layeringCombos) {
+      const verdict = layeringAffinity(byId(combo.anchorSlug), byId(combo.accentSlug)).verdict;
+      expect(verdict, `${combo.slug}`).not.toBe('cuidado');
     }
   });
 

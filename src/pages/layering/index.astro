@@ -26,12 +26,14 @@ import imageDimsRaw from '@/data/image-dims.json';
 import { getFamilias } from '@/data/familias';
 import { site, assetUrl } from '@/site.config';
 import { resenasRating, hasResenas } from '@/data/resenas';
+import { inspiraciones } from '@/data/inspiraciones';
 import { formatPrice } from '@/utils/formatters';
 import { getStockStatus, primarySize, DECANT_ML } from '@/utils/stock';
 import {
   availableLayeringCombos,
   decantAvailable,
   decantPrice,
+  dupeKey,
   layeringAffinity,
   layeringRole,
   pairPrice,
@@ -50,6 +52,12 @@ const BASE = site.basePath;
 const perfumes = perfumesData.perfumes as Perfume[];
 const byId = new Map(perfumes.map((p) => [p.id, p]));
 const inStock = perfumes.filter((p) => decantAvailable(p) && decantPrice(p) !== null);
+
+// Clave de ADN por perfume (dupe de qué original es), para que el combinador no
+// sugiera combinar dos interpretaciones del mismo perfume.
+const dupeBySlug = new Map(
+  inspiraciones.map((insp) => [insp.perfumeSlug, dupeKey(insp.original, insp.casa)] as const)
+);
 
 const roleGroups: { role: LayeringRole; label: string; items: Perfume[] }[] = [
   { role: 'ancla', label: 'Ideales como base', items: [] },
@@ -225,6 +233,9 @@ const clientPerfumes = inStock.map((p) => ({
   img: bottleSrc(p),
   w: dimsFor(p).width,
   h: dimsFor(p).height,
+  // Clave de "ADN": si dos perfumes comparten clave son dupes del mismo
+  // original y el combinador los marca como no recomendados.
+  dupe: dupeBySlug.get(p.slug) ?? '',
 }));
 
 const pageTitle = 'Layering: cómo combinar perfumes';
@@ -842,7 +853,7 @@ const meterTicks = (score: number): number => Math.max(0, Math.min(10, Math.roun
 
 <script>
   import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
-  import { layeringAffinity } from '@/utils/layering';
+  import { isSameDupe, layeringAffinity } from '@/utils/layering';
   import { escapeHtml, formatPrice } from '@/utils/formatters';
   import type { Perfume } from '@/data/types';
 
@@ -862,6 +873,8 @@ const meterTicks = (score: number): number => Math.max(0, Math.min(10, Math.roun
     img: string;
     w: number;
     h: number;
+    /** clave de ADN (dupe de qué original es); '' si es original sin dupe */
+    dupe: string;
   }
 
   const VERDICT_LABEL: Record<string, string> = {
@@ -1016,9 +1029,13 @@ const meterTicks = (score: number): number => Math.max(0, Math.min(10, Math.roun
       }
       addBtn?.removeAttribute('disabled');
 
-      const aff = layeringAffinity(toPerfume(a), toPerfume(b));
+      const sameDupe = isSameDupe(a.dupe, b.dupe);
+      const aff = layeringAffinity(toPerfume(a), toPerfume(b), { sameOriginal: sameDupe });
       const label = (n: string): string => escapeHtml(n);
       const href = (p: ClientPerfume): string => `${base}producto/${p.slug}/`;
+      // Dos dupes del mismo original no se agregan: duplicarían el aroma.
+      if (sameDupe) addBtn?.setAttribute('disabled', '');
+      else addBtn?.removeAttribute('disabled');
       // El motor reordena el par: quien quedó de ancla/acento según rol.
       const anchorSrc = aff.anchor.id === a.id ? a : b;
       const accentSrc = aff.accent.id === a.id ? a : b;

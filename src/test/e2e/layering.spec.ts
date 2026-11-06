@@ -4,11 +4,11 @@ const LAYERING = 'layering/';
 
 /**
  * El par estrella del hero/combinador es la primera combo curada con stock
- * (`fresco-sobre-madera`): Odyssey Mega Man (ancla) + Yeah! (acento).
+ * (`dulce-con-filo`): Angham (ancla) + Hawas Tropical (acento).
  * Mismos ids que valida `src/test/unit/layering.test.ts`.
  */
-const ANCHOR = 'odyssey-mega-man';
-const ACCENT = 'yeah';
+const ANCHOR = 'angham';
+const ACCENT = 'hawas-tropical';
 
 async function readCart(page: import('@playwright/test').Page): Promise<{
   items: { perfumeId: string; size: { ml: number }; quantity: number }[];
@@ -27,8 +27,8 @@ test.describe('Layering: guía + combinador', () => {
     await expect(star).toBeVisible();
     await expect(star.locator('figure img')).toHaveCount(2);
     await expect(star.getByRole('button', { name: /Probalos juntos/ })).toBeVisible();
-    // Precio del par desde el catálogo: 7.000 + 6.000.
-    await expect(star.locator('.ly-star-price')).toContainText('$13.000');
+    // Precio del par desde el catálogo: 8.000 + 10.000.
+    await expect(star.locator('.ly-star-price')).toContainText('$18.000');
 
     // El resultado del combinador viene servido (funciona sin JS): veredicto
     // y proporción del par estrella.
@@ -42,6 +42,17 @@ test.describe('Layering: guía + combinador', () => {
     for (const card of await allCombos.all()) {
       await expect(card.locator('.ly-combo-pair img')).toHaveCount(2);
     }
+  });
+
+  test('two dupes of the same original are flagged and cannot be added', async ({ page }) => {
+    await page.goto(LAYERING);
+
+    // Odyssey Mega Man y Yeah! son los dos dupes de Y EDP: no es layering.
+    await page.selectOption('#ly-a', 'odyssey-mega-man');
+    await page.selectOption('#ly-b', 'yeah');
+    await expect(page.locator('#ly-result .ly-verdict')).toContainText('Combiná con cuidado');
+    await expect(page.locator('#ly-result .ly-reason')).toContainText(/mismo perfume original|duplica el aroma/i);
+    await expect(page.locator('#ly-actions [data-combo-add]')).toBeDisabled();
   });
 
   test('changing the selects updates verdict, order and ratio live', async ({ page }) => {
