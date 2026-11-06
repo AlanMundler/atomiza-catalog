@@ -68,6 +68,11 @@ export default defineConfig({
           // prioridad que las fichas de producto.
           item.changefreq = ChangeFreqEnum.WEEKLY;
           item.priority = 0.8;
+        } else if (path.startsWith('/layering')) {
+          // Guía + conversión: prioriza alto pero cambia cuando cambia
+          // el stock de las combos, no semanalmente.
+          item.changefreq = ChangeFreqEnum.MONTHLY;
+          item.priority = 0.8;
         } else if (path.startsWith('/blog')) {
           item.changefreq = ChangeFreqEnum.MONTHLY;
           item.priority = 0.6;

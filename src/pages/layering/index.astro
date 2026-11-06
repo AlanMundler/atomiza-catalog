@@ -1,0 +1,1906 @@
+---
+/**
+ * /layering — Guía editorial + combinador interactivo.
+ *
+ * Estructura: hero con combo estrella (visible sin scroll, render completo
+ * en el server para que funcione sin JS) → qué es / qué no es → combinador
+ * (dos selects con stock real, veredicto en vivo con `layeringAffinity`,
+ * estado en la URL) → combos curadas → cómo se hace → matriz de familias →
+ * qué evitar → seguridad → clima Córdoba → FAQ → CTA.
+ *
+ * La lógica de afinidad vive en `src/utils/layering.ts` (sin DOM): el server
+ * la usa para el estado inicial y el script del cliente importa la MISMA
+ * función para el resultado en vivo. Nada de promesas de duración: heurística
+ * honesta, precios siempre desde `perfumes.json`.
+ */
+import Layout from '@/layouts/Layout.astro';
+import Faq from '@/components/ui/Faq.astro';
+import Chip from '@/components/ui/Chip.astro';
+import perfumesData from '@/data/perfumes.json';
+import imageDimsRaw from '@/data/image-dims.json';
+import { getFamilias } from '@/data/familias';
+import { site, assetUrl } from '@/site.config';
+import { formatPrice } from '@/utils/formatters';
+import { getStockStatus, primarySize, DECANT_ML } from '@/utils/stock';
+import {
+  availableLayeringCombos,
+  decantAvailable,
+  decantPrice,
+  layeringAffinity,
+  layeringRole,
+  pairPrice,
+  sharedNotes,
+  type AffinityVerdict,
+  type LayeringRole,
+} from '@/utils/layering';
+import type { Perfume } from '@/data/types';
+
+const BASE = site.basePath;
+
+// ---------------------------------------------------------------------------
+// Datos reales (stock manda): el combinador solo ofrece decants de 5 ml
+// disponibles, y las combos curadas se filtran por disponibilidad al vuelo.
+// ---------------------------------------------------------------------------
+const perfumes = perfumesData.perfumes as Perfume[];
+const byId = new Map(perfumes.map((p) => [p.id, p]));
+const inStock = perfumes.filter((p) => decantAvailable(p) && decantPrice(p) !== null);
+
+const roleGroups: { role: LayeringRole; label: string; items: Perfume[] }[] = [
+  { role: 'ancla', label: 'Ideales como base', items: [] },
+  { role: 'acento', label: 'Ideales como acento', items: [] },
+  { role: 'puente', label: 'Comodines (sirven de las dos)', items: [] },
+];
+for (const p of inStock) {
+  const group = roleGroups.find((g) => g.role === layeringRole(p));
+  group?.items.push(p);
+}
+for (const g of roleGroups) g.items.sort((a, b) => a.name.localeCompare(b.name, 'es'));
+
+const combos = availableLayeringCombos(perfumes);
+const comboViews = combos.map((combo) => {
+  const anchor = byId.get(combo.anchorSlug)!;
+  const accent = byId.get(combo.accentSlug)!;
+  const anchorSize = primarySize(anchor);
+  const accentSize = primarySize(accent);
+  return {
+    ...combo,
+    anchor,
+    accent,
+    shared: sharedNotes(anchor, accent),
+    total: pairPrice(anchor, accent) ?? 0,
+    // Chip honesto de "poco stock" (1-4 unidades) cuando alguna pata lo esté.
+    lowStock:
+      (anchorSize ? getStockStatus(anchorSize) : 'out-of-stock') === 'low-stock' ||
+      (accentSize ? getStockStatus(accentSize) : 'out-of-stock') === 'low-stock',
+  };
+});
+
+// Combo estrella del hero = la primera disponible (orden de curaduría).
+const star = comboViews[0] ?? null;
+
+// Estado inicial del combinador (server render, mismo que pintaría el cliente):
+// la combo estrella como default.
+const defA = star?.anchor ?? inStock[0];
+const defB = star?.accent ?? inStock[1];
+const defAff = layeringAffinity(defA, defB);
+const defTotal = pairPrice(defAff.anchor, defAff.accent) ?? 0;
+
+const verdictMeta: Record<AffinityVerdict, { label: string; className: string }> = {
+  fuerte: { label: 'Combinación fuerte', className: 'ly-verdict--fuerte' },
+  buena: { label: 'Buena combinación', className: 'ly-verdict--buena' },
+  cuidado: { label: 'Combiná con cuidado', className: 'ly-verdict--cuidado' },
+};
+
+// Anchos/altos reales (scripts/image-dims.mjs) para cero CLS en las botellas.
+type ImageDims = { width: number; height: number };
+const imageDims = imageDimsRaw as unknown as Record<string, ImageDims>;
+const FALLBACK_DIMS: ImageDims = { width: 400, height: 400 };
+const dimsFor = (p: Perfume): ImageDims => imageDims[p.images[0]?.src ?? ''] ?? FALLBACK_DIMS;
+const bottleSrc = (p: Perfume): string => assetUrl(p.images[0]?.src);
+const bottleAlt = (p: Perfume): string => p.images[0]?.alt || `${p.brand} ${p.name}`;
+
+// Links de la matriz de familias a páginas reales de /familias/ cuando existen.
+const familias = getFamilias();
+const norm = (v: string) => v.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+const familiaLink = (keyword: string): string | null => {
+  const f = familias.find((x) => norm(x.name).includes(norm(keyword)));
+  return f ? `${BASE}familias/${f.slug}/` : null;
+};
+
+const matrix = [
+  { anchorWord: 'Amaderada', accentWord: 'Cítrica', verdict: 'Clásico seguro', note: 'La madera sostiene; lo liviano levanta la salida sin pelearse.' },
+  { anchorWord: 'Oriental vainilla', accentWord: 'Aromática verde', verdict: 'Dulce cortado', note: 'El mentolado corta el azúcar: gourmand usable de día.' },
+  { anchorWord: 'Cuero', accentWord: 'Floral frutal', verdict: 'Noche sin gritar', note: 'El floral doman el cuero: contraste que se recuerda sin saturar.' },
+  { anchorWord: 'Almizcle', accentWord: 'Dulce especiado', verdict: 'Limpio con carácter', note: 'Prolijo de día, cálido de cerca. El almizcle cose todo.' },
+  { anchorWord: 'Oriental', accentWord: 'Oriental vainilla', verdict: 'Cuidado', note: 'Dos anclas densas se pisan. Si los amás, 1 spray de cada uno y nada más.' },
+  { anchorWord: 'Gourmand', accentWord: 'Gourmand', verdict: 'Sobredosis', note: 'Excepción: si uno es claramente más liviano que el otro, puede cerrar.' },
+];
+
+// FAQ compartida entre el `<Faq>` visible y el JSON-LD FAQPage.
+const faq = [
+  {
+    question: '¿Qué perfume va primero?',
+    answer: 'El más denso siempre va primero: amaderados, oud, vainillas, cueros, especidos. Sobre esa base, 30 a 60 segundos después, va el más liviano: cítricos, frescos, acuosos, florales. Es una heurística, no una ley: si tenés dos perfumes parecidos, probá los dos órdenes y quedate con el que leas mejor.',
+  },
+  {
+    question: '¿Se pueden mezclar marcas distintas?',
+    answer: 'Sí, y es lo más común: el layering justamente libera combinaciones entre casas. Nuestro catálogo completa los pairs con perfumes de Armaf, Lattafa, Maison Alhambra y otras marcas sin problema. Lo único que no se mezcla es el líquido dentro del frasco: las capas van sobre la piel.',
+  },
+  {
+    question: '¿Cuántos sprays uso?',
+    answer: '1 o 2 de cada perfume, no 2 de cada uno por las dudas. La regla: la dosis TOTAL no tiene que ser mayor a la de un solo perfume solo. Si arrancás con 2 del de abajo, ponele 1 arriba. Siempre podés sumar un spray más al rato; quitar no se puede.',
+  },
+  {
+    question: '¿El layering hace que el perfume dure más?',
+    answer: 'No es un truco de duración, y desconfiá de quien te lo prometa. Lo que sí pasa: el ancla (la capa densa) suele ser más longeva que el acento, así que a medida que el acento se apaga, queda tu base sonando con otro carácter. Ganás evolución, no necesariamente horas.',
+  },
+  {
+    question: '¿Mancha la ropa?',
+    answer: 'Puede, sobre todo en telas claras o de seda: los perfumes árabes concentrados tienen óleos y colorantes. Rociá sobre la piel, dejá secar y recién ahí te vestís. Si querés perfume en la ropa, probá primero en una costura interna.',
+  },
+  {
+    question: 'Tengo piel sensible. ¿Puedo hacer layering?',
+    answer: 'Con más precaución, no con prohibición. Hacé la prueba de contacto abierta (ROAT): aplicá la mezcla en un parche chico del antebrazo dos veces por día durante una semana. Si no hay rojeces ni picazón, aléate. Y menos sprays en total: con piel sensible, menos es más.',
+  },
+  {
+    question: '¿Cuál es la forma más fácil de empezar?',
+    answer: 'Una de las combos curadas de esta guía, en decants de 5 ml: dos decants chicos, los probás una semana en capas y recién ahí decidís si querés los frascos. El combinador de arriba te deja testear cualquier par antes de comprar.',
+  },
+];
+
+const faqSchema = faq.map((f) => ({
+  '@type': 'Question',
+  name: f.question,
+  acceptedAnswer: { '@type': 'Answer', text: f.answer },
+}));
+
+// Payload mínimo para el combinador cliente: solo lo que lee layeringAffinity
+// (name, olfactoryFamily, notes) + precio/id/slug para la UI. Nada de
+// duplicar el JSON completo en el bundle.
+const clientPerfumes = inStock.map((p) => ({
+  id: p.id,
+  slug: p.slug,
+  name: p.name,
+  brand: p.brand,
+  family: p.olfactoryFamily,
+  notes: { top: p.notes.top, heart: p.notes.heart, base: p.notes.base },
+  price: decantPrice(p) ?? 0,
+}));
+
+const pageTitle = 'Layering: cómo combinar perfumes';
+const pageDescription = `Guía de layering para combinar dos perfumes en capas: ancla abajo, acento arriba. Probá cualquier par en el combinador y llevá los dos en decants de 5 ml con entrega en ${site.addressLocality}.`;
+const preloadImages = star ? [star.anchor.images[0]?.src, star.accent.images[0]?.src].filter(Boolean) : [];
+
+// URLs para los JSON-LD: se resuelven en el frontmatter (los scripts inline
+// viajan dentro del slot de Layout y allá `Astro` no está en scope).
+const schemaAuthorUrl = Astro.site ?? new URL(Astro.url.href);
+const schemaPageUrl = new URL(Astro.url.pathname, Astro.site).href;
+const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
+---
+
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  ogImage="og-image.jpg"
+  ogType="article"
+  preloadImages={preloadImages}
+>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqSchema,
+  }).replace(/</g, '\\u003c')} />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: pageTitle,
+    description: pageDescription,
+    inLanguage: 'es-AR',
+    datePublished: '2026-11-06',
+    author: { '@type': 'Organization', name: site.namePlain, url: schemaAuthorUrl },
+    publisher: { '@type': 'Organization', name: site.namePlain, url: schemaAuthorUrl },
+    mainEntityOfPage: schemaPageUrl,
+  }).replace(/</g, '\\u003c')} />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Inicio', item: schemaSiteOrigin },
+      { '@type': 'ListItem', position: 2, name: 'Layering' },
+    ],
+  }).replace(/</g, '\\u003c')} />
+
+  <script is:inline id="layering-data" type="application/json" set:html={JSON.stringify(clientPerfumes).replace(/</g, '\\u003c')} />
+
+  <article class="ly" data-base={BASE}>
+    {/* ================= 1 · HERO editorial con combo estrella ================= */}
+    {star && (
+      <section class="ly-hero" aria-labelledby="ly-title">
+        <div class="container">
+          <nav class="ly-breadcrumb" aria-label="Migas de pan">
+            <ol>
+              <li><a href={BASE}>Inicio</a></li>
+              <li aria-current="page">Layering</li>
+            </ol>
+          </nav>
+          <p class="ly-kicker">Guía · 5 min</p>
+          <h1 id="ly-title" class="page-title ly-title">Layering: cómo combinar perfumes</h1>
+          <p class="ly-sub">
+            Dos perfumes en capas: el denso abajo, el liviano arriba.
+            <span class="ly-sub-2">Se leen como un solo perfume. Empezá con un par curado en decants de 5 ml.</span>
+          </p>
+
+          <div class="ly-star" aria-label={`Combo estrella: ${star.title}`}>
+            <div class="ly-star-pair">
+              <figure class="ly-bottle">
+                <span class="ly-role-tag ly-role-tag--base">Base</span>
+                <img
+                  src={bottleSrc(star.anchor)}
+                  alt={bottleAlt(star.anchor)}
+                  width={dimsFor(star.anchor).width}
+                  height={dimsFor(star.anchor).height}
+                  loading="eager"
+                  fetchpriority="high"
+                  decoding="async"
+                />
+                <figcaption>{star.anchor.name}</figcaption>
+              </figure>
+              <span class="ly-star-arrow" aria-hidden="true">→</span>
+              <figure class="ly-bottle">
+                <span class="ly-role-tag ly-role-tag--accent">Acento</span>
+                <img
+                  src={bottleSrc(star.accent)}
+                  alt={bottleAlt(star.accent)}
+                  width={dimsFor(star.accent).width}
+                  height={dimsFor(star.accent).height}
+                  loading="eager"
+                  decoding="async"
+                />
+                <figcaption>{star.accent.name}</figcaption>
+              </figure>
+            </div>
+            <div class="ly-star-copy">
+              <p class="ly-star-title">{star.title}</p>
+              <p class="ly-star-why">{star.why}</p>
+              <p class="ly-star-price">
+                <strong>{formatPrice(star.total)}</strong> el par · 2 decants de {DECANT_ML} ml
+              </p>
+              <div class="ly-star-actions">
+                <button
+                  type="button"
+                  class="btn btn--primary btn--md"
+                  data-combo-add
+                  data-anchor={star.anchor.id}
+                  data-accent={star.accent.id}
+                  aria-label={`Probalos juntos: agregar ${star.anchor.name} y ${star.accent.name} en decants de 5 ml`}
+                >
+                  Probalos juntos
+                </button>
+                <a href="#ly-combinador" class="ly-star-link">O armá tu propio par ↓</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    )}
+
+    {/* ================= 2 · Qué es / qué no es ================= */}
+    <section class="ly-section" id="que-es" aria-labelledby="ly-que-es">
+      <div class="container ly-prose">
+        <h2 id="ly-que-es" class="ly-h2"><span class="ly-num" aria-hidden="true">01</span>Qué es el layering (y qué no)</h2>
+        <p>
+          Layering es aplicarte dos perfumes (máximo tres) en capas sobre la piel: primero el más
+          denso, esperás medio minuto, y encima el más liviano. Bien hecho, no se siente como dos
+          perfumes peleando: se siente como <em>un</em> perfume con más matices. La técnica vive en
+          los roles: el <dfn class="ly-dfn" title="El perfume más denso; va primero y sostiene el conjunto">ancla</dfn>
+          da estructura y permanencia, el <dfn class="ly-dfn" title="El perfume más liviano; va arriba y aporta brillo">acento</dfn>
+          da luz, y la <dfn class="ly-dfn" title="Una nota que comparten los dos perfumes y cose la mezcla">nota puente</dfn>
+          es lo que hace que se lean juntos.
+        </p>
+        <p>
+          Lo que <strong>no</strong> es: mezclar líquidos dentro de un frasco (eso arruina dos perfumes),
+          sumar dosis para "durar el doble" (no lo prometemos: lo que gana es evolución, no horas), ni una
+          fórmula química con garantía. Es heurística de perfumistas y de la comunidad. La
+          <dfn class="ly-dfn" title="La mezcla final que resulta de superponer las capas">blending</dfn>
+          sale distinta en cada piel: por eso la forma barata de probarla son dos decants de 5 ml, no dos frascos.
+        </p>
+      </div>
+    </section>
+
+    <figure class="ly-quote">
+      <blockquote>
+        <p>Layering no es mezclar: es superponer. Si a los veinte minutos se siente como un solo perfume, va por buen camino.</p>
+      </blockquote>
+    </figure>
+
+    {/* ================= 3 · Combinador interactivo ================= */}
+    <section class="ly-section ly-section--tint" id="ly-combinador" aria-labelledby="ly-combinador-title">
+      <div class="container">
+        <p class="ly-kicker">Herramienta</p>
+        <h2 id="ly-combinador-title" class="ly-h2"><span class="ly-num" aria-hidden="true">02</span>Elegí dos perfumes con stock y mirá qué sale</h2>
+        <p class="ly-hint">
+          El veredicto usa notas compartidas y roles (densa abajo, liviana arriba). Es una guía, no una sentencia:
+          el narices manda siempre.
+        </p>
+        <noscript>
+          <p class="ly-noscript">Sin JavaScript el combinador no recalcula: te dejamos igual el veredicto del par estrella más abajo, y las 8 combos curadas funcionan igual.</p>
+        </noscript>
+
+        <div class="ly-comb-grid">
+          <div class="ly-selects">
+            <div class="ly-field">
+              <label for="ly-a">Perfume A</label>
+              <select id="ly-a" name="a" data-combo-select>
+                {roleGroups.map((g) => (
+                  <optgroup label={g.label}>
+                    {g.items.map((p) => (
+                      <option value={p.id} selected={p.id === defA.id}>{p.name} — {p.brand}</option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
+            </div>
+            <button type="button" class="ly-swap" data-swap aria-label="Intercambiar los perfumes">⇄</button>
+            <div class="ly-field">
+              <label for="ly-b">Perfume B</label>
+              <select id="ly-b" name="b" data-combo-select>
+                {roleGroups.map((g) => (
+                  <optgroup label={g.label}>
+                    {g.items.map((p) => (
+                      <option value={p.id} selected={p.id === defB.id}>{p.name} — {p.brand}</option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div class="ly-result" id="ly-result" aria-live="polite">
+            <p class={`ly-verdict ${verdictMeta[defAff.verdict].className}`}>
+              {verdictMeta[defAff.verdict].label}
+            </p>
+            <ol class="ly-order">
+              <li><span class="ly-order-tag">Abajo · ancla</span> <a href={`${BASE}producto/${defAff.anchor.slug}/`} class="ly-inline-link">{defAff.anchor.name}</a></li>
+              <li><span class="ly-order-tag ly-order-tag--accent">Arriba · acento</span> <a href={`${BASE}producto/${defAff.accent.slug}/`} class="ly-inline-link">{defAff.accent.name}</a></li>
+            </ol>
+            {defAff.shared.length > 0 && (
+              <ul class="ly-shared" aria-label="Notas puente">
+                {defAff.shared.map((n) => <li class="ly-note-chip">{n}</li>)}
+              </ul>
+            )}
+            <p class="ly-ratio"><span class="ly-ratio-label">Proporción sugerida</span>{defAff.ratio}</p>
+            <p class="ly-reason">{defAff.reason}</p>
+          </div>
+
+          <div class="ly-actions" id="ly-actions">
+            <button
+              type="button"
+              class="btn btn--primary btn--lg ly-add"
+              data-combo-add
+              data-anchor={defAff.anchor.id}
+              data-accent={defAff.accent.id}
+            >
+              Agregar los dos ({DECANT_ML} ml) · <span data-pair-total>{formatPrice(defTotal)}</span>
+            </button>
+            <div class="ly-actions-side">
+              <button type="button" class="ly-copy" data-copy-link>Copiar link</button>
+              <p class="ly-copy-status" data-copy-status role="status" aria-live="polite"></p>
+              <p class="ly-fichas">
+                Fichas: <a href={`${BASE}producto/${defAff.anchor.slug}/`} class="ly-inline-link" data-ficha-a>{defAff.anchor.name}</a>
+                {' · '}
+                <a href={`${BASE}producto/${defAff.accent.slug}/`} class="ly-inline-link" data-ficha-b>{defAff.accent.name}</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ================= 4 · Las combos curadas ================= */}
+    <section class="ly-section" id="combos" aria-labelledby="ly-combos-title">
+      <div class="container">
+        <p class="ly-kicker">Curaduría</p>
+        <h2 id="ly-combos-title" class="ly-h2"><span class="ly-num" aria-hidden="true">03</span>Ocho pares que ya probamos por vos</h2>
+        <p class="ly-hint">Cada par existe en decants de 5 ml, con stock real. Las notas puente están calculadas sobre las fichas del catálogo.</p>
+
+        <div class="ly-combos">
+          {comboViews.map((c) => (
+            <article class="ly-combo" id={`combo-${c.slug}`}>
+              <header class="ly-combo-head">
+                <h3 class="ly-combo-title">{c.title}</h3>
+                <p class="ly-combo-meta">{c.occasion} · {c.season}</p>
+                {c.lowStock && (
+                  <Chip variant="low-stock" class="ly-combo-low">Poco stock</Chip>
+                )}
+              </header>
+
+              <div class="ly-combo-pair">
+                <figure class="ly-bottle ly-bottle--sm">
+                  <span class="ly-role-tag ly-role-tag--base">Base</span>
+                  <img
+                    src={bottleSrc(c.anchor)}
+                    alt={bottleAlt(c.anchor)}
+                    width={dimsFor(c.anchor).width}
+                    height={dimsFor(c.anchor).height}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <figcaption><a href={`${BASE}producto/${c.anchor.slug}/`} class="ly-inline-link">{c.anchor.name}</a></figcaption>
+                </figure>
+                <span class="ly-combo-arrow" aria-hidden="true">→</span>
+                <figure class="ly-bottle ly-bottle--sm">
+                  <span class="ly-role-tag ly-role-tag--accent">Acento</span>
+                  <img
+                    src={bottleSrc(c.accent)}
+                    alt={bottleAlt(c.accent)}
+                    width={dimsFor(c.accent).width}
+                    height={dimsFor(c.accent).height}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <figcaption><a href={`${BASE}producto/${c.accent.slug}/`} class="ly-inline-link">{c.accent.name}</a></figcaption>
+                </figure>
+              </div>
+
+              {c.shared.length > 0 && (
+                <ul class="ly-shared" aria-label={`Notas puente de ${c.title}`}>
+                  {c.shared.map((n) => <li class="ly-note-chip">{n}</li>)}
+                </ul>
+              )}
+
+              <p class="ly-combo-why">{c.why}</p>
+              <p class="ly-ratio"><span class="ly-ratio-label">Proporción</span>{c.ratio}</p>
+
+              <footer class="ly-combo-foot">
+                <p class="ly-combo-price"><strong>{formatPrice(c.total)}</strong> el par ({DECANT_ML} ml)</p>
+                <button
+                  type="button"
+                  class="btn btn--primary btn--md"
+                  data-combo-add
+                  data-anchor={c.anchor.id}
+                  data-accent={c.accent.id}
+                >
+                  Agregar los dos
+                </button>
+              </footer>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    {/* ================= 5 · Cómo se hace ================= */}
+    <section class="ly-section ly-section--tint" id="como-se-hace" aria-labelledby="ly-pasos-title">
+      <div class="container">
+        <p class="ly-kicker">Técnica</p>
+        <h2 id="ly-pasos-title" class="ly-h2"><span class="ly-num" aria-hidden="true">04</span>Cómo se hace, paso por paso</h2>
+        <ol class="ly-steps">
+          {(
+            [
+              ['Elegí el par', 'Uno denso (madera, oud, vainilla, cuero) y uno liviano (cítrico, fresco, floral). El denso es el ancla: va abajo.'],
+              ['Ancla primero', 'Aplícatelo en la piel y esperá de 30 a 60 segundos. Si pones el acento sobre la base mojada, se mezclan en vez de capas.'],
+              ['Acento arriba', '1 o 2 sprays, sobre los mismos puntos o apenas más abajo. La dosis total no supera a la de un perfume solo.'],
+              ['No frotes', 'Ni muñeca contra muñeca ni contra la tela: se rompen las notas de salida y el aroma se aplana. Dejá secar solo.'],
+              ['Juzgá a los 20-60 min', 'El aroma real es el secado, no el golpe inicial. Si a la hora todavía te gusta, es tu firma.'],
+            ] as [string, string][]
+          ).map(([title, text], i) => (
+            <li class="ly-step">
+              <span class="ly-step-num" aria-hidden="true">{i + 1}</span>
+              <div>
+                <h3 class="ly-step-title">{title}</h3>
+                <p class="ly-step-text">{text}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    {/* ================= 6 · Matriz de familias ================= */}
+    <section class="ly-section" id="matriz" aria-labelledby="ly-matriz-title">
+      <div class="container">
+        <p class="ly-kicker">Referencia rápida</p>
+        <h2 id="ly-matriz-title" class="ly-h2"><span class="ly-num" aria-hidden="true">05</span>Matriz de familias: base × acento</h2>
+        <div class="ly-table-wrap">
+          <table class="ly-table">
+            <caption class="ly-table-caption">Qué esperar cuando una familia funciona de ancla y otra de acento.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Base (abajo)</th>
+                <th scope="col">Acento (arriba)</th>
+                <th scope="col">Qué esperar</th>
+              </tr>
+            </thead>
+            <tbody>
+              {matrix.map((row) => {
+                const aLink = familiaLink(row.anchorWord);
+                const bLink = familiaLink(row.accentWord);
+                return (
+                  <tr>
+                    <th scope="row">
+                      {aLink ? <a href={aLink} class="ly-inline-link">{row.anchorWord}</a> : row.anchorWord}
+                    </th>
+                    <td>
+                      {bLink ? <a href={bLink} class="ly-inline-link">{row.accentWord}</a> : row.accentWord}
+                    </td>
+                    <td>
+                      <span class={`ly-cell-verdict ${row.verdict === 'Cuidado' || row.verdict === 'Sobredosis' ? 'ly-cell-verdict--warn' : 'ly-cell-verdict--ok'}`}>{row.verdict}</span>
+                      <span class="ly-cell-note">{row.note}</span>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <p class="ly-hint">Las familias son las del catálogo: entrá a cada una para ver qué perfumes tenemos con stock.</p>
+      </div>
+    </section>
+
+    {/* ================= 7 · Qué evitar ================= */}
+    <section class="ly-section ly-section--tint" id="evitar" aria-labelledby="ly-evitar-title">
+      <div class="container ly-prose">
+        <p class="ly-kicker">Errores comunes</p>
+        <h2 id="ly-evitar-title" class="ly-h2"><span class="ly-num" aria-hidden="true">06</span>Qué evitar</h2>
+        <ul class="ly-avoid">
+          {(
+            [
+              ['Dos potentes a la vez', 'Oud + cuero, o dos orientales densos: se pisan y el resultado es ruido. Excepción posible: uno claramente más leve que el otro.'],
+              ['Dos gourmands', 'Vainilla sobre praliné es empalague x2. El azúcar se corta con verde, cítrico o almizcle, no con más azúcar.'],
+              ['Mezclar en el frasco', 'No decores perfumes dentro del envase: no podés deshacerlo, emulsionan distinto y arruinás dos. Las capas van sobre la piel.'],
+              ['Duplicar la dosis', 'El error más caro: "dos perfumes = dos dosis". No. La dosis total sigue siendo la de uno solo.'],
+            ] as [string, string][]
+          ).map(([title, text]) => (
+            <li class="ly-avoid-item">
+              <h3>{title}</h3>
+              <p>{text}</p>
+            </li>
+          ))}
+        </ul>
+        <p class="ly-avoid-note">Nada de esto es una ley física: son las fallas más repetidas. Si una excepción te cierra en la piel, es tu excepción.</p>
+      </div>
+    </section>
+
+    {/* ================= 8 · Seguridad ================= */}
+    <section class="ly-section" id="seguridad" aria-labelledby="ly-seguridad-title">
+      <div class="container ly-prose">
+        <p class="ly-kicker">Antes de rociar</p>
+        <h2 id="ly-seguridad-title" class="ly-h2"><span class="ly-num" aria-hidden="true">07</span>Piel, ropa y nariz: la parte seria</h2>
+        <details class="ly-safety">
+          <summary>Piel sensible: probá la mezcla antes, no sobre la cara</summary>
+          <p>Hacé una prueba de contacto abierta (ROAT): aplicá el par en un parche chico del antebrazo, dos veces por día, durante una semana. Sin rojeces ni picazón, aléate. Con dos perfumes la carga de ingredientes se acumula: menos sprays de los que usarías con uno solo.</p>
+        </details>
+        <details class="ly-safety">
+          <summary>Ropa: los árabes concentrados pueden manchar</summary>
+          <p>Powder, oud y colorantes sobre tela clara o seda dejan marca. Rocíá sobre la piel seca, esperá, y recién ahí te vestís. Si querés la prenda perfumada, probá de adentro, en una costura oculta.</p>
+        </details>
+        <details class="ly-safety">
+          <summary>Fatiga olfativa: tu nariz te va a mentir a los 10 minutos</summary>
+          <p>Te acostumbrás a tu propia mezcla y sentís que "no dura". Oliteá aire, comé algo, o preguntale a alguien de confianza a la media hora. Mejor todavía: juzgá la evolución a los 20-60 minutos, cuando las capas ya se acomodaron.</p>
+        </details>
+      </div>
+    </section>
+
+    {/* ================= 9 · Clima Córdoba ================= */}
+    <section class="ly-section ly-section--tint" id="clima" aria-labelledby="ly-clima-title">
+      <div class="container">
+        <p class="ly-kicker">Local</p>
+        <h2 id="ly-clima-title" class="ly-h2"><span class="ly-num" aria-hidden="true">08</span>Layering con el clima de Córdoba</h2>
+        <div class="ly-climate">
+          <div class="ly-climate-card">
+            <h3>Verano (esos 40 grados a la sombra)</h3>
+            <p>El calor dispara la proyección: lo que en invierno es 2 sprays, acá es un golpe. Menos capas, menos sprays: un fresco o un almizcle de base y un cítrico arriba, máximo 1 spray de cada uno. Gourmand y cuero en verano van en dosis homeopáticas o para la noche.</p>
+          </div>
+          <div class="ly-climate-card">
+            <h3>Invierno (seco, frío, ambientes con estufa)</h3>
+            <p>El frío aplana las salidas: ahí es donde el par denso se luce. Gourmand abajo, cuero o especiado, y un floral o frutal arriba para que no suene a baño cerrado de oficina. Acá podés subir a 2 sprays de ancla sin molestar a nadie.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ================= 10 · FAQ ================= */}
+    <section class="ly-section" id="faq" aria-labelledby="ly-faq-title">
+      <div class="container">
+        <h2 id="ly-faq-title" class="ly-h2 ly-h2--center"><span class="ly-num" aria-hidden="true">09</span>Preguntas frecuentes</h2>
+        <Faq items={faq} firstOpen={false} />
+      </div>
+    </section>
+
+    {/* ================= 11 · CTA final ================= */}
+    <section class="ly-cta" aria-labelledby="ly-cta-title">
+      <div class="container">
+        <h2 id="ly-cta-title" class="ly-h2 ly-h2--center">Armá tu par en decants de 5 ml</h2>
+        <p class="ly-cta-text">Dos decantes chicos, una semana de pruebas sobre tu piel, y recién ahí decidís si querés los frascos. Entrega en mano o por Uber en {site.addressLocality}.</p>
+        <div class="ly-cta-actions">
+          <a href={`${BASE}catalogo/decants/`} class="btn btn--primary btn--lg" data-fab-avoid>Elegir decants</a>
+          <a href={`${BASE}tridentes/`} class="ly-cta-link">¿Llevás 3? Conocé el descuento tridente</a>
+        </div>
+      </div>
+    </section>
+  </article>
+</Layout>
+
+<script>
+  import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
+  import { layeringAffinity } from '@/utils/layering';
+  import { escapeHtml, formatPrice } from '@/utils/formatters';
+  import type { Perfume } from '@/data/types';
+
+  /**
+   * Payload mínimo serializado arriba: solo lo que lee `layeringAffinity`
+   * (name, olfactoryFamily, notes) + id/slug/price para la UI. El cast a
+   * Perfume es seguro porque la función nunca toca los otros campos.
+   */
+  interface ClientPerfume {
+    id: string;
+    slug: string;
+    name: string;
+    brand: string;
+    family: string;
+    notes: { top: string[]; heart: string[]; base: string[] };
+    price: number;
+  }
+
+  const VERDICT_LABEL: Record<string, string> = {
+    fuerte: 'Combinación fuerte',
+    buena: 'Buena combinación',
+    cuidado: 'Combiná con cuidado',
+  };
+
+  const toPerfume = (m: ClientPerfume): Perfume =>
+    ({ id: m.id, slug: m.slug, name: m.name, brand: m.brand, olfactoryFamily: m.family, notes: m.notes }) as unknown as Perfume;
+
+  function initCombinator(): void {
+    const wrap = document.querySelector<HTMLElement>('#ly-combinador');
+    if (!wrap) return;
+    const base = wrap.closest<HTMLElement>('.ly')?.dataset.base ?? '/';
+    const raw = document.getElementById('layering-data')?.textContent ?? '[]';
+    let items: ClientPerfume[] = [];
+    try {
+      items = JSON.parse(raw) as ClientPerfume[];
+    } catch {
+      items = [];
+    }
+    if (items.length === 0) return;
+    const byId = new Map(items.map((m) => [m.id, m]));
+
+    const selA = document.getElementById('ly-a') as HTMLSelectElement | null;
+    const selB = document.getElementById('ly-b') as HTMLSelectElement | null;
+    const result = document.getElementById('ly-result');
+    const addBtn = document.querySelector<HTMLElement>('#ly-actions [data-combo-add]');
+    const totalEl = document.querySelector<HTMLElement>('[data-pair-total]');
+    const fichaA = document.querySelector<HTMLElement>('[data-ficha-a]');
+    const fichaB = document.querySelector<HTMLElement>('[data-ficha-b]');
+    const swap = wrap.querySelector<HTMLElement>('[data-swap]');
+    const copyBtn = wrap.querySelector<HTMLElement>('[data-copy-link]');
+    const copyStatus = wrap.querySelector<HTMLElement>('[data-copy-status]');
+    if (!selA || !selB || !result) return;
+
+    const pairUrl = (a: string, b: string): string =>
+      `${location.origin}${location.pathname}?a=${encodeURIComponent(a)}&b=${encodeURIComponent(b)}`;
+
+    const render = (updateUrl: boolean): void => {
+      const a = byId.get(selA!.value);
+      const b = byId.get(selB!.value);
+      if (!a || !b) return;
+      if (a.id === b.id) {
+        result.innerHTML =
+          '<p class="ly-verdict ly-verdict--cuidado">Elegí dos perfumes distintos</p>' +
+          '<p class="ly-reason">Está buenísimo armar dos decants del mismo aroma en talles distintos, pero para layering hace falta un par.</p>';
+        if (addBtn) addBtn.setAttribute('disabled', '');
+        return;
+      }
+      addBtn?.removeAttribute('disabled');
+
+      const aff = layeringAffinity(toPerfume(a), toPerfume(b));
+      const label = (n: string): string => escapeHtml(n);
+      const href = (p: ClientPerfume): string => `${base}producto/${p.slug}/`;
+      // El motor reordena el par: quien quedó de ancla/cento según id.
+      const anchorSrc = aff.anchor.id === a.id ? a : b;
+      const accentSrc = aff.accent.id === a.id ? a : b;
+      const shared = aff.shared.length
+        ? `<ul class="ly-shared" aria-label="Notas puente">${aff.shared
+            .map((n) => `<li class="ly-note-chip">${label(n)}</li>`)
+            .join('')}</ul>`
+        : '';
+      result.innerHTML =
+        `<p class="ly-verdict ly-verdict--${aff.verdict}">${VERDICT_LABEL[aff.verdict]}</p>` +
+        '<ol class="ly-order">' +
+        `<li><span class="ly-order-tag">Abajo · ancla</span> <a href="${href(anchorSrc)}" class="ly-inline-link">${label(aff.anchor.name)}</a></li>` +
+        `<li><span class="ly-order-tag ly-order-tag--accent">Arriba · acento</span> <a href="${href(accentSrc)}" class="ly-inline-link">${label(aff.accent.name)}</a></li>` +
+        '</ol>' +
+        shared +
+        `<p class="ly-ratio"><span class="ly-ratio-label">Proporción sugerida</span>${label(aff.ratio)}</p>` +
+        `<p class="ly-reason">${label(aff.reason)}</p>`;
+
+      if (addBtn) {
+        addBtn.setAttribute('data-anchor', aff.anchor.id);
+        addBtn.setAttribute('data-accent', aff.accent.id);
+      }
+      const total = a.price + b.price;
+      if (totalEl) totalEl.textContent = formatPrice(total);
+      if (fichaA) {
+        fichaA.setAttribute('href', href(anchorSrc));
+        fichaA.textContent = anchorSrc.name;
+      }
+      if (fichaB) {
+        fichaB.setAttribute('href', href(accentSrc));
+        fichaB.textContent = accentSrc.name;
+      }
+      if (updateUrl) history.replaceState(null, '', pairUrl(a.id, b.id));
+    };
+
+    // Estado inicial desde la URL (?a=<slug>&b=<slug>); si no, el default
+    // servido por Astro (la combo estrella) se re-pinta con la misma función.
+    const params = new URLSearchParams(location.search);
+    const qa = params.get('a');
+    const qb = params.get('b');
+    if (qa && qb && byId.has(qa) && byId.has(qb) && qa !== qb) {
+      selA.value = qa;
+      selB.value = qb;
+    }
+    render(false);
+
+    for (const sel of [selA, selB]) {
+      bindOnce(sel, (el) => {
+        el.addEventListener('change', () => render(true));
+      });
+    }
+
+    if (swap) {
+      bindOnce(swap, (el) => {
+        el.addEventListener('click', () => {
+          const t = selA.value;
+          selA.value = selB.value;
+          selB.value = t;
+          render(true);
+        });
+      });
+    }
+
+    if (copyBtn) {
+      bindOnce(copyBtn, (el) => {
+        el.addEventListener('click', async () => {
+          const url = pairUrl(selA.value, selB.value);
+          const done = (ok: boolean): void => {
+            if (copyStatus) copyStatus.textContent = ok ? 'Link copiado' : url;
+          };
+          try {
+            await navigator.clipboard.writeText(url);
+            done(true);
+          } catch {
+            // Fallback sin API de portapapeles (http, navegadores viejos):
+            // textarea oculta + execCommand; si eso tampoco, se muestra el link.
+            try {
+              const ta = document.createElement('textarea');
+              ta.value = url;
+              ta.setAttribute('readonly', '');
+              ta.style.position = 'fixed';
+              ta.style.opacity = '0';
+              document.body.appendChild(ta);
+              ta.select();
+              const ok = document.execCommand('copy');
+              ta.remove();
+              done(ok);
+            } catch {
+              done(false);
+            }
+          }
+        });
+      });
+    }
+  }
+
+  // Delegación global: sirve a la combo estrella del hero, a las 8 cards y
+  // al botón del combinador. El drawer de carrito valida stock por su cuenta.
+  onWindowOnce('layering-add', 'click', (e) => {
+    const target = e.target;
+    if (!target || typeof (target as Element).closest !== 'function') return;
+    const btn = (target as Element).closest('[data-combo-add]');
+    if (!btn || !(btn instanceof HTMLElement) || btn.hasAttribute('disabled')) return;
+    const anchor = btn.dataset.anchor ?? '';
+    const accent = btn.dataset.accent ?? '';
+    if (!anchor || !accent) return;
+    for (const perfumeId of [anchor, accent]) {
+      window.dispatchEvent(
+        new CustomEvent('cart:add', { detail: { perfumeId, sizeMl: 5, quantity: 1 } })
+      );
+    }
+    window.dispatchEvent(new CustomEvent('cart:open'));
+  });
+
+  onPageLoad('layering', () => {
+    initCombinator();
+  });
+</script>
+
+<!-- is:global: el combinador re-renderiza el resultado por JS (innerHTML) y
+  los nodos nuevos no reciben el data-astro-cid del scope. Con todas las
+  clases prefijadas `ly-`, el riesgo de colisión es nulo. Mismo patrón que
+  ProductCard.astro por la misma razón. -->
+<style is:global>
+  /* ==========================================================================
+     Layering — nota editorial sobre el sistema existente (negro + oro
+     Montserrat). Convocaciones de revista: números de sección, hairlines,
+     kickers en versalitas, sangría del primer párrafo y una frase a pleno.
+     ========================================================================== */
+  .ly {
+    padding-bottom: var(--spacing-stack-lg);
+  }
+
+  /* --- Hero --- */
+  .ly-hero {
+    padding: var(--spacing-stack-md) 0 var(--spacing-stack-sm);
+  }
+
+  @media (max-width: 640px) {
+    .ly-hero {
+      padding: 12px 0 8px;
+    }
+
+    /* La miga de pan es decorativa en celu: se gana el espacio que necesita
+       la combo estrella para entrar sin scroll. */
+    .ly-breadcrumb {
+      display: none;
+    }
+  }
+
+  .ly-breadcrumb {
+    font-size: var(--font-label-sm-size);
+    color: var(--color-on-surface-variant);
+    margin: 0 0 var(--spacing-stack-sm);
+  }
+
+  .ly-breadcrumb ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 8px;
+    list-style: none;
+  }
+
+  .ly-breadcrumb li + li::before {
+    content: '›';
+    margin-right: 8px;
+  }
+
+  .ly-breadcrumb a {
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .ly-kicker {
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-primary);
+    margin: 0 0 var(--spacing-stack-sm);
+  }
+
+  .ly-title {
+    margin: 0 0 var(--spacing-stack-sm);
+  }
+
+  /* Orquestación de entrada: escalonado simple en el hero, sin coreografía
+     pesada. El global `prefers-reduced-motion` mata la animación si toca. */
+  .ly-hero > .container > * {
+    animation: ly-rise 600ms var(--transition-easing) both;
+  }
+
+  .ly-hero .ly-sub {
+    animation-delay: 120ms;
+  }
+
+  .ly-hero .ly-star {
+    animation-delay: 240ms;
+  }
+
+  @keyframes ly-rise {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .ly-sub {
+    font-size: var(--font-body-lg-size);
+    line-height: var(--font-body-lg-line-height);
+    color: var(--color-on-surface-variant);
+    max-width: 62ch;
+    margin: 0 0 var(--spacing-stack-md);
+  }
+
+  @media (max-width: 640px) {
+    .ly-kicker {
+      margin-bottom: 10px;
+    }
+
+    .ly-title {
+      margin-bottom: 12px;
+    }
+
+    .ly-sub {
+      font-size: var(--font-body-md-size);
+      margin-bottom: var(--spacing-stack-sm);
+    }
+  }
+
+  .ly-sub-2 {
+    display: block;
+  }
+
+  /* Combo estrella: las dos botellas sin scroll */
+  .ly-star {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-stack-sm);
+    border: var(--border-width) solid var(--color-outline-variant);
+    background-color: var(--color-surface-container);
+    padding: var(--spacing-stack-sm);
+  }
+
+  @media (min-width: 900px) {
+    .ly-star {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      gap: var(--spacing-stack-lg);
+      align-items: center;
+      padding: var(--spacing-stack-md) var(--spacing-stack-lg);
+    }
+  }
+
+  .ly-star-pair {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    background-color: var(--color-image-bg);
+    padding: 12px;
+  }
+
+  .ly-bottle {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .ly-bottle img {
+    height: 120px;
+    width: auto;
+    max-width: 40vw;
+    object-fit: contain;
+  }
+
+  .ly-bottle--sm img {
+    height: 96px;
+  }
+
+  .ly-bottle figcaption {
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-image);
+    text-align: center;
+  }
+
+  @media (min-width: 768px) {
+    .ly-bottle img {
+      height: 150px;
+    }
+  }
+
+  .ly-role-tag {
+    position: absolute;
+    top: -4px;
+    left: 0;
+    z-index: 1;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-on-primary);
+    background-color: var(--color-primary);
+    padding: 2px 8px;
+  }
+
+  .ly-role-tag--accent {
+    background-color: var(--color-on-surface);
+    color: var(--color-surface);
+  }
+
+  .ly-star-arrow,
+  .ly-combo-arrow {
+    color: var(--color-primary);
+    font-size: 24px;
+    line-height: 1;
+    padding: 0 6px;
+    flex-shrink: 0;
+  }
+
+  .ly-star-title {
+    font-size: var(--font-headline-md-size);
+    font-weight: var(--font-headline-md-weight);
+    letter-spacing: var(--font-headline-md-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    margin: 0 0 8px;
+  }
+
+  .ly-star-why {
+    font-size: var(--font-body-md-size);
+    line-height: var(--font-body-md-line-height);
+    color: var(--color-on-surface-variant);
+    margin: 0 0 12px;
+  }
+
+  .ly-star-price {
+    font-size: var(--font-body-md-size);
+    color: var(--color-on-surface);
+    margin: 0 0 var(--spacing-stack-sm);
+  }
+
+  .ly-star-price strong {
+    color: var(--color-primary);
+    font-size: var(--font-body-lg-size);
+  }
+
+  .ly-star-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 20px;
+  }
+
+  .ly-star-link {
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    padding: 10px 0;
+  }
+
+  /* --- Secciones --- */
+  .ly-section {
+    padding: var(--spacing-stack-lg) 0;
+  }
+
+  .ly-section--tint {
+    background-color: var(--color-surface-container);
+  }
+
+  .ly-h2 {
+    font-size: var(--font-headline-lg-size);
+    font-weight: var(--font-headline-lg-weight);
+    line-height: var(--font-headline-lg-line-height);
+    letter-spacing: var(--font-headline-lg-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    margin: 0 0 var(--spacing-stack-md);
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+  }
+
+  @media (max-width: 640px) {
+    .ly-section {
+      padding: var(--spacing-stack-md) 0;
+    }
+
+    .ly-h2 {
+      font-size: var(--font-headline-lg-mobile-size);
+    }
+  }
+
+  .ly-num {
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    color: var(--color-primary);
+    flex-shrink: 0;
+    transform: translateY(-4px);
+  }
+
+  .ly-h2--center {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .ly-prose {
+    max-width: 720px;
+  }
+
+  .ly-prose p {
+    font-size: var(--font-body-lg-size);
+    line-height: var(--font-body-lg-line-height);
+    color: var(--color-on-surface-variant);
+    margin: 0 0 var(--spacing-stack-sm);
+  }
+
+  @media (max-width: 640px) {
+    .ly-prose p {
+      font-size: var(--font-body-md-size);
+    }
+  }
+
+  .ly-dfn {
+    font-style: normal;
+    color: var(--color-on-surface);
+    font-weight: 500;
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-decoration-color: var(--color-primary);
+    text-underline-offset: 3px;
+    cursor: help;
+  }
+
+  .ly-hint {
+    font-size: var(--font-body-md-size);
+    line-height: var(--font-body-md-line-height);
+    color: var(--color-on-surface-variant);
+    max-width: 64ch;
+    margin: 0 0 var(--spacing-stack-md);
+  }
+
+  .ly-noscript {
+    font-size: var(--font-body-md-size);
+    color: var(--color-status-low-stock);
+    margin: 0 0 var(--spacing-stack-sm);
+  }
+
+  .ly-quote {
+    margin: 0 auto;
+    max-width: 900px;
+    padding: 0 var(--spacing-gutter);
+  }
+
+  .ly-quote blockquote p {
+    font-size: var(--font-headline-lg-size);
+    font-weight: var(--font-headline-lg-weight);
+    line-height: var(--font-headline-lg-line-height);
+    letter-spacing: var(--font-headline-lg-tracking);
+    color: var(--color-primary);
+    text-align: center;
+    text-wrap: balance;
+    margin: 0;
+  }
+
+  @media (max-width: 640px) {
+    .ly-quote blockquote p {
+      font-size: var(--font-headline-md-size);
+    }
+
+    .ly-quote {
+      padding: 0 var(--spacing-margin-mobile);
+    }
+  }
+
+  /* --- Combinador --- */
+  .ly-comb-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-stack-md);
+  }
+
+  /* El botón de "Agregar los dos" es largo: sin `min-width:0` los hijos de
+     grid traen su min-content (≈430px) y empujan la columna fuera del
+     contenedor en 320/390 (el clip global lo esconde, pero se corta). */
+  .ly-comb-grid > * {
+    min-width: 0;
+  }
+
+  @media (min-width: 900px) {
+    .ly-comb-grid {
+      grid-template-columns: minmax(300px, 420px) minmax(0, 1fr);
+      grid-template-areas:
+        'selects result'
+        'actions result';
+      align-items: start;
+    }
+
+    .ly-selects {
+      grid-area: selects;
+    }
+
+    .ly-result {
+      grid-area: result;
+    }
+
+    .ly-actions {
+      grid-area: actions;
+    }
+  }
+
+  .ly-selects {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: 12px;
+    align-items: end;
+  }
+
+  @media (max-width: 480px) {
+    .ly-selects {
+      grid-template-columns: 1fr;
+    }
+
+    .ly-swap {
+      justify-self: center;
+      transform: rotate(90deg);
+    }
+  }
+
+  .ly-field label {
+    display: block;
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+    margin: 0 0 6px;
+  }
+
+  .ly-field select {
+    width: 100%;
+    height: 48px;
+    color-scheme: dark;
+    background-color: var(--color-surface-container-lowest);
+    color: var(--color-on-surface);
+    border: var(--border-width) solid var(--color-outline-variant);
+    padding: 0 40px 0 12px;
+    font-size: var(--font-body-md-size);
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23e9c176' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    transition: border-color var(--transition-duration) var(--transition-easing);
+  }
+
+  .ly-field select:hover {
+    border-color: var(--color-primary);
+  }
+
+  .ly-field select:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .ly-field optgroup {
+    background-color: var(--color-surface-container);
+    color: var(--color-primary);
+    font-style: normal;
+  }
+
+  .ly-field option {
+    background-color: var(--color-surface-container-lowest);
+    color: var(--color-on-surface);
+  }
+
+  .ly-swap {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: var(--color-primary);
+    border: var(--border-width) solid var(--color-outline-variant);
+    background-color: transparent;
+    cursor: pointer;
+    transition: border-color var(--transition-duration) var(--transition-easing);
+  }
+
+  .ly-swap:hover {
+    border-color: var(--color-primary);
+  }
+
+  .ly-result {
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-left: 3px solid var(--color-primary);
+    background-color: var(--color-surface-container);
+    padding: var(--spacing-stack-sm) var(--spacing-stack-md);
+    min-height: 220px;
+  }
+
+  .ly-verdict {
+    font-size: var(--font-headline-md-size);
+    font-weight: var(--font-headline-md-weight);
+    letter-spacing: var(--font-headline-md-tracking);
+    text-transform: uppercase;
+    margin: 0 0 12px;
+  }
+
+  .ly-verdict--fuerte {
+    color: var(--color-status-in-stock);
+  }
+
+  .ly-verdict--buena {
+    color: var(--color-primary);
+  }
+
+  .ly-verdict--cuidado {
+    color: var(--color-error);
+  }
+
+  .ly-order {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 20px;
+    margin: 0 0 12px;
+    padding: 0;
+  }
+
+  .ly-order li {
+    font-size: var(--font-body-md-size);
+    color: var(--color-on-surface);
+    min-height: 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ly-order-tag {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-on-primary);
+    background-color: var(--color-primary);
+    padding: 2px 8px;
+  }
+
+  .ly-order-tag--accent {
+    background-color: var(--color-on-surface);
+    color: var(--color-surface);
+  }
+
+  .ly-shared {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 14px;
+    padding: 0;
+  }
+
+  .ly-note-chip {
+    font-size: var(--font-label-sm-size);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: 999px;
+    padding: 4px 12px;
+  }
+
+  .ly-ratio {
+    font-size: var(--font-body-md-size);
+    color: var(--color-on-surface);
+    margin: 0 0 10px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 10px;
+  }
+
+  .ly-ratio-label {
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-primary);
+  }
+
+  .ly-reason {
+    font-size: var(--font-body-md-size);
+    line-height: var(--font-body-md-line-height);
+    color: var(--color-on-surface-variant);
+    margin: 0;
+  }
+
+  .ly-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ly-add {
+    align-self: flex-start;
+    max-width: 100%;
+    /* "AGREGAR LOS DOS (5 ML) · $13.000" en 320: 2 líneas antes que desbordar.
+       `inline-block` para que el total (span) siga el flujo del texto y no
+       quede como item flex separado. */
+    display: inline-block;
+    white-space: normal;
+    height: auto;
+    min-height: 52px;
+    line-height: 1.5;
+    text-align: center;
+  }
+
+  .ly-actions-side {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 16px;
+  }
+
+  .ly-copy {
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-primary);
+    background: transparent;
+    border: var(--border-width) solid var(--color-primary);
+    min-height: 44px;
+    padding: 0 16px;
+    cursor: pointer;
+    transition: background-color var(--transition-duration) var(--transition-easing), color var(--transition-duration) var(--transition-easing);
+  }
+
+  .ly-copy:hover {
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+  }
+
+  .ly-copy-status {
+    font-size: var(--font-label-sm-size);
+    color: var(--color-status-in-stock);
+    word-break: break-all;
+  }
+
+  .ly-fichas {
+    font-size: var(--font-body-md-size);
+    color: var(--color-on-surface-variant);
+  }
+
+  .ly-inline-link {
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .ly-inline-link:hover {
+    color: var(--color-on-surface);
+  }
+
+  /* Links sobre el área BLANCA de las botellas: el oro del sistema no pasa
+     AA sobre blanco. Acá el nombre linkado usa el negro del sistema
+     (--color-on-image, la convención del sitio para texto sobre imagen). */
+  .ly-combo-pair .ly-inline-link,
+  .ly-star-pair .ly-inline-link {
+    color: var(--color-on-image);
+    text-decoration-color: var(--color-outline-variant);
+  }
+
+  .ly-combo-pair .ly-inline-link:hover,
+  .ly-star-pair .ly-inline-link:hover {
+    text-decoration-color: var(--color-on-image);
+  }
+
+  /* --- Combos curadas --- */
+  .ly-combos {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-stack-md);
+  }
+
+  @media (min-width: 768px) {
+    .ly-combos {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .ly-combo {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    border: var(--border-width) solid var(--color-outline-variant);
+    background-color: var(--color-surface-container);
+    padding: var(--spacing-stack-md);
+    transition: border-color var(--transition-duration) var(--transition-easing);
+  }
+
+  .ly-combo:hover {
+    border-color: var(--color-primary);
+  }
+
+  .ly-combo:target {
+    border-color: var(--color-primary);
+    border-left: 3px solid var(--color-primary);
+  }
+
+  .ly-combo-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px 16px;
+  }
+
+  .ly-combo-title {
+    font-size: var(--font-headline-md-size);
+    font-weight: var(--font-headline-md-weight);
+    letter-spacing: var(--font-headline-md-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+    margin: 0;
+  }
+
+  .ly-combo-meta {
+    font-size: var(--font-label-sm-size);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+    margin: 0;
+  }
+
+  .ly-combo-low {
+    margin-left: auto;
+  }
+
+  .ly-combo-pair {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    background-color: var(--color-image-bg);
+    padding: 10px;
+  }
+
+  .ly-combo-why {
+    font-size: var(--font-body-md-size);
+    line-height: var(--font-body-md-line-height);
+    color: var(--color-on-surface-variant);
+    margin: 0;
+  }
+
+  .ly-combo-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: var(--border-width) solid var(--color-outline-variant);
+  }
+
+  .ly-combo-price {
+    font-size: var(--font-body-md-size);
+    color: var(--color-on-surface);
+    margin: 0;
+  }
+
+  .ly-combo-price strong {
+    color: var(--color-primary);
+    font-size: var(--font-body-lg-size);
+  }
+
+  /* --- Pasos --- */
+  .ly-steps {
+    list-style: none;
+    display: grid;
+    gap: var(--spacing-stack-sm);
+    padding: 0;
+    max-width: 800px;
+  }
+
+  .ly-step {
+    display: flex;
+    gap: 16px;
+    padding: var(--spacing-stack-sm) var(--spacing-stack-md);
+    background-color: var(--color-surface-container-lowest);
+    border: var(--border-width) solid var(--color-outline-variant);
+  }
+
+  .ly-step-num {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: var(--font-body-lg-size);
+    font-weight: 600;
+    color: var(--color-on-primary);
+    background-color: var(--color-primary);
+  }
+
+  .ly-step-title {
+    font-size: var(--font-body-lg-size);
+    font-weight: 500;
+    color: var(--color-on-surface);
+    margin: 0 0 6px;
+  }
+
+  .ly-step-text {
+    font-size: var(--font-body-md-size);
+    line-height: var(--font-body-md-line-height);
+    color: var(--color-on-surface-variant);
+    margin: 0;
+  }
+
+  /* --- Matriz --- */
+  .ly-table-wrap {
+    overflow-x: auto;
+    border: var(--border-width) solid var(--color-outline-variant);
+  }
+
+  .ly-table {
+    width: 100%;
+    min-width: 560px;
+    border-collapse: collapse;
+    font-size: var(--font-body-md-size);
+  }
+
+  .ly-table-caption {
+    caption-side: bottom;
+    padding: 10px 14px;
+    text-align: left;
+    font-size: var(--font-label-sm-size);
+    color: var(--color-on-surface-variant);
+  }
+
+  .ly-table th,
+  .ly-table td {
+    padding: 14px;
+    text-align: left;
+    border-bottom: var(--border-width) solid var(--color-outline-variant);
+    vertical-align: top;
+  }
+
+  .ly-table thead th {
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-primary);
+    background-color: var(--color-surface-container);
+  }
+
+  .ly-table tbody tr:last-child th,
+  .ly-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .ly-table tbody tr {
+    background-color: var(--color-surface-container);
+  }
+
+  .ly-table tbody th {
+    color: var(--color-on-surface);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .ly-table td {
+    color: var(--color-on-surface-variant);
+  }
+
+  .ly-cell-verdict {
+    display: block;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-size: var(--font-label-sm-size);
+    margin-bottom: 2px;
+  }
+
+  .ly-cell-verdict--ok {
+    color: var(--color-status-in-stock);
+  }
+
+  .ly-cell-verdict--warn {
+    color: var(--color-error);
+  }
+
+  .ly-cell-note {
+    display: block;
+  }
+
+  /* --- Qué evitar --- */
+  .ly-avoid {
+    list-style: none;
+    display: grid;
+    gap: var(--spacing-stack-sm);
+    padding: 0;
+    margin: 0 0 var(--spacing-stack-sm);
+  }
+
+  .ly-avoid-item {
+    padding: var(--spacing-stack-sm) var(--spacing-stack-md);
+    background-color: var(--color-surface-container-lowest);
+    border-left: 3px solid var(--color-error);
+  }
+
+  .ly-avoid-item h3 {
+    font-size: var(--font-body-lg-size);
+    font-weight: 500;
+    color: var(--color-on-surface);
+    margin: 0 0 6px;
+  }
+
+  .ly-avoid-item p {
+    font-size: var(--font-body-md-size);
+    color: var(--color-on-surface-variant);
+    margin: 0 !important;
+  }
+
+  .ly-avoid-note {
+    font-size: var(--font-body-md-size);
+    font-style: italic;
+    color: var(--color-on-surface-variant);
+  }
+
+  /* --- Seguridad --- */
+  .ly-safety {
+    border: var(--border-width) solid var(--color-outline-variant);
+    margin-bottom: 12px;
+    background-color: var(--color-surface-container);
+  }
+
+  .ly-safety summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 14px var(--spacing-stack-md);
+    font-size: var(--font-body-md-size);
+    font-weight: 500;
+    color: var(--color-on-surface);
+    min-height: 44px;
+  }
+
+  .ly-safety summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .ly-safety summary::after {
+    content: '+';
+    color: var(--color-primary);
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .ly-safety[open] summary::after {
+    content: '−';
+  }
+
+  .ly-safety summary:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
+  }
+
+  .ly-safety p {
+    padding: 0 var(--spacing-stack-md) var(--spacing-stack-sm);
+    font-size: var(--font-body-md-size);
+    line-height: var(--font-body-md-line-height);
+    color: var(--color-on-surface-variant);
+    margin: 0;
+  }
+
+  /* --- Clima --- */
+  .ly-climate {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-stack-sm);
+  }
+
+  @media (min-width: 768px) {
+    .ly-climate {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .ly-climate-card {
+    padding: var(--spacing-stack-md);
+    border: var(--border-width) solid var(--color-outline-variant);
+    background-color: var(--color-surface-container-lowest);
+  }
+
+  .ly-climate-card h3 {
+    font-size: var(--font-headline-md-size);
+    font-weight: var(--font-headline-md-weight);
+    letter-spacing: var(--font-headline-md-tracking);
+    text-transform: uppercase;
+    color: var(--color-primary);
+    margin: 0 0 10px;
+  }
+
+  .ly-climate-card p {
+    font-size: var(--font-body-md-size);
+    line-height: var(--font-body-md-line-height);
+    color: var(--color-on-surface-variant);
+    margin: 0;
+  }
+
+  /* --- CTA final --- */
+  .ly-cta {
+    padding: var(--spacing-stack-lg) 0;
+    text-align: center;
+    border-top: var(--border-width) solid var(--color-outline-variant);
+  }
+
+  .ly-cta-text {
+    font-size: var(--font-body-lg-size);
+    line-height: var(--font-body-lg-line-height);
+    color: var(--color-on-surface-variant);
+    max-width: 640px;
+    margin: 0 auto var(--spacing-stack-md);
+  }
+
+  .ly-cta-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .ly-cta-link {
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    padding: 10px 0;
+  }
+
+  /* ==========================================================================
+     Hero compacto en celu: la combo estrella tiene que entrar COMPLETA en el
+     primer viewport (390×844 medido: bottom 830 sin scroll). Va al final del
+     stylesheet a propósito: pisa las bases del hero por orden de cascada.
+     ========================================================================== */
+  @media (max-width: 640px) {
+    .ly-star {
+      padding: 10px;
+      gap: 12px;
+    }
+
+    .ly-star-pair {
+      padding: 8px;
+    }
+
+    .ly-bottle img {
+      height: 78px;
+    }
+
+    .ly-bottle--sm img {
+      height: 84px;
+    }
+
+    .ly-star-title {
+      font-size: var(--font-body-lg-size);
+      margin-bottom: 6px;
+    }
+
+    .ly-star-why {
+      font-size: var(--font-body-md-size);
+      margin-bottom: 8px;
+    }
+
+    .ly-star-price {
+      margin-bottom: 12px;
+    }
+
+    .ly-star-actions {
+      gap: 10px 16px;
+    }
+  }
+</style>

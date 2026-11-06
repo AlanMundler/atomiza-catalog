@@ -145,15 +145,19 @@ const robots = noindex ? 'noindex, nofollow' : 'index, follow';
     <CartDrawer />
     <OrderModal />
     <CookieBanner />
-    <a
-      href={`https://wa.me/${site.whatsappNumber}?text=${encodeURIComponent(site.whatsappMessage)}`}
-      target="_blank"
-      rel="noopener noreferrer"
-      class="whatsapp-fab"
-      aria-label="Consultar por WhatsApp"
-    >
-      <img src={assetUrl('images/icons/whatsapp.svg')} width="28" height="28" alt="" aria-hidden="true" />
-    </a>
+    {/* Landmark propio: el FAB vive fuera de header/main/footer y axe lo
+        pedía contenido en un landmark (regla `region`). */}
+    <div role="complementary" aria-label="Contacto por WhatsApp">
+      <a
+        href={`https://wa.me/${site.whatsappNumber}?text=${encodeURIComponent(site.whatsappMessage)}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="whatsapp-fab"
+        aria-label="Consultar por WhatsApp"
+      >
+        <img src={assetUrl('images/icons/whatsapp.svg')} width="28" height="28" alt="" aria-hidden="true" />
+      </a>
+    </div>
   </body>
 </html>
 
