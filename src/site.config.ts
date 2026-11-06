@@ -65,10 +65,10 @@ export const site = {
     origin: 'Sale de un frasco original y sellado',
     delivery: 'Entrega en mano o Uber en Córdoba Capital',
   },
-  whatsappNumber: '5493518752159',
-  whatsappUrl: 'https://wa.me/5493518752159',
+  whatsappNumber: '5493472559307',
+  whatsappUrl: 'https://wa.me/5493472559307',
   whatsappMessage: 'Hola, quiero hacer un pedido',
-  phoneDisplay: '54 9 351 875-2159',
+  phoneDisplay: '54 9 3472 559307',
   // Modal de pedido: modalidades de entrega que el cliente puede elegir.
   // La clave viaja a `generateOrderText({ delivery })`; `label` es el texto
   // del chip y `message` el de la línea `🚚 Entrega:` del pedido (se separan
