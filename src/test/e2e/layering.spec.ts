@@ -35,9 +35,11 @@ test.describe('Layering: guía + combinador', () => {
     await expect(page.locator('#ly-result .ly-verdict')).toContainText('Combinación fuerte');
     await expect(page.locator('#ly-result .ly-ratio')).toContainText('2 sprays');
 
-    // Las 8 combos curadas con sus dos botellas reales.
-    await expect(page.locator('.ly-combo')).toHaveCount(8);
-    for (const card of await page.locator('.ly-combo').all()) {
+    // Las combos curadas (crecen con la investigación): todas con dos botellas.
+    const allCombos = page.locator('.ly-combo');
+    const totalCombos = await allCombos.count();
+    expect(totalCombos).toBeGreaterThanOrEqual(8);
+    for (const card of await allCombos.all()) {
       await expect(card.locator('.ly-combo-pair img')).toHaveCount(2);
     }
   });
@@ -95,5 +97,86 @@ test.describe('Layering: guía + combinador', () => {
     await expect(page.locator('#ly-a')).toHaveValue(ANCHOR);
     await expect(page.locator('#ly-b')).toHaveValue(ACCENT);
     await expect(page.locator('#ly-result .ly-verdict')).toContainText('Combinación fuerte');
+  });
+
+  test('affinity meter shows the score with an accessible label', async ({ page }) => {
+    await page.goto(LAYERING);
+
+    // Par estrella: medidor con label accesible y texto visible "N/10".
+    const meter = page.locator('#ly-result [data-affinity-meter]');
+    await expect(meter).toHaveAttribute('aria-label', /Afinidad \d+\/10 · Combinación fuerte/);
+    await expect(meter).toContainText('/10');
+    await expect(meter.locator('.ly-tick--on').first()).toBeVisible();
+
+    // Dos anclas densas → el medidor baja y pasa a rojo/cuidado.
+    await page.selectOption('#ly-a', 'ameer-al-oudh');
+    await page.selectOption('#ly-b', 'asad-elixir');
+    await expect(meter).toHaveAttribute('aria-label', /Combiná con cuidado/);
+  });
+
+  test('sticky section nav pins under the header and tracks the active section', async ({ page }) => {
+    await page.goto(LAYERING);
+
+    const nav = page.locator('.ly-nav');
+    await page.evaluate(() => {
+      document.getElementById('combos')!.scrollIntoView({ block: 'start', behavior: 'instant' });
+      window.scrollBy(0, 40);
+    });
+    await expect(nav).toHaveCSS('position', 'sticky');
+    await expect(nav).toHaveCSS('top', '72px');
+    // El estado activo lo marca el IntersectionObserver: dar tiempo a un frame.
+    await expect(nav.locator('[data-nav-link="combos"]')).toHaveAttribute('aria-current', 'true', { timeout: 3000 });
+
+    // El ancla de la nav lleva a la sección sin que el heading quede debajo.
+    await nav.locator('[data-nav-link="faq"]').click();
+    const box = await page.evaluate(() => {
+      const nav = document.querySelector('.ly-nav')!.getBoundingClientRect();
+      const h2 = document.querySelector('#faq h2')!.getBoundingClientRect();
+      return { navBottom: nav.bottom, headingTop: h2.top };
+    });
+    expect(box.headingTop).toBeGreaterThanOrEqual(box.navBottom);
+  });
+
+  test('combo filters, affinity sort and "ver más" scale the gallery', async ({ page }) => {
+    await page.goto(LAYERING);
+
+    // Con JS: toolbar visible y cap de 6 sobre el total de combos.
+    const filters = page.locator('.ly-filters');
+    await expect(filters).toBeVisible();
+    const visibleCards = page.locator('.ly-combo:not([hidden])');
+    const totalCombos = await page.locator('.ly-combo').count();
+    await expect(visibleCards).toHaveCount(Math.min(6, totalCombos));
+    await page.locator('[data-show-more-btn]').click();
+    await expect(visibleCards).toHaveCount(totalCombos);
+
+    // Filtro "Noche": solo los pares de noche (o los "todos").
+    await page.locator('.ly-filters [data-moment="noche"]').click();
+    const nightCount = await visibleCards.count();
+    expect(nightCount).toBeGreaterThan(0);
+    const moments = await visibleCards.evaluateAll((els) => els.map((el) => el.getAttribute('data-moment')));
+    expect(moments.every((m) => m === 'noche' || m === 'todos')).toBe(true);
+
+    // Orden por afinidad dentro del filtro: las scores visibles bajan.
+    await page.locator('.ly-sort [data-sort="afinidad"]').click();
+    const scores = await page.locator('.ly-combo:not([hidden])').evaluateAll((els) =>
+      els.map((el) => Number(el.getAttribute('data-affinity')))
+    );
+    expect(scores.length).toBe(nightCount);
+    expect([...scores].sort((x, y) => y - x)).toEqual(scores);
+
+    // "Estación Primavera" incluye los pares "Todo el año" (data-season=all).
+    await page.locator('.ly-filters [data-moment="todos"]').click();
+    await page.locator('.ly-filters [data-season="primavera"]').click();
+    const seasons = await page.locator('.ly-combo:not([hidden])').evaluateAll((els) =>
+      els.map((el) => el.getAttribute('data-season'))
+    );
+    expect(seasons.length).toBeGreaterThan(0);
+    expect(seasons.every((s) => s!.includes('primavera') || s === 'all')).toBe(true);
+
+    // Estado combinado imposible: familia del ancla que no tiene pares de noche.
+    await page.locator('.ly-filters [data-moment="noche"]').click();
+    await page.locator('.ly-filters [data-family="almizcles"]').click();
+    await expect(page.locator('.ly-combo:not([hidden])')).toHaveCount(0);
+    await expect(page.locator('[data-combos-empty]')).toBeVisible();
   });
 });

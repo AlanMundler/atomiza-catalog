@@ -2,16 +2,21 @@
 /**
  * /layering — Guía editorial + combinador interactivo.
  *
- * Estructura: hero con combo estrella (visible sin scroll, render completo
- * en el server para que funcione sin JS) → qué es / qué no es → combinador
- * (dos selects con stock real, veredicto en vivo con `layeringAffinity`,
- * estado en la URL) → combos curadas → cómo se hace → matriz de familias →
- * qué evitar → seguridad → clima Córdoba → FAQ → CTA.
+ * Estructura: hero con combo estrella (entra sin scroll en 390×844 medido,
+ * render completo en el server para que funcione sin JS) → navegación interna
+ * sticky con estado activo por scroll → qué es / qué no es → combinador (búsqueda
+ * + dos selects agrupados por rol, previsualización de botellas, medidor de
+ * afinidad, notas puente, ratio, estado en URL con `?a=&b=`, copiar link) →
+ * combos curadas con filtros (estación/momento/familia), orden por afinidad y
+ * "ver más" para escalar a 20 pares → stepper de técnica → matriz de familias
+ * (tabla en desktop, cards en mobile) → qué evitar con ejemplos reales del
+ * stock → seguridad en disclosure → clima Córdoba → FAQ → CTA.
  *
  * La lógica de afinidad vive en `src/utils/layering.ts` (sin DOM): el server
  * la usa para el estado inicial y el script del cliente importa la MISMA
  * función para el resultado en vivo. Nada de promesas de duración: heurística
- * honesta, precios siempre desde `perfumes.json`.
+ * honesta, precios siempre desde `perfumes.json`. Sin dependencias nuevas ni
+ * JS pesado: IntersectionObserver + listeners nativos.
  */
 import Layout from '@/layouts/Layout.astro';
 import Faq from '@/components/ui/Faq.astro';
@@ -20,6 +25,7 @@ import perfumesData from '@/data/perfumes.json';
 import imageDimsRaw from '@/data/image-dims.json';
 import { getFamilias } from '@/data/familias';
 import { site, assetUrl } from '@/site.config';
+import { resenasRating, hasResenas } from '@/data/resenas';
 import { formatPrice } from '@/utils/formatters';
 import { getStockStatus, primarySize, DECANT_ML } from '@/utils/stock';
 import {
@@ -56,24 +62,68 @@ for (const p of inStock) {
 }
 for (const g of roleGroups) g.items.sort((a, b) => a.name.localeCompare(b.name, 'es'));
 
+// Agrupación simple de familias olfativas para los chips de filtro de combos
+// (el catálogo tiene 30+ familias literales; para filtrar hace falta un
+// grouping legible en una línea de chips).
+const FAMILY_GROUPS: [RegExp, string][] = [
+  [/cuero/i, 'Cueros'],
+  [/almizcle/i, 'Almizcles'],
+  [/vainilla|gourmand|dulce|coco|pera/i, 'Dulces'],
+  [/amader|oud/i, 'Amaderados'],
+  [/oriental|ambar|especiad|cálido|calido|foug/i, 'Orientales'],
+  [/floral|chipre/i, 'Florales'],
+  [/citric|arom|acu|fresc|frutal|verde|tropical|marin/i, 'Frescos'],
+];
+const familyGroup = (family: string): string =>
+  FAMILY_GROUPS.find(([re]) => re.test(family))?.[1] ?? 'Otros';
+const familySlug = (label: string): string =>
+  label
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, '-');
+
+// Tokens de estación para filtrar: "todo el año" entra en TODA estación.
+const seasonTokens = (season: string): string[] => {
+  if (/todo el año/i.test(season)) return ['all'];
+  const tokens: string[] = [];
+  if (/primavera/i.test(season)) tokens.push('primavera');
+  if (/verano/i.test(season)) tokens.push('verano');
+  if (/otoñ/i.test(season)) tokens.push('otono');
+  if (/inviern/i.test(season)) tokens.push('invierno');
+  return tokens.length ? tokens : ['all'];
+};
+const momentOf = (occasion: string): 'dia' | 'noche' => (/noche/i.test(occasion) ? 'noche' : 'dia');
+
 const combos = availableLayeringCombos(perfumes);
-const comboViews = combos.map((combo) => {
+const comboViews = combos.map((combo, i) => {
   const anchor = byId.get(combo.anchorSlug)!;
   const accent = byId.get(combo.accentSlug)!;
   const anchorSize = primarySize(anchor);
   const accentSize = primarySize(accent);
+  const aff = layeringAffinity(anchor, accent);
   return {
     ...combo,
+    index: i,
     anchor,
     accent,
     shared: sharedNotes(anchor, accent),
     total: pairPrice(anchor, accent) ?? 0,
+    score: aff.score,
+    verdict: aff.verdict,
+    family: familyGroup(anchor.olfactoryFamily),
+    seasons: seasonTokens(combo.season).join(' '),
+    moment: momentOf(combo.occasion),
     // Chip honesto de "poco stock" (1-4 unidades) cuando alguna pata lo esté.
     lowStock:
       (anchorSize ? getStockStatus(anchorSize) : 'out-of-stock') === 'low-stock' ||
       (accentSize ? getStockStatus(accentSize) : 'out-of-stock') === 'low-stock',
   };
 });
+
+// Familia de los anclas presentes, en orden de aparición (chips de filtro).
+const comboFamilies: string[] = [];
+for (const c of comboViews) if (!comboFamilies.includes(c.family)) comboFamilies.push(c.family);
 
 // Combo estrella del hero = la primera disponible (orden de curaduría).
 const star = comboViews[0] ?? null;
@@ -116,6 +166,13 @@ const matrix = [
   { anchorWord: 'Gourmand', accentWord: 'Gourmand', verdict: 'Sobredosis', note: 'Excepción: si uno es claramente más liviano que el otro, puede cerrar.' },
 ];
 
+// Ejemplos reales del stock para "qué evitar": pares que el propio combinador
+// puntúa como "cuidado". Mismos ids que valida `layering.spec.ts`.
+const avoidExamples = [
+  { key: 'dos-potentes', a: 'ameer-al-oudh', b: 'asad-elixir' },
+  { key: 'dos-dulces', a: 'angham', b: 'yara' },
+];
+
 // FAQ compartida entre el `<Faq>` visible y el JSON-LD FAQPage.
 const faq = [
   {
@@ -155,7 +212,7 @@ const faqSchema = faq.map((f) => ({
 }));
 
 // Payload mínimo para el combinador cliente: solo lo que lee layeringAffinity
-// (name, olfactoryFamily, notes) + precio/id/slug para la UI. Nada de
+// (name, olfactoryFamily, notes) + precio/id/slug/imagen para la UI. Nada de
 // duplicar el JSON completo en el bundle.
 const clientPerfumes = inStock.map((p) => ({
   id: p.id,
@@ -165,6 +222,9 @@ const clientPerfumes = inStock.map((p) => ({
   family: p.olfactoryFamily,
   notes: { top: p.notes.top, heart: p.notes.heart, base: p.notes.base },
   price: decantPrice(p) ?? 0,
+  img: bottleSrc(p),
+  w: dimsFor(p).width,
+  h: dimsFor(p).height,
 }));
 
 const pageTitle = 'Layering: cómo combinar perfumes';
@@ -176,6 +236,19 @@ const preloadImages = star ? [star.anchor.images[0]?.src, star.accent.images[0]?
 const schemaAuthorUrl = Astro.site ?? new URL(Astro.url.href);
 const schemaPageUrl = new URL(Astro.url.pathname, Astro.site).href;
 const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
+
+// Secciones de la navegación interna sticky (id → etiqueta corta).
+const navItems = [
+  { id: 'que-es', label: 'Qué es' },
+  { id: 'ly-combinador', label: 'Combinador' },
+  { id: 'combos', label: 'Combos' },
+  { id: 'como-se-hace', label: 'Cómo' },
+  { id: 'matriz', label: 'Familias' },
+  { id: 'seguridad', label: 'Seguridad' },
+  { id: 'faq', label: 'FAQ' },
+];
+
+const meterTicks = (score: number): number => Math.max(0, Math.min(10, Math.round(score)));
 ---
 
 <Layout
@@ -223,11 +296,11 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
               <li aria-current="page">Layering</li>
             </ol>
           </nav>
-          <p class="ly-kicker">Guía · 5 min</p>
+          <p class="ly-kicker">Guía de layering · 5 min</p>
           <h1 id="ly-title" class="page-title ly-title">Layering: cómo combinar perfumes</h1>
           <p class="ly-sub">
             Dos perfumes en capas: el denso abajo, el liviano arriba.
-            <span class="ly-sub-2">Se leen como un solo perfume. Empezá con un par curado en decants de 5 ml.</span>
+            <span class="ly-sub-2">Se leen como un solo perfume.</span>
           </p>
 
           <div class="ly-star" aria-label={`Combo estrella: ${star.title}`}>
@@ -245,7 +318,7 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
                 />
                 <figcaption>{star.anchor.name}</figcaption>
               </figure>
-              <span class="ly-star-arrow" aria-hidden="true">→</span>
+              <span class="ly-star-plus" aria-hidden="true">+</span>
               <figure class="ly-bottle">
                 <span class="ly-role-tag ly-role-tag--accent">Acento</span>
                 <img
@@ -266,23 +339,44 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
                 <strong>{formatPrice(star.total)}</strong> el par · 2 decants de {DECANT_ML} ml
               </p>
               <div class="ly-star-actions">
+                <a href="#ly-combinador" class="btn btn--primary btn--md">Probá tu combinación</a>
                 <button
                   type="button"
-                  class="btn btn--primary btn--md"
+                  class="btn btn--secondary btn--md"
                   data-combo-add
                   data-anchor={star.anchor.id}
                   data-accent={star.accent.id}
-                  aria-label={`Probalos juntos: agregar ${star.anchor.name} y ${star.accent.name} en decants de 5 ml`}
                 >
                   Probalos juntos
                 </button>
-                <a href="#ly-combinador" class="ly-star-link">O armá tu propio par ↓</a>
               </div>
+              <p class="ly-trust">
+                <span>Originales y sellados</span>
+                <span aria-hidden="true">·</span>
+                <span>Entrega en {site.addressLocality}</span>
+                {hasResenas && (
+                  <>
+                    <span aria-hidden="true">·</span>
+                    <span>{resenasRating.ratingValue.toFixed(1).replace('.', ',')}★ en Google ({resenasRating.reviewCount} reseñas)</span>
+                  </>
+                )}
+              </p>
             </div>
           </div>
         </div>
       </section>
     )}
+
+    {/* ============ Navegación interna sticky (bajo el header) ============ */}
+    <nav class="ly-nav" aria-label="Secciones de la guía">
+      <div class="ly-nav-inner">
+        <ul class="ly-nav-list">
+          {navItems.map((item) => (
+            <li><a class="ly-nav-link" href={`#${item.id}`} data-nav-link={item.id}>{item.label}</a></li>
+          ))}
+        </ul>
+      </div>
+    </nav>
 
     {/* ================= 2 · Qué es / qué no es ================= */}
     <section class="ly-section" id="que-es" aria-labelledby="ly-que-es">
@@ -292,11 +386,22 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
           Layering es aplicarte dos perfumes (máximo tres) en capas sobre la piel: primero el más
           denso, esperás medio minuto, y encima el más liviano. Bien hecho, no se siente como dos
           perfumes peleando: se siente como <em>un</em> perfume con más matices. La técnica vive en
-          los roles: el <dfn class="ly-dfn" title="El perfume más denso; va primero y sostiene el conjunto">ancla</dfn>
-          da estructura y permanencia, el <dfn class="ly-dfn" title="El perfume más liviano; va arriba y aporta brillo">acento</dfn>
-          da luz, y la <dfn class="ly-dfn" title="Una nota que comparten los dos perfumes y cose la mezcla">nota puente</dfn>
-          es lo que hace que se lean juntos.
+          los roles.
         </p>
+        <div class="ly-roles" role="list" aria-label="Los tres roles del layering">
+          <div class="ly-role" role="listitem">
+            <p class="ly-role-word"><dfn class="ly-dfn" title="El perfume más denso; va primero y sostiene el conjunto">Ancla</dfn></p>
+            <p>El más denso (madera, oud, vainilla, cuero). Va primero y da estructura.</p>
+          </div>
+          <div class="ly-role" role="listitem">
+            <p class="ly-role-word"><dfn class="ly-dfn" title="El perfume más liviano; va arriba y aporta brillo">Acento</dfn></p>
+            <p>El más liviano (cítrico, fresco, floral). Va arriba y da luz.</p>
+          </div>
+          <div class="ly-role" role="listitem">
+            <p class="ly-role-word"><dfn class="ly-dfn" title="Una nota que comparten los dos perfumes y cose la mezcla">Nota puente</dfn></p>
+            <p>Una nota que comparten los dos: es lo que hace que se lean juntos.</p>
+          </div>
+        </div>
         <p>
           Lo que <strong>no</strong> es: mezclar líquidos dentro de un frasco (eso arruina dos perfumes),
           sumar dosis para "durar el doble" (no lo prometemos: lo que gana es evolución, no horas), ni una
@@ -323,40 +428,88 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
           el narices manda siempre.
         </p>
         <noscript>
-          <p class="ly-noscript">Sin JavaScript el combinador no recalcula: te dejamos igual el veredicto del par estrella más abajo, y las 8 combos curadas funcionan igual.</p>
+          <p class="ly-noscript">Sin JavaScript el combinador no recalcula: te dejamos igual el veredicto del par estrella, y las combos curadas de abajo funcionan igual (se muestran todas).</p>
         </noscript>
 
-        <div class="ly-comb-grid">
-          <div class="ly-selects">
-            <div class="ly-field">
-              <label for="ly-a">Perfume A</label>
-              <select id="ly-a" name="a" data-combo-select>
-                {roleGroups.map((g) => (
-                  <optgroup label={g.label}>
-                    {g.items.map((p) => (
-                      <option value={p.id} selected={p.id === defA.id}>{p.name} — {p.brand}</option>
-                    ))}
-                  </optgroup>
-                ))}
-              </select>
+        <div class="ly-comb">
+          <div class="ly-comb-controls">
+            <div class="ly-field ly-field--search">
+              <label for="ly-search">Buscar en el catálogo</label>
+              <input
+                id="ly-search"
+                type="search"
+                placeholder="Nombre o marca… (ej. oud, Lattafa)"
+                autocomplete="off"
+                data-search
+              />
             </div>
-            <button type="button" class="ly-swap" data-swap aria-label="Intercambiar los perfumes">⇄</button>
-            <div class="ly-field">
-              <label for="ly-b">Perfume B</label>
-              <select id="ly-b" name="b" data-combo-select>
-                {roleGroups.map((g) => (
-                  <optgroup label={g.label}>
-                    {g.items.map((p) => (
-                      <option value={p.id} selected={p.id === defB.id}>{p.name} — {p.brand}</option>
-                    ))}
-                  </optgroup>
-                ))}
-              </select>
+            <div class="ly-pickers">
+              <div class="ly-field">
+                <label for="ly-a">Perfume A</label>
+                <select id="ly-a" name="a" data-combo-select>
+                  {roleGroups.map((g) => (
+                    <optgroup label={g.label}>
+                      {g.items.map((p) => (
+                        <option value={p.id} selected={p.id === defA.id}>{p.name} — {p.brand}</option>
+                      ))}
+                    </optgroup>
+                  ))}
+                </select>
+              </div>
+              <button type="button" class="ly-swap" data-swap aria-label="Intercambiar los perfumes">⇄</button>
+              <div class="ly-field">
+                <label for="ly-b">Perfume B</label>
+                <select id="ly-b" name="b" data-combo-select>
+                  {roleGroups.map((g) => (
+                    <optgroup label={g.label}>
+                      {g.items.map((p) => (
+                        <option value={p.id} selected={p.id === defB.id}>{p.name} — {p.brand}</option>
+                      ))}
+                    </optgroup>
+                  ))}
+                </select>
+              </div>
             </div>
+            <p class="ly-controls-note">La búsqueda solo filtra la lista; el catálogo completo sigue intacto.</p>
           </div>
 
           <div class="ly-result" id="ly-result" aria-live="polite">
-            <p class={`ly-verdict ${verdictMeta[defAff.verdict].className}`}>
+            <div class="ly-preview" aria-hidden="true">
+              <figure class="ly-bottle ly-bottle--prev">
+                <span class="ly-role-tag ly-role-tag--base">Base</span>
+                <img
+                  src={bottleSrc(defAff.anchor)}
+                  alt=""
+                  width={dimsFor(defAff.anchor).width}
+                  height={dimsFor(defAff.anchor).height}
+                  loading="lazy"
+                  decoding="async"
+                  data-preview-img="anchor"
+                />
+              </figure>
+              <span class="ly-preview-plus">+</span>
+              <figure class="ly-bottle ly-bottle--prev">
+                <span class="ly-role-tag ly-role-tag--accent">Acento</span>
+                <img
+                  src={bottleSrc(defAff.accent)}
+                  alt=""
+                  width={dimsFor(defAff.accent).width}
+                  height={dimsFor(defAff.accent).height}
+                  loading="lazy"
+                  decoding="async"
+                  data-preview-img="accent"
+                />
+              </figure>
+            </div>
+            <div class="ly-meter" data-affinity-meter role="img" aria-label={`Afinidad ${meterTicks(defAff.score)}/10 · ${verdictMeta[defAff.verdict].label}`}>
+              <span class:list={['ly-meter-label', `ly-meter-label--${defAff.verdict}`]}>{meterTicks(defAff.score)}/10</span>
+              <span class="ly-meter-track" aria-hidden="true">
+                {Array.from({ length: 10 }, (_, i) => (
+                  <span class:list={['ly-tick', { 'ly-tick--on': i < meterTicks(defAff.score) }]} data-tick={i} />
+                ))}
+              </span>
+            </div>
+            <p class:list={['ly-verdict', verdictMeta[defAff.verdict].className]}>
               {verdictMeta[defAff.verdict].label}
             </p>
             <ol class="ly-order">
@@ -400,18 +553,65 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
     <section class="ly-section" id="combos" aria-labelledby="ly-combos-title">
       <div class="container">
         <p class="ly-kicker">Curaduría</p>
-        <h2 id="ly-combos-title" class="ly-h2"><span class="ly-num" aria-hidden="true">03</span>Ocho pares que ya probamos por vos</h2>
+        <div class="ly-combos-head">
+          <h2 id="ly-combos-title" class="ly-h2"><span class="ly-num" aria-hidden="true">03</span>{comboViews.length} pares que ya probamos por vos</h2>
+          <div class="ly-sort" role="group" aria-label="Orden de las combos" data-filters hidden>
+            <button type="button" class="ly-chip ly-chip--sort" data-sort="curaduria" aria-pressed="true">Curaduría</button>
+            <button type="button" class="ly-chip ly-chip--sort" data-sort="afinidad" aria-pressed="false">Afinidad</button>
+          </div>
+        </div>
         <p class="ly-hint">Cada par existe en decants de 5 ml, con stock real. Las notas puente están calculadas sobre las fichas del catálogo.</p>
 
-        <div class="ly-combos">
+        {/* Filtros: solo con JS (sin JS se muestran todas las combos tal cual). */}
+        <div class="ly-filters" data-filters hidden>
+          <div class="ly-filter-group" role="group" aria-label="Filtrar por estación">
+            <span class="ly-filter-label" aria-hidden="true">Estación</span>
+            <ul class="ly-filter-chips">
+              <li><button type="button" class="ly-chip" data-season="todas" aria-pressed="true">Todas</button></li>
+              <li><button type="button" class="ly-chip" data-season="primavera" aria-pressed="false">Primavera</button></li>
+              <li><button type="button" class="ly-chip" data-season="verano" aria-pressed="false">Verano</button></li>
+              <li><button type="button" class="ly-chip" data-season="otono" aria-pressed="false">Otoño</button></li>
+              <li><button type="button" class="ly-chip" data-season="invierno" aria-pressed="false">Invierno</button></li>
+            </ul>
+          </div>
+          <div class="ly-filter-group" role="group" aria-label="Filtrar por momento">
+            <span class="ly-filter-label" aria-hidden="true">Momento</span>
+            <ul class="ly-filter-chips">
+              <li><button type="button" class="ly-chip" data-moment="todos" aria-pressed="true">Todos</button></li>
+              <li><button type="button" class="ly-chip" data-moment="dia" aria-pressed="false">Día</button></li>
+              <li><button type="button" class="ly-chip" data-moment="noche" aria-pressed="false">Noche</button></li>
+            </ul>
+          </div>
+          <div class="ly-filter-group" role="group" aria-label="Filtrar por familia del ancla">
+            <span class="ly-filter-label" aria-hidden="true">Familia</span>
+            <ul class="ly-filter-chips">
+              <li><button type="button" class="ly-chip" data-family="todas" aria-pressed="true">Todas</button></li>
+              {comboFamilies.map((f) => (
+                <li><button type="button" class="ly-chip" data-family={familySlug(f)} aria-pressed="false">{f}</button></li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <div class="ly-combos" id="ly-combos-grid">
           {comboViews.map((c) => (
-            <article class="ly-combo" id={`combo-${c.slug}`}>
+            <article
+              class="ly-combo"
+              id={`combo-${c.slug}`}
+              data-season={c.seasons}
+              data-moment={c.moment}
+              data-family={familySlug(c.family)}
+              data-affinity={c.score}
+              data-cur={c.index}
+            >
+              <span class="ly-combo-index" aria-hidden="true">{String(c.index + 1).padStart(2, '0')}</span>
               <header class="ly-combo-head">
                 <h3 class="ly-combo-title">{c.title}</h3>
-                <p class="ly-combo-meta">{c.occasion} · {c.season}</p>
+                <p class={`ly-combo-aff ly-combo-aff--${c.verdict}`}>Afinidad {c.verdict}</p>
                 {c.lowStock && (
                   <Chip variant="low-stock" class="ly-combo-low">Poco stock</Chip>
                 )}
+                <p class="ly-combo-meta">{c.occasion} · {c.season}</p>
               </header>
 
               <div class="ly-combo-pair">
@@ -427,7 +627,7 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
                   />
                   <figcaption><a href={`${BASE}producto/${c.anchor.slug}/`} class="ly-inline-link">{c.anchor.name}</a></figcaption>
                 </figure>
-                <span class="ly-combo-arrow" aria-hidden="true">→</span>
+                <span class="ly-combo-plus" aria-hidden="true">+</span>
                 <figure class="ly-bottle ly-bottle--sm">
                   <span class="ly-role-tag ly-role-tag--accent">Acento</span>
                   <img
@@ -466,10 +666,16 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
             </article>
           ))}
         </div>
+
+        <div class="ly-combos-more" data-show-more hidden>
+          <button type="button" class="ly-copy" data-show-more-btn>Ver más pares</button>
+        </div>
+        <p class="ly-combos-empty" data-combos-empty role="status" hidden>No hay pares con esa combinación de filtros. Probá aflojar alguno.</p>
+        <p class="ly-combos-status" data-combos-status role="status" hidden></p>
       </div>
     </section>
 
-    {/* ================= 5 · Cómo se hace ================= */}
+    {/* ================= 5 · Cómo se hace (stepper) ================= */}
     <section class="ly-section ly-section--tint" id="como-se-hace" aria-labelledby="ly-pasos-title">
       <div class="container">
         <p class="ly-kicker">Técnica</p>
@@ -485,8 +691,8 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
             ] as [string, string][]
           ).map(([title, text], i) => (
             <li class="ly-step">
-              <span class="ly-step-num" aria-hidden="true">{i + 1}</span>
-              <div>
+              <span class="ly-step-node" aria-hidden="true">{i + 1}</span>
+              <div class="ly-step-body">
                 <h3 class="ly-step-title">{title}</h3>
                 <p class="ly-step-text">{text}</p>
               </div>
@@ -517,13 +723,13 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
                 const bLink = familiaLink(row.accentWord);
                 return (
                   <tr>
-                    <th scope="row">
+                    <th scope="row" data-label="Base (abajo)">
                       {aLink ? <a href={aLink} class="ly-inline-link">{row.anchorWord}</a> : row.anchorWord}
                     </th>
-                    <td>
+                    <td data-label="Acento (arriba)">
                       {bLink ? <a href={bLink} class="ly-inline-link">{row.accentWord}</a> : row.accentWord}
                     </td>
-                    <td>
+                    <td data-label="Qué esperar">
                       <span class={`ly-cell-verdict ${row.verdict === 'Cuidado' || row.verdict === 'Sobredosis' ? 'ly-cell-verdict--warn' : 'ly-cell-verdict--ok'}`}>{row.verdict}</span>
                       <span class="ly-cell-note">{row.note}</span>
                     </td>
@@ -545,17 +751,27 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
         <ul class="ly-avoid">
           {(
             [
-              ['Dos potentes a la vez', 'Oud + cuero, o dos orientales densos: se pisan y el resultado es ruido. Excepción posible: uno claramente más leve que el otro.'],
-              ['Dos gourmands', 'Vainilla sobre praliné es empalague x2. El azúcar se corta con verde, cítrico o almizcle, no con más azúcar.'],
-              ['Mezclar en el frasco', 'No decores perfumes dentro del envase: no podés deshacerlo, emulsionan distinto y arruinás dos. Las capas van sobre la piel.'],
-              ['Duplicar la dosis', 'El error más caro: "dos perfumes = dos dosis". No. La dosis total sigue siendo la de uno solo.'],
-            ] as [string, string][]
-          ).map(([title, text]) => (
-            <li class="ly-avoid-item">
-              <h3>{title}</h3>
-              <p>{text}</p>
-            </li>
-          ))}
+              ['Dos potentes a la vez', 'Oud + cuero, o dos orientales densos: se pisan y el resultado es ruido. Excepción posible: uno claramente más leve que el otro.', 'dos-potentes'],
+              ['Dos gourmands', 'Vainilla sobre praliné es empalague x2. El azúcar se corta con verde, cítrico o almizcle, no con más azúcar.', 'dos-dulces'],
+              ['Mezclar en el frasco', 'No decores perfumes dentro del envase: no podés deshacerlo, emulsionan distinto y arruinás dos. Las capas van sobre la piel.', null],
+              ['Duplicar la dosis', 'El error más caro: "dos perfumes = dos dosis". No. La dosis total sigue siendo la de uno solo.', null],
+            ] as [string, string, string | null][]
+          ).map(([title, text, exampleKey]) => {
+            const ex = exampleKey ? avoidExamples.find((e) => e.key === exampleKey) : undefined;
+            const a = ex ? byId.get(ex.a) : undefined;
+            const b = ex ? byId.get(ex.b) : undefined;
+            return (
+              <li class="ly-avoid-item">
+                <h3>{title}</h3>
+                <p>{text}</p>
+                {ex && a && b && (
+                  <a class="ly-avoid-example" href={`?a=${ex.a}&b=${ex.b}`}>
+                    Ejemplo real: {a.name} + {b.name} → ver el veredicto
+                  </a>
+                )}
+              </li>
+            );
+          })}
         </ul>
         <p class="ly-avoid-note">Nada de esto es una ley física: son las fallas más repetidas. Si una excepción te cierra en la piel, es tu excepción.</p>
       </div>
@@ -588,10 +804,12 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
         <h2 id="ly-clima-title" class="ly-h2"><span class="ly-num" aria-hidden="true">08</span>Layering con el clima de Córdoba</h2>
         <div class="ly-climate">
           <div class="ly-climate-card">
+            <p class="ly-climate-tag">Calor</p>
             <h3>Verano (esos 40 grados a la sombra)</h3>
             <p>El calor dispara la proyección: lo que en invierno es 2 sprays, acá es un golpe. Menos capas, menos sprays: un fresco o un almizcle de base y un cítrico arriba, máximo 1 spray de cada uno. Gourmand y cuero en verano van en dosis homeopáticas o para la noche.</p>
           </div>
           <div class="ly-climate-card">
+            <p class="ly-climate-tag">Frío</p>
             <h3>Invierno (seco, frío, ambientes con estufa)</h3>
             <p>El frío aplana las salidas: ahí es donde el par denso se luce. Gourmand abajo, cuero o especiado, y un floral o frutal arriba para que no suene a baño cerrado de oficina. Acá podés subir a 2 sprays de ancla sin molestar a nadie.</p>
           </div>
@@ -613,7 +831,8 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
         <h2 id="ly-cta-title" class="ly-h2 ly-h2--center">Armá tu par en decants de 5 ml</h2>
         <p class="ly-cta-text">Dos decantes chicos, una semana de pruebas sobre tu piel, y recién ahí decidís si querés los frascos. Entrega en mano o por Uber en {site.addressLocality}.</p>
         <div class="ly-cta-actions">
-          <a href={`${BASE}catalogo/decants/`} class="btn btn--primary btn--lg" data-fab-avoid>Elegir decants</a>
+          <a href="#ly-combinador" class="btn btn--primary btn--lg">Elegí tu par ahora</a>
+          <a href={`${BASE}catalogo/decants/`} class="btn btn--secondary btn--lg" data-fab-avoid>Elegir decants</a>
           <a href={`${BASE}tridentes/`} class="ly-cta-link">¿Llevás 3? Conocé el descuento tridente</a>
         </div>
       </div>
@@ -629,7 +848,7 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
 
   /**
    * Payload mínimo serializado arriba: solo lo que lee `layeringAffinity`
-   * (name, olfactoryFamily, notes) + id/slug/price para la UI. El cast a
+   * (name, olfactoryFamily, notes) + id/slug/price/imagen para la UI. El cast a
    * Perfume es seguro porque la función nunca toca los otros campos.
    */
   interface ClientPerfume {
@@ -640,6 +859,9 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
     family: string;
     notes: { top: string[]; heart: string[]; base: string[] };
     price: number;
+    img: string;
+    w: number;
+    h: number;
   }
 
   const VERDICT_LABEL: Record<string, string> = {
@@ -648,9 +870,103 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
     cuidado: 'Combiná con cuidado',
   };
 
+  const norm = (v: string): string =>
+    v.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
   const toPerfume = (m: ClientPerfume): Perfume =>
     ({ id: m.id, slug: m.slug, name: m.name, brand: m.brand, olfactoryFamily: m.family, notes: m.notes }) as unknown as Perfume;
 
+  // ==========================================================================
+  // Navegación interna sticky: estado activo por scroll + centrado del enlace.
+  // ==========================================================================
+  let navObserver: IntersectionObserver | null = null;
+  // Tail del scroll (última sección activa en el CTA final): el listener de
+  // window se registra una sola vez y apunta siempre a la página actual.
+  let navTail: (() => void) | null = null;
+  onWindowOnce('layering-nav-tail', 'scroll', () => {
+    requestAnimationFrame(() => navTail?.());
+  }, { passive: true });
+
+  function initStickyNav(): void {
+    const nav = document.querySelector<HTMLElement>('.ly-nav');
+    if (!nav) {
+      navTail = null;
+      return;
+    }
+    const links = new Map<string, HTMLElement>();
+    nav.querySelectorAll<HTMLElement>('[data-nav-link]').forEach((el) => {
+      const id = el.dataset.navLink;
+      if (id) links.set(id, el);
+    });
+    const sections = [...links.keys()]
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => el !== null);
+    if (sections.length === 0) {
+      navTail = null;
+      return;
+    }
+
+    const visible = new Set<string>();
+    let activeId: string | null = null;
+
+    const setActive = (id: string | null): void => {
+      if (id === activeId) return;
+      activeId = id;
+      for (const [key, el] of links) {
+        if (key === id) el.setAttribute('aria-current', 'true');
+        else el.removeAttribute('aria-current');
+      }
+      // El enlace activo se centra dentro del riel scrolleable (mobile) solo
+      // si estaba fuera de la vista: `scrollLeft` mueve el riel, no la página.
+      if (id) {
+        const link = links.get(id);
+        const inner = nav.querySelector<HTMLElement>('.ly-nav-inner');
+        if (link && inner && inner.scrollWidth > inner.clientWidth + 4) {
+          const innerBox = inner.getBoundingClientRect();
+          const linkBox = link.getBoundingClientRect();
+          const target =
+            linkBox.left - innerBox.left + inner.scrollLeft - inner.clientWidth / 2 + linkBox.width / 2;
+          if (linkBox.left < innerBox.left + 8 || linkBox.right > innerBox.right - 8) {
+            inner.scrollTo({ left: Math.max(0, target), behavior: 'smooth' });
+          }
+        }
+      }
+    };
+
+    // Banda de detección: debajo del header + nav sticky (~140 px) y arriba
+    // del 40 % inferior del viewport. El activo es la sección MÁS ARRIBA de
+    // las visibles; si ninguna corta la banda, se mantiene la última.
+    navObserver?.disconnect();
+    visible.clear();
+    navObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) visible.add(entry.target.id);
+          else visible.delete(entry.target.id);
+        }
+        const ordered = sections.filter((s) => visible.has(s.id));
+        setActive(ordered.length ? ordered[0].id : activeId);
+      },
+      { rootMargin: '-140px 0px -55% 0px', threshold: 0 }
+    );
+    sections.forEach((s) => navObserver?.observe(s));
+
+    // Link click: actualizar estado al instante (el observer tarda un frame).
+    nav.addEventListener('click', (e) => {
+      const link = (e.target as Element).closest?.('[data-nav-link]') as HTMLElement | null;
+      if (link) setActive(link.dataset.navLink ?? null);
+    });
+
+    // Fin de página: la última sección queda activa en el CTA final.
+    navTail = () => {
+      const atEnd = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 80;
+      if (atEnd) setActive(sections[sections.length - 1].id);
+    };
+  }
+
+  // ==========================================================================
+  // Combinador: selects + búsqueda + preview + medidor + URL + copiar link.
+  // ==========================================================================
   function initCombinator(): void {
     const wrap = document.querySelector<HTMLElement>('#ly-combinador');
     if (!wrap) return;
@@ -675,10 +991,17 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
     const swap = wrap.querySelector<HTMLElement>('[data-swap]');
     const copyBtn = wrap.querySelector<HTMLElement>('[data-copy-link]');
     const copyStatus = wrap.querySelector<HTMLElement>('[data-copy-status]');
+    const search = wrap.querySelector<HTMLInputElement>('input[data-search]');
     if (!selA || !selB || !result) return;
 
     const pairUrl = (a: string, b: string): string =>
       `${location.origin}${location.pathname}?a=${encodeURIComponent(a)}&b=${encodeURIComponent(b)}`;
+
+    const bottleFigure = (p: ClientPerfume, role: 'anchor' | 'accent'): string =>
+      `<figure class="ly-bottle ly-bottle--prev">` +
+      `<span class="ly-role-tag ly-role-tag--${role === 'anchor' ? 'base' : 'accent'}">${role === 'anchor' ? 'Base' : 'Acento'}</span>` +
+      `<img src="${escapeHtml(p.img)}" alt="" width="${p.w}" height="${p.h}" loading="lazy" decoding="async" data-preview-img="${role}" />` +
+      `</figure>`;
 
     const render = (updateUrl: boolean): void => {
       const a = byId.get(selA!.value);
@@ -696,7 +1019,7 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
       const aff = layeringAffinity(toPerfume(a), toPerfume(b));
       const label = (n: string): string => escapeHtml(n);
       const href = (p: ClientPerfume): string => `${base}producto/${p.slug}/`;
-      // El motor reordena el par: quien quedó de ancla/cento según id.
+      // El motor reordena el par: quien quedó de ancla/acento según rol.
       const anchorSrc = aff.anchor.id === a.id ? a : b;
       const accentSrc = aff.accent.id === a.id ? a : b;
       const shared = aff.shared.length
@@ -704,7 +1027,22 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
             .map((n) => `<li class="ly-note-chip">${label(n)}</li>`)
             .join('')}</ul>`
         : '';
+      const ticks = Math.max(0, Math.min(10, Math.round(aff.score)));
+      const meterLabel = `Afinidad ${ticks}/10 · ${VERDICT_LABEL[aff.verdict]}`;
+      const meter =
+        `<div class="ly-meter" data-affinity-meter role="img" aria-label="${escapeHtml(meterLabel)}">` +
+        `<span class="ly-meter-label ly-meter-label--${aff.verdict}">${ticks}/10</span>` +
+        `<span class="ly-meter-track" aria-hidden="true">` +
+        Array.from({ length: 10 }, (_, i) => `<span class="ly-tick${i < ticks ? ' ly-tick--on' : ''}"></span>`).join('') +
+        `</span></div>`;
+
       result.innerHTML =
+        `<div class="ly-preview" aria-hidden="true">` +
+        bottleFigure(anchorSrc, 'anchor') +
+        `<span class="ly-preview-plus">+</span>` +
+        bottleFigure(accentSrc, 'accent') +
+        `</div>` +
+        meter +
         `<p class="ly-verdict ly-verdict--${aff.verdict}">${VERDICT_LABEL[aff.verdict]}</p>` +
         '<ol class="ly-order">' +
         `<li><span class="ly-order-tag">Abajo · ancla</span> <a href="${href(anchorSrc)}" class="ly-inline-link">${label(aff.anchor.name)}</a></li>` +
@@ -745,6 +1083,22 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
     for (const sel of [selA, selB]) {
       bindOnce(sel, (el) => {
         el.addEventListener('change', () => render(true));
+      });
+    }
+
+    // Búsqueda: deshabilita opciones que no matchean (el select nativo sigue
+    // mandando en a11y; sin JS el input simplemente no filtra nada).
+    if (search) {
+      bindOnce(search, (el) => {
+        el.addEventListener('input', () => {
+          const q = norm(el.value.trim());
+          for (const sel of [selA, selB]) {
+            for (const opt of sel.options) {
+              if (!opt.value) continue;
+              opt.disabled = q !== '' && !norm(opt.textContent).includes(q);
+            }
+          }
+        });
       });
     }
 
@@ -792,7 +1146,110 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
     }
   }
 
-  // Delegación global: sirve a la combo estrella del hero, a las 8 cards y
+  // ==========================================================================
+  // Combos: filtros por chips + orden por afinidad + "ver más" (escala a 20+).
+  // Sin JS: el toolbar queda [hidden] y las tarjetas todas visibles.
+  // ==========================================================================
+  const COMBO_CAP = 6;
+
+  function initCombos(): void {
+    const grid = document.getElementById('ly-combos-grid');
+    if (!grid) return;
+    const toolbars = [...document.querySelectorAll<HTMLElement>('[data-filters]')];
+    if (toolbars.length === 0) return;
+    for (const t of toolbars) t.hidden = false;
+
+    const cards = [...grid.querySelectorAll<HTMLElement>('.ly-combo')];
+    const showMoreWrap = document.querySelector<HTMLElement>('[data-show-more]');
+    const showMoreBtn = document.querySelector<HTMLElement>('[data-show-more-btn]');
+    const status = document.querySelector<HTMLElement>('[data-combos-status]');
+    const empty = document.querySelector<HTMLElement>('[data-combos-empty]');
+    if (cards.length === 0) return;
+    if (status) status.hidden = false;
+
+    const state = { season: 'todas', moment: 'todos', family: 'todas', sort: 'curaduria', expanded: false };
+
+    const matches = (c: HTMLElement): boolean => {
+      const seasons = (c.dataset.season ?? 'all').split(' ');
+      const okSeason =
+        state.season === 'todas' || seasons.includes(state.season) || seasons.includes('all');
+      const okMoment = state.moment === 'todos' || c.dataset.moment === state.moment;
+      const okFamily = state.family === 'todas' || c.dataset.family === state.family;
+      return okSeason && okMoment && okFamily;
+    };
+
+    const filtersActive = (): boolean =>
+      state.season !== 'todas' || state.moment !== 'todos' || state.family !== 'todas';
+
+    const apply = (): void => {
+      const sorted = [...cards].sort((x, y) =>
+        state.sort === 'afinidad'
+          ? Number(y.dataset.affinity) - Number(x.dataset.affinity) || Number(x.dataset.cur) - Number(y.dataset.cur)
+          : Number(x.dataset.cur) - Number(y.dataset.cur)
+      );
+      for (const c of sorted) grid.appendChild(c);
+
+      const visible = sorted.filter(matches);
+      const capped = !state.expanded && !filtersActive() && visible.length > COMBO_CAP;
+      const shown = capped ? visible.slice(0, COMBO_CAP) : visible;
+      const shownSet = new Set(shown);
+      for (const c of cards) c.hidden = !shownSet.has(c);
+
+      if (showMoreWrap && showMoreBtn) {
+        const rest = visible.length - shown.length;
+        if (capped && rest > 0) {
+          showMoreWrap.hidden = false;
+          showMoreBtn.textContent = `Ver los ${rest} pares restantes`;
+        } else if (visible.length > COMBO_CAP && !filtersActive()) {
+          showMoreWrap.hidden = false;
+          showMoreBtn.textContent = 'Mostrar menos';
+        } else {
+          showMoreWrap.hidden = true;
+        }
+      }
+      if (empty) empty.hidden = visible.length > 0;
+      if (status) status.textContent = `Mostrando ${shown.length} de ${visible.length} pares.`;
+    };
+
+    for (const toolbar of toolbars) {
+      bindOnce(toolbar, (el) => {
+        el.addEventListener('click', (e) => {
+          const btn = (e.target as Element).closest?.('button[data-season],button[data-moment],button[data-family],button[data-sort]') as HTMLButtonElement | null;
+          if (!btn) return;
+          const pick = (group: string, value: string): void => {
+            (state as Record<string, unknown>)[group] = value;
+            el.querySelectorAll<HTMLButtonElement>(`[data-${group}]`).forEach((b) =>
+              b.setAttribute('aria-pressed', String(b === btn))
+            );
+          };
+          if (btn.dataset.season !== undefined) pick('season', btn.dataset.season);
+          else if (btn.dataset.moment !== undefined) pick('moment', btn.dataset.moment);
+          else if (btn.dataset.family !== undefined) pick('family', btn.dataset.family);
+          else if (btn.dataset.sort !== undefined) {
+            state.sort = btn.dataset.sort;
+            el.querySelectorAll<HTMLButtonElement>('[data-sort]').forEach((b) =>
+              b.setAttribute('aria-pressed', String(b === btn))
+            );
+          }
+          if (btn.dataset.sort === undefined) state.expanded = false;
+          apply();
+        });
+      });
+    }
+
+    if (showMoreBtn) {
+      bindOnce(showMoreBtn, (el) => {
+        el.addEventListener('click', () => {
+          state.expanded = !state.expanded;
+          apply();
+        });
+      });
+    }
+
+    apply();
+  }
+
+  // Delegación global: sirve a la combo estrella del hero, a las cards y
   // al botón del combinador. El drawer de carrito valida stock por su cuenta.
   onWindowOnce('layering-add', 'click', (e) => {
     const target = e.target;
@@ -811,7 +1268,9 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
   });
 
   onPageLoad('layering', () => {
+    initStickyNav();
     initCombinator();
+    initCombos();
   });
 </script>
 
@@ -822,28 +1281,25 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
 <style is:global>
   /* ==========================================================================
      Layering — nota editorial sobre el sistema existente (negro + oro
-     Montserrat). Convocaciones de revista: números de sección, hairlines,
-     kickers en versalitas, sangría del primer párrafo y una frase a pleno.
+     Montserrat, radios 0). Convocatorias de revista: números de sección,
+     hairlines, kickers en versalitas, una frase a pleno y rieles dorados.
+     La página entremejora la densidad: sticky nav interna, hero compacto con
+     CTA único, combinador con preview + medidor, combos filtrables.
      ========================================================================== */
   .ly {
+    --ly-nav-h: 52px;
+    --ly-jump: calc(var(--header-height) + var(--ly-nav-h) + 12px);
     padding-bottom: var(--spacing-stack-lg);
+  }
+
+  /* Anclas: nada queda tapado por header + nav sticky. */
+  .ly [id] {
+    scroll-margin-top: var(--ly-jump);
   }
 
   /* --- Hero --- */
   .ly-hero {
     padding: var(--spacing-stack-md) 0 var(--spacing-stack-sm);
-  }
-
-  @media (max-width: 640px) {
-    .ly-hero {
-      padding: 12px 0 8px;
-    }
-
-    /* La miga de pan es decorativa en celu: se gana el espacio que necesita
-       la combo estrella para entrar sin scroll. */
-    .ly-breadcrumb {
-      display: none;
-    }
   }
 
   .ly-breadcrumb {
@@ -890,11 +1346,11 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
   }
 
   .ly-hero .ly-sub {
-    animation-delay: 120ms;
+    animation-delay: 100ms;
   }
 
   .ly-hero .ly-star {
-    animation-delay: 240ms;
+    animation-delay: 200ms;
   }
 
   @keyframes ly-rise {
@@ -912,23 +1368,8 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
     font-size: var(--font-body-lg-size);
     line-height: var(--font-body-lg-line-height);
     color: var(--color-on-surface-variant);
-    max-width: 62ch;
-    margin: 0 0 var(--spacing-stack-md);
-  }
-
-  @media (max-width: 640px) {
-    .ly-kicker {
-      margin-bottom: 10px;
-    }
-
-    .ly-title {
-      margin-bottom: 12px;
-    }
-
-    .ly-sub {
-      font-size: var(--font-body-md-size);
-      margin-bottom: var(--spacing-stack-sm);
-    }
+    max-width: 58ch;
+    margin: 0 0 var(--spacing-stack-sm);
   }
 
   .ly-sub-2 {
@@ -941,13 +1382,14 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
     grid-template-columns: 1fr;
     gap: var(--spacing-stack-sm);
     border: var(--border-width) solid var(--color-outline-variant);
+    border-top: 2px solid var(--color-primary);
     background-color: var(--color-surface-container);
     padding: var(--spacing-stack-sm);
   }
 
   @media (min-width: 900px) {
     .ly-star {
-      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
       gap: var(--spacing-stack-lg);
       align-items: center;
       padding: var(--spacing-stack-md) var(--spacing-stack-lg);
@@ -958,7 +1400,7 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
+    gap: 6px;
     background-color: var(--color-image-bg);
     padding: 12px;
   }
@@ -980,7 +1422,7 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
   }
 
   .ly-bottle--sm img {
-    height: 96px;
+    height: 92px;
   }
 
   .ly-bottle figcaption {
@@ -990,6 +1432,14 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
     text-transform: uppercase;
     color: var(--color-on-image);
     text-align: center;
+  }
+
+  .ly-bottle figcaption a {
+    /* Nombre linkado sobre la franja blanca: se agranda el target táctil sin
+       romper la composición (inline-block + padding vertical). */
+    display: inline-block;
+    min-height: 34px;
+    padding: 4px 6px;
   }
 
   @media (min-width: 768px) {
@@ -1017,10 +1467,12 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
     color: var(--color-surface);
   }
 
-  .ly-star-arrow,
-  .ly-combo-arrow {
+  .ly-star-plus,
+  .ly-combo-plus,
+  .ly-preview-plus {
     color: var(--color-primary);
     font-size: 24px;
+    font-weight: 200;
     line-height: 1;
     padding: 0 6px;
     flex-shrink: 0;
@@ -1057,18 +1509,96 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 12px 20px;
+    gap: 12px 14px;
   }
 
-  .ly-star-link {
+  .ly-trust {
+    font-size: var(--font-label-sm-size);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 8px;
+    align-items: center;
+    margin: 14px 0 0;
+  }
+
+  .ly-trust > span[aria-hidden='true'] {
+    color: var(--color-primary);
+  }
+
+  /* --- Navegación interna sticky --- */
+  .ly-nav {
+    position: sticky;
+    top: var(--header-height);
+    z-index: 60;
+    background-color: color-mix(in srgb, var(--color-surface) 96%, transparent);
+    backdrop-filter: blur(16px);
+    border-bottom: var(--border-width) solid var(--color-outline-variant);
+  }
+
+  .ly-nav-inner {
+    max-width: var(--spacing-container-max);
+    margin: 0 auto;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    mask-image: linear-gradient(to right, transparent 0, black 16px, black calc(100% - 16px), transparent 100%);
+  }
+
+  @media (min-width: 1200px) {
+    .ly-nav-inner {
+      mask-image: none;
+    }
+  }
+
+  .ly-nav-inner::-webkit-scrollbar {
+    display: none;
+  }
+
+  .ly-nav-list {
+    display: flex;
+    list-style: none;
+    min-width: max-content;
+    padding: 0 var(--spacing-gutter);
+  }
+
+  @media (max-width: 640px) {
+    .ly-nav-list {
+      padding: 0 var(--spacing-margin-mobile);
+    }
+  }
+
+  .ly-nav-link {
+    display: flex;
+    align-items: center;
+    height: var(--ly-nav-h);
+    padding: 0 14px;
     font-size: var(--font-label-sm-size);
     font-weight: var(--font-label-sm-weight);
     letter-spacing: var(--font-label-sm-tracking);
     text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: color var(--transition-duration) var(--transition-easing), border-color var(--transition-duration) var(--transition-easing);
+  }
+
+  .ly-nav-link:hover {
     color: var(--color-primary);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    padding: 10px 0;
+  }
+
+  .ly-nav-link:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -4px;
+  }
+
+  .ly-nav-link[aria-current='true'] {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
   }
 
   /* --- Secciones --- */
@@ -1091,16 +1621,6 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
     display: flex;
     align-items: baseline;
     gap: 16px;
-  }
-
-  @media (max-width: 640px) {
-    .ly-section {
-      padding: var(--spacing-stack-md) 0;
-    }
-
-    .ly-h2 {
-      font-size: var(--font-headline-lg-mobile-size);
-    }
   }
 
   .ly-num {
@@ -1128,12 +1648,6 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
     margin: 0 0 var(--spacing-stack-sm);
   }
 
-  @media (max-width: 640px) {
-    .ly-prose p {
-      font-size: var(--font-body-md-size);
-    }
-  }
-
   .ly-dfn {
     font-style: normal;
     color: var(--color-on-surface);
@@ -1143,6 +1657,44 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
     text-decoration-color: var(--color-primary);
     text-underline-offset: 3px;
     cursor: help;
+  }
+
+  /* Los tres roles como tira editorial (densidad baja, escaneable). */
+  .ly-roles {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1px;
+    background-color: var(--color-outline-variant);
+    border: var(--border-width) solid var(--color-outline-variant);
+    margin: 0 0 var(--spacing-stack-md);
+  }
+
+  @media (min-width: 640px) {
+    .ly-roles {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .ly-role {
+    background-color: var(--color-surface);
+    padding: var(--spacing-stack-sm) var(--spacing-stack-md) var(--spacing-stack-sm) 18px;
+    border-left: 2px solid var(--color-primary);
+  }
+
+  .ly-role-word {
+    margin: 0 0 6px !important;
+    font-size: var(--font-headline-md-size) !important;
+    font-weight: var(--font-headline-md-weight);
+    letter-spacing: var(--font-headline-md-tracking);
+    line-height: 1.2;
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+  }
+
+  .ly-role p:last-child {
+    font-size: var(--font-body-md-size) !important;
+    line-height: var(--font-body-md-line-height) !important;
+    margin: 0 !important;
   }
 
   .ly-hint {
@@ -1162,7 +1714,18 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
   .ly-quote {
     margin: 0 auto;
     max-width: 900px;
-    padding: 0 var(--spacing-gutter);
+    padding: var(--spacing-stack-sm) var(--spacing-gutter) var(--spacing-stack-sm);
+    position: relative;
+  }
+
+  .ly-quote::before {
+    content: '“';
+    display: block;
+    text-align: center;
+    font-size: 56px;
+    line-height: 0.6;
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-stack-sm);
   }
 
   .ly-quote blockquote p {
@@ -1176,18 +1739,8 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
     margin: 0;
   }
 
-  @media (max-width: 640px) {
-    .ly-quote blockquote p {
-      font-size: var(--font-headline-md-size);
-    }
-
-    .ly-quote {
-      padding: 0 var(--spacing-margin-mobile);
-    }
-  }
-
   /* --- Combinador --- */
-  .ly-comb-grid {
+  .ly-comb {
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--spacing-stack-md);
@@ -1196,21 +1749,22 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
   /* El botón de "Agregar los dos" es largo: sin `min-width:0` los hijos de
      grid traen su min-content (≈430px) y empujan la columna fuera del
      contenedor en 320/390 (el clip global lo esconde, pero se corta). */
-  .ly-comb-grid > * {
+  .ly-comb > * {
     min-width: 0;
   }
 
-  @media (min-width: 900px) {
-    .ly-comb-grid {
+  @media (min-width: 960px) {
+    .ly-comb {
       grid-template-columns: minmax(300px, 420px) minmax(0, 1fr);
       grid-template-areas:
-        'selects result'
+        'controls result'
         'actions result';
       align-items: start;
+      gap: var(--spacing-stack-sm) var(--spacing-stack-md);
     }
 
-    .ly-selects {
-      grid-area: selects;
+    .ly-comb-controls {
+      grid-area: controls;
     }
 
     .ly-result {
@@ -1222,7 +1776,16 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
     }
   }
 
-  .ly-selects {
+  .ly-comb-controls {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-stack-sm);
+    border: var(--border-width) solid var(--color-outline-variant);
+    background-color: var(--color-surface);
+    padding: var(--spacing-stack-sm);
+  }
+
+  .ly-pickers {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     gap: 12px;
@@ -1230,7 +1793,7 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
   }
 
   @media (max-width: 480px) {
-    .ly-selects {
+    .ly-pickers {
       grid-template-columns: 1fr;
     }
 
@@ -1250,7 +1813,8 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
     margin: 0 0 6px;
   }
 
-  .ly-field select {
+  .ly-field select,
+  .ly-field input[type='search'] {
     width: 100%;
     height: 48px;
     color-scheme: dark;
@@ -1259,18 +1823,37 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
     border: var(--border-width) solid var(--color-outline-variant);
     padding: 0 40px 0 12px;
     font-size: var(--font-body-md-size);
+    transition: border-color var(--transition-duration) var(--transition-easing);
+  }
+
+  .ly-field select {
     appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23e9c176' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 12px center;
-    transition: border-color var(--transition-duration) var(--transition-easing);
   }
 
-  .ly-field select:hover {
+  .ly-field input[type='search'] {
+    padding-right: 12px;
+  }
+
+  .ly-field input[type='search']::placeholder {
+    color: var(--color-on-surface-variant);
+    opacity: 0.8;
+  }
+
+  /* El clear de search en WebKit tiene área propia; lo pintamos dorado. */
+  .ly-field input[type='search']::-webkit-search-cancel-button {
+    filter: invert(75%) sepia(30%) saturate(500%) hue-rotate(1deg);
+  }
+
+  .ly-field select:hover,
+  .ly-field input[type='search']:hover {
     border-color: var(--color-primary);
   }
 
-  .ly-field select:focus-visible {
+  .ly-field select:focus-visible,
+  .ly-field input[type='search']:focus-visible {
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
   }
@@ -1286,6 +1869,17 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
     color: var(--color-on-surface);
   }
 
+  .ly-field option:disabled {
+    color: var(--color-status-out-of-stock);
+    background-color: var(--color-surface-container);
+  }
+
+  .ly-controls-note {
+    font-size: var(--font-label-sm-size);
+    color: var(--color-on-surface-variant);
+    margin: 0;
+  }
+
   .ly-swap {
     width: 44px;
     height: 44px;
@@ -1297,19 +1891,87 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
     border: var(--border-width) solid var(--color-outline-variant);
     background-color: transparent;
     cursor: pointer;
-    transition: border-color var(--transition-duration) var(--transition-easing);
+    transition: border-color var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing);
   }
 
   .ly-swap:hover {
     border-color: var(--color-primary);
   }
 
+  /* --- Panel de resultado: preview + medidor + veredicto --- */
   .ly-result {
     border: var(--border-width) solid var(--color-outline-variant);
     border-left: 3px solid var(--color-primary);
-    background-color: var(--color-surface-container);
+    background-color: var(--color-surface);
     padding: var(--spacing-stack-sm) var(--spacing-stack-md);
-    min-height: 220px;
+  }
+
+  @media (max-width: 640px) {
+    .ly-result {
+      padding: var(--spacing-stack-sm) 16px;
+    }
+  }
+
+  .ly-preview {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background-color: var(--color-image-bg);
+    padding: 10px 12px;
+    margin-bottom: 16px;
+  }
+
+  .ly-bottle--prev img {
+    height: 84px;
+    max-width: 28vw;
+  }
+
+  .ly-preview-plus {
+    color: var(--color-primary-container);
+  }
+
+  .ly-meter {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 0 0 12px;
+  }
+
+  .ly-meter-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--color-on-surface-variant);
+  }
+
+  .ly-meter-track {
+    display: flex;
+    gap: 3px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ly-tick {
+    flex: 1;
+    height: 8px;
+    background-color: var(--color-surface-container-highest);
+  }
+
+  /* El color del medidor sigue al veredicto del par actual: `:has` sobre la
+     clase del label, sin clases extra en el markup renderizado. */
+  .ly-meter:has(.ly-meter-label--fuerte) .ly-tick--on {
+    background-color: var(--color-status-in-stock);
+  }
+
+  .ly-meter:has(.ly-meter-label--buena) .ly-tick--on {
+    background-color: var(--color-primary);
+  }
+
+  .ly-meter:has(.ly-meter-label--cuidado) .ly-tick--on {
+    background-color: var(--color-error);
   }
 
   .ly-verdict {
@@ -1380,7 +2042,6 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
     text-transform: uppercase;
     color: var(--color-on-surface-variant);
     border: var(--border-width) solid var(--color-outline-variant);
-    border-radius: 999px;
     padding: 4px 12px;
   }
 
@@ -1416,7 +2077,8 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
   }
 
   .ly-add {
-    align-self: flex-start;
+    align-self: stretch;
+    width: 100%;
     max-width: 100%;
     /* "AGREGAR LOS DOS (5 ML) · $13.000" en 320: 2 líneas antes que desbordar.
        `inline-block` para que el total (span) siga el flujo del texto y no
@@ -1455,6 +2117,11 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
     color: var(--color-on-primary);
   }
 
+  .ly-copy:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
   .ly-copy-status {
     font-size: var(--font-label-sm-size);
     color: var(--color-status-in-stock);
@@ -1491,10 +2158,83 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
   }
 
   /* --- Combos curadas --- */
+  .ly-combos-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px 20px;
+  }
+
+  .ly-sort {
+    display: flex;
+    gap: 8px;
+    margin-bottom: var(--spacing-stack-md);
+  }
+
+  .ly-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 28px;
+    margin: 0 0 var(--spacing-stack-md);
+  }
+
+  .ly-filter-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .ly-filter-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+  }
+
+  .ly-filter-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    list-style: none;
+  }
+
+  .ly-chip {
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+    background-color: transparent;
+    border: var(--border-width) solid var(--color-outline-variant);
+    min-height: 44px;
+    padding: 0 14px;
+    cursor: pointer;
+    transition: color var(--transition-duration) var(--transition-easing), border-color var(--transition-duration) var(--transition-easing), background-color var(--transition-duration) var(--transition-easing);
+  }
+
+  .ly-chip:hover {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+  }
+
+  .ly-chip:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .ly-chip[aria-pressed='true'] {
+    color: var(--color-on-primary);
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+  }
+
   .ly-combos {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--spacing-stack-md);
+    gap: var(--spacing-stack-sm);
   }
 
   @media (min-width: 768px) {
@@ -1503,18 +2243,33 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
     }
   }
 
-  .ly-combo {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    border: var(--border-width) solid var(--color-outline-variant);
-    background-color: var(--color-surface-container);
-    padding: var(--spacing-stack-md);
-    transition: border-color var(--transition-duration) var(--transition-easing);
+  @media (min-width: 1100px) {
+    .ly-combos {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--spacing-stack-sm) var(--spacing-stack-sm);
+    }
   }
 
-  .ly-combo:hover {
-    border-color: var(--color-primary);
+  .ly-combo {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border: var(--border-width) solid var(--color-outline-variant);
+    background-color: var(--color-surface-container);
+    padding: var(--spacing-stack-sm) var(--spacing-stack-sm) var(--spacing-stack-sm) 22px;
+    transition: border-color var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing);
+  }
+
+  .ly-combo[hidden] {
+    display: none;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .ly-combo:hover {
+      border-color: var(--color-primary);
+      transform: translateY(-2px);
+    }
   }
 
   .ly-combo:target {
@@ -1522,20 +2277,52 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
     border-left: 3px solid var(--color-primary);
   }
 
+  .ly-combo-index {
+    position: absolute;
+    top: 14px;
+    left: 6px;
+    font-size: 10px;
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: 0.08em;
+    color: var(--color-primary);
+  }
+
   .ly-combo-head {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    gap: 6px 16px;
+    gap: 6px 14px;
   }
 
   .ly-combo-title {
-    font-size: var(--font-headline-md-size);
-    font-weight: var(--font-headline-md-weight);
-    letter-spacing: var(--font-headline-md-tracking);
+    font-size: var(--font-body-lg-size);
+    font-weight: 500;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--color-on-surface);
     margin: 0;
+  }
+
+  .ly-combo-aff {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin: 0;
+    padding: 2px 8px;
+    border: var(--border-width) solid currentColor;
+  }
+
+  .ly-combo-aff--fuerte {
+    color: var(--color-status-in-stock);
+  }
+
+  .ly-combo-aff--buena {
+    color: var(--color-primary);
+  }
+
+  .ly-combo-aff--cuidado {
+    color: var(--color-error);
   }
 
   .ly-combo-meta {
@@ -1544,6 +2331,7 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
     text-transform: uppercase;
     color: var(--color-on-surface-variant);
     margin: 0;
+    width: 100%;
   }
 
   .ly-combo-low {
@@ -1556,7 +2344,7 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
     justify-content: center;
     gap: 4px;
     background-color: var(--color-image-bg);
-    padding: 10px;
+    padding: 10px 8px;
   }
 
   .ly-combo-why {
@@ -1588,35 +2376,78 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
     font-size: var(--font-body-lg-size);
   }
 
-  /* --- Pasos --- */
+  .ly-combos-more {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--spacing-stack-md);
+  }
+
+  /* `hidden` + `display:flex` propio: la regla UA se pisa, hay que matarla a
+     mano o los controles sin JS quedarían visibles/inútiles. */
+  .ly-combos-more[hidden],
+  .ly-filters[hidden],
+  .ly-sort[hidden] {
+    display: none !important;
+  }
+
+  .ly-combos-empty {
+    text-align: center;
+    font-size: var(--font-body-md-size);
+    color: var(--color-on-surface-variant);
+    margin: var(--spacing-stack-sm) 0 0;
+  }
+
+  .ly-combos-status {
+    text-align: center;
+    font-size: var(--font-label-sm-size);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+    margin: var(--spacing-stack-sm) 0 0;
+  }
+
+  /* --- Stepper de técnica --- */
   .ly-steps {
     list-style: none;
     display: grid;
-    gap: var(--spacing-stack-sm);
+    gap: 0;
     padding: 0;
-    max-width: 800px;
   }
 
   .ly-step {
-    display: flex;
-    gap: 16px;
-    padding: var(--spacing-stack-sm) var(--spacing-stack-md);
-    background-color: var(--color-surface-container-lowest);
-    border: var(--border-width) solid var(--color-outline-variant);
+    position: relative;
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr);
+    gap: 0 16px;
+    padding-bottom: var(--spacing-stack-md);
   }
 
-  .ly-step-num {
+  /* Riel vertical (mobile) / horizontal (desktop). */
+  .ly-step:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: 19px;
+    top: 40px;
+    bottom: 6px;
+    width: var(--border-width);
+    background-color: var(--color-outline-variant);
+  }
+
+  .ly-step-node {
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
     width: 40px;
     height: 40px;
-    border-radius: 50%;
+    border: var(--border-width) solid var(--color-primary);
+    background-color: var(--color-surface);
     font-size: var(--font-body-lg-size);
-    font-weight: 600;
-    color: var(--color-on-primary);
-    background-color: var(--color-primary);
+    font-weight: 200;
+    color: var(--color-primary);
+  }
+
+  .ly-step-body {
+    padding-top: 2px;
   }
 
   .ly-step-title {
@@ -1631,9 +2462,35 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
     line-height: var(--font-body-md-line-height);
     color: var(--color-on-surface-variant);
     margin: 0;
+    max-width: 60ch;
   }
 
-  /* --- Matriz --- */
+  @media (min-width: 960px) {
+    .ly-steps {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 0 18px;
+    }
+
+    .ly-step {
+      grid-template-columns: 1fr;
+      padding-bottom: 0;
+    }
+
+    .ly-step:not(:last-child)::before {
+      left: 40px;
+      right: -18px;
+      top: 20px;
+      bottom: auto;
+      width: auto;
+      height: var(--border-width);
+    }
+
+    .ly-step-node {
+      margin-bottom: 14px;
+    }
+  }
+
+  /* --- Matriz: tabla en desktop, cards en mobile --- */
   .ly-table-wrap {
     overflow-x: auto;
     border: var(--border-width) solid var(--color-outline-variant);
@@ -1678,6 +2535,13 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
 
   .ly-table tbody tr {
     background-color: var(--color-surface-container);
+    transition: background-color var(--transition-duration) var(--transition-easing);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .ly-table tbody tr:hover {
+      background-color: var(--color-surface-container-high);
+    }
   }
 
   .ly-table tbody th {
@@ -1711,6 +2575,71 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
     display: block;
   }
 
+  @media (max-width: 767px) {
+    /* Tabla → cards apiladas con etiquetas: legible sin scroll horizontal. */
+    .ly-table-wrap {
+      border: none;
+      overflow: visible;
+    }
+
+    .ly-table {
+      min-width: 0;
+    }
+
+    .ly-table thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+    }
+
+    /* caption como bloque normal: en modo cards la caja "table-caption"
+       colapsa de ancho y el texto baja en una columna angosta. */
+    .ly-table-caption {
+      display: block;
+      width: 100%;
+      padding: 0 2px 10px;
+    }
+
+    .ly-table,
+    .ly-table tbody,
+    .ly-table tr,
+    .ly-table th,
+    .ly-table td {
+      display: block;
+      width: 100%;
+    }
+
+    .ly-table tbody tr {
+      border: var(--border-width) solid var(--color-outline-variant);
+      border-left: 2px solid var(--color-primary);
+      margin-bottom: 12px;
+      padding: 4px 0;
+    }
+
+    .ly-table th,
+    .ly-table td {
+      border-bottom: none;
+      padding: 6px 14px;
+    }
+
+    .ly-table th[data-label]::before,
+    .ly-table td[data-label]::before {
+      content: attr(data-label) ' · ';
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--color-primary);
+    }
+
+    .ly-table tbody th {
+      white-space: normal;
+      font-size: var(--font-body-lg-size);
+    }
+  }
+
   /* --- Qué evitar --- */
   .ly-avoid {
     list-style: none;
@@ -1739,6 +2668,20 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
     margin: 0 !important;
   }
 
+  .ly-avoid-example {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    min-height: 44px;
+    padding: 10px 0;
+  }
+
   .ly-avoid-note {
     font-size: var(--font-body-md-size);
     font-style: italic;
@@ -1764,6 +2707,11 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
     font-weight: 500;
     color: var(--color-on-surface);
     min-height: 44px;
+    transition: color var(--transition-duration) var(--transition-easing);
+  }
+
+  .ly-safety summary:hover {
+    color: var(--color-primary);
   }
 
   .ly-safety summary::-webkit-details-marker {
@@ -1804,6 +2752,8 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
   @media (min-width: 768px) {
     .ly-climate {
       grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1px;
+      background-color: var(--color-outline-variant);
     }
   }
 
@@ -1813,12 +2763,27 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
     background-color: var(--color-surface-container-lowest);
   }
 
+  @media (min-width: 768px) {
+    .ly-climate-card {
+      border: none;
+    }
+  }
+
+  .ly-climate-tag {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-primary);
+    margin: 0 0 10px;
+  }
+
   .ly-climate-card h3 {
     font-size: var(--font-headline-md-size);
     font-weight: var(--font-headline-md-weight);
     letter-spacing: var(--font-headline-md-tracking);
     text-transform: uppercase;
-    color: var(--color-primary);
+    color: var(--color-on-surface);
     margin: 0 0 10px;
   }
 
@@ -1833,7 +2798,7 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
   .ly-cta {
     padding: var(--spacing-stack-lg) 0;
     text-align: center;
-    border-top: var(--border-width) solid var(--color-outline-variant);
+    border-top: 2px solid var(--color-primary);
   }
 
   .ly-cta-text {
@@ -1859,18 +2824,49 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
     color: var(--color-primary);
     text-decoration: underline;
     text-underline-offset: 3px;
-    padding: 10px 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 8px;
   }
 
   /* ==========================================================================
-     Hero compacto en celu: la combo estrella tiene que entrar COMPLETA en el
-     primer viewport (390×844 medido: bottom 830 sin scroll). Va al final del
+     Hero compacto en celu: la combo estrella + el CTA tienen que entrar
+     COMPLETOS en el primer viewport (390×844 medido). Va al final del
      stylesheet a propósito: pisa las bases del hero por orden de cascada.
      ========================================================================== */
   @media (max-width: 640px) {
+    .ly {
+      --ly-nav-h: 48px;
+    }
+
+    .ly-hero {
+      padding: 12px 0 10px;
+    }
+
+    /* La miga de pan es decorativa en celu: se gana el espacio que necesita
+       la combo estrella para entrar sin scroll. */
+    .ly-breadcrumb {
+      display: none;
+    }
+
+    .ly-kicker {
+      margin-bottom: 10px;
+    }
+
+    .ly-title {
+      margin-bottom: 12px;
+    }
+
+    .ly-sub {
+      font-size: var(--font-body-md-size);
+      margin-bottom: 12px;
+    }
+
     .ly-star {
-      padding: 10px;
-      gap: 12px;
+      padding: 8px;
+      gap: 10px;
     }
 
     .ly-star-pair {
@@ -1878,7 +2874,7 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
     }
 
     .ly-bottle img {
-      height: 78px;
+      height: 64px;
     }
 
     .ly-bottle--sm img {
@@ -1887,20 +2883,52 @@ const schemaSiteOrigin = `${Astro.site?.origin}${site.basePath}`;
 
     .ly-star-title {
       font-size: var(--font-body-lg-size);
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .ly-star-why {
       font-size: var(--font-body-md-size);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .ly-star-price {
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
+    /* CTAs apilados a ancho completo: "PROBÁ TU COMBINACIÓN" no entra en la
+       mitad de 390 y dos columnas forzarían wrap con white-space: nowrap. */
     .ly-star-actions {
-      gap: 10px 16px;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 8px;
+    }
+
+    .ly-trust {
+      margin-top: 8px;
+    }
+
+    .ly-quote blockquote p {
+      font-size: var(--font-headline-md-size);
+    }
+
+    .ly-quote {
+      padding: var(--spacing-stack-sm) var(--spacing-margin-mobile);
+    }
+
+    .ly-section {
+      padding: var(--spacing-stack-md) 0;
+    }
+
+    .ly-h2 {
+      font-size: var(--font-headline-lg-mobile-size);
+    }
+
+    .ly-prose p {
+      font-size: var(--font-body-md-size);
+    }
+
+    .ly-comb-controls {
+      padding: 14px;
     }
   }
 </style>
