@@ -3173,6 +3173,130 @@
       ],
       "isBoutiqueExclusive": false,
       "featured": false
+    },
+    {
+      "id": "angham-second-song",
+      "slug": "angham-second-song",
+      "brand": "Lattafa Perfumes",
+      "name": "Angham Second Song",
+      "gender": "femenino",
+      "olfactoryFamily": "Frutal Floral",
+      "description": "Inspirado en My Devotion de Dolce & Gabbana. Pera y bergamota con peonía y azahar sobre vainilla, praliné y almizcle. Frutal floral cremoso y luminoso: ideal de día en primavera y verano.",
+      "notes": {
+        "top": [
+          "Pera",
+          "Bergamota"
+        ],
+        "heart": [
+          "Peonía",
+          "Flor de Azahar del Naranjo"
+        ],
+        "base": [
+          "Vainilla",
+          "Haba Tonka",
+          "Praliné",
+          "Almizcle",
+          "Ambroxan"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/angham-second-song.avif",
+          "alt": "Lattafa Perfumes Angham Second Song"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 8000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    },
+    {
+      "id": "summit-elixir",
+      "slug": "summit-elixir",
+      "brand": "Maison Alhambra",
+      "name": "Summit Elixir",
+      "gender": "masculino",
+      "olfactoryFamily": "Amaderada Aromática",
+      "description": "Inspirado en Invictus Victory Elixir de Paco Rabanne. Toronja y bergamota especiadas con lavanda al corazón sobre ámbar, cedro y vetiver. Aromático amaderado, fresco y potente: sirve de día, todo el año.",
+      "notes": {
+        "top": [
+          "Toronja",
+          "Bergamota",
+          "Notas Especiadas"
+        ],
+        "heart": [
+          "Lavanda",
+          "Notas Aromáticas",
+          "Especias"
+        ],
+        "base": [
+          "Ámbar",
+          "Almizcle",
+          "Cedro",
+          "Vetiver"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/summit-elixir.avif",
+          "alt": "Maison Alhambra Summit Elixir"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 8000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
+    },
+    {
+      "id": "hawas-diva",
+      "slug": "hawas-diva",
+      "brand": "Rasasi",
+      "name": "Hawas Diva",
+      "gender": "femenino",
+      "olfactoryFamily": "Oriental Floral",
+      "description": "Inspirado en Donna Born In Roma de Valentino. Frutas rojas, ruibarbo y lichi con rosa e incienso sobre vainilla, almizcle y ámbar gris. Floral frutal con fondo cálido: de noche, en otoño e invierno.",
+      "notes": {
+        "top": [
+          "Frutas Rojas",
+          "Ruibarbo",
+          "Lichi"
+        ],
+        "heart": [
+          "Rosa",
+          "Incienso",
+          "Cedro"
+        ],
+        "base": [
+          "Vainilla",
+          "Almizcle",
+          "Ámbar Gris"
+        ]
+      },
+      "images": [
+        {
+          "src": "images/perfumes/hawas-diva.avif",
+          "alt": "Rasasi Hawas Diva"
+        }
+      ],
+      "sizes": [
+        {
+          "ml": 5,
+          "price": 10000,
+          "stock": 10
+        }
+      ],
+      "isBoutiqueExclusive": false,
+      "featured": false
     }
   ]
 }

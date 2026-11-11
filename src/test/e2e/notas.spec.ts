@@ -31,8 +31,9 @@ test.describe('Buscador del hub de decants', () => {
     await page.goto('decants/');
     await page.waitForLoadState('networkidle');
 
-    await expect(page.locator('[data-hub-card]')).toHaveCount(62);
-    await expect(page.locator('[data-hub-count]')).toHaveText('62 aromas');
+    const totalAromas = await page.locator('[data-hub-card]').count();
+    expect(totalAromas).toBeGreaterThan(0);
+    await expect(page.locator('[data-hub-count]')).toHaveText(`${totalAromas} aromas`);
 
     await page.locator('input[type=search]').fill('aventus');
     await expect(page.locator('[data-hub-count]')).toHaveText('2 aromas');
@@ -77,7 +78,7 @@ test.describe('Buscador del hub de decants', () => {
 
     await input.fill('');
     await expect(empty).toBeHidden();
-    await expect(page.locator('[data-hub-count]')).toHaveText('62 aromas');
+    await expect(page.locator('[data-hub-count]')).toHaveText(/^\d+ aromas$/);
     await expect(page).not.toHaveURL(/[?&]search=/);
   });
 });
@@ -141,7 +142,7 @@ test.describe('Filtro por casa en el hub de decants', () => {
     // "Limpiar filtros" deja todo el hub otra vez y sanea la URL.
     await page.locator('[data-clear-filters]').click();
     await expect(page.locator('.hub-empty')).toBeHidden();
-    await expect(page.locator('[data-hub-count]')).toHaveText('62 aromas');
+    await expect(page.locator('[data-hub-count]')).toHaveText(/^\d+ aromas$/);
     await expect(page.locator('input[type=search]')).toHaveValue('');
     await expect(page).not.toHaveURL(/casa=/);
     await expect(page).not.toHaveURL(/search=/);

@@ -19,6 +19,10 @@
     "width": 217,
     "height": 469
   },
+  "images/perfumes/angham-second-song.avif": {
+    "width": 375,
+    "height": 500
+  },
   "images/perfumes/angham.avif": {
     "width": 233,
     "height": 469
@@ -86,6 +90,10 @@
   "images/perfumes/hawas-black.avif": {
     "width": 262,
     "height": 470
+  },
+  "images/perfumes/hawas-diva.avif": {
+    "width": 375,
+    "height": 500
   },
   "images/perfumes/hawas-fire.avif": {
     "width": 263,
@@ -243,6 +251,10 @@
     "width": 180,
     "height": 470
   },
+  "images/perfumes/summit-elixir.avif": {
+    "width": 375,
+    "height": 500
+  },
   "images/perfumes/the-kingdom-for-women.avif": {
     "width": 188,
     "height": 470
@@ -294,6 +306,10 @@
   "images/originales/102791.avif": {
     "width": 161,
     "height": 468
+  },
+  "images/originales/113886.avif": {
+    "width": 194,
+    "height": 469
   },
   "images/originales/13805.avif": {
     "width": 207,
@@ -399,6 +415,10 @@
     "width": 184,
     "height": 470
   },
+  "images/originales/55805.avif": {
+    "width": 323,
+    "height": 470
+  },
   "images/originales/57038.avif": {
     "width": 188,
     "height": 469
@@ -449,6 +469,10 @@
   },
   "images/originales/72381.avif": {
     "width": 194,
+    "height": 470
+  },
+  "images/originales/78575.avif": {
+    "width": 339,
     "height": 470
   },
   "images/originales/79699.avif": {

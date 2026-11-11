@@ -636,6 +636,36 @@ export const inspiraciones: Inspiracion[] = [
     familia: 'Floral Frutal Gourmand',
     originalImageId: '51694',
   },
+  {
+    perfumeSlug: 'angham-second-song',
+    perfumeBrand: 'Lattafa Perfumes',
+    perfumeName: 'Angham Second Song',
+    original: 'My Devotion',
+    casa: 'Dolce & Gabbana',
+    slug: 'my-devotion-dolce-gabbana',
+    familia: 'Frutal Floral',
+    originalImageId: '113886',
+  },
+  {
+    perfumeSlug: 'summit-elixir',
+    perfumeBrand: 'Maison Alhambra',
+    perfumeName: 'Summit Elixir',
+    original: 'Invictus Victory Elixir',
+    casa: 'Paco Rabanne',
+    slug: 'invictus-victory-elixir-paco-rabanne',
+    familia: 'Amaderada Aromática',
+    originalImageId: '78575',
+  },
+  {
+    perfumeSlug: 'hawas-diva',
+    perfumeBrand: 'Rasasi',
+    perfumeName: 'Hawas Diva',
+    original: 'Donna Born In Roma',
+    casa: 'Valentino',
+    slug: 'born-in-roma-valentino',
+    familia: 'Oriental Floral',
+    originalImageId: '55805',
+  },
 ];
 
 /** Devuelve la inspiración de un perfume por su slug, si existe. */

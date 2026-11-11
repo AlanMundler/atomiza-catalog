@@ -84,4 +84,7 @@ export const QUIZ_PROFILES: Record<string, PerfumeProfile> = {
   'the-kingdom-for-women': { styles: ['dulce-vainilla', 'frutal'], occasions: ['todo-el-dia', 'noche'], intensity: 'notoria', weather: ['frio'] },
   'odyssey-candee': { styles: ['frutal', 'dulce-vainilla'], occasions: ['todo-el-dia', 'noche'], intensity: 'notoria', weather: ['todo-el-ano'] },
   ajwad: { styles: ['floral', 'amaderado'], occasions: ['todo-el-dia', 'noche'], intensity: 'notoria', weather: ['todo-el-ano'] },
+  'angham-second-song': { styles: ['frutal', 'floral', 'dulce-vainilla'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'notoria', weather: ['calor'] },
+  'summit-elixir': { styles: ['citrico-fresco', 'amaderado'], occasions: ['trabajo', 'todo-el-dia'], intensity: 'notoria', weather: ['todo-el-ano'] },
+  'hawas-diva': { styles: ['frutal', 'floral', 'ambarado-especiado'], occasions: ['noche', 'especiales'], intensity: 'intensa', weather: ['frio'] },
 };
