@@ -126,6 +126,11 @@
           "ml": 5,
           "price": 6000,
           "stock": 10
+        },
+        {
+          "ml": 100,
+          "price": 60000,
+          "stock": 1
         }
       ],
       "isBoutiqueExclusive": false,
@@ -215,11 +220,16 @@
           "ml": 5,
           "price": 6000,
           "stock": 10
+        },
+        {
+          "ml": 100,
+          "price": 65000,
+          "stock": 1
         }
       ],
       "isBoutiqueExclusive": false,
       "featured": false,
-      "originalPrice": 60000
+      "originalPrice": 65000
     },
     {
       "id": "glacier-ultra",
@@ -1306,7 +1316,7 @@
         {
           "ml": 5,
           "price": 6000,
-          "stock": 10
+          "stock": 0
         },
         {
           "ml": 100,
