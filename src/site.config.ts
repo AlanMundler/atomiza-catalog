@@ -43,7 +43,8 @@ export const site = {
   // v30: originalPrice de Glacier Bella y Confidential Private Gold alineado al precio de su frasco 100 ml)
   // v31: 3 perfumes nuevos (Angham Second Song, Summit Elixir, Hawas Diva))
   // v32: frascos 100 ml en Dark Door Sport ($60.000) y Your Touch ($65.000); Hayaati Florence sin stock en el decant)
-  dataVersion: '32',
+  // v33: Hayaati Florence corregido: decant con stock, frasco cerrado sin stock)
+  dataVersion: '33',
   instagramHandle: 'atomiza.cba',
   instagramUrl: 'https://instagram.com/atomiza.cba',
   tiktokHandle: 'atomiza.cba',
