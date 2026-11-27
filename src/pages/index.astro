@@ -19,17 +19,18 @@ const homeDescription = `${site.name}. ${site.tagline} en ${site.addressLocality
 // Título con keyword local: es lo que busca quien quiere comprar perfumes árabes
 // en Córdoba. El "decants" + ciudad diferencia a ATOMIZA de otros "ATOMIZA" del mundo.
 const homeTitle = `Perfumes árabes en decants · ${site.addressLocality}`;
-// Perfumes en stock para la home. El SSR pinta los primeros 4 fijos
-// (SEO/LCP, sin parpadeos ni HTML oculto): el sorteo real por visita lo
-// hace `initHomeRandom` en el browser, porque el build estático congelaba
-// cualquier seed hasta el próximo deploy.
+// Perfumes en stock para la home. El SSR pinta un pool de 12 (SEO/LCP): 4
+// visibles + 8 ocultos para que el sorteo por visita tenga variedad. El
+// markup vive solo en `ProductCard`; `initHomeRandom` mueve esos nodos en el
+// browser (sin fetch del catálogo ni HTML duplicado), así el build estático
+// no congela el orden hasta el próximo deploy.
 const allPerfumes = perfumesData.perfumes as Perfume[];
 const inStockPerfumes = allPerfumes.filter((perfume) => {
   const size = primarySize(perfume);
   return size ? isSizeAvailable(size) : false;
 });
 
-const homePerfumes = inStockPerfumes.slice(0, 4);
+const homePerfumePool = inStockPerfumes.slice(0, 12);
 // FAQ real de la home: el JSON-LD FAQPage refleja exactamente el contenido visible
 const faqs = [
   {
@@ -67,7 +68,7 @@ const faqs = [
 ] as const;
 ---
 
-<Layout title={homeTitle} description={homeDescription} preloadImages={homePerfumes[0] ? [homePerfumes[0].images[0]?.src] : []}>
+<Layout title={homeTitle} description={homeDescription} preloadImages={homePerfumePool[0] ? [homePerfumePool[0].images[0]?.src] : []}>
   <script is:inline type="application/ld+json" set:html={jsonLd({
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -126,9 +127,9 @@ const faqs = [
         <h2 id="home-perfumes-title" class="section-title">Decants en stock</h2>
       </div>
       <div class="home-perfume-grid" id="home-perfume-grid" role="list">
-        {homePerfumes.map((perfume) => (
-          <div class="home-perfume-item" role="none">
-            <ProductCard perfume={perfume} eager />
+        {homePerfumePool.map((perfume, i) => (
+          <div class="home-perfume-item" role="none" hidden={i >= 4}>
+            <ProductCard perfume={perfume} eager={i < 4} />
           </div>
         ))}
       </div>
@@ -309,9 +310,9 @@ const faqs = [
     // por vez en mobile. La guarda interna evita duplicar listeners.
     onPageLoad('sliders', () => initSliders());
 
-    // Sorteo de la home: el SSR pinta 4 fijos (SEO/LCP) y acá se reemplazan
-    // por 4 al azar en cada visita (el build estático congelaba el sorteo
-    // diario: siempre salían los mismos hasta el próximo deploy).
+    // Sorteo de la home: mueve los nodos del pool SSR (4 visibles + 8 ocultos)
+    // para que cada visita muestre 4 distintos, sin fetch ni HTML duplicado
+    // (el build estático congelaba el orden hasta el próximo deploy).
     onPageLoad('home-random', () => initHomeRandom());
 
     // Tira de promociones: abre el modal con la regla y tu progreso en vivo.

@@ -61,7 +61,7 @@ npm run build
 CI/CD (`.github/workflows/ci.yml`, un solo workflow): job `build` (`test` + `lint` + `build` + size) publica `dist` como artifact;
 job `e2e` baja ese artifact y corre Playwright chromium; job `deploy` (solo en `main`) publica el mismo `dist` en Pages y avisa a IndexNow.
 Los pull requests corren `build` + `e2e` y no deployan.
-Baseline actual: **233 tests unitarios**, **57 e2e (+1 skip)**, **199 páginas**, **axe 0 violaciones**.
+Baseline actual: **235 tests unitarios**, **59 e2e (+1 skip)**, **199 páginas**, **axe 0 violaciones**.
 
 ---
 
@@ -91,6 +91,7 @@ drawer de carrito, modal de pedido, cookie banner y FAB de WhatsApp.
 | `catalogo.ts` | normalización de filtros, `cardMatches`, modo decants/frascos, texto de resultados, búsqueda difusa |
 | `hub.ts` | buscador del hub “por aroma”, casas y contadores |
 | `search-page.ts` | mecánica compartida de las páginas con búsqueda (URL, fuzzy, visibilidad, contadores) |
+| `list-controller.ts` | controlador común de catálogo y hub: URL→estado→DOM, listeners `search:change`/`popstate`, contador y empty state; la página solo aporta el criterio y sus bindings |
 | `perfumes-client.ts` | fetch del catálogo + caché en `localStorage` validada por `dataVersion` |
 | `related.ts` | “Podría interesarte” (score por familia/notas/género) |
 | `layering.ts` | roles, afinidad y combos disponibles de layering |
@@ -102,7 +103,10 @@ drawer de carrito, modal de pedido, cookie banner y FAB de WhatsApp.
 | `body-scroll.ts` | libera el `overflow` del body al cerrar drawer/modal |
 | `view-transitions.ts` | ciclo de vida `astro:page-load` con `ClientRouter` (evita listeners duplicados) |
 | `analytics-client.ts` | eventos GA4/Meta/TikTok (solo con consentimiento) |
-| `home-random.ts` | sorteo de las cards de la home |
+| `home-random.ts` | sorteo de las cards de la home moviendo los nodos SSR (sin fetch ni HTML duplicado) |
+| `text.ts` | `normalizeText` (minúsculas sin acentos) y `slugify` (slugs estables de familias/casas) |
+| `jsonld.ts` | `jsonLd()`: serialización + escape `<` para los bloques `application/ld+json` |
+| `consent.ts` | consentimiento de cookies: estado en `localStorage`, carga diferida de GA/Meta/TikTok y puente SecurePrivacy opcional |
 
 ### Datos (`src/data/`)
 
@@ -183,6 +187,10 @@ Tokens en `src/styles/global.css` (`--color-*`, `--font-*`, `--spacing-*`, `--bo
 `--transition-*`). Los componentes consumen variables; evitá colores literales nuevos.
 Los tres estados de stock usan `--color-status-*`.
 
+El CSS de la **card de producto** (`ProductCard.astro`) y del **FAQ** (`Faq.astro`) vive al final de
+`global.css`, no en el componente: se usan en decenas de páginas y así viajan en un único asset cacheado
+en vez de repetirse inlineados en cada página.
+
 ### Cambiar el descuento “3 decants”
 `src/utils/trident.ts` (`TRIDENT_COUNT`, `TRIDENT_DISCOUNT`) **y** `TRIDENTES_LINES` en
 `scripts/generate-og-pages.mjs` (la imagen social repite el texto), **y** el copy de `/tridentes/`.
@@ -214,7 +222,7 @@ Opciones en `site.config.ts` (`delivery`, `payment`); formato del mensaje en `ut
 
 | Comando | Qué valida |
 |---|---|
-| `npm test` | 233 tests unitarios (Vitest + jsdom) |
+| `npm test` | 235 tests unitarios (Vitest + jsdom) |
 | `npm run lint` | `astro check` (TypeScript en `.ts` y `.astro`) |
 | `npm run build` | 199 páginas estáticas |
 | `npm run size` | budget de JS/CSS/fuente |
@@ -229,5 +237,5 @@ Los e2e corren contra `npm run preview` con el build real (`playwright.config.ts
 
 Ver [`docs/MEJORAS.md`](MEJORAS.md) (priorizado por impacto/esfuerzo/riesgo) y el reporte de la auditoría
 [`docs/AUDITORIA-2026-11.md`](AUDITORIA-2026-11.md).
-Resumen de lo estructural pendiente: cableado de búsqueda duplicado entre catálogo y hub, card con doble
-fuente de verdad (SSR vs string JS), `dataVersion` manual, CSS repetido entre páginas y bundle del quiz.
+Resumen de lo estructural pendiente: `dataVersion` manual, CSS de card/FAQ repetido por página y bundle del quiz
+(33 KB). El modelo de datos (`id`≡`slug`, snapshot en `CartItem.size`) también sigue anotado.

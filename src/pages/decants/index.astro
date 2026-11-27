@@ -240,38 +240,35 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
 </Layout>
 
 <script>
-  import { onPageLoad, onWindowOnce, bindOnce } from '@/utils/view-transitions';
+  import { bindOnce, onWindowOnce } from '@/utils/view-transitions';
+  import { createListController } from '@/utils/list-controller';
+  import type { ListController } from '@/utils/list-controller';
   import {
     HUB_CASA_ALL,
     buildHubCountTextWithCasa,
     hubSearchMatches,
   } from '@/utils/hub';
   import {
-    applyCardVisibility,
     buildCardIndex,
-    createFuzzyMatches,
     isPageActive,
-    readSearchFromUrl,
-    setEmptyState,
-    setResultsCount,
     syncSearchInput,
     writeSearchToUrl,
   } from '@/utils/search-page';
 
-  let currentSearch = '';
-  // Slug de casa ("" = todas). Va en la URL como ?casa=creed.
-  let currentCasa = HUB_CASA_ALL;
-  let fuzzyMatches: Set<string> | null = null;
+  interface HubState {
+    search: string;
+    /** Slug de casa (HUB_CASA_ALL = todas). Viaja en la URL como ?casa=creed. */
+    casa: string;
+  }
+
+  // Visibles por búsqueda: se resuelve una vez por apply, no por card.
+  let searchMatches = new Set<string>();
   let casasExpanded = false;
 
   /**
    * Índice difuso del hub. FUENTE ÚNICA: el `data-search` de cada card. Antes
-   * ese mismo texto viajaba dos veces (JSON inline `hub-search-index` + el
-   * atributo); se dejó solo en las cards porque es lo que ya renderiza el
-   * servidor, lo que usan los e2e y el fallback literal, así no hay JSON
-   * duplicado que descargar ni riesgo de que las dos copias se desincronicen.
-   * No hay flash: el primer pintado filtra con coincidencia literal sobre el
-   * índice ya presente en el DOM.
+   * ese texto viajaba dos veces (JSON inline + atributo); quedó solo en las
+   * cards porque es lo que ya renderiza el servidor y lo que usan los e2e.
    */
   function fuzzyIndex() {
     return buildCardIndex(
@@ -281,24 +278,6 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
     );
   }
 
-  // Recalcula el set difuso para la búsqueda actual. Se usa al escribir y en
-  // popstate, porque el Set anterior no sirve para el query nuevo.
-  function refreshFuzzyMatches() {
-    fuzzyMatches = createFuzzyMatches(fuzzyIndex(), currentSearch);
-  }
-
-  function readUrlState() {
-    const params = new URL(window.location.href).searchParams;
-    currentSearch = readSearchFromUrl();
-    currentCasa = params.get('casa') || HUB_CASA_ALL;
-  }
-
-  function pushUrl() {
-    writeSearchToUrl(currentSearch, {
-      casa: currentCasa === HUB_CASA_ALL ? null : currentCasa,
-    });
-  }
-
   function casaDisplayFor(slug: string): string | null {
     if (slug === HUB_CASA_ALL) return null;
     const chip = document.querySelector<HTMLElement>(`[data-casa-chip][data-casa-slug="${slug}"]`);
@@ -306,30 +285,29 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
   }
 
   /**
-   * Label del toggle de casas, siempre compacto ("Ver 20 más"): en desktop el
-   * botón comparte la fila con el scroller de chips, y un label largo dejaría
-   * apenas unos pocos chips visibles. Vive fuera del scroller, siempre a mano.
+   * Label del toggle, siempre compacto ("Ver 20 más"): en desktop comparte la
+   * fila con el scroller y un label largo dejaría ver pocos chips.
    */
   function moreLabel(total: number): string {
     return casasExpanded ? 'Ver menos' : `Ver ${total} más`;
   }
 
   /**
-   * Pone la UI de control en el estado lógico (input, chips, botón de
-   * expansión). Al plegar, la casa activa aunque sea "extra" queda visible:
-   * nunca mostramos un filtro que no se ve.
+   * Pone la UI de control en el estado lógico (input, chips, toggle). Al
+   * plegar, la casa activa aunque sea "extra" queda visible: nunca ocultamos
+   * un filtro que está aplicado.
    */
-  function syncControls() {
-    syncSearchInput(currentSearch);
+  function syncControls(state: HubState): void {
+    syncSearchInput(state.search);
 
     document.querySelectorAll<HTMLElement>('[data-casa-chip]').forEach((chip) => {
-      const active = chip.getAttribute('data-casa-slug') === currentCasa;
+      const active = chip.getAttribute('data-casa-slug') === state.casa;
       chip.setAttribute('aria-pressed', String(active));
       chip.classList.toggle('casa-chip--active', active);
     });
 
     document.querySelectorAll<HTMLElement>('.casa-chip--extra').forEach((chip) => {
-      chip.hidden = !casasExpanded && chip.getAttribute('data-casa-slug') !== currentCasa;
+      chip.hidden = !casasExpanded && chip.getAttribute('data-casa-slug') !== state.casa;
     });
 
     const moreBtn = document.querySelector<HTMLElement>('[data-casa-more]');
@@ -340,7 +318,7 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
     }
   }
 
-  /** Fade de "hay más chips" solo si el scroller tiene overflow y no está al final. */
+  /** Fade de "hay más chips": solo si el scroller desborda y no está al final. */
   function updateCasaFade(): void {
     const scroller = document.querySelector<HTMLElement>('[data-casa-scroller]');
     const fade = document.querySelector<HTMLElement>('[data-casa-fade]');
@@ -350,44 +328,15 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
     fade.classList.toggle('hub-casa-fade--hidden', overflow <= 2 || atEnd);
   }
 
-  function applyFilters() {
-    const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-hub-card]'));
-    const matches = hubSearchMatches(
-      buildCardIndex(cards, 'data-insp-slug', 'data-search'),
-      currentSearch,
-      fuzzyMatches
-    );
-
-    const visible = applyCardVisibility(
-      cards,
-      (card) =>
-        matches.has(card.getAttribute('data-insp-slug') || '') &&
-        (currentCasa === HUB_CASA_ALL || card.getAttribute('data-casa-slug') === currentCasa)
-    );
-
-    setResultsCount(
-      document.querySelector('[data-hub-count]'),
-      buildHubCountTextWithCasa(visible, casaDisplayFor(currentCasa))
-    );
-    setEmptyState(
-      document.querySelector('.hub-grid'),
-      document.querySelector('.hub-empty'),
-      visible
-    );
-
-    updateCasaFade();
-  }
-
   /** Entra filtrado con ?casa=de-una-extra: el chip activo debe quedar a la vista. */
-  function revealActiveChip(): void {
-    if (currentCasa === HUB_CASA_ALL) return;
-    const chip = document.querySelector<HTMLElement>(
-      `[data-casa-chip][data-casa-slug="${currentCasa}"]`
-    );
-    chip?.scrollIntoView({ inline: 'nearest', block: 'nearest' });
+  function revealActiveChip(state: HubState): void {
+    if (state.casa === HUB_CASA_ALL) return;
+    document
+      .querySelector<HTMLElement>(`[data-casa-chip][data-casa-slug="${state.casa}"]`)
+      ?.scrollIntoView({ inline: 'nearest', block: 'nearest' });
   }
 
-  function setupCasaStrip() {
+  function setupCasaStrip(controller: ListController<HubState>): void {
     const wrap = document.querySelector('.hub-casa');
     const scroller = document.querySelector('[data-casa-scroller]');
     if (!wrap || !scroller) return;
@@ -395,26 +344,21 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
     // El click se delega en .hub-casa porque el botón de expansión vive FUERA
     // del scroller (así queda siempre visible sin scrollear).
     bindOnce(wrap, (el) => {
-      el.addEventListener('click', (e) => {
-        const target = e.target as HTMLElement;
+      el.addEventListener('click', (event) => {
+        const target = event.target as HTMLElement;
 
-        const moreBtn = target.closest<HTMLElement>('[data-casa-more]');
-        if (moreBtn) {
+        if (target.closest('[data-casa-more]')) {
           casasExpanded = !casasExpanded;
-          syncControls();
+          syncControls(controller.state());
           updateCasaFade();
           return;
         }
 
         const chip = target.closest<HTMLElement>('[data-casa-chip]');
         if (!chip) return;
-        currentCasa = chip.getAttribute('data-casa-slug') || HUB_CASA_ALL;
-        // En la fila con scroll horizontal (desktop), el chip tocado queda
-        // siempre a la vista tras filtrar.
+        // En la fila con scroll horizontal, el chip tocado queda a la vista.
         chip.scrollIntoView({ inline: 'nearest', block: 'nearest' });
-        pushUrl();
-        syncControls();
-        applyFilters();
+        controller.update({ casa: chip.getAttribute('data-casa-slug') || HUB_CASA_ALL });
       });
     });
 
@@ -423,62 +367,59 @@ const pageDescription = `Buscá un perfume por el aroma famoso que te gusta: dec
     });
   }
 
-  function setupClear() {
+  function setupClear(controller: ListController<HubState>): void {
     const btn = document.querySelector('[data-clear-filters]');
     if (!btn) return;
     bindOnce(btn, (el) => {
-      el.addEventListener('click', () => {
-        currentSearch = '';
-        currentCasa = HUB_CASA_ALL;
-        pushUrl();
-        syncControls();
-        refreshFuzzyMatches();
-        applyFilters();
-      });
+      el.addEventListener('click', () => controller.update({ search: '', casa: HUB_CASA_ALL }));
     });
   }
 
-  // Al redimensionar se recalcula el fade del scroller (y el label si cambia el estado).
-  onWindowOnce('decants-hub-resize', 'resize', () => {
-    syncControls();
-    updateCasaFade();
+  const controller = createListController<HubState>({
+    id: 'decants-hub',
+    rootSelector: '[data-hub-page]',
+    cardSelector: '[data-hub-card]',
+    countSelector: '[data-hub-count]',
+    gridSelector: '.hub-grid',
+    emptySelector: '.hub-empty',
+    readState: (url) => ({
+      search: url.searchParams.get('search') || '',
+      casa: url.searchParams.get('casa') || HUB_CASA_ALL,
+    }),
+    writeUrl: (state) => {
+      writeSearchToUrl(state.search, {
+        casa: state.casa === HUB_CASA_ALL ? null : state.casa,
+      });
+    },
+    index: fuzzyIndex,
+    beforeApply: (state, fuzzyIds, index) => {
+      searchMatches = hubSearchMatches([...index], state.search, fuzzyIds);
+    },
+    isVisible: (card, state) =>
+      searchMatches.has(card.getAttribute('data-insp-slug') || '') &&
+      (state.casa === HUB_CASA_ALL || card.getAttribute('data-casa-slug') === state.casa),
+    countText: (visible, state) =>
+      buildHubCountTextWithCasa(visible, casaDisplayFor(state.casa)),
+    syncControls,
+    bindControls(ctl) {
+      setupCasaStrip(ctl);
+      setupClear(ctl);
+      revealActiveChip(ctl.state());
+      // Al redimensionar se recalcula el fade y el label del toggle.
+      onWindowOnce('decants-hub-resize', 'resize', () => {
+        if (!isPageActive('[data-hub-page]')) return;
+        syncControls(ctl.state());
+        updateCasaFade();
+      });
+    },
+    onEnter: () => {
+      casasExpanded = false;
+    },
+    afterApply: () => updateCasaFade(),
+    afterRefresh: revealActiveChip,
   });
 
-  onWindowOnce('decants-hub-search', 'search:change', (e) => {
-    // Misma guarda que el catálogo: este listener vive en window toda la
-    // sesión tras navegar entre páginas con buscador, y solo debe filtrar
-    // cuando el root del hub está en el DOM.
-    if (!isPageActive('[data-hub-page]')) return;
-
-    currentSearch = (e as CustomEvent<{ query?: string }>).detail?.query || '';
-    pushUrl();
-    refreshFuzzyMatches();
-    applyFilters();
-  });
-
-  // Back/forward: se re-lee la URL (búsqueda y casa) y se recalculan los matches difusos.
-  onWindowOnce('decants-hub-popstate', 'popstate', () => {
-    if (!isPageActive('[data-hub-page]')) return;
-    readUrlState();
-    syncControls();
-    revealActiveChip();
-    refreshFuzzyMatches();
-    applyFilters();
-  });
-
-  onPageLoad('decants-hub', () => {
-    casasExpanded = false;
-    readUrlState();
-    syncControls();
-    setupCasaStrip();
-    setupClear();
-    revealActiveChip();
-
-    // Primer pintado con el estado de la URL, ya con el set difuso calculado
-    // (coincidencia literal priorizada dentro de hubSearchMatches).
-    refreshFuzzyMatches();
-    applyFilters();
-  });
+  controller.init();
 </script>
 
 <style>

@@ -26,12 +26,13 @@ Todo lo afirmado abajo se verificó con comandos; no hay estimaciones sin medir.
 
 | Métrica | Antes | Después |
 |---|---|---|
-| Tests unitarios | 216 | **233** (+17) |
+| Tests unitarios | 216 | **235** (+19) |
 | Páginas construidas | 199 | 199 |
-| E2E (chromium) | 57 + 1 skip | 57 + 1 skip |
+| E2E (chromium) | 57 + 1 skip | **59 + 1 skip** |
 | `astro check` | 0 errors / 11 hints | 0 errors / 5 hints |
-| HTML total (201 archivos) | 9.632 KB | **8.466 KB (−12,1 %)** |
-| Script de consentimiento inline | 6,0 KB × 199 páginas = 1.204 KB | **0** (módulo de 7,9 KB / 2,7 KB gzip, cacheado) |
+| HTML total (201 archivos) | 9.632 KB | **7.611 KB (−21,0 %)** |
+| Script de consentimiento inline | 6,0 KB × 199 páginas = 1.204 KB | **0** (módulo de 7,7 KB / 2,7 KB gzip, cacheado) |
+| CSS inline repetido (card + FAQ) | 1.247 KB | **434 KB** |
 | `perfumes.json` | 89,1 KB | **86,3 KB** |
 | Builds por push en CI | 3 (+2× test/lint) | **1** (+1 e2e, +1 deploy del mismo artifact) |
 | Scripts huérfanos | 3 | 0 |
@@ -66,15 +67,17 @@ Todo lo afirmado abajo se verificó con comandos; no hay estimaciones sin medir.
 | Normalización de texto (minúsculas + sin acentos) | 6 | `src/utils/text.ts` → `normalizeText()` |
 | Slug de familias/casas | 2 | `src/utils/text.ts` → `slugify()`, **byte-idéntico** (42 slugs comparados, 0 diferencias) |
 | `genderMatches` | 2 (firmas distintas) | una sola en `utils/catalogo.ts`; el quiz mapea `para-el/para-ella/indistinto` |
+| CSS de card y FAQ inlineado | card 5,6 KB y FAQ 4,8 KB en ~77 páginas | movido a `src/styles/global.css`: −812 KB de HTML, un solo asset cacheado |
 | Tipo de índice `{id,text}` | 2 | `SearchIndexEntry` en `search-page.ts`, reusado por `hub.ts` |
 | Lectura de `image-dims.json` + fallback + doble cast | 2 páginas | `src/data/image-dims.ts` → `dimsFor()` / `hasDims()` |
 | Serialización JSON-LD | 13 | `src/utils/jsonld.ts` → `jsonLd()` (escape `<` garantizado) |
 | `.slice()` redundante tras `.filter()` | 1 | eliminado |
 | Changelog manual de `dataVersion` | 34 versiones | se dejó como está (ver `MEJORAS.md`, automatización propuesta) |
+| Cableado de búsqueda catálogo↔hub | ~395 líneas en 2 scripts | `src/utils/list-controller.ts` + config por página: −114 líneas en los `<script>`, una sola máquina de estado, 4 tests unitarios y 2 e2e nuevos |
+| Card de producto | SSR en `ProductCard` + string `homeCardHtml()` | pool SSR de 12 cards y `initHomeRandom` moviendo nodos: `homeCardHtml` eliminado y la home deja de descargar 86 KB de catálogo |
 
-Duplicaciones **identificadas y no aplicadas** por riesgo/beneficio (documentadas en `MEJORAS.md`):
-cableado de búsqueda catálogo↔hub (~395 líneas, ahorro estimado 300/350), card SSR vs string JS,
-CSS de grillas/chips repetido y bundle del quiz.
+Duplicaciones/pendientes **no aplicados** (documentados en `MEJORAS.md`): CSS de card/FAQ repetido por página
+(~370 KB de HTML), bundle del quiz (33 KB) y modelo de datos (`id`≡`slug`, snapshot en `CartItem.size`).
 
 ---
 
@@ -93,6 +96,11 @@ CSS de grillas/chips repetido y bundle del quiz.
 - **Documentación mentirosa**: README decía `src/public` (no existe), “todas las tallas son de 5 ml” (hay frascos de
   90/100 ml), `copy-perfumes.mjs` decía “32KB” (son 91 KB), `guiones-reels` decía “37 decants” (son 76).
   Todo corregido; `CLAUDE.md` pasó a ser un puntero a `AGENTS.md` para no mantener dos copias.
+- **Card duplicada**: el markup de la card existía en `ProductCard.astro` (SSR) y como string en `homeCardHtml()`,
+  con `is:global` solo para sostener la copia. Hoy la home renderiza un pool SSR de 12 cards y `initHomeRandom`
+  **mueve nodos**; `homeCardHtml` ya no existe y la home no descarga el catálogo (86 KB menos por visita).
+- **Cableado duplicado de listas**: catálogo y hub repetían URL→estado→DOM, guardas anti-view-transition y
+  contadores. Hoy comparten `src/utils/list-controller.ts`; los scripts de página son configuración.
 
 ---
 
@@ -101,9 +109,9 @@ CSS de grillas/chips repetido y bundle del quiz.
 - [`ARQUITECTURA.md`](ARQUITECTURA.md): mapa de rutas, componentes, utilidades y datos; pipeline de build; flujo de
   una compra; **10 recetas** (agregar perfume/frasco, cambiar stock/precio, agregar inspiración, combo de layering,
   página, marca, estilos, descuento del tridente, formulario de pedido) y 8 reglas de oro de lo que no se toca.
-- [`MEJORAS.md`](MEJORAS.md): 4 pendientes de bajo riesgo + 7 estructurales, con impacto/esfuerzo/riesgo y verificación.
+- [`MEJORAS.md`](MEJORAS.md): 3 pendientes de bajo riesgo + 5 estructurales, con impacto/esfuerzo/riesgo y verificación.
 - `README.md` y `AGENTS.md` actualizados (comandos, tamaños, stock por talle, `dataVersion`).
-- Comentarios en español en los módulos nuevos (`text.ts`, `jsonld.ts`, `image-dims.ts`, `consent.ts`).
+- Comentarios en español en los módulos nuevos (`text.ts`, `jsonld.ts`, `image-dims.ts`, `consent.ts`, `list-controller.ts`).
 
 ---
 
@@ -147,10 +155,9 @@ CSS de grillas/chips repetido y bundle del quiz.
 ## 10. Deuda pendiente (priorizada en `MEJORAS.md`)
 
 1. **`dataVersion` automático** por hash del catálogo en `prebuild` (hoy es manual y puede servir precios viejos).
-2. **`list-controller.ts`** compartido catálogo/hub (~300/350 líneas menos).
-3. **Card con una sola fuente de verdad** (borrar `homeCardHtml` y el `is:global`).
-4. **CSS repetido** y **bundle del quiz** (33 KB).
-5. Modelo de datos: `id` ≡ `slug`, snapshot inerte en `CartItem.size`, campos copiados en `inspiraciones.ts`.
+2. **Bundle del quiz** (33 KB para 5 preguntas).
+3. Modelo de datos: `id` ≡ `slug`, snapshot inerte en `CartItem.size`, campos copiados en `inspiraciones.ts`.
+4. **Pool de la home**: 12 es fijo por build; opciones medidas en `MEJORAS.md` (ampliar, rotar por deploy o curar con `featured`).
 
 Ninguna es urgente; todas tienen su criterio de verificación en `MEJORAS.md`.
 
@@ -159,11 +166,11 @@ Ninguna es urgente; todas tienen su criterio de verificación en `MEJORAS.md`.
 ## 11. Cómo verificar el estado actual
 
 ```bash
-npm test          # 233 tests
+npm test          # 235 tests
 npm run lint      # astro check: 0 errors
 npm run build     # 199 páginas
 npm run size      # 38 OK, 0 fallas
-npm run test:e2e  # 57 passed, 1 skipped (chromium; necesita el build)
+npm run test:e2e  # 59 passed, 1 skipped (chromium; necesita el build)
 ```
 
 Chequeos puntuales de la limpieza:

@@ -509,3 +509,260 @@ body:has(dialog[open]) .whatsapp-fab {
     scroll-snap-align: center;
   }
 }
+/* ==========================================================================
+   Card de producto — markup en components/catalog/ProductCard.astro
+   Vive acá y no en el componente porque la card se usa en ~185 páginas:
+   así el CSS viaja en este único asset cacheado en lugar de inlinearse
+   repetido en cada página.
+   ========================================================================== */
+.product-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    color: inherit;
+    background-color: var(--color-surface-container);
+    border: var(--border-width) solid var(--color-on-surface);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    transition: all var(--transition-duration) var(--transition-easing);
+  }
+
+  .product-card:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--color-primary) 15%, transparent);
+    transform: translateY(-4px);
+  }
+
+  /* Link estirado sobre toda la card (stretched-link): el click en
+     cualquier parte navega, menos en el botón quick-add que está por
+     encima (z-index) y frena la navegación en quick-add.ts. */
+  .product-card-link {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .product-card-link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .product-card-link:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .product-card-image-wrapper {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    background-color: var(--color-image-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .product-card-image {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 13%;
+    object-fit: contain;
+    transition: transform 400ms var(--transition-easing);
+  }
+
+  .product-card:hover .product-card-image {
+    transform: scale(1.04);
+  }
+
+  .product-card-overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(18, 20, 20, 0.75);
+    pointer-events: none;
+  }
+
+  .product-card-stock {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    z-index: 1;
+  }
+
+  /* Quick-add: sumar al pedido sin entrar a la ficha. Siempre visible
+     (en touch no hay hover) y de 44px para el pulgar. */
+  .product-card-quick {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 2;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-on-primary);
+    background-color: var(--color-primary);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+    transition: transform var(--transition-duration) var(--transition-easing);
+  }
+
+  .product-card-quick:hover {
+    transform: scale(1.08);
+  }
+
+  .product-card-quick:active {
+    transform: scale(0.95);
+  }
+
+  .product-card-quick:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .product-card-quick:focus-visible {
+    outline: 2px solid var(--color-on-surface);
+    outline-offset: 2px;
+  }
+
+  .product-card-info {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+  }
+
+  .product-card-brand {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+  }
+
+  .product-card-name {
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    font-weight: var(--font-body-md-weight);
+    color: var(--color-on-surface);
+    line-height: 1.3;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+  }
+
+  .product-card-price {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-primary);
+    margin-top: auto;
+  }
+
+/* ==========================================================================
+   FAQ — markup en components/ui/Faq.astro (mismo motivo que la card).
+   ========================================================================== */
+.faq-list {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .faq-item {
+    border: var(--border-width) solid var(--color-outline-variant);
+    border-radius: var(--border-radius);
+    margin-bottom: var(--spacing-stack-sm);
+  }
+
+  .faq-item summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--spacing-stack-sm);
+    cursor: pointer;
+    list-style: none;
+    padding: var(--spacing-stack-sm) var(--spacing-stack-md);
+    font-family: var(--font-family);
+    font-size: var(--font-body-lg-size);
+    font-weight: 500;
+    color: var(--color-on-surface);
+    transition: color var(--transition-duration) var(--transition-easing);
+  }
+
+  .faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-item summary:hover {
+    color: var(--color-primary);
+  }
+
+  .faq-item summary:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
+    border-radius: var(--border-radius);
+  }
+
+  .faq-item summary::after {
+    content: '+';
+    font-size: 20px;
+    line-height: 1;
+    color: var(--color-primary);
+    flex-shrink: 0;
+  }
+
+  .faq-item[open] summary {
+    color: var(--color-primary);
+  }
+
+  .faq-item[open] summary::after {
+    content: '−';
+  }
+
+  .faq-answer {
+    padding: 0 var(--spacing-stack-md) var(--spacing-stack-sm);
+    font-family: var(--font-family);
+    font-size: var(--font-body-md-size);
+    line-height: var(--font-body-md-line-height);
+    letter-spacing: var(--font-body-md-tracking);
+    color: var(--color-on-surface-variant);
+    margin: 0;
+  }
+
+  .faq-cta {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--spacing-stack-md);
+  }
+
+  .faq-cta-link {
+    font-family: var(--font-family);
+    font-size: var(--font-label-sm-size);
+    font-weight: var(--font-label-sm-weight);
+    letter-spacing: var(--font-label-sm-tracking);
+    text-transform: uppercase;
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+
+  .faq-cta-link:hover {
+    text-decoration: none;
+  }
+
+  .faq-cta-link:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }

@@ -67,158 +67,103 @@ const initialFilter: GenderFilter = urlFilter === 'masculino' || urlFilter === '
 </section>
 
 <script>
-  // Client-side filtering without page reload (static output has no query params at build time)
-  import { bindOnce, onPageLoad, onWindowOnce } from '@/utils/view-transitions';
-  import {
-    buildResultsText,
-    cardMatches,
-    normalizeFilter,
-  } from '@/utils/catalogo';
-  import {
-    applyCardVisibility,
-    createFuzzyMatches,
-    isPageActive,
-    readSearchFromUrl,
-    readSearchIndex,
-    setEmptyState,
-    setResultsCount,
-    syncSearchInput,
-    writeSearchToUrl,
-  } from '@/utils/search-page';
+  // Filtrado client-side sin recargar: el build estático no conoce la query.
+  import { bindOnce } from '@/utils/view-transitions';
+  import { createListController } from '@/utils/list-controller';
+  import { buildResultsText, cardMatches, normalizeFilter } from '@/utils/catalogo';
+  import { readSearchIndex, syncSearchInput, writeSearchToUrl } from '@/utils/search-page';
 
-  let currentFilter = 'all';
-  let currentSearch = '';
-  let fuzzyMatches: Set<string> | null = null;
-
-  function readUrlState() {
-    const params = new URL(window.location.href).searchParams;
-    currentFilter = normalizeFilter(params.get('filter'));
-    currentSearch = readSearchFromUrl();
+  interface CatalogState {
+    search: string;
+    filter: string;
   }
 
-  function applyFilters() {
-    const cards = Array.from(document.querySelectorAll<HTMLElement>('.product-card'));
-    const visible = applyCardVisibility(cards, (card) =>
+  // analytics de lista: una sola vez por entrada, después del primer pintado.
+  let listAnnounced = false;
+
+  const controller = createListController<CatalogState>({
+    id: 'catalogo',
+    rootSelector: '[data-catalog-page]',
+    cardSelector: '.product-card',
+    countSelector: '[data-results-count]',
+    gridSelector: '.product-grid',
+    emptySelector: '.product-grid-empty',
+    readState: (url) => ({
+      filter: normalizeFilter(url.searchParams.get('filter')),
+      search: url.searchParams.get('search') || '',
+    }),
+    writeUrl: (state) => {
+      writeSearchToUrl(state.search, {
+        filter: state.filter === 'all' ? null : state.filter,
+      });
+    },
+    index: () => readSearchIndex('search-index'),
+    isVisible: (card, state, fuzzyIds) =>
       cardMatches({
         gender: card.getAttribute('data-gender') || '',
         searchText: card.getAttribute('data-search') || '',
         perfumeId: card.getAttribute('data-perfume-id') || '',
-        filter: currentFilter,
-        query: currentSearch,
-        fuzzyIds: fuzzyMatches,
-      })
-    );
-
-    setResultsCount(
-      document.querySelector('[data-results-count]'),
-      buildResultsText(visible, currentFilter, currentSearch)
-    );
-    setEmptyState(
-      document.querySelector('.product-grid'),
-      document.querySelector('.product-grid-empty'),
-      visible
-    );
-  }
-
-  // Recalcula el set de fuzzy matches para la búsqueda actual. Se usa al
-  // escribir (search:change), al navegar con atrás/adelante (popstate) y al
-  // entrar a la página. El índice se relee del DOM cada vez: decants y frascos
-  // tienen índices distintos y cachearlo entre navegaciones dejaría un set
-  // incompleto (regresión detectada en review).
-  function refreshFuzzyMatches() {
-    fuzzyMatches = createFuzzyMatches(readSearchIndex('search-index'), currentSearch);
-  }
-
-  function applyUrlState() {
-    readUrlState();
-    syncSearchInput(currentSearch);
-    updateActiveChip();
-    refreshFuzzyMatches();
-    applyFilters();
-  }
-
-  function updateActiveChip() {
-    const filterButtons = document.querySelectorAll('.filter-chip') as NodeListOf<HTMLButtonElement>;
-    filterButtons.forEach((b) => {
-      const isActive = b.getAttribute('data-filter') === currentFilter;
-      b.classList.toggle('filter-chip--active', isActive);
-      b.setAttribute('aria-pressed', String(isActive));
-    });
-  }
-
-  onWindowOnce('catalogo-search', 'search:change', (e) => {
-    // Guarda View Transitions: este listener vive en window toda la sesión y,
-    // tras navegar catálogo <-> hub, sigue registrado. Sin este root correría
-    // en la página equivocada (índice inexistente, analytics falso) y una
-    // tecla dispararía los dos handlers.
-    if (!isPageActive('[data-catalog-page]')) return;
-
-    currentSearch = (e as CustomEvent<{ query?: string }>).detail?.query || '';
-    writeSearchToUrl(currentSearch);
-
-    // Búsqueda fuzzy (lazy-loaded) sobre el índice inline
-    refreshFuzzyMatches();
-
-    applyFilters();
-    if (currentSearch) {
-      document.dispatchEvent(new CustomEvent('analytics:search', { detail: { query: currentSearch } }));
-    }
-  });
-
-  // Back/forward del navegador re-aplica el estado de filtros y búsqueda.
-  // Se recalculan los fuzzy matches porque el Set corresponde al query
-  // anterior y si no el filtrado queda incorrecto.
-  onWindowOnce('catalogo-popstate', 'popstate', () => {
-    if (!isPageActive('[data-catalog-page]')) return;
-    readUrlState();
-    syncSearchInput(currentSearch);
-    updateActiveChip();
-    refreshFuzzyMatches();
-    applyFilters();
-  });
-
-  onPageLoad('catalogo', () => {
-    const filterButtons = document.querySelectorAll('.filter-chip') as NodeListOf<HTMLButtonElement>;
-    filterButtons.forEach((button) => {
-      bindOnce(button, (el) => {
-        el.addEventListener('click', () => {
-          const filter = el.getAttribute('data-filter');
-          if (!filter) return;
-          currentFilter = filter;
-          const url = new URL(window.location.href);
-          if (filter === 'all') {
-            url.searchParams.delete('filter');
-          } else {
-            url.searchParams.set('filter', filter);
-          }
-          window.history.pushState({}, '', url);
-
-          updateActiveChip();
-          applyFilters();
+        filter: state.filter,
+        query: state.search,
+        fuzzyIds,
+      }),
+    countText: (visible, state) => buildResultsText(visible, state.filter, state.search),
+    syncControls: (state) => {
+      syncSearchInput(state.search);
+      document.querySelectorAll<HTMLButtonElement>('.filter-chip').forEach((button) => {
+        const active = button.getAttribute('data-filter') === state.filter;
+        button.classList.toggle('filter-chip--active', active);
+        button.setAttribute('aria-pressed', String(active));
+      });
+    },
+    bindControls(ctl) {
+      document.querySelectorAll<HTMLButtonElement>('.filter-chip').forEach((button) => {
+        bindOnce(button, (el) => {
+          el.addEventListener('click', () => {
+            const filter = el.getAttribute('data-filter');
+            if (filter) ctl.update({ filter });
+          });
         });
       });
-    });
-
-    applyUrlState();
-
-    // Analytics: view_item_list con los perfumes visibles
-    requestAnimationFrame(() => {
-      const visibleCards = Array.from(document.querySelectorAll('.product-card')).filter(
-        (c) => (c as HTMLElement).style.display !== 'none'
-      );
-      if (visibleCards.length > 0) {
-        document.dispatchEvent(new CustomEvent('analytics:view_item_list', {
-          detail: {
-            listName: 'catalogo',
-            items: visibleCards.slice(0, 10).map((c) => ({
-              item_id: c.getAttribute('data-perfume-id') || '',
-              item_name: c.getAttribute('data-search') || '',
-            })),
-          },
-        }));
+    },
+    onSearch: (state) => {
+      // Solo al escribir: un chip no debe emitir analytics de búsqueda.
+      if (state.search) {
+        document.dispatchEvent(
+          new CustomEvent('analytics:search', { detail: { query: state.search } })
+        );
       }
-    });
+    },
+    onEnter: () => {
+      // onPageLoad corre en cada vista aunque el módulo no se re-ejecute: el
+      // reset acá garantiza un view_item_list por entrada, no uno por sesión.
+      listAnnounced = false;
+    },
+    afterApply() {
+      if (listAnnounced) return;
+      listAnnounced = true;
+      // rAF: espera a que el primer filtrado asiente el DOM antes de medir.
+      requestAnimationFrame(() => {
+        const visibleCards = Array.from(document.querySelectorAll<HTMLElement>('.product-card')).filter(
+          (card) => card.style.display !== 'none'
+        );
+        if (visibleCards.length === 0) return;
+        document.dispatchEvent(
+          new CustomEvent('analytics:view_item_list', {
+            detail: {
+              listName: 'catalogo',
+              items: visibleCards.slice(0, 10).map((card) => ({
+                item_id: card.getAttribute('data-perfume-id') || '',
+                item_name: card.getAttribute('data-search') || '',
+              })),
+            },
+          })
+        );
+      });
+    },
   });
+
+  controller.init();
 </script>
 
 <style>

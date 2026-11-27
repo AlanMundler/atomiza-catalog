@@ -1,8 +1,11 @@
-import { site, assetUrl } from '@/site.config';
-import type { Perfume } from '@/data/types';
-import { getStockLabel, getStockStatus, isSizeAvailable, primarySize } from '@/utils/stock';
-import { escapeHtml, formatPrice } from '@/utils/formatters';
-import { getPerfumesMap } from '@/utils/perfumes-client';
+/**
+ * Sorteo de la home sin re-render: una sola fuente de markup.
+ *
+ * La grilla pinta un pool SSR de 12 cards con `ProductCard` (4 visibles + 8
+ * ocultas). Acá solo se mueven esos nodos del DOM: nunca se genera HTML ni se
+ * baja el catálogo (`data/perfumes.json`), así no hay una segunda copia del
+ * markup en JS y el CSS de la card puede quedar scopeado.
+ */
 
 /** Cuántas cards muestra la home en "Decants en stock". */
 export const HOME_RANDOM_COUNT = 4;
@@ -33,97 +36,69 @@ function cryptoRand(): number {
   }
 }
 
-/**
- * Marca de una card igual a `ProductCard.astro` (clases 1:1): wrapper
- * `div.product-card` + link estirado + botón quick-add hermano (nunca
- * un botón dentro del link). Los estilos de ProductCard/Chip son
- * globales (`is:global`) justamente para que estas cards inyectadas por
- * JS se vean igual que las del SSR.
- */
-export function homeCardHtml(perfume: Perfume, eager = false): string {
-  const mainImage = assetUrl(perfume.images[0]?.src);
-  const mainAlt = perfume.images[0]?.alt || `${perfume.brand} ${perfume.name}`;
-  const primary = primarySize(perfume);
-  const stockStatus = primary ? getStockStatus(primary) : 'out-of-stock';
-  const stockLabel = getStockLabel(stockStatus);
-  const isOutOfStock = stockStatus === 'out-of-stock';
-  const variantClass =
-    stockStatus === 'in-stock' ? 'chip--in-stock' : stockStatus === 'low-stock' ? 'chip--low-stock' : 'chip--out-of-stock';
-  const search = `${perfume.brand} ${perfume.name} ${perfume.olfactoryFamily}`.toLowerCase();
-
-  return (
-    `<div class="product-card" role="listitem"` +
-    ` data-perfume-id="${escapeHtml(perfume.id)}" data-gender="${escapeHtml(perfume.gender)}" data-search="${escapeHtml(search)}">` +
-    `<a href="${escapeHtml(site.basePath)}producto/${escapeHtml(perfume.slug)}/" class="product-card-link"` +
-    `>` +
-    `<div class="product-card-image-wrapper">` +
-    `<img src="${escapeHtml(mainImage)}" alt="${escapeHtml(mainAlt)}" class="product-card-image"` +
-    ` loading="${eager ? 'eager' : 'lazy'}"${eager ? ' fetchpriority="high"' : ''} decoding="async" width="400" height="400">` +
-    (isOutOfStock ? `<div class="product-card-overlay" aria-hidden="true"></div>` : '') +
-    `<span class="chip ${variantClass} product-card-stock">${escapeHtml(stockLabel)}</span></div>` +
-    `<div class="product-card-info"><span class="product-card-brand">${escapeHtml(perfume.brand)}</span>` +
-    `<h3 class="product-card-name" title="${escapeHtml(perfume.name)}">${escapeHtml(perfume.name)}</h3>` +
-    `<span class="product-card-price">${primary ? escapeHtml(formatPrice(primary.price)) : '—'}</span></div></a>` +
-    (primary && !isOutOfStock
-      ? `<button type="button" class="product-card-quick" data-quick-add data-size-ml="${primary.ml}"` +
-        ` aria-label="Agregar ${escapeHtml(perfume.brand)} ${escapeHtml(perfume.name)} al pedido">` +
-        `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">` +
-        `<line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>`
-      : '') +
-    `</div>`
-  );
+/** id del perfume que contiene un slot de la grilla, o null si no lo tiene. */
+function idOf(slot: Element): string | null {
+  return slot.querySelector('[data-perfume-id]')?.getAttribute('data-perfume-id') ?? null;
 }
 
-function currentIds(slots: Element[]): Set<string> {
+/** ids de los slots hoy visibles (los que pinta el SSR). */
+function visibleIds(slots: readonly HTMLElement[]): Set<string> {
   const ids = new Set<string>();
   for (const slot of slots) {
-    const id = slot.querySelector('[data-perfume-id]')?.getAttribute('data-perfume-id');
+    if (slot.hidden) continue;
+    const id = idOf(slot);
     if (id) ids.add(id);
   }
   return ids;
 }
 
 /**
- * Sorteo de la home: reemplaza las 4 cards del SSR por 4 al azar en cada
- * visita. El SSR queda como fallback (SEO/LCP y si el fetch falla, se ven
- * las 4 del build). Reusa los wrappers `.home-perfume-item` del SSR y la
- * delegación global del quick-add sigue funcionando sin re-bind.
+ * Sorteo de la home: mueve los nodos del pool SSR para que cada visita muestre
+ * `count` perfumes distintos, sin fetch ni `innerHTML`. Los slots que quedan
+ * fuera del sorteo siguen en el DOM, ocultos.
  */
-export async function initHomeRandom(
-  gridId = 'home-perfume-grid',
-  count: number = HOME_RANDOM_COUNT
-): Promise<void> {
+export function initHomeRandom(gridId = 'home-perfume-grid', count: number = HOME_RANDOM_COUNT): void {
   if (typeof document === 'undefined') return;
   const grid = document.getElementById(gridId);
   if (!grid) return;
-  const slots = Array.from(grid.querySelectorAll('.home-perfume-item'));
-  if (slots.length === 0) return;
+  const slots = Array.from(grid.querySelectorAll<HTMLElement>('.home-perfume-item'));
+  // Con un pool que no supera el cupo no hay nada que sortear: se deja el SSR
+  // tal cual (y no se toca la visibilidad).
+  if (slots.length <= count) return;
 
-  let pool: Perfume[];
-  try {
-    const map = await getPerfumesMap();
-    pool = [...map.values()].filter((p) => {
-      const size = primarySize(p);
-      return size ? isSizeAvailable(size) : false;
-    });
-  } catch {
-    return;
-  }
-  if (pool.length <= slots.length) return;
-
-  const before = currentIds(slots);
-  let picks = pickRandom(pool, Math.min(count, slots.length), cryptoRand);
-  // Best-effort: evita repetir el mismo set del SSR (con 37 perfumes el
-  // choque igual es raro, pero el SSR es fijo por build y se notaría).
+  const before = visibleIds(slots);
+  let picks = pickRandom(slots, count, cryptoRand);
+  // Best-effort: evita repetir exactamente el set visible actual (con 12
+  // perfumes el choque es raro, pero el SSR es fijo por build y se notaría).
   for (let attempt = 0; attempt < 5; attempt++) {
-    const ids = new Set(picks.map((p) => p.id));
-    const same = ids.size === before.size && [...ids].every((id) => before.has(id));
+    const ids = picks.map(idOf).filter((id): id is string => id !== null);
+    const same = ids.length === before.size && ids.every((id) => before.has(id));
     if (!same) break;
-    picks = pickRandom(pool, Math.min(count, slots.length), cryptoRand);
+    picks = pickRandom(slots, count, cryptoRand);
   }
 
-  slots.forEach((slot, i) => {
-    const perfume = picks[i];
-    if (perfume) slot.innerHTML = homeCardHtml(perfume, i === 0);
+  // Primero se ocultan todos y se dejan sus imágenes en lazy: así el sorteo no
+  // deja imágenes eager escondidas consumiendo ancho de banda.
+  for (const slot of slots) {
+    slot.hidden = true;
+    const img = slot.querySelector('img');
+    if (img) {
+      img.setAttribute('loading', 'lazy');
+      img.removeAttribute('fetchpriority');
+    }
+  }
+
+  // En el orden sorteado se mueve cada nodo al final y se muestra. `append`
+  // reubica el nodo existente (no lo clona), así el markup SSR es el único.
+  picks.forEach((slot, i) => {
+    grid.append(slot);
+    slot.hidden = false;
+    const img = slot.querySelector('img');
+    if (!img) return;
+    if (i === 0) {
+      // LCP: la primera card visible es la que debe cargar primero.
+      img.setAttribute('loading', 'eager');
+      img.setAttribute('fetchpriority', 'high');
+    }
   });
 }
