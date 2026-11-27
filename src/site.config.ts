@@ -44,7 +44,8 @@ export const site = {
   // v31: 3 perfumes nuevos (Angham Second Song, Summit Elixir, Hawas Diva))
   // v32: frascos 100 ml en Dark Door Sport ($60.000) y Your Touch ($65.000); Hayaati Florence sin stock en el decant)
   // v33: Hayaati Florence corregido: decant con stock, frasco cerrado sin stock)
-  dataVersion: '33',
+  // v34: Hayaati Gold Elixir sin stock en el frasco cerrado de 100 ml)
+  dataVersion: '34',
   instagramHandle: 'atomiza.cba',
   instagramUrl: 'https://instagram.com/atomiza.cba',
   tiktokHandle: 'atomiza.cba',
