@@ -10,7 +10,7 @@ Tienda estática de perfumes construida con **Astro**: 76 perfumes (decants de 5
 | `npm run dev` | Servidor de desarrollo (`localhost:4321`) |
 | `npm run build` | Compila el sitio estático a `dist/` |
 | `npm run preview` | Previsualiza el build |
-| `npm test` | Tests unitarios (Vitest, 226 tests) |
+| `npm test` | Tests unitarios (Vitest, 233 tests) |
 | `npm run test:e2e` | Tests e2e (Playwright, Chromium) |
 | `npm run test:coverage` | Tests con cobertura |
 | `npm run lint` | `astro check` (typecheck) |

@@ -61,7 +61,7 @@ npm run build
 CI/CD (`.github/workflows/ci.yml`, un solo workflow): job `build` (`test` + `lint` + `build` + size) publica `dist` como artifact;
 job `e2e` baja ese artifact y corre Playwright chromium; job `deploy` (solo en `main`) publica el mismo `dist` en Pages y avisa a IndexNow.
 Los pull requests corren `build` + `e2e` y no deployan.
-Baseline actual: **226 tests unitarios**, **57 e2e (+1 skip)**, **199 páginas**, **axe 0 violaciones**.
+Baseline actual: **233 tests unitarios**, **57 e2e (+1 skip)**, **199 páginas**, **axe 0 violaciones**.
 
 ---
 
@@ -214,7 +214,7 @@ Opciones en `site.config.ts` (`delivery`, `payment`); formato del mensaje en `ut
 
 | Comando | Qué valida |
 |---|---|
-| `npm test` | 226 tests unitarios (Vitest + jsdom) |
+| `npm test` | 233 tests unitarios (Vitest + jsdom) |
 | `npm run lint` | `astro check` (TypeScript en `.ts` y `.astro`) |
 | `npm run build` | 199 páginas estáticas |
 | `npm run size` | budget de JS/CSS/fuente |

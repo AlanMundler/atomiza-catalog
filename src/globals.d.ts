@@ -15,6 +15,8 @@ declare global {
     [key: `__vtl:${string}`]: boolean | number | undefined;
     /** Llaves `__vtw:<nombre>` de onWindowOnce ya registrados. */
     [key: `__vtw:${string}`]: boolean | undefined;
+    /** Guard de arranque único de `initConsent` (ClientRouter re-ejecuta módulos). */
+    __ATZ_CONSENT_INIT?: boolean;
   }
 
   interface Element {
