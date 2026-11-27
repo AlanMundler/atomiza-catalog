@@ -7,6 +7,7 @@ import CartDrawer from '@/components/cart/CartDrawer.astro';
 import OrderModal from '@/components/cart/OrderModal.astro';
 import { site, assetUrl } from '@/site.config';
 import { resenasRating, hasResenas } from '@/data/resenas';
+import { jsonLd } from '@/utils/jsonld';
 import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
 
@@ -67,7 +68,7 @@ const robots = noindex ? 'noindex, nofollow' : 'index, follow';
     {preloadImages.map((src) => (
       <link rel="preload" as="image" href={new URL(assetUrl(src), Astro.site).href} />
     ))}
-    <script is:inline type="application/ld+json" set:html={JSON.stringify({
+    <script is:inline type="application/ld+json" set:html={jsonLd({
       '@context': 'https://schema.org',
       '@type': 'Store',
       name: site.name,
@@ -109,10 +110,8 @@ const robots = noindex ? 'noindex, nofollow' : 'index, follow';
         '@type': 'City',
         name: site.addressLocality,
       },
-      // Igual que el resto de JSON-LD del sitio: se escapa `<` para que un
-      // `</script>` en los datos no pueda romper el bloque.
-    }).replace(/</g, '\\u003c')} />
-    <script is:inline type="application/ld+json" set:html={JSON.stringify({
+    })} />
+    <script is:inline type="application/ld+json" set:html={jsonLd({
       '@context': 'https://schema.org',
       '@type': 'Organization',
       name: site.namePlain,
@@ -128,7 +127,7 @@ const robots = noindex ? 'noindex, nofollow' : 'index, follow';
         areaServed: site.addressCountry,
         availableLanguage: ['es'],
       },
-    }).replace(/</g, '\\u003c')} />
+    })} />
     <ClientRouter />
     {site.secureprivacyScriptId && (
       <script is:inline defer src={`https://app.secureprivacy.ai/script/${site.secureprivacyScriptId}.js`}></script>

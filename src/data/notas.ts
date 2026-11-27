@@ -1,4 +1,5 @@
 import type { Perfume } from '@/data/types';
+import { normalizeText } from '@/utils/text';
 
 export interface Nota {
   /** Nombre visible ("Vainilla"). */
@@ -76,13 +77,6 @@ export const NOTAS: Nota[] = [
   },
 ];
 
-function normalizar(input: string): string {
-  return input
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '');
-}
-
 /**
  * Perfumes que llevan la nota en cualquier tier, ordenados por dónde se
  * huele primero: salida, después corazón, después fondo. Así no falta
@@ -90,12 +84,12 @@ function normalizar(input: string): string {
  * representativos quedan arriba.
  */
 export function perfumesConNota(perfumes: Perfume[], nota: Nota): Perfume[] {
-  const keys = nota.keywords.map(normalizar);
-  const excl = (nota.exclude ?? []).map(normalizar);
+  const keys = nota.keywords.map(normalizeText);
+  const excl = (nota.exclude ?? []).map(normalizeText);
   const tierDe = (p: Perfume): number => {
     const tiers = [p.notes.top, p.notes.heart, p.notes.base];
     for (let tier = 0; tier < tiers.length; tier++) {
-      const haystack = normalizar(tiers[tier].join(' '));
+      const haystack = normalizeText(tiers[tier].join(' '));
       if (excl.some((x) => haystack.includes(x))) return -1;
       if (keys.some((k) => haystack.includes(k))) return tier;
     }

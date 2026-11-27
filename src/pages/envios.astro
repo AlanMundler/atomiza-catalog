@@ -1,6 +1,7 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import { site } from '@/site.config';
+import { jsonLd } from '@/utils/jsonld';
 import { TRIDENT_DISCOUNT, TRIDENT_BULK_PER_DECANT } from '@/utils/trident';
 import { formatPrice } from '@/utils/formatters';
 
@@ -25,7 +26,7 @@ const schema = {
 ---
 
 <Layout title="Envíos y entregas en Córdoba | Perfumes árabes" description={shippingDescription}>
-  <script is:inline type="application/ld+json" set:html={JSON.stringify(schema).replace(/</g, '\\u003c')} />
+  <script is:inline type="application/ld+json" set:html={jsonLd(schema)} />
   <section class="shipping-hero" aria-labelledby="shipping-title">
     <div class="container">
       <h1 id="shipping-title" class="page-title shipping-title">Envíos y entregas en {site.addressLocality}</h1>

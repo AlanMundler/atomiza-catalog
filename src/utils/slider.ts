@@ -76,24 +76,12 @@ export function initSliders(scope: ParentNode = document): void {
     };
 
     if (dotsBox) {
-      // Los dots viven en el markup (con el scope de Astro); solo se crean
-      // acá como fallback si el HTML no los trae (los creados por JS no
-      // matchean CSS scopeado).
+      // Los dots viven en el markup (con el scope de Astro): SliderNav.astro
+      // siempre los renderiza. Si un slider no los trae, no se cablean.
       const existing = Array.from(dotsBox.querySelectorAll('.slider-dot')).filter(
         (el): el is HTMLButtonElement => el instanceof HTMLButtonElement
       );
-      if (existing.length > 0) {
-        dots.push(...existing.slice(0, slides.length));
-      } else {
-        slides.forEach((_, k) => {
-          const d = document.createElement('button');
-          d.type = 'button';
-          d.className = 'slider-dot';
-          d.setAttribute('aria-label', `Ir a la tarjeta ${k + 1} de ${slides.length}`);
-          dotsBox.appendChild(d);
-          dots.push(d);
-        });
-      }
+      dots.push(...existing.slice(0, slides.length));
       dots.forEach((d, k) => d.addEventListener('click', () => go(k)));
       paint();
       // Si el usuario desliza con el dedo, los dots lo siguen.

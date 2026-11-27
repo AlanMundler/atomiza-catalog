@@ -15,7 +15,6 @@ function makePerfume(id: string, stock = 10): Perfume {
     notes: { top: [], heart: [], base: [] },
     images: [],
     sizes: [{ ml: 5, price: 6000, stock }],
-    isBoutiqueExclusive: false,
     featured: false,
   };
 }
@@ -37,7 +36,6 @@ function seedCart(ids: string[]) {
         size: { ml: 5, price: 6000, stock: 10 },
         quantity: 1,
       })),
-      updatedAt: Date.now(),
     })
   );
 }
@@ -80,7 +78,6 @@ describe('tridenteProgressText', () => {
           { perfumeId: 'b', size: { ml: 5, price: 6000, stock: 10 }, quantity: 1 },
           { perfumeId: 'c', size: { ml: 100, price: 100000, stock: 1 }, quantity: 1 },
         ],
-        updatedAt: Date.now(),
       })
     );
     await expect(tridenteProgressText()).resolves.toContain('te falta 1');

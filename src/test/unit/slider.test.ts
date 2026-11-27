@@ -1,7 +1,13 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { initSliders } from '@/utils/slider';
 
-function mount(slides = 3): HTMLElement {
+function mount(slides = 3, withDots = true): HTMLElement {
+  const dotButtons = withDots
+    ? Array.from(
+        { length: slides },
+        (_, i) => `<button type="button" class="slider-dot" aria-label="Ir a la tarjeta ${i + 1} de ${slides}"></button>`
+      ).join('')
+    : '';
   document.body.innerHTML = `
     <div data-slider>
       <div data-slider-track>
@@ -9,7 +15,7 @@ function mount(slides = 3): HTMLElement {
       </div>
       <div>
         <button type="button" data-slider-prev>‹</button>
-        <div data-slider-dots></div>
+        <div data-slider-dots>${dotButtons}</div>
         <button type="button" data-slider-next>›</button>
       </div>
     </div>
@@ -28,7 +34,7 @@ describe('initSliders', () => {
     vi.useRealTimers();
   });
 
-  it('crea un dot por slide y avanza con siguiente', () => {
+  it('marca el dot activo y avanza con siguiente', () => {
     const root = mount(3);
     initSliders();
 
@@ -64,8 +70,14 @@ describe('initSliders', () => {
   });
 
   it('no duplica inits ni toca sliders de 1 slide', () => {
-    mount(1);
+    mount(1, false);
     initSliders();
+    initSliders();
+    expect(document.querySelectorAll('.slider-dot')).toHaveLength(0);
+  });
+
+  it('no crea dots cuando el markup no los trae', () => {
+    mount(3, false);
     initSliders();
     expect(document.querySelectorAll('.slider-dot')).toHaveLength(0);
   });

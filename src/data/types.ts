@@ -27,14 +27,10 @@ export interface Perfume {
   notes: PerfumeNotes;
   images: PerfumeImage[];
   sizes: PerfumeSize[];
-  isBoutiqueExclusive: boolean;
+  /** Único lector: desempate en utils/quiz.ts (recommendPerfumes). */
   featured: boolean;
   /** Precio aproximado del frasco completo original (ARS). Opcional: si existe, se muestra como anclaje en la ficha. */
   originalPrice?: number;
-}
-
-export interface PerfumeCatalog {
-  perfumes: Perfume[];
 }
 
 export type StockStatus = 'in-stock' | 'low-stock' | 'out-of-stock';
@@ -47,7 +43,6 @@ export interface CartItem {
 
 export interface CartState {
   items: CartItem[];
-  updatedAt: number;
 }
 
 export type GenderFilter = 'all' | 'masculino' | 'femenino' | 'unisex';

@@ -1,2 +1,5 @@
+# Este archivo solo lo lee ripgrep (y herramientas que respetan .ignore):
+# fuerza a incluir .slim/deepwork/ en las búsquedas. Git lo ignora igual
+# porque .gitignore también excluye .slim/deepwork/.
 !.slim/deepwork/
 !.slim/deepwork/**

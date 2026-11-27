@@ -1,9 +1,9 @@
-export interface GuiaSection {
+interface GuiaSection {
   heading: string;
   body: string[];
 }
 
-export interface GuiaFaq {
+interface GuiaFaq {
   question: string;
   answer: string;
 }

@@ -4,6 +4,7 @@ import CatalogView from '@/components/catalog/CatalogView.astro';
 import perfumesData from '@/data/perfumes.json';
 import { perfumesForMode } from '@/utils/catalogo';
 import { site } from '@/site.config';
+import { jsonLd } from '@/utils/jsonld';
 import type { Perfume } from '@/data/types';
 
 const allPerfumes = perfumesData.perfumes as Perfume[];
@@ -29,7 +30,7 @@ const catalogSchema = {
   description={catalogDescription}
   ogImage="og-catalogo.jpg"
 >
-  <script is:inline type="application/ld+json" set:html={JSON.stringify(catalogSchema).replace(/</g, '\\u003c')} />
+  <script is:inline type="application/ld+json" set:html={jsonLd(catalogSchema)} />
   <CatalogView
     perfumes={perfumes}
     mode="decants"

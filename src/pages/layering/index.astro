@@ -22,7 +22,7 @@ import Layout from '@/layouts/Layout.astro';
 import Faq from '@/components/ui/Faq.astro';
 import Chip from '@/components/ui/Chip.astro';
 import perfumesData from '@/data/perfumes.json';
-import imageDimsRaw from '@/data/image-dims.json';
+import { dimsFor as dimsForSrc, type ImageDims } from '@/data/image-dims';
 import { getFamilias } from '@/data/familias';
 import { site, assetUrl } from '@/site.config';
 import { resenasRating, hasResenas } from '@/data/resenas';
@@ -41,6 +41,7 @@ import {
   type AffinityVerdict,
   type LayeringRole,
 } from '@/utils/layering';
+import { jsonLd } from '@/utils/jsonld';
 import type { Perfume } from '@/data/types';
 
 const BASE = site.basePath;
@@ -155,10 +156,7 @@ const verdictMeta: Record<AffinityVerdict, { label: string; className: string }>
 };
 
 // Anchos/altos reales (scripts/image-dims.mjs) para cero CLS en las botellas.
-type ImageDims = { width: number; height: number };
-const imageDims = imageDimsRaw as unknown as Record<string, ImageDims>;
-const FALLBACK_DIMS: ImageDims = { width: 400, height: 400 };
-const dimsFor = (p: Perfume): ImageDims => imageDims[p.images[0]?.src ?? ''] ?? FALLBACK_DIMS;
+const dimsFor = (p: Perfume): ImageDims => dimsForSrc(p.images[0]?.src);
 const bottleSrc = (p: Perfume): string => assetUrl(p.images[0]?.src);
 const bottleAlt = (p: Perfume): string => p.images[0]?.alt || `${p.brand} ${p.name}`;
 
@@ -274,12 +272,12 @@ const meterTicks = (score: number): number => Math.max(0, Math.min(10, Math.roun
   ogType="article"
   preloadImages={preloadImages}
 >
-  <script is:inline type="application/ld+json" set:html={JSON.stringify({
+  <script is:inline type="application/ld+json" set:html={jsonLd({
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
     mainEntity: faqSchema,
-  }).replace(/</g, '\\u003c')} />
-  <script is:inline type="application/ld+json" set:html={JSON.stringify({
+  })} />
+  <script is:inline type="application/ld+json" set:html={jsonLd({
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: pageTitle,
@@ -289,15 +287,15 @@ const meterTicks = (score: number): number => Math.max(0, Math.min(10, Math.roun
     author: { '@type': 'Organization', name: site.namePlain, url: schemaAuthorUrl },
     publisher: { '@type': 'Organization', name: site.namePlain, url: schemaAuthorUrl },
     mainEntityOfPage: schemaPageUrl,
-  }).replace(/</g, '\\u003c')} />
-  <script is:inline type="application/ld+json" set:html={JSON.stringify({
+  })} />
+  <script is:inline type="application/ld+json" set:html={jsonLd({
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Inicio', item: schemaSiteOrigin },
       { '@type': 'ListItem', position: 2, name: 'Layering' },
     ],
-  }).replace(/</g, '\\u003c')} />
+  })} />
 
   <script is:inline id="layering-data" type="application/json" set:html={JSON.stringify(clientPerfumes).replace(/</g, '\\u003c')} />
 
@@ -2289,7 +2287,7 @@ const meterTicks = (score: number): number => Math.max(0, Math.min(10, Math.roun
   /* --- Combos: galería de cards con esqueleto de filas fijas -------------
      Cada fila tiene altura fija (clamp incluido) para que en una misma fila
      de la grilla todos los bloques arranquen en la misma Y y el CTA quede
-     anclado al pie. Alturas medidas con Playwright (ly4-verify): ≤2 px de
+     anclado al pie. Alturas medidas con Playwright: ≤2 px de
      diferencia dentro de una fila. */
   .ly {
     --ly-bottle-h: 96px;  /* escenario blanco: botellas todas al mismo alto, base común */

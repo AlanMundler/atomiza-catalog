@@ -10,7 +10,7 @@
  * la comunidad (alta) de lo que es razonamiento por familias y notas (media).
  * No es una regla química: es un punto de partida (ver "qué evitar").
  */
-export type LayeringConfidence = 'alta' | 'media';
+type LayeringConfidence = 'alta' | 'media';
 
 export interface LayeringCombo {
   /** id estable para anclas (#combo-slug) */

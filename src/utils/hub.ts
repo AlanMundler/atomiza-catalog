@@ -1,9 +1,7 @@
 /** Lógica pura del buscador del hub de decants (sin DOM, testeable). */
 
-export interface HubCardIndexEntry {
-  id: string;
-  text: string;
-}
+import type { SearchIndexEntry } from '@/utils/search-page';
+import { slugify } from '@/utils/text';
 
 /** Texto del contador del hub: "1 aroma" / "N aromas". */
 export function buildHubCountText(visible: number): string {
@@ -19,7 +17,7 @@ export function buildHubCountText(visible: number): string {
  * no ensuciar los resultados con matches de subsequencia.
  */
 export function hubSearchMatches(
-  cards: HubCardIndexEntry[],
+  cards: SearchIndexEntry[],
   query: string,
   fuzzyIds: Set<string> | null
 ): Set<string> {
@@ -38,19 +36,15 @@ export const HUB_CASA_ALL = 'all';
 
 /**
  * Slug de una casa para el query param `?casa=`: "Parfums de Marly" →
- * "parfums-de-marly". Sin acentos ni símbolos; estable frente a renames
- * de datos porque deriva del nombre visible.
+ * "parfums-de-marly". Delega en `slugify` (misma lógica que los slugs de
+ * familias). Sin acentos ni símbolos; estable frente a renames de datos
+ * porque deriva del nombre visible.
  */
 export function hubCasaSlug(casa: string): string {
-  return casa
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
+  return slugify(casa);
 }
 
-export interface HubCasa {
+interface HubCasa {
   casa: string;
   slug: string;
   count: number;

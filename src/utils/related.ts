@@ -1,18 +1,12 @@
 import type { Perfume } from '@/data/types';
 import { isSizeAvailable, primarySize } from '@/utils/stock';
+import { normalizeText } from '@/utils/text';
 
 /** Cuántas cards muestra la ficha en "Podría interesarte". */
 const RELATED_COUNT = 4;
 
-function normalizar(input: string): string {
-  return input
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '');
-}
-
 function allNotes(p: Perfume): Set<string> {
-  return new Set([...p.notes.top, ...p.notes.heart, ...p.notes.base].map(normalizar));
+  return new Set([...p.notes.top, ...p.notes.heart, ...p.notes.base].map(normalizeText));
 }
 
 function gendersCompatible(a: Perfume['gender'], b: Perfume['gender']): boolean {

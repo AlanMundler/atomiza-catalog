@@ -6,6 +6,7 @@ import perfumesData from '@/data/perfumes.json';
 import { inspiraciones } from '@/data/inspiraciones';
 import { DECANT_ML, getStockStatus, getStockLabel } from '@/utils/stock';
 import { formatPrice, buildWhatsAppLink } from '@/utils/formatters';
+import { jsonLd } from '@/utils/jsonld';
 import { site } from '@/site.config';
 import type { Perfume } from '@/data/types';
 
@@ -53,7 +54,7 @@ const whatsappHref = buildWhatsAppLink(
 ---
 
 <Layout title={pageTitle} description={pageDescription} noindex={!perfume}>
-  <script is:inline type="application/ld+json" set:html={JSON.stringify({
+  <script is:inline type="application/ld+json" set:html={jsonLd({
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
     mainEntity: faq.map((f) => ({
@@ -61,7 +62,7 @@ const whatsappHref = buildWhatsAppLink(
       name: f.question,
       acceptedAnswer: { '@type': 'Answer', text: f.answer },
     })),
-  }).replace(/</g, '\\u003c')} />
+  })} />
 
   {perfume ? (
     <section class="insp-hero" aria-labelledby="insp-title">

@@ -10,6 +10,7 @@ import { resenas, resenasRating, hasResenas } from '@/data/resenas';
 import { site } from '@/site.config';
 import { TRIDENT_DISCOUNT, TRIDENT_BULK_PER_DECANT } from '@/utils/trident';
 import { formatPrice } from '@/utils/formatters';
+import { jsonLd } from '@/utils/jsonld';
 import type { Perfume } from '@/data/types';
 
 const BASE = site.basePath;
@@ -67,7 +68,7 @@ const faqs = [
 ---
 
 <Layout title={homeTitle} description={homeDescription} preloadImages={homePerfumes[0] ? [homePerfumes[0].images[0]?.src] : []}>
-  <script is:inline type="application/ld+json" set:html={JSON.stringify({
+  <script is:inline type="application/ld+json" set:html={jsonLd({
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
     mainEntity: faqs.map((faq) => ({
@@ -75,7 +76,7 @@ const faqs = [
       name: faq.question,
       acceptedAnswer: { '@type': 'Answer', text: faq.answer },
     })),
-  }).replace(/</g, '\\u003c')} />
+  })} />
   <button type="button" class="promo-strip" data-open-tridente aria-haspopup="dialog">
     <span aria-hidden="true">🎁</span>
     <strong class="promo-strip-label">Promociones:</strong>

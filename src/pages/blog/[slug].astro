@@ -3,6 +3,7 @@ import Layout from '@/layouts/Layout.astro';
 import Faq from '@/components/ui/Faq.astro';
 import { guias } from '@/data/guias';
 import { site } from '@/site.config';
+import { jsonLd } from '@/utils/jsonld';
 
 export function getStaticPaths() {
   return guias.map((guia) => ({
@@ -25,11 +26,11 @@ const faq = guia.faq.map((f) => ({
 ---
 
 <Layout title={pageTitle} description={pageDescription}>
-  <script is:inline type="application/ld+json" set:html={JSON.stringify({
+  <script is:inline type="application/ld+json" set:html={jsonLd({
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
     mainEntity: faq,
-  }).replace(/</g, '\\u003c')} />
+  })} />
 
   <article class="guia">
     <div class="container">

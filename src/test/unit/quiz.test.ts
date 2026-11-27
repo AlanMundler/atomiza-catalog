@@ -13,7 +13,6 @@ function makePerfume(overrides: Partial<Perfume> & Pick<Perfume, 'id'>): Perfume
     notes: { top: [], heart: [], base: [] },
     images: [],
     sizes: [{ ml: 5, price: 6000, stock: 10 }],
-    isBoutiqueExclusive: false,
     featured: false,
     ...overrides,
   };

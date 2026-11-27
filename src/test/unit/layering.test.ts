@@ -11,7 +11,6 @@ import {
   layeringAffinity,
   layeringRole,
   pairPrice,
-  roleLabel,
   sharedNotes,
 } from '@/utils/layering';
 import { primarySize } from '@/utils/stock';
@@ -34,8 +33,6 @@ describe('layering: roles', () => {
 
   it('las familias mixtas son comodín', () => {
     expect(layeringRole(byId('reflection'))).toBe('puente'); // almizcle + floral + amaderado
-    expect(roleLabel('ancla')).toMatch(/base/i);
-    expect(roleLabel('acento')).toMatch(/acento/i);
   });
 });
 

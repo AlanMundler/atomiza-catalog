@@ -9,7 +9,7 @@ const CART_STORAGE_KEY = site.storage.cart;
  * o produzcan `NaN` en precios y cantidades.
  */
 function normalizeCart(value: unknown): CartState {
-  const fallback = { items: [], updatedAt: Date.now() };
+  const fallback = { items: [] };
   if (typeof value !== 'object' || value === null) return fallback;
   const raw = value as { items?: unknown };
   if (!Array.isArray(raw.items)) return fallback;
@@ -42,7 +42,7 @@ function normalizeCart(value: unknown): CartState {
     });
   }
 
-  return { items, updatedAt: Date.now() };
+  return { items };
 }
 
 function getStoredCart(): CartState {
@@ -54,7 +54,7 @@ function getStoredCart(): CartState {
   } catch {
     // Ignore parse errors
   }
-  return { items: [], updatedAt: Date.now() };
+  return { items: [] };
 }
 
 function saveCart(cart: CartState): void {
@@ -99,7 +99,6 @@ export function addToCart(item: CartItem): CartState {
     }
   }
 
-  cart.updatedAt = Date.now();
   saveCart(cart);
   return cart;
 }
@@ -112,7 +111,6 @@ export function removeFromCart(perfumeId: string, sizeMl: number): CartState {
 
   if (index >= 0) {
     cart.items.splice(index, 1);
-    cart.updatedAt = Date.now();
     saveCart(cart);
   }
 
@@ -141,13 +139,12 @@ export function changeCartItemQuantity(
   } else {
     cart.items[index].quantity = next;
   }
-  cart.updatedAt = Date.now();
   saveCart(cart);
   return cart;
 }
 
 export function clearCart(): CartState {
-  const cart = { items: [], updatedAt: Date.now() };
+  const cart = { items: [] };
   saveCart(cart);
   return cart;
 }

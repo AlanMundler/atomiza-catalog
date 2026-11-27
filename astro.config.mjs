@@ -48,9 +48,7 @@ export default defineConfig({
           item.changefreq = ChangeFreqEnum.WEEKLY;
           item.priority = 1.0;
         } else if (
-          path === '/catalogo/decants' ||
           path === '/catalogo/decants/' ||
-          path === '/catalogo/frascos' ||
           path === '/catalogo/frascos/'
         ) {
           // Listados separados del catálogo (decants / frascos).

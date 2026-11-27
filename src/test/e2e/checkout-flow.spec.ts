@@ -24,7 +24,6 @@ test.describe('Checkout Flow', () => {
             quantity: 1
           }
         ],
-        updatedAt: Date.now()
       };
       localStorage.setItem('atomiza-cart', JSON.stringify(payload));
     });

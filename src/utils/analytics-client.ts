@@ -6,7 +6,7 @@ import { primarySize } from '@/utils/stock';
 import type { Perfume } from '@/data/types';
 
 /** Item en el formato estándar de GA4 (enhanced ecommerce). */
-export interface Ga4Item {
+interface Ga4Item {
   item_id: string;
   item_name?: string;
   price?: number;
@@ -23,7 +23,7 @@ declare global {
   }
 }
 
-export function ga4ItemFromPerfume(perfume: Perfume, quantity?: number): Ga4Item {
+export function ga4ItemFromPerfume(perfume: Perfume, quantity?: number) {
   const size = primarySize(perfume);
   return {
     item_id: perfume.id,

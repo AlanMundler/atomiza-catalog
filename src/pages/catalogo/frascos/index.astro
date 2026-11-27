@@ -4,6 +4,7 @@ import CatalogView from '@/components/catalog/CatalogView.astro';
 import perfumesData from '@/data/perfumes.json';
 import { perfumesForMode } from '@/utils/catalogo';
 import { site } from '@/site.config';
+import { jsonLd } from '@/utils/jsonld';
 import type { Perfume } from '@/data/types';
 
 const allPerfumes = perfumesData.perfumes as Perfume[];
@@ -29,7 +30,7 @@ const catalogSchema = {
   description={catalogDescription}
   ogImage="og-catalogo.jpg"
 >
-  <script is:inline type="application/ld+json" set:html={JSON.stringify(catalogSchema).replace(/</g, '\\u003c')} />
+  <script is:inline type="application/ld+json" set:html={jsonLd(catalogSchema)} />
   <!-- Sin sizeMl fijo: el frasco es 100 ml salvo qaed-al-fursan y qaed-al-fursan-untamed (90 ml).
        CatalogView pasa el modo y la card elige el talle de cada producto. -->
   <CatalogView

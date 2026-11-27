@@ -1,8 +1,10 @@
 import type { Perfume } from '@/data/types';
 import { QUIZ_PROFILES, type PerfumeProfile } from '@/data/quiz-profiles';
+import { genderMatches } from '@/utils/catalogo';
 import { primarySize } from '@/utils/stock';
+import { normalizeText } from '@/utils/text';
 
-export type Gender = 'para-el' | 'para-ella' | 'indistinto';
+type Gender = 'para-el' | 'para-ella' | 'indistinto';
 export type Style =
   | 'citrico-fresco'
   | 'floral'
@@ -23,13 +25,13 @@ export interface QuizAnswers {
   weather: Weather;
 }
 
-export interface QuizOption {
+interface QuizOption {
   value: string;
   label: string;
   hint?: string;
 }
 
-export interface QuizQuestion {
+interface QuizQuestion {
   id: keyof QuizAnswers;
   title: string;
   options: QuizOption[];
@@ -123,12 +125,12 @@ const INTENSITY_WEIGHT = 2;
 const WEATHER_WEIGHT = 1;
 const GENDER_WEIGHT = 1;
 
-function normalize(text: string): string {
-  return text
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '');
-}
+/** Traducción de la respuesta del quiz al filtro de género del catálogo. */
+const GENDER_FILTER: Record<Gender, string> = {
+  'para-el': 'masculino',
+  'para-ella': 'femenino',
+  indistinto: 'all',
+};
 
 function countMatches(text: string, keywords: string[] | undefined): number {
   if (!keywords) return 0;
@@ -140,17 +142,11 @@ function countMatches(text: string, keywords: string[] | undefined): number {
 }
 
 function primaryText(perfume: Perfume): string {
-  return normalize(`${perfume.olfactoryFamily} ${perfume.description}`);
+  return normalizeText(`${perfume.olfactoryFamily} ${perfume.description}`);
 }
 
 function notesText(perfume: Perfume): string {
-  return normalize([...perfume.notes.top, ...perfume.notes.heart, ...perfume.notes.base].join(' '));
-}
-
-function genderMatches(perfume: Perfume, choice: Gender): boolean {
-  if (choice === 'indistinto') return true;
-  const target = choice === 'para-el' ? 'masculino' : 'femenino';
-  return perfume.gender === target || perfume.gender === 'unisex';
+  return normalizeText([...perfume.notes.top, ...perfume.notes.heart, ...perfume.notes.base].join(' '));
 }
 
 function profileScore(perfume: Perfume, profile: PerfumeProfile, answers: QuizAnswers): number {
@@ -197,7 +193,7 @@ export function recommendPerfumes(answers: QuizAnswers, perfumes: Perfume[]): Pe
     .filter((perfume) => {
       const size = primarySize(perfume);
       if (!size || size.stock <= 0) return false;
-      if (!genderMatches(perfume, answers.gender)) return false;
+      if (!genderMatches(perfume.gender, GENDER_FILTER[answers.gender])) return false;
       return true;
     })
     .sort((a, b) => {

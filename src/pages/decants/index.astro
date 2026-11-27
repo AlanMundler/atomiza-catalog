@@ -4,7 +4,7 @@ import Search from '@/components/catalog/Search.astro';
 import Chip from '@/components/ui/Chip.astro';
 import { inspiraciones } from '@/data/inspiraciones';
 import perfumesData from '@/data/perfumes.json';
-import imageDimsRaw from '@/data/image-dims.json';
+import { dimsFor, hasDims } from '@/data/image-dims';
 import { site, assetUrl } from '@/site.config';
 import { formatPrice } from '@/utils/formatters';
 import {
@@ -21,16 +21,6 @@ import type { Inspiracion } from '@/data/inspiraciones';
 
 const BASE = site.basePath;
 const perfumes = perfumesData.perfumes as Perfume[];
-
-// Ancho/alto reales de cada avif (los genera `node scripts/image-dims.mjs`),
-// claveados por la ruta relativa sin base path. Van en width/height de las
-// <img> para que el navegador reserve el espacio: sin CLS aunque las fotos
-// de originales tienen proporciones distintas entre sí.
-type ImageDims = { width: number; height: number };
-const imageDims = imageDimsRaw as unknown as Record<string, ImageDims>;
-const FALLBACK_DIMS: ImageDims = { width: 400, height: 400 };
-const dimsFor = (relSrc: string | undefined): ImageDims =>
-  (relSrc && imageDims[relSrc]) || FALLBACK_DIMS;
 
 // Mismo índice que usa el catálogo: aroma famoso, casa, perfume nuestro,
 // marca y familia. Se usa para el fuzzy (typos) y como `data-search` de cada
@@ -73,8 +63,8 @@ const items: HubItem[] = inspiraciones.map((insp) => {
     : undefined;
   // Solo mostramos la pareja si la foto existe en el manifest (o sea, en
   // public/images/originales/); si no, mejor una botella limpia que un 404.
-  const hasOriginal = Boolean(originalRel && imageDims[originalRel]);
-  const ourDims = dimsFor(image?.src?.replace(/^\//, ''));
+  const hasOriginal = hasDims(originalRel);
+  const ourDims = dimsFor(image?.src);
   const originalDims = dimsFor(originalRel);
   return {
     slug: insp.slug,

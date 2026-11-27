@@ -8,7 +8,7 @@ async function seedCart(page: Page, items: unknown[]) {
   await page.evaluate(({ items }) => {
     localStorage.setItem(
       'atomiza-cart',
-      JSON.stringify({ items, updatedAt: Date.now() })
+      JSON.stringify({ items })
     );
   }, { items });
   await page.reload();

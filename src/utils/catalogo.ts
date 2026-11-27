@@ -15,14 +15,17 @@ export function normalizeFilter(raw: string | null): string {
   return Object.hasOwn(GENDERS, value) ? value : 'all';
 }
 
-/** Si un perfume de cierto género pasa el filtro (unisex pasa en ambos). */
+/**
+ * Si un perfume de cierto género pasa el filtro: `all` deja pasar todo y
+ * `unisex` pasa tanto en el filtro masculino como en el femenino.
+ */
 export function genderMatches(gender: string, filter: string): boolean {
   if (filter === 'all') return true;
   const allowed = GENDERS[filter] || [];
   return allowed.includes(gender);
 }
 
-export interface CardMatchInput {
+interface CardMatchInput {
   gender: string;
   searchText: string;
   perfumeId: string;
@@ -64,7 +67,6 @@ export function sizeForMode(perfume: Perfume, mode: 'decants' | 'frascos'): Perf
 export function perfumesForMode(perfumes: Perfume[], mode: 'decants' | 'frascos'): Perfume[] {
   return perfumes
     .filter((perfume) => sizeForMode(perfume, mode) !== undefined)
-    .slice()
     .sort((a, b) => a.name.localeCompare(b.name, 'es'));
 }
 

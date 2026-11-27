@@ -143,7 +143,7 @@ function oneLine(value: string, max: number): string {
   return value.replace(/[\r\n]+/g, ' ').trim().slice(0, max);
 }
 
-export interface OrderTextOptions {
+interface OrderTextOptions {
   items: CartItem[];
   perfumes: Map<string, Perfume>;
   customerName?: string;

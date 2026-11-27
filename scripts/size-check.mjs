@@ -20,6 +20,7 @@ for (const check of checks) {
   const files = fs.existsSync(dir) ? glob(dir, filePattern) : [];
   
   if (files.length === 0) {
+    failed++;
     console.log(`⚠ ${check.name}: No files found at ${check.pattern}`);
     continue;
   }
@@ -40,5 +41,5 @@ for (const check of checks) {
   }
 }
 
-console.log(`\nResultado: ${passed} OK, ${failed} EXCEDEN`);
+console.log(`\nResultado: ${passed} OK, ${failed} con fallas (tamaño excedido o archivos faltantes)`);
 if (failed > 0) process.exit(1);

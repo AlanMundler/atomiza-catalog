@@ -18,7 +18,7 @@ Para reutilizar el proyecto en otro emprendimiento, ver `README.md`.
 
 ## Stock manual (importante)
 
-El stock se maneja **manualmente** editando `src/data/perfumes.json`, campo `stock` de la talla de cada perfume (todas las tallas son de 5 ml).
+El stock se maneja **manualmente** editando `src/data/perfumes.json`, campo `stock` de la talla de cada perfume. Un perfume puede tener decant de 5 ml y, opcionalmente, frasco cerrado de 90/100 ml; cada talle tiene su propio stock. Si el catálogo cambia (stock, precio, perfume nuevo o imagen), subí `dataVersion` en `src/site.config.ts` para invalidar la caché del catálogo en los navegadores.
 
 Los tres estados preconfigurados (etiquetas en `src/utils/stock.ts`; colores en `src/styles/global.css` con las variables `--color-status-*`, aplicadas por `src/components/ui/Chip.astro`):
 
@@ -28,13 +28,15 @@ Los tres estados preconfigurados (etiquetas en `src/utils/stock.ts`; colores en 
 
 ### Convención con el usuario
 
-Cuando el usuario dice **"(perfume) esta en (estado)"**, por ejemplo "qaed-al-fursan-untamed esta en poco stock", cambiar el `stock` de ese perfume en `perfumes.json` al rango del estado pedido:
+Cuando el usuario dice **"(perfume) esta en (estado)"**, por ejemplo "qaed-al-fursan-untamed esta en poco stock", cambiá el `stock` del talle de ese perfume en `perfumes.json` al rango del estado pedido. Si el pedido es ambiguo sobre el talle (decant o frasco), confirmá cuál antes de tocar el JSON:
 
 - `en stock` → `stock: 10`
 - `poco stock` → `stock: 3`
 - `sin stock` → `stock: 0`
 
-Luego correr tests (`npm test`), `npm run lint` (`astro check`), `npm run build` y hacer commit + push (deploy automático a GitHub Pages).
+Luego correr tests (`npm test`), `npm run lint` (`astro check`), `npm run build`, subir `dataVersion` si cambió el catálogo, y hacer commit + push (deploy automático a GitHub Pages).
+
+Mapa del código y recetas de edición: `docs/ARQUITECTURA.md`. Mejoras y deuda técnica: `docs/MEJORAS.md`.
 
 ## Decisiones del usuario (no proponer de nuevo)
 

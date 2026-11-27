@@ -10,6 +10,7 @@
 import type { Perfume } from '@/data/types';
 import { layeringCombos, type LayeringCombo } from '@/data/layering';
 import { DECANT_ML } from '@/utils/stock';
+import { normalizeText } from '@/utils/text';
 
 export type LayeringRole = 'ancla' | 'acento' | 'puente';
 
@@ -20,14 +21,8 @@ const ANCHOR_FAMILIES =
 /** Familias que funcionan como acento: aportan brillo y frescura. */
 const ACCENT_FAMILIES = /(citric|aromatic|acuatic|fresco|floral|frutal|verde|marin)/i;
 
-const normalize = (value: string): string =>
-  value
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .trim();
-
-export function perfumeNotes(perfume: Perfume): string[] {
+/** Todas las notas del perfume, en orden pirámide. */
+function perfumeNotes(perfume: Perfume): string[] {
   return [...perfume.notes.top, ...perfume.notes.heart, ...perfume.notes.base];
 }
 
@@ -47,8 +42,8 @@ export function layeringRole(perfume: Perfume): LayeringRole {
 
 /** Notas compartidas (sin tildes ni mayúsculas), en el orden del primer perfume. */
 export function sharedNotes(a: Perfume, b: Perfume): string[] {
-  const other = new Set(perfumeNotes(b).map(normalize));
-  return [...new Set(perfumeNotes(a).filter((note) => other.has(normalize(note))))];
+  const other = new Set(perfumeNotes(b).map(normalizeText));
+  return [...new Set(perfumeNotes(a).filter((note) => other.has(normalizeText(note))))];
 }
 
 export type AffinityVerdict = 'fuerte' | 'buena' | 'cuidado';
@@ -92,7 +87,7 @@ function complementaryFamilies(a: string, b: string): boolean {
   );
 }
 
-export interface LayerinAffinityOptions {
+interface LayeringAffinityOptions {
   /**
    * true cuando los dos perfumes son interpretaciones del mismo original
    * (ej. dos dupes de Y EDP). Ahí no hay layering: se duplica el aroma.
@@ -100,7 +95,7 @@ export interface LayerinAffinityOptions {
   sameOriginal?: boolean;
 }
 
-export function layeringAffinity(a: Perfume, b: Perfume, options: LayerinAffinityOptions = {}): LayeringAffinity {
+export function layeringAffinity(a: Perfume, b: Perfume, options: LayeringAffinityOptions = {}): LayeringAffinity {
   const [anchor, accent] = orderPair(a, b);
   const shared = sharedNotes(anchor, accent);
   const roleA = layeringRole(anchor);
@@ -145,11 +140,6 @@ export function layeringAffinity(a: Perfume, b: Perfume, options: LayerinAffinit
         : `Los dos son densos, dulces o del mismo tipo: pueden anularse. ${bridge}`;
 
   return { score, verdict, shared, anchor, accent, ratio, reason };
-}
-
-/** Etiqueta de rol para mostrar en la ficha o en la página. */
-export function roleLabel(role: LayeringRole): string {
-  return role === 'ancla' ? 'Ideal como base' : role === 'acento' ? 'Ideal como acento' : 'Comodín (sirve de base o acento)';
 }
 
 /**

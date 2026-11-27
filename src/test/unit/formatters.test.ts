@@ -48,7 +48,6 @@ describe('formatters', () => {
       notes: { top: [], heart: [], base: [] },
       images: [],
       sizes: [{ ml: 5, price: 32000, stock: 2 }],
-      isBoutiqueExclusive: false,
       featured: true
     };
 
@@ -84,7 +83,6 @@ describe('formatters', () => {
       sizes: [
         { ml: 5, price: 32000, stock: 2 }
       ],
-      isBoutiqueExclusive: false,
       featured: true
     };
 
@@ -167,7 +165,6 @@ describe('formatters', () => {
       notes: { top: [], heart: [], base: [] },
       images: [],
       sizes: [{ ml: 5, price: 32000, stock: 2 }],
-      isBoutiqueExclusive: false,
       featured: true
     };
 
@@ -221,7 +218,6 @@ describe('formatters', () => {
       sizes: [
         { ml: 5, price: 32000, stock: 2 }
       ],
-      isBoutiqueExclusive: false,
       featured: true
     };
 
@@ -238,7 +234,6 @@ describe('formatters', () => {
       sizes: [
         { ml: 5, price: 42000, stock: 3 }
       ],
-      isBoutiqueExclusive: false,
       featured: true
     };
 
@@ -336,7 +331,6 @@ describe('formatters', () => {
       notes: { top: [], heart: [], base: [] },
       images: [],
       sizes: [{ ml: 5, price: 6000, stock: 10 }],
-      isBoutiqueExclusive: false,
       featured: false
     };
     const map = new Map([['six-pack', sixPack]]);
@@ -384,7 +378,6 @@ describe('formatters', () => {
       notes: { top: [], heart: [], base: [] },
       images: [],
       sizes: [{ ml: 5, price: 6000, stock: 10 }],
-      isBoutiqueExclusive: false,
       featured: false
     };
     const map = new Map([['six-pack', sixPack]]);

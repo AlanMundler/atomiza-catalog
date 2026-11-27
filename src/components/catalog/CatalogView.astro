@@ -4,6 +4,7 @@ import Search from '@/components/catalog/Search.astro';
 import ProductGrid from '@/components/catalog/ProductGrid.astro';
 import CatalogModeSwitch from '@/components/catalog/CatalogModeSwitch.astro';
 import type { Perfume, GenderFilter } from '@/data/types';
+import { jsonLd } from '@/utils/jsonld';
 
 interface Props {
   perfumes: Perfume[];
@@ -29,7 +30,7 @@ const urlFilter = Astro.url.searchParams.get('filter');
 const initialFilter: GenderFilter = urlFilter === 'masculino' || urlFilter === 'femenino' || urlFilter === 'unisex' ? urlFilter : 'all';
 ---
 
-<script is:inline type="application/json" id="search-index" set:html={JSON.stringify(searchIndex).replace(/</g, '\\u003c')} />
+<script is:inline type="application/json" id="search-index" set:html={jsonLd(searchIndex)} />
 <div class="container">
   <CatalogModeSwitch active={mode} />
 </div>
@@ -84,7 +85,6 @@ const initialFilter: GenderFilter = urlFilter === 'masculino' || urlFilter === '
     syncSearchInput,
     writeSearchToUrl,
   } from '@/utils/search-page';
-  import type { SearchIndexEntry } from '@/utils/search-page';
 
   let currentFilter = 'all';
   let currentSearch = '';

@@ -1,6 +1,6 @@
 # 🎬 20 GUIONES DE REELS VIRALES — ATOMIZA
 
-**Catálogo real (37 decants) · Precios de frasco reales del mercado argentino (sept 2026) · 100% gratis**
+**Catálogo real (76 perfumes: decants de 5 ml y 24 frascos cerrados) · Precios de frasco reales del mercado argentino (sept 2026) · 100% gratis**
 
 > **Cómo usar cada guión:** grabá en vertical (9:16), subtítulos en pantalla SIEMPRE, música trending de la pestaña de tendencias, geotag Córdoba, y el CTA final SIEMPRE ("hacé el quiz, link en bio").
 > **Ajuste de precio:** los precios de frasco son verificados (Mercado Libre/tiendas árabes argentinas) pero se mueven. Antes de grabar, chequeá el precio actual del frasco con una búsqueda rápida.

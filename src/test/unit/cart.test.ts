@@ -34,13 +34,11 @@ describe('cart utilities', () => {
     it('returns empty cart when localStorage is empty', () => {
       const cart = getCart();
       expect(cart.items).toEqual([]);
-      expect(typeof cart.updatedAt).toBe('number');
     });
 
     it('returns parsed cart from localStorage', () => {
       const storedCart = {
         items: [mockCartItem1],
-        updatedAt: Date.now()
       };
       localStorage.setItem('atomiza-cart', JSON.stringify(storedCart));
       
@@ -63,7 +61,6 @@ describe('cart utilities', () => {
           { perfumeId: '', size: { ml: 5, price: 32000, stock: 2 }, quantity: 1 },
           { perfumeId: 'bad-price', size: { ml: 5, price: 'x', stock: 2 }, quantity: 1 },
         ],
-        updatedAt: Date.now()
       }));
 
       const cart = getCart();
@@ -80,7 +77,6 @@ describe('cart utilities', () => {
           { perfumeId: 'neg-price', size: { ml: 5, price: -100, stock: 2 }, quantity: 1 },
           { perfumeId: 'neg-stock', size: { ml: 5, price: 32000, stock: -3 }, quantity: 1 },
         ],
-        updatedAt: Date.now()
       }));
 
       const cart = getCart();
@@ -96,7 +92,6 @@ describe('cart utilities', () => {
           { perfumeId: 'b', size: { ml: 5, price: 32000, stock: 10 }, quantity: '2' },
           { perfumeId: 'c', size: { ml: 5, price: 32000, stock: 10 }, quantity: 50 },
         ],
-        updatedAt: Date.now()
       }));
 
       const cart = getCart();
@@ -116,7 +111,6 @@ describe('cart utilities', () => {
     it('increments quantity when same perfume and size exists', () => {
       localStorage.setItem('atomiza-cart', JSON.stringify({
         items: [mockCartItem1],
-        updatedAt: Date.now()
       }));
       
       const cart = addToCart({ ...mockCartItem1, quantity: 1 });
@@ -127,7 +121,6 @@ describe('cart utilities', () => {
     it('increments quantity when adding the same item again', () => {
       localStorage.setItem('atomiza-cart', JSON.stringify({
         items: [mockCartItem1],
-        updatedAt: Date.now()
       }));
       
       const cart = addToCart({ 
@@ -142,7 +135,6 @@ describe('cart utilities', () => {
     it('adds separate entry for different perfume', () => {
       localStorage.setItem('atomiza-cart', JSON.stringify({
         items: [mockCartItem1],
-        updatedAt: Date.now()
       }));
       
       const cart = addToCart(mockCartItem2);
@@ -160,7 +152,6 @@ describe('cart utilities', () => {
     it('removes item from cart', () => {
       localStorage.setItem('atomiza-cart', JSON.stringify({
         items: [mockCartItem1, mockCartItem2],
-        updatedAt: Date.now()
       }));
       
       const cart = removeFromCart('tobacco-vanille', mockPerfumeSize.ml);
@@ -171,7 +162,6 @@ describe('cart utilities', () => {
     it('handles removing non-existent item', () => {
       localStorage.setItem('atomiza-cart', JSON.stringify({
         items: [mockCartItem1],
-        updatedAt: Date.now()
       }));
       
       const cart = removeFromCart('non-existent', mockPerfumeSize.ml);
@@ -181,7 +171,6 @@ describe('cart utilities', () => {
     it('removes by id+ml even without the catalog size (ghost item)', () => {
       localStorage.setItem('atomiza-cart', JSON.stringify({
         items: [{ perfumeId: 'borrado', size: { ml: 5, price: 6000, stock: 0 }, quantity: 1 }],
-        updatedAt: Date.now()
       }));
 
       const cart = removeFromCart('borrado', 5);
@@ -194,7 +183,6 @@ describe('cart utilities', () => {
       const sizeWithStock: PerfumeSize = { ml: 5, price: 32000, stock: 10 };
       localStorage.setItem('atomiza-cart', JSON.stringify({
         items: [{ perfumeId: 'tobacco-vanille', size: sizeWithStock, quantity: 1 }],
-        updatedAt: Date.now()
       }));
 
       const cart = changeCartItemQuantity('tobacco-vanille', sizeWithStock, 2);
@@ -204,7 +192,6 @@ describe('cart utilities', () => {
     it('elimina el item cuando el delta lo deja en 0', () => {
       localStorage.setItem('atomiza-cart', JSON.stringify({
         items: [mockCartItem1],
-        updatedAt: Date.now()
       }));
 
       const cart = changeCartItemQuantity('tobacco-vanille', mockPerfumeSize, -1);
@@ -214,7 +201,6 @@ describe('cart utilities', () => {
     it('recorta contra el stock disponible', () => {
       localStorage.setItem('atomiza-cart', JSON.stringify({
         items: [mockCartItem1],
-        updatedAt: Date.now()
       }));
 
       const cart = changeCartItemQuantity('tobacco-vanille', mockPerfumeSize, 10);
@@ -224,7 +210,6 @@ describe('cart utilities', () => {
     it('ignora deltas no finitos en vez de guardar quantity NaN', () => {
       localStorage.setItem('atomiza-cart', JSON.stringify({
         items: [mockCartItem1],
-        updatedAt: Date.now()
       }));
 
       const cart = changeCartItemQuantity('tobacco-vanille', mockPerfumeSize, NaN);
@@ -238,7 +223,6 @@ describe('cart utilities', () => {
     it('empties the cart', () => {
       localStorage.setItem('atomiza-cart', JSON.stringify({
         items: [mockCartItem1, mockCartItem2],
-        updatedAt: Date.now()
       }));
       
       const cart = clearCart();
@@ -250,7 +234,6 @@ describe('cart utilities', () => {
     it('returns total quantity of all items', () => {
       localStorage.setItem('atomiza-cart', JSON.stringify({
         items: [mockCartItem1, mockCartItem2],
-        updatedAt: Date.now()
       }));
       
       expect(getCartItemCount()).toBe(3); // 1 + 2

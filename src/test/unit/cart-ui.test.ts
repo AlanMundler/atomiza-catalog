@@ -15,7 +15,6 @@ function makePerfume(id: string, price = 6000, stock = 10): Perfume {
     notes: { top: [], heart: [], base: [] },
     images: [{ src: 'images/perfumes/test.avif', alt: 'Test' }],
     sizes: [{ ml: 5, price, stock }],
-    isBoutiqueExclusive: false,
     featured: false,
   };
 }

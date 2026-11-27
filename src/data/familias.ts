@@ -1,19 +1,11 @@
 import perfumesData from '@/data/perfumes.json';
 import type { Perfume } from '@/data/types';
+import { slugify } from '@/utils/text';
 
 interface Familia {
   name: string;
   slug: string;
   items: Perfume[];
-}
-
-function slugify(input: string): string {
-  return input
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
 }
 
 export function getFamilias(): Familia[] {

@@ -14,7 +14,6 @@ function makePerfume(overrides: Partial<Perfume> = {}): Perfume {
     notes: { top: [], heart: [], base: [] },
     images: [{ src: 'images/perfumes/test.jpg', alt: 'Test' }],
     sizes: [{ ml: 5, price: 32000, stock: 10 }],
-    isBoutiqueExclusive: false,
     featured: false,
     ...overrides,
   };

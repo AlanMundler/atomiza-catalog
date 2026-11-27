@@ -21,7 +21,6 @@ function makePerfume(overrides: Partial<Perfume> & { name: string }): Perfume {
     notes: { top: [], heart: [], base: [] },
     images: [],
     sizes: [],
-    isBoutiqueExclusive: false,
     featured: false,
     ...overrides,
   };
